@@ -1,0 +1,145 @@
+<style>
+  .nav-item.active > .nav-link {
+    background-color: #007bff; /* Couleur de fond */
+    color: #fff; /* Couleur du texte */
+    font-weight: bold;
+}
+
+.menu-content .active > a {
+    color: #007bff; /* Couleur pour le sous-menu actif */
+    font-weight: bold;
+}
+
+
+
+</style>
+
+<?php
+
+$current_page = basename($_SERVER['REQUEST_URI']); // Récupère le nom de la page actuelle
+
+
+
+?>
+
+<div class="main-menu menu-fixed menu-light menu-accordion menu-shadow" data-scroll-to-active="true">
+    <div class="navbar-header">
+        <ul class="nav navbar-nav flex-row">
+            <li class="nav-item mr-auto">
+                <a class="navbar-brand" href="<?= ROOT ?>/index">
+                    <div class="brand-logo">
+                        <img class="logo" src="<?= ROOT ?>/assets/images/logo/logo.png" />
+                    </div>
+                    <h2 class="brand-text mb-0">IUFP</h2>
+                </a>
+            </li>
+            <li class="nav-item nav-toggle">
+                <a class="nav-link modern-nav-toggle pr-0" data-toggle="collapse">
+                    <i class="bx bx-x d-block d-xl-none font-medium-4 primary toggle-icon"></i>
+                    <i class="toggle-icon bx bx-disc font-medium-4 d-none d-xl-block collapse-toggle-icon primary" data-ticon="bx-disc"></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="main-menu-content">
+        <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation">
+            <!-- Tableau de bord -->
+            <li class="nav-item <?= ($current_page == 'index') ? 'active' : '' ?>">
+                <a class="nav-link" href="<?= ROOT ?>/index">
+                    <i class="bx bx-home-alt"></i>
+                    <span class="menu-title">Tableau Bord</span>
+                </a>
+            </li>
+
+            <!-- Filières -->
+            <li class="nav-item <?= ($current_page == 'Filieres') ? 'active' : '' ?>">
+                <a class="nav-link" href="<?= ROOT ?>/Filieres">
+                    <i class="bx bx-save"></i>
+                    <span class="menu-title">Filières</span>
+                </a>
+            </li>
+
+            <!-- Enseignants -->
+            <li class="nav-item <?= ($current_page == 'Enseignants') ? 'active' : '' ?>">
+                <a class="nav-link" href="<?= ROOT ?>/Enseignants">
+                    <i class="bx bx-droplet"></i>
+                    <span class="menu-title">Enseignants</span>
+                </a>
+            </li>
+             <!-- Émargement  -->
+            <li class="nav-item <?= ($current_page == 'Enseignants') ? 'active' : '' ?>">
+                <a class="nav-link" href="<?= ROOT ?>/Enseignants/lsite_emargement">
+                    <i class="bx bx-droplet"></i>
+                    <span class="menu-title">Émargement </span>
+                </a>
+            </li>
+            <!-- Emploi du temps -->
+            <li class="nav-item <?= ($current_page == 'Emploi_du_temps') ? 'active' : '' ?>">
+                <a class="nav-link" href="<?= ROOT ?>/Emploi_du_temps">
+                    <i class="bx bx-droplet"></i>
+                    <span class="menu-title">EDT</span>
+                </a>
+            </li>
+
+            <!-- Étudiants (Sous-menus) -->
+            <!-- Étudiants (Sous-menus) -->
+<li class="nav-item <?= $is_etudiant_active ? '' : '' ?>"> <!-- Pas de classe 'active' pour le parent -->
+    <a class="nav-link" href="#">
+        <i class="bx bx-check"></i>
+        <span class="menu-title">Étudiants</span>
+    </a>
+    <ul class="menu-content">
+        <li class="<?= ($current_page == 'form-inputs.html') ? 'active' : '' ?>">
+            <a href="form-inputs.html">
+                <i class="bx bx-right-arrow-alt"></i>
+                <span class="menu-item">Inscription</span>
+            </a>
+        </li>
+        <li class="<?= ($current_page == 'form-input-groups.html') ? 'active' : '' ?>">
+            <a href="form-input-groups.html">
+                <i class="bx bx-right-arrow-alt"></i>
+                <span class="menu-item">Réinscription</span>
+            </a>
+        </li>
+        <li class="<?= ($current_page == 'form-number-input.html') ? 'active' : '' ?>">
+            <a href="form-number-input.html">
+                <i class="bx bx-right-arrow-alt"></i>
+                <span class="menu-item">Liste</span>
+            </a>
+        </li>
+    </ul>
+</li>
+      <!-- Configuration -->
+            <li class="nav-item <?= ($current_page == 'Modules/liste') ? 'active' : '' ?>">
+                <a class="nav-link" href="<?= ROOT ?>/Modules/listeModule">
+                    <i class="bx bx-droplet"></i>
+                    <span class="menu-title">Configuration</span>
+                </a>
+               
+            </li>
+        </ul>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const currentPage = window.location.pathname.split("/").pop(); // Récupère le nom de la page
+    const menuItems = document.querySelectorAll(".main-menu .nav-item");
+
+    menuItems.forEach(item => {
+        const link = item.querySelector("a");
+        if (link) {
+            const linkPage = link.getAttribute("href").split("/").pop();
+            if (linkPage === currentPage) {
+                // Vérifie si c'est un sous-menu
+                if (item.closest(".menu-content")) {
+                    item.classList.add("active");
+                } else {
+                    item.classList.add("active");
+                }
+            }
+        }
+    });
+});
+
+
+</script>
