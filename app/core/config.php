@@ -7,7 +7,7 @@
 // define("DBDRIVER", "mysql");
 
 // define ("ROOT", "public");
-define("ROOT", "HTTP://localhost/G_universites/public");
+define("ROOT", "HTTP://localhost/G_universite/public");
 // define ("ROOT", "scolarite/MVC_Scolarite/public");
 define("DB_NAME","db_universite");
 define("DBHOST", "localhost");
