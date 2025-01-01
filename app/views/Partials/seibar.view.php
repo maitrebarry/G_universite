@@ -1,17 +1,17 @@
 <style>
-  .nav-item.active > .nav-link {
-    background-color: #007bff; /* Couleur de fond */
-    color: #fff; /* Couleur du texte */
-    font-weight: bold;
-}
+    .nav-item.active>.nav-link {
+        background-color: #007bff;
+        /* Couleur de fond */
+        color: #fff;
+        /* Couleur du texte */
+        font-weight: bold;
+    }
 
-.menu-content .active > a {
-    color: #007bff; /* Couleur pour le sous-menu actif */
-    font-weight: bold;
-}
-
-
-
+    .menu-content .active>a {
+        color: #007bff;
+        /* Couleur pour le sous-menu actif */
+        font-weight: bold;
+    }
 </style>
 
 <?php
@@ -66,7 +66,7 @@ $current_page = basename($_SERVER['REQUEST_URI']); // Récupère le nom de la pa
                     <span class="menu-title">Enseignants</span>
                 </a>
             </li>
-             <!-- Émargement  -->
+            <!-- Émargement  -->
             <li class="nav-item <?= ($current_page == 'Emargements') ? 'active' : '' ?>">
                 <a class="nav-link" href="<?= ROOT ?>/Enseignants/lsite_emargement">
                     <i class="bx bx-droplet"></i>
@@ -83,63 +83,61 @@ $current_page = basename($_SERVER['REQUEST_URI']); // Récupère le nom de la pa
 
             <!-- Étudiants (Sous-menus) -->
             <!-- Étudiants (Sous-menus) -->
-<li class="nav-item <?= $is_etudiant_active ? '' : '' ?>"> <!-- Pas de classe 'active' pour le parent -->
-    <a class="nav-link" href="#">
-        <i class="bx bx-check"></i>
-        <span class="menu-title">Étudiants</span>
-    </a>
-    <ul class="menu-content">
-        <li class="<?= ($current_page == 'form-inputs.html') ? 'active' : '' ?>">
-            <a href="form-inputs.html">
-                <i class="bx bx-right-arrow-alt"></i>
-                <span class="menu-item">Inscription</span>
-            </a>
-        </li>
-        <li class="<?= ($current_page == 'form-input-groups.html') ? 'active' : '' ?>">
-            <a href="form-input-groups.html">
-                <i class="bx bx-right-arrow-alt"></i>
-                <span class="menu-item">Réinscription</span>
-            </a>
-        </li>
-        <li class="<?= ($current_page == 'form-number-input.html') ? 'active' : '' ?>">
-            <a href="form-number-input.html">
-                <i class="bx bx-right-arrow-alt"></i>
-                <span class="menu-item">Liste</span>
-            </a>
-        </li>
-    </ul>
-</li>
-      <!-- Configuration -->
+            <li class="nav-item <?= $is_etudiant_active ? '' : '' ?>"> <!-- Pas de classe 'active' pour le parent -->
+                <a class="nav-link" href="#">
+                    <i class="bx bx-check"></i>
+                    <span class="menu-title">Étudiants</span>
+                </a>
+                <ul class="menu-content">
+                    <li class="<?= ($current_page == 'Etudiants.') ? 'active' : '' ?>">
+                        <a href="<?= ROOT ?>/Etudiants">
+                            <i class="bx bx-right-arrow-alt"></i>
+                            <span class="menu-item">Inscription</span>
+                        </a>
+                    </li>
+                    <li class="<?= ($current_page == 'form-input-groups.html') ? 'active' : '' ?>">
+                        <a href="form-input-groups.html">
+                            <i class="bx bx-right-arrow-alt"></i>
+                            <span class="menu-item">Réinscription</span>
+                        </a>
+                    </li>
+                    <li class="<?= ($current_page == 'form-number-input.html') ? 'active' : '' ?>">
+                        <a href="form-number-input.html">
+                            <i class="bx bx-right-arrow-alt"></i>
+                            <span class="menu-item">Liste</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <!-- Configuration -->
             <li class="nav-item <?= ($current_page == 'Modules/liste') ? 'active' : '' ?>">
                 <a class="nav-link" href="<?= ROOT ?>/Modules/listeModule">
                     <i class="bx bx-droplet"></i>
                     <span class="menu-title">Configuration</span>
                 </a>
-               
+
             </li>
         </ul>
     </div>
 </div>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-    const currentPage = window.location.pathname.split("/").pop(); // Récupère le nom de la page
-    const menuItems = document.querySelectorAll(".main-menu .nav-item");
+    document.addEventListener("DOMContentLoaded", function() {
+        const currentPage = window.location.pathname.split("/").pop(); // Récupère le nom de la page
+        const menuItems = document.querySelectorAll(".main-menu .nav-item");
 
-    menuItems.forEach(item => {
-        const link = item.querySelector("a");
-        if (link) {
-            const linkPage = link.getAttribute("href").split("/").pop();
-            if (linkPage === currentPage) {
-                // Vérifie si c'est un sous-menu
-                if (item.closest(".menu-content")) {
-                    item.classList.add("active");
-                } else {
-                    item.classList.add("active");
+        menuItems.forEach(item => {
+            const link = item.querySelector("a");
+            if (link) {
+                const linkPage = link.getAttribute("href").split("/").pop();
+                if (linkPage === currentPage) {
+                    // Vérifie si c'est un sous-menu
+                    if (item.closest(".menu-content")) {
+                        item.classList.add("active");
+                    } else {
+                        item.classList.add("active");
+                    }
                 }
             }
-        }
+        });
     });
-});
-
-
 </script>

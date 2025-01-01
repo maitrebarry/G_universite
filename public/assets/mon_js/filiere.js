@@ -18,7 +18,7 @@ function addSemestre() {
   // Créer le semestre sélectionné dans le tableau
   $.ajax({
     method: "POST",
-    url: "HTTP://localhost/G_universites/public/Filieres/post_ajouter_Filiere",
+    url: "HTTP://localhost/G_universite/public/Filieres/post_ajouter_Filiere",
     data: {
       action: "semestre",
       semestreId: semestreId,
@@ -39,7 +39,7 @@ function addUE(semestreId) {
 
   $.ajax({
     method: "POST",
-    url: "HTTP://localhost/G_universites/public/Filieres/post_ajouter_Filiere",
+    url: "HTTP://localhost/G_universite/public/Filieres/post_ajouter_Filiere",
     data: {
       action: "ue",
       semestreId: semestreId,
@@ -61,7 +61,7 @@ function addModule(semestreId, button) {
 
   $.ajax({
     method: "POST",
-    url: "HTTP://localhost/G_universites/public/Filieres/post_ajouter_Filiere",
+    url: "HTTP://localhost/G_universite/public/Filieres/post_ajouter_Filiere",
     data: {
       action: "module",
       semestreId: semestreId,
@@ -153,7 +153,7 @@ function ajouterFiliere() {
   // Debut de l'envoi des données avec Ajax
   $.ajax({
     method: "POST",
-    url: "HTTP://localhost/G_universites/public/Filieres/ajouter_Filiere",
+    url: "HTTP://localhost/G_universite/public/Filieres/ajouter_Filiere",
     data: {
       action: "ajouter_filiere",
       filiere: filiere,
