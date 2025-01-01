@@ -126,7 +126,7 @@ class Enseignants extends Controller
 
     public function lsite_emargement(){
 
-        $this->view('lsite_emargement');
+        $this->view('liste_emargement');
     }
 
 
