@@ -22,9 +22,6 @@ class Enseignants extends Controller
 
     }
    
-
-
-
     public function ajouter_enseignant() {
         $enseignant = new Enseignant();
         if (isset($_POST["envoyer"])) {
@@ -112,7 +109,7 @@ class Enseignants extends Controller
         $this->view('modifier_enseignant', ['enseignant' => $enseignantData, 'errors' => $errors]);
     }
 
- public function delete($id) {
+    public function delete($id) {
         $perso = new Enseignant();     
         // Définir la requête de suppression et les paramètres
         $sql = 'DELETE FROM enseignants WHERE enseignant_id = :id';
@@ -124,10 +121,279 @@ class Enseignants extends Controller
         $perso->redirect('Enseignants/liste_enseignant');
     }   
 
-    public function lsite_emargement(){
+   
 
-        $this->view('liste_emargement');
+
+    public function liste_emargement() {
+        // Instancier les modèles nécessaires
+        $filiereModel = new Filiere();
+        $semestreModel = new Semestre();
+        $enseignantModel = new Enseignant();
+        
+        // Récupérer toutes les données nécessaires pour les filtres
+        $filiere = $filiereModel->SelectAllData("*", "filiere");
+        $semestre = $semestreModel->SelectAllData("*", "semestre");
+        $enseignants = $enseignantModel->SelectAllData("*", "enseignants");
+        $errors = [];
+        $resultats = [];
+        $filters = []; 
+
+        // Traitement du formulaire d'enregistrement d'émargement
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
+            // Récupération des données du formulaire
+            $id_enseignant = isset($_POST['enseignant']) ? intval($_POST['enseignant']) : null;
+            $id_filiere = isset($_POST['filiere']) ? intval($_POST['filiere']) : null;
+            $id_semestre = isset($_POST['semestre']) ? intval($_POST['semestre']) : null;
+            $date_debut = $_POST['date_debut'] ?? null;
+            $date_fin = $_POST['date_fin'] ?? null;
+            $nh_programme = isset($_POST['nh_programme']) ? intval($_POST['nh_programme']) : null;
+            $statut = $_POST['statut'] ?? null;
+            $grade = $_POST['grade'] ?? null;
+
+            // Vérification des champs obligatoires pour l'enregistrement
+            if (empty($id_enseignant)) {
+                $errors[] = "Veuillez sélectionner un enseignant.";
+            }
+            if (empty($id_filiere)) {
+                $errors[] = "Veuillez sélectionner une filière.";
+            }
+            if (empty($id_semestre)) {
+                $errors[] = "Veuillez sélectionner un semestre.";
+            }
+            if (empty($date_debut)) {
+                $errors[] = "Veuillez sélectionner une date de début.";
+            }
+            if (empty($date_fin)) {
+                $errors[] = "Veuillez sélectionner une date de fin.";
+            }
+            if (empty($statut)) {
+                $errors[] = "Veuillez sélectionner un statut.";
+            }
+
+            // Récupération et traitement spécifique selon le statut
+            if (empty($errors)) {
+                $heures_supp = 0;
+                $heures_dues = null;
+
+                // Initialiser la variable cumule_heures_programmees
+                $cumul_heures_programmees = 0;
+
+                // Récupération des heures supplémentaires existantes pour cet enseignant et ce semestre
+                $resultats_existants = $enseignantModel->recupererEmargementData(['id_enseignant' => $id_enseignant, 'id_semestre' => $id_semestre]);
+                foreach ($resultats_existants as $resultat) {
+                    $cumul_heures_programmees += $resultat->nh_programme;
+                }
+
+                $cumul_heures_programmees += $nh_programme; // Ajouter les heures programmées de cette nouvelle entrée
+
+                if ($statut == "1") { // CDI
+                    $heures_dues = intval($_POST['heures_dues'] ?? 0); // Heures dues obtenues du formulaire
+                    $heures_supp = max(0, $cumul_heures_programmees - $heures_dues);
+                } else { // VACT
+                    $heures_supp = intval($_POST['heures_supp'] ?? 0);
+                }
+
+                // Préparer les données pour l'insertion
+                $emargementData = [
+                    'id_enseignant' => $id_enseignant,
+                    'id_filiere' => $id_filiere,
+                    'id_semestre' => $id_semestre,
+                    'date_debut' => $date_debut,
+                    'date_fin' => $date_fin,
+                    'nh_programme' => $nh_programme,
+                    'heures_supp' => $heures_supp,
+                    'statut' => $statut,
+                    'grade' => $statut == "1" ? $grade : null,
+                    'heures_dues' => $statut == "1" ? $heures_dues : null,
+                ];
+
+                // Insertion dans la base de données
+                $insertion = $enseignantModel->enregistrer_emargement($emargementData);
+
+                if ($insertion) {
+                    $enseignantModel->set_flash("Insertion faite avec succès.", 'success');
+                    $enseignantModel->clear_input_data();
+                    $enseignantModel->redirect("Enseignants/liste_emargement");
+                } else {
+                    $errors[] = "Une erreur s'est produite lors de l'insertion des données.";
+                }
+            }
+        }
+
+        // Traitement du formulaire de filtrage
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_filtre'])) {
+            // Récupération des données du formulaire de filtrage
+            $id_enseignant_filtre = isset($_POST['enseignant']) ? intval($_POST['enseignant']) : null;
+            $id_filiere_filtre = isset($_POST['filiere']) ? intval($_POST['filiere']) : null;
+            $id_semestre_filtre = isset($_POST['semestre']) ? intval($_POST['semestre']) : null;
+
+            // Préparation des filtres
+            $filters = [
+                'id_enseignant' => $id_enseignant_filtre,
+                'id_filiere' => $id_filiere_filtre,
+                'id_semestre' => $id_semestre_filtre
+            ];
+
+            // Récupération des résultats filtrés
+            $resultats = $enseignantModel->recupererEmargementData($filters);
+        } else {
+            // Récupération des heures supplémentaires et programmées sans filtres
+            $resultats = $enseignantModel->recupererEmargementData();
+        }
+
+        // Charger la vue avec les données récupérées
+        $this->view("liste_emargement", [
+            'filiere' => $filiere,
+            'semestre' => $semestre,
+            'enseignants' => $enseignants,
+            'errors' => $errors,
+            'resultats' => $resultats
+        ]);
     }
+    public function getCumulHeuresProgrammees() {
+        $id_enseignant = $_GET['id_enseignant'] ?? null;
+
+        if ($id_enseignant) {
+            $enseignantModel = new Enseignant();
+            $cumulHeuresProgrammees = $enseignantModel->getCumulHeuresProgrammees($id_enseignant);
+            echo json_encode(['cumul_heures_programmees' => $cumulHeuresProgrammees]);
+        } else {
+            echo json_encode(['error' => 'ID enseignant manquant']);
+        }
+    }
+    
+    public function update_emargement($id) {
+        $model = new Enseignant();
+        $erreurs = [];
+
+        // Vérification de l'existence du bouton "modifier"
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['modifier'])) {
+            // Récupération et nettoyage des données entrantes
+            $id_enseignant = isset($_POST['id_enseignant']) ? intval($_POST['id_enseignant']) : null;
+            $id_filiere = isset($_POST['id_filiere']) ? intval($_POST['id_filiere']) : null;
+            $id_semestre = isset($_POST['id_semestre']) ? intval($_POST['id_semestre']) : null;
+            $date_debut = $_POST['date_debut'] ?? null;
+            $date_fin = $_POST['date_fin'] ?? null;
+            $nh_programme = isset($_POST['nh_programme']) ? intval($_POST['nh_programme']) : null;
+            $statut = $_POST['statut'] ?? null;
+            $grade = $_POST['grade'] ?? null;
+
+           
+
+            // Si aucune erreur, traitement spécifique selon le statut
+            if (empty($erreurs)) {
+                $heures_supp = 0;
+                $heures_dues = null;
+                $cumul_heures_programmees = 0;
+
+                // Récupération des heures supplémentaires existantes pour cet enseignant et ce semestre
+                $resultats_existants = $model->recupererEmargementData(['id_enseignant' => $id_enseignant, 'id_semestre' => $id_semestre]);
+                foreach ($resultats_existants as $resultat) {
+                    $cumul_heures_programmees += $resultat->nh_programme;
+                }
+
+                $cumul_heures_programmees += $nh_programme; // Ajouter les heures programmées de cette nouvelle entrée
+
+                if ($statut == "1") { // CDI
+                    $heures_dues = intval($_POST['heures_dues'] ?? 0); // Heures dues obtenues du formulaire
+                    $heures_supp = max(0, $cumul_heures_programmees - $heures_dues);
+                } else { // VACT
+                    $heures_supp = intval($_POST['heures_supp'] ?? 0);
+                }
+
+                // Préparer les données pour la mise à jour
+                $emargementData = [
+                    'id_enseignant' => $id_enseignant,
+                    'id_filiere' => $id_filiere,
+                    'id_semestre' => $id_semestre,
+                    'date_debut' => $date_debut,
+                    'date_fin' => $date_fin,
+                    'nh_programme' => $nh_programme,
+                    'heures_supp' => $heures_supp,
+                    'statut' => $statut,
+                    'grade' => $statut == "1" ? $grade : null,
+                    'heures_dues' => $statut == "1" ? $heures_dues : null,
+                ];
+
+                // Appel de la méthode de mise à jour
+                $result = $model->mettre_a_jour_emargement($id, $emargementData);
+
+                // Gestion du résultat de la mise à jour et redirection
+                if ($result) {
+                    $model->set_flash("Emargement modifié avec succès.", 'success');
+                } else {
+                    $erreurs[] = "Erreurs lors de la mise à jour.";
+                }
+                
+                $model->redirect('Enseignants/liste_emargement');
+            } else {
+                // Gestion des erreurs de validation
+                foreach ($erreurs as $erreur) {
+                    echo $erreur . '<br>';
+                }
+            }
+        } else {
+            $erreurs[] = "Le bouton modifier n'a pas été détecté.";
+            $model->redirect('Enseignants/liste_emargement');
+        }
+
+        if (!empty($erreurs)) {
+            // Gérez l'affichage des erreurs si nécessaire
+            foreach ($erreurs as $erreur) {
+                echo $erreur . '<br>';
+            }
+        }
+    }
+
+public function getEnseignantsParStatut() {
+    $statut = $_GET['statut'] ?? null;
+
+    if ($statut) {
+        $model = new Enseignant();
+        if ($statut === 'CDI') {
+            $enseignants = $model->getEnseignantCDI();
+        } else if ($statut === 'VACT') {
+            $enseignants = $model->getEnseignantVCT();
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Statut invalide']);
+            return;
+        }
+
+        echo json_encode(['success' => true, 'enseignants' => $enseignants]);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Statut non fourni']);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+    public function delete_emargement($id) {
+        $emargement = new Enseignant(); 
+        // Définir la requête de suppression et les paramètres
+        $sql = 'DELETE FROM emargement WHERE id_emargement = :id';
+        $params = [':id' => $id];
+        // Exécuter la requête de suppression
+        $result_emargement = $emargement->insertion_update_simples($sql, $params);
+        if ($result_emargement->rowCount() > 0) {
+            $emargement->set_flash("Suppression réussie", 'success');
+        } 
+        $emargement->redirect('Enseignants/liste_emargement');
+    }
+
+
+
+
+
+
+
+
 
 
 }
