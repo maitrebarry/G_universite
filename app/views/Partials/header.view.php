@@ -31,12 +31,16 @@
 
     <!-- BEGIN: Page CSS-->
     <link rel="stylesheet" type="text/css" href="<?=ROOT?>/assets/css/core/menu/menu-types/vertical-menu.css">
+
+    <link rel="stylesheet" type="text/css" href="<?=ROOT?>/assets/css/plugins/forms/wizard.css">
     <link rel="stylesheet" type="text/css" href="<?=ROOT?>/assets/css/plugins/forms/validation/form-validation.css">
     <link rel="stylesheet" type="text/css" href="<?=ROOT?>/assets/vendors/css/forms/select/select2.min.css">
     <!-- END: Page CSS-->
-
+    <link rel="stylesheet" type="text/css" href="<?=ROOT?>/assets/css/core/menu/menu-types/vertical-menu.css">
+    <link rel="stylesheet" type="text/css" href="<?=ROOT?>/assets/css/plugins/forms/wizard.css">
+    <!-- END: Page CSS-->
     <!-- BEGIN: Custom CSS-->
-    <link rel="stylesheet" type="text/css" href="../../../assets/css/style.css">
+    <link rel="stylesheet" type="text/css" href="<?=ROOT?>/assets/css/style.css">
     <!-- END: Custom CSS-->
 
 </head>
