@@ -3,14 +3,54 @@ class Emploi_du_temps extends Controller
 {
     public function index()
     {
-
-        $this->view('liste_EDT');
+        $edtModel = new Emploi_du_temp();
+        $edts = $edtModel->listeEdts();
+        $filiereModel = new Filiere();
+        $filieres = $filiereModel->SelectAllData("*", "filiere");
+        $this->view('liste_EDT', ['edts' => $edts, 'filieres' => $filieres]);
     }
-
-
 
     public function ajouter_EDT()
     {
-        $this->view("ajouter_EDT");
+        if (isset($_POST['action']) && $_POST['action'] === "ajouter_EDT") {
+            @$edt = $_POST['edt'];
+            @$horaires = $_POST['horaires'];
+            $edtModel = new Emploi_du_temp();
+            $edtModel->ajouterEdt($edt, $horaires);
+            $this->view("set_flash");
+            return;
+        }
+        $filiereModel = new Filiere();
+        $filieres = $filiereModel->SelectAllData("*", "filiere");
+        $enseignants = $filiereModel->SelectAllData("*", "enseignants");
+        $salles = $filiereModel->SelectAllData("*", "salle");
+        $jours = $filiereModel->SelectAllData("*", "jour");
+        $this->view("ajouter_EDT", ['filieres' => $filieres, "enseignants" => $enseignants, "salles" => $salles, "jours" => $jours]);
+    }
+
+
+    public function apercu_edt($idEdt = null)
+    {
+        if ($idEdt != null && is_numeric($idEdt)) {
+            $edtModel = new Emploi_du_temp();
+            $infosEdt = $edtModel->getInfoEdt($idEdt);
+            $horairesEdt = $edtModel->getHorairesEdt($idEdt);
+            $jours = $edtModel->SelectAllData("*", "jour");
+            if (!empty($infosEdt)) {
+                $this->view("apercu_edt", ["infosEdt" => $infosEdt, "horairesEdt" => $horairesEdt, "jours" => $jours]);
+            }
+        }
+    }
+
+    public function filiere_info()
+    {
+        if (isset($_POST['idFiliere'])) {
+
+            $idFiliere = $_POST['idFiliere'];
+            $filiereModel = new Filiere();
+            $infoFiliere = $filiereModel->apercu_filiere($idFiliere);
+            header("Content-Type:application/json");
+            echo json_encode($infoFiliere);
+        }
     }
 }

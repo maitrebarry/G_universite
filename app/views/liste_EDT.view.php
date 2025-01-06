@@ -1,7 +1,9 @@
 <!-- inclusion du partie header -->
 <?php $this->view("Partials/header") ?>
 
-<body class="vertical-layout vertical-menu-modern boxicon-layout no-card-shadow 2-columns  navbar-sticky footer-static  " data-open="click" data-menu="vertical-menu-modern" data-col="2-columns">
+<body
+    class="vertical-layout vertical-menu-modern boxicon-layout no-card-shadow 2-columns  navbar-sticky footer-static  "
+    data-open="click" data-menu="vertical-menu-modern" data-col="2-columns">
 
     <!-- inclusion du partie header -->
     <?php $this->view("Partials/navbar") ?>
@@ -37,71 +39,132 @@
             <div class="content-body">
                 <!-- formulaire -->
                 <section id="basic-datatable">
+
                     <div class="row">
                         <div class="col-12">
                             <div class="card card-animated-border-top ">
 
-                                <div class="card-content">
-                                    <div class="card-body">
-                                        <p class="mb-1">Filtré par</p>
-                                        <div class="row">
-                                            <div class="col-md-6">
+                                <div class="card-content row">
+                                    <div class="col-12 row mt-1 px-2 ">
 
-                                                <div class="form-group">
-                                                    <label class="form-label" for="single-select ">Filiere</label>
-                                                    <select class="select2 form-control" >
-                                                        <option value="square">Square</option>
-                                                        <option value="rectangle">Rectangle</option>
-                                                        <option value="rombo">Rombo</option>
-                                                        <option value="romboid">Romboid</option>
-                                                        <option value="trapeze">Trapeze</option>
-                                                        <option value="traible">Triangle</option>
-                                                        <option value="polygon">Polygon</option>
+                                        <div
+                                            class="card-body card-dashboard col-12 row d-flex justify-content-around align-items-center">
+                                            <div
+                                                class="col-12 col-md-10 row d-flex justify-content-start align-items-center mb-1 mb-md-0">
+                                                <div class="col-1">
+                                                    <i class="bx bx-dialpad text-primary"></i>
+                                                </div>
+                                                <div class="col-3 ">
+                                                    <select class="select2 form-control text-center" id="filieres">
+                                                        <option value="0" disabled selected>Filieres</option>
+                                                        <?php foreach ($filieres as $filiere): ?>
+                                                        <option value="<?php echo $filiere->id_filiere ?>">
+                                                            <?php echo strtoupper($filiere->sigle_filiere) ?>
+                                                        </option>
+                                                        <?php endforeach ?>
                                                     </select>
                                                 </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                   
-                                                        <label class="form-label" for="single-select ">Date</label>
-                                                        <input type="date" class="form-control pickadate-months-year" placeholder="Select Date">
-                                                        
-                                                        
+                                                <div class="col-4 col-md-3">
+                                                    <select class="select2 form-control text-center" id="semestres">
+                                                        <option value="0" disabled selected>Semestres</option>
+                                                    </select>
                                                 </div>
-                                                
+                                                <div class="col-4 col-md-3">
+                                                    <select class="select2 form-control text-center"
+                                                        id="anneeUniversitaires">
+                                                        <option value="0" disabled selected>Annee universitaire</option>
+                                                        <?php foreach ($filieres as $filiere): ?>
+                                                        <option value="<?php echo $filiere->id_filiere ?>">
+                                                            <?php echo strtoupper($filiere->nom_filiere . '(' . $filiere->sigle_filiere . ')') ?>
+                                                        </option>
+                                                        <?php endforeach ?>
+                                                    </select>
+                                                </div>
+
+
                                             </div>
+                                            <a href="<?= ROOT ?>/Emploi_du_temps/ajouter_EDT" class="col-4 col-md-2">
+                                                <button class="btn btn-primary" style="float:right;">
+                                                    <i class="bx bx-plus"></i>&nbsp; Nouveau
+                                                </button>
+                                            </a>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="card card-animated-border-top ">
 
-                                <div class="card-content">
-                               <a href="<?= ROOT ?>/Emploi_du_temps/ajouter_EDT"><button class="btn btn-primary" style="float:right;" ><i class="bx bx-plus"></i>&nbsp; Nouveau </button></a> 
-                                    <div class="card-body card-dashboard">
-                                   
 
-                                        <div class="table-responsive">
+                                        <div class="table-responsive col-12">
                                             <table class="table zero-configuration">
                                                 <thead>
                                                     <tr>
-                                                        <th>filière</th>
-                                                        <th>Au</th>
+                                                        <th>Filière</th>
                                                         <th>Niveau</th>
-                                                        <th>Modules</th>
-                                                        <th>Nb/H</th>
-                                                        <th>Date début</th>
-                                                        <th>Date fin</th>
+                                                        <th>Module</th>
+                                                        <th>Professeur</th>
+                                                        <th>Année Universitaire</th>
                                                         <th>Salle</th>
-                                                        <th>Profeeur</th>
-                                                        <th>DR</th>
+                                                        <th>Date Debut</th>
                                                         <th>Action</th>
                                                     </tr>
                                                 </thead>
+                                                <tbody>
+                                                    <?php foreach ($edts as $edt): ?>
+                                                    <tr style="font-size: 13px;">
+                                                        <td class="h6 d-flex" style="font-weight: bolder;">
+                                                            <?php if ($edt->edt->statut == 0): ?>
+                                                            <div class="badge badge-warning badge-icon">
+                                                                <span>x</span>
+                                                            </div>
+                                                            <?php endif ?>
+                                                            <?php if ($edt->edt->statut == 1): ?>
+                                                            <div class="badge badge-success badge-icon">
+                                                                <span>v</span>
+                                                            </div>
+                                                            <?php endif ?>
+                                                            <span
+                                                                class="px-1"><?php echo strtoupper($edt->semestre->sigle_filiere) ?></span>
+                                                        </td>
+                                                        <td>
+                                                            <?php echo strtoupper($edt->semestre->sigle_semestre) ?>
+                                                        </td>
+                                                        <td>
+                                                            <?php echo strtoupper($edt->module->nom_module) ?>
+                                                        </td>
+                                                        <td class="h6 text-bold-700 text-italic"
+                                                            style="font-size: 13px;">
+                                                            <?php echo strtoupper($edt->edt->enseignant_prenom . ' ' . $edt->edt->enseignant_nom) ?>
+                                                        </td>
+                                                        <td>
+                                                            <?php echo strtoupper($edt->edt->annee_universitaire) ?>
+                                                        </td>
+                                                        <td>
+                                                            <?php echo strtoupper($edt->edt->nom_salle) ?>
+                                                        </td>
+                                                        <td>
+                                                            <div class="badge badge-light-primary mr-1 mb-1">
+                                                                <?php echo strtoupper($edt->edt->date_debut) ?>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center dt-no-sorting">
+                                                            <div class="dropdown">
+                                                                <span
+                                                                    class="bx bx-dots-horizontal-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer"
+                                                                    data-toggle="dropdown" aria-haspopup="true"
+                                                                    aria-expanded="false" role="menu">
+                                                                </span>
+                                                                <div class="dropdown-menu dropdown-menu-right">
+                                                                    <a class="dropdown-item"
+                                                                        href="<?= ROOT ?>/Emploi_du_temps/apercu_EDT/<?php echo $edt->edt->id_edt ?>">
+                                                                        <i class="bx bx-edit-alt mr-1"></i> Aperçu
+                                                                    </a>
+                                                                    <a class="dropdown-item" href="#"><i
+                                                                            class="bx bx-edit-alt mr-1"></i> Editer</a>
+                                                                    <a class="dropdown-item" href="#"><i
+                                                                            class="bx bx-trash mr-1"></i> Supprimer</a>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <?php endforeach ?>
+                                                </tbody>
 
                                             </table>
                                         </div>
@@ -129,5 +192,15 @@
     <!-- inclusion du partie footer fin-->
 </body>
 <!-- END: Body-->
+<script src="<?= ROOT ?>/assets/mon_js/edt.js"></script>
+<script>
+var infoFiliere = [];
+$("#filieres").change(async function() {
+
+    infoFiliere = await infosFiliere($(this).val());
+    semestresFiliere(infoFiliere);
+
+})
+</script>
 
 </html>

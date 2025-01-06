@@ -42,7 +42,7 @@
 
                     <div class="row">
                         <div>
-                            <?php  $this->view("set_flash"); ?>
+                            <?php $this->view("set_flash"); ?>
                         </div>
                         <div class="col-12">
                             <div class="card">
@@ -55,17 +55,18 @@
 
                                         <div class="table-responsive">
                                             <table id="table-extended-chechbox"
-                                                class="table zero-configuration table-bordered">
+                                                class="table table-bordered table-striped">
                                                 <thead>
                                                     <tr>
 
                                                         <th>Nom filière</th>
                                                         <th>Code Filière</th>
+                                                        <th>Statut</th>
                                                         <th class="text-center dt-no-sorting">Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <?php foreach($filieres as $filiere): ?>
+                                                    <?php foreach ($filieres as $filiere): ?>
                                                     <tr>
                                                         <td>
                                                             <?php echo strtoupper($filiere->nom_filiere) ?>
@@ -73,6 +74,8 @@
 
                                                         <td>
                                                             <?php echo strtoupper($filiere->sigle_filiere) ?>
+                                                        </td>
+                                                        <td> <span class=" badge badge-light-warning">Actif</span>
                                                         </td>
 
 
@@ -86,12 +89,15 @@
                                                                 <div class="dropdown-menu dropdown-menu-right">
                                                                     <a class="dropdown-item"
                                                                         href="<?= ROOT ?>/Filieres/apercu_Filiere/<?php echo $filiere->id_filiere ?>">
-                                                                        <i class="bx bx-edit-alt mr-1"></i>Aperçu
+                                                                        <i class="bx bx-show mr-1"></i>Aperçu
                                                                     </a>
+                                                                    <a class="dropdown-item editerFiliere"
+                                                                        data-toggle="modal" data-target="#menuEditer"
+                                                                        href="#"
+                                                                        data-id="<?php echo $filiere->id_filiere ?>"><i
+                                                                            class="bx bx-edit-alt mr-1"></i> Editer</a>
                                                                     <a class="dropdown-item" href="#"><i
-                                                                            class="bx bx-edit-alt mr-1"></i> edit</a>
-                                                                    <a class="dropdown-item" href="#"><i
-                                                                            class="bx bx-trash mr-1"></i> delete</a>
+                                                                            class="bx bx-trash mr-1"></i> Supprimer</a>
                                                                 </div>
                                                             </div>
                                                         </td>
@@ -100,6 +106,53 @@
 
                                                 </tbody>
                                             </table>
+                                            <!-- partie insertion des données -->
+                                            <div class="modal-primary mr-1 mb-1 d-inline-block">
+                                                <div class="modal fade text-left" id="menuEditer" tabindex="-1"
+                                                    role="dialog" aria-labelledby="myModalLabel160" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+                                                        role="document">
+                                                        <div class="modal-content">
+
+                                                            <div class="modal-body">
+                                                                <div class="row">
+                                                                    <input type="hidden" id="idFiliere">
+                                                                    <div class="col-12">
+                                                                        <a href=""
+                                                                            class="btn btn-light-warning d-block actionEdit"
+                                                                            id="editButton">
+                                                                            <i class="bx bx-edit-alt mr-1"></i>Modifier
+                                                                            Info </a>
+                                                                    </div>
+                                                                    <div class="col-12 mt-1">
+                                                                        <a href=""
+                                                                            class="btn btn-light-info d-block actionEdit"
+                                                                            id="addButton">
+                                                                            <i class="bx bx-plus mr-1"></i>Ajouter
+                                                                            Element</a>
+                                                                    </div>
+                                                                    <div class="col-12 mt-1">
+                                                                        <a href=""
+                                                                            class="btn btn-light-danger d-block actionEdit"
+                                                                            id="delButton">
+                                                                            <i class="bx bx-trash mr-1"></i> Supprimer
+                                                                            ELement</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn  btn-link"
+                                                                    data-dismiss="modal">
+                                                                    <i class="bx bx-x d-block d-sm-none"></i>
+                                                                    <span class="d-none d-sm-block">Annuler</span>
+                                                                </button>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- fin insertion des données -->
                                         </div>
                                     </div>
                                 </div>
@@ -113,7 +166,6 @@
         </div>
     </div>
     <!-- fin: Content-->
-
     <div class="sidenav-overlay"></div>
     <div class="drag-target"></div>
 
@@ -123,6 +175,27 @@
     <!-- inclusion du partie footer-->
     <?php $this->view("Partials/footer") ?>
     <!-- inclusion du partie footer fin-->
+
+    <script>
+    $('.editerFiliere').click(function() {
+        $('#idFiliere').val($(this).data('id'))
+    })
+
+    $('#editButton').click(function() {
+        let idFiliere = $('#idFiliere').val();
+        $(this).attr("href", "<?= ROOT ?>/Filieres/editer_Filiere/" + idFiliere)
+    })
+
+    $('#addButton').click(function() {
+        let idFiliere = $('#idFiliere').val();
+        $(this).attr("href", "<?= ROOT ?>/Filieres/ajouter_element_filiere/" + idFiliere)
+    })
+
+    $('#delButton').click(function() {
+        let idFiliere = $('#idFiliere').val();
+        $(this).attr("href", "<?= ROOT ?>/Filieres/supprimer_element_filiere/" + idFiliere)
+    })
+    </script>
 </body>
 <!-- END: Body-->
 

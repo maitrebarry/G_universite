@@ -7,7 +7,21 @@ class Model extends Database{
     // }
 
     protected $table="";
+    
+    public function isArrayDataValid($fields)
+    {
+        if (!empty($fields)) {
 
+            foreach ($fields as $key => $field) {
+                if ((empty($field) || trim($field) === '') && $field != 0) {
+                    return false; // Retourne false dès qu'un champ obligatoire est vide
+                }
+            }
+
+            return true;
+        }
+        return false;
+    }
     // Vérifie si tous les champs spécifiés sont remplis dans la requête POST
 public function VerifyFieldsStrict($fields = []) {
     if (count($fields) > 0) {
