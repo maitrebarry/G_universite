@@ -207,9 +207,144 @@ class Enseignant extends Model{
             $this->set_flash("Échec de la mise à jour", 'error');
         }
     }
+     // enregistrer les emargements
+    public function enregistrer_emargement($data) {
+        $sql = 'INSERT INTO emargement (id_enseignant, id_filiere, id_semestre, nh_programme, 
+        heures_supp, date_debut, date_fin, statut';
+
+        $params = [
+            ':id_enseignant' => $data['id_enseignant'],
+            ':id_filiere' => $data['id_filiere'],
+            ':id_semestre' => $data['id_semestre'],
+            ':nh_programme' => $data['nh_programme'],
+            ':heures_supp' => $data['heures_supp'],
+            ':date_debut' => $data['date_debut'],
+            ':date_fin' => $data['date_fin'],
+            ':statut' => $data['statut']
+        ];
+
+        // Ajouter les champs spécifiques pour le statut "CDI"
+        if ($data['statut'] == "1") { // CDI
+            $sql .= ', heures_dues, grade';
+            $params[':heures_dues'] = $data['heures_dues'];
+            $params[':grade'] = $data['grade'];
+        }
+
+        $sql .= ') VALUES (:id_enseignant, :id_filiere, :id_semestre, 
+        :nh_programme, :heures_supp, :date_debut, :date_fin, :statut';
+
+        if ($data['statut'] == "1") { // CDI
+            $sql .= ', :heures_dues, :grade';
+        }
+
+        $sql .= ')';
+
+        return $this->insertion_update_simples($sql, $params);
+    }
+   
+    public function recupererEmargementData($filters = [], $limit = null) {
+        $sql = "SELECT 
+                    e.*, 
+                    ens.enseignant_nom, 
+                    ens.enseignant_prenom, 
+                    ens.enseignant_statut, 
+                    f.nom_filiere, 
+                    s.nom_semestre,
+                    SUM(e.heures_supp) AS total_heures_supplementaires,
+                    SUM(e.nh_programme) AS total_heures_programmees
+                FROM emargement e
+                JOIN enseignants ens ON e.id_enseignant = ens.enseignant_id
+                JOIN filiere f ON e.id_filiere = f.id_filiere
+                JOIN semestre s ON e.id_semestre = s.id_semestre
+                WHERE 1=1";
+
+        $params = [];
+
+        // Application des filtres dynamiques
+        if (!empty($filters['id_enseignant'])) {
+            $sql .= " AND e.id_enseignant = :id_enseignant";
+            $params[':id_enseignant'] = (int)$filters['id_enseignant'];
+        }
+
+        if (!empty($filters['id_filiere'])) {
+            $sql .= " AND e.id_filiere = :id_filiere";
+            $params[':id_filiere'] = (int)$filters['id_filiere'];
+        }
+
+        if (!empty($filters['id_semestre'])) {
+            $sql .= " AND e.id_semestre = :id_semestre";
+            $params[':id_semestre'] = (int)$filters['id_semestre'];
+        }
+
+        $sql .= " GROUP BY e.id_enseignant, e.id_filiere, e.id_semestre";
+
+        if ($limit) {
+            $sql .= " LIMIT :limit";
+            $params[':limit'] = (int)$limit;
+        }
+
+        // Afficher le SQL et les paramètres pour déboguer
+        // echo "<pre>SQL: " . $sql . "</pre>";
+        // echo "<pre>Params: " . print_r($params, true) . "</pre>";
+
+        return $this->select_data_table_join_where_limite_emarg_uni($sql, $params, $limit);
+    }
+
+    public function calculerHeuresSupp($id_enseignant, $id_semestre) {
+        $data = $this->recupererEmargementData(['id_enseignant' => $id_enseignant, 'id_semestre' => $id_semestre]);
+        $totalHeuresProgrammees = array_sum(array_column($data, 'nh_programme'));
+        $totalHeuresDues = array_sum(array_column($data, 'heures_dues'));
+        return max(0, $totalHeuresProgrammees - $totalHeuresDues);
+    }
+    public function getCumulHeuresProgrammees($id_enseignant) {
+        $sql = "SELECT SUM(nh_programme) as cumul_heures_programmees FROM emargement WHERE id_enseignant = :id_enseignant";
+        $params = [':id_enseignant' => $id_enseignant];
+        $result = $this->SelectData($sql, $params);
+        return $result ? $result->cumul_heures_programmees : 0;
+    }
+   
+
+public function mettre_a_jour_emargement($id, $data) { 
+    $sql = 'UPDATE emargement SET 
+                id_enseignant = :id_enseignant, 
+                id_filiere = :id_filiere, 
+                id_semestre = :id_semestre, 
+                nh_programme = :nh_programme, 
+                heures_supp = :heures_supp, 
+                date_debut = :date_debut, 
+                date_fin = :date_fin, 
+                statut = :statut';
+
+    $params = [
+        ':id_enseignant' => $data['id_enseignant'],
+        ':id_filiere' => $data['id_filiere'],
+        ':id_semestre' => $data['id_semestre'],
+        ':nh_programme' => $data['nh_programme'],
+        ':heures_supp' => $data['heures_supp'],
+        ':date_debut' => $data['date_debut'],
+        ':date_fin' => $data['date_fin'],
+        ':statut' => $data['statut'],
+        ':id' => $id
+    ];
+
+    if ($data['statut'] == "1") {
+        $sql .= ', heures_dues = :heures_dues, grade = :grade';
+        $params[':heures_dues'] = $data['heures_dues'];
+        $params[':grade'] = $data['grade'];
+    }
+
+    $sql .= ' WHERE id_emargement = :id';
+
+    return $this->insertion_update_simples($sql, $params);
+}
 
 
-  
+
+
+
+
+
+
 
 
 

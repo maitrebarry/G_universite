@@ -68,7 +68,7 @@ $current_page = basename($_SERVER['REQUEST_URI']); // Récupère le nom de la pa
             </li>
              <!-- Émargement  -->
             <li class="nav-item <?= ($current_page == 'Emargements') ? 'active' : '' ?>">
-                <a class="nav-link" href="<?= ROOT ?>/Enseignants/lsite_emargement">
+                <a class="nav-link" href="<?= ROOT ?>/Enseignants/liste_emargement">
                     <i class="bx bx-droplet"></i>
                     <span class="menu-title">Émargement </span>
                 </a>

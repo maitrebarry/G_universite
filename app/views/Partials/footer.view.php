@@ -10,7 +10,7 @@
     <script src="<?=ROOT?>/assets/vendors/js/tables/datatable/dataTables.buttons.min.js"></script>
     <script src="<?=ROOT?>/assets/vendors/js/tables/datatable/datatables.checkboxes.min.js"></script>
     <!-- BEGIN: Page Vendor JS-->
-    <script src="<?=ROOT?>/assets/vendors/js/forms/validation/jqBootstrapValidation.js"></script>
+   
     <!-- END: Page Vendor JS-->
 
     <script src="<?=ROOT?>/assets/vendors/js/forms/select/select2.full.min.js"></script>
@@ -31,3 +31,4 @@
       <!-- Ajout des scripts nécessaires pour faire fonctionner le modal -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

@@ -176,6 +176,30 @@ public function select_data_table_join_where($select, $execute_data = [])
         $stm->execute(); 
         return $stm->fetchAll(PDO::FETCH_OBJ);
     }
+
+
+public function select_data_table_join_where_limite_emarg_uni($select, $execute_data = [], $limit = null)
+{
+    // S'assurer que la limite est un entier si elle est fournie
+    if ($limit !== null) {
+        $limit = intval($limit);
+        $select .= " LIMIT " . $limit; 
+    }    
+    // Préparer et exécuter la requête
+    $bdd = $this->bdd();
+    $stm = $bdd->prepare($select);
+    
+    // Lier les paramètres en utilisant les noms de paramètres
+    foreach ($execute_data as $index => $data) {
+        $stm->bindValue($index, $data); // Utilisation des noms de paramètres
+    }  
+
+    $stm->execute(); 
+    return $stm->fetchAll(PDO::FETCH_OBJ);
+}
+
+
+
    // Compte le nombre de résultats en fonction d'une condition WHERE
     public function selectWhereCount($fields, $whereValue,$select=[], $value=[]){
         $bdd = $this->bdd();
