@@ -13,6 +13,9 @@
     <script src="<?=ROOT?>/assets/vendors/js/tables/datatable/datatables.checkboxes.min.js"></script>
     <!-- BEGIN: Page Vendor JS-->
     <script src="<?=ROOT?>/assets/vendors/js/forms/validation/jqBootstrapValidation.js"></script>
+    <script src="<?= ROOT ?>/assets/vendors/js/extensions/sweetalert2.all.min.js"></script>
+<script src="<?= ROOT ?>/assets/vendors/js/extensions/polyfill.min.js"></script>
+
       <!-- BEGIN: Page Vendor JS-->
       <script src="<?=ROOT?>/assets/vendors/js/extensions/jquery.steps.min.js"></script>
     <script src="<?=ROOT?>/assets/vendors/js/forms/validation/jquery.validate.min.js"></script>
@@ -31,6 +34,7 @@
     <script src="<?=ROOT?>/assets/js/scripts/forms/validation/form-validation.js"></script>
     <script src="<?=ROOT?>/assets/js/scripts/datatables/datatable.js"></script>
     <script src="<?=ROOT?>/assets/js/scripts/forms/select/form-select2.js"></script>
+    <script src="<?= ROOT ?>/assets/js/scripts/extensions/sweet-alerts.js"></script>
     <script src="<?=ROOT?>/assets/js/scripts/forms/wizard-steps.js"></script>
 
     <!-- END: Page JS-->
