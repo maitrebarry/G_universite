@@ -107,7 +107,11 @@
                                                 <div class="col-sm-4">
                                                     <label class="form-label">Diplôme</label>
                                                     <div class="form-group">
-                                                        <input type="text" name="enseignant_diplome" class="form-control" value="<?= htmlspecialchars($enseignant->enseignant_diplome) ?>" />
+                                                         <select class="select2 form-control" name="enseignant_diplome">
+                                                            <option value="Master" <?= $enseignant->enseignant_diplome === 'Master' ? 'selected' : '' ?>>Master</option>
+                                                            <option value="Doctorat" <?= $enseignant->enseignant_diplome === 'Doctorat' ? 'selected' : '' ?>>Doctorat</option>                                                           
+                                                        </select>
+                                                      
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-4">

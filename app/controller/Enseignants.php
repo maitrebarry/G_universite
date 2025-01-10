@@ -57,57 +57,122 @@ class Enseignants extends Controller
     }
 
     public function update($id) {
-        $enseignant = new Enseignant();
-        $errors = []; 
-        $enseignantData = $enseignant->FetchSelectWhere("*", "enseignants", "enseignant_id=:id", ["id" => $id]);
-        // Vérifiez si les données sont récupérées
-        if (!$enseignantData) {
-            $errors[] = "L'enseignant avec l'ID spécifié n'existe pas.";
-            $this->view('modifier_enseignant', ['errors' => $errors]);
-            return;
-        }
+    $enseignant = new Enseignant();
+    $errors = []; 
+    $enseignantData = $enseignant->FetchSelectWhere("*", "enseignants", "enseignant_id=:id", ["id" => $id]);
+    
+    if (!$enseignantData) {
+        $errors[] = "L'enseignant avec l'ID spécifié n'existe pas.";
+        $this->view('modifier_enseignant', ['errors' => $errors]);
+        return;
+    }
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $statut = $_POST['enseignant_statut'];
-            // Traitement du fichier CV
-            if (isset($_FILES['enseignant_cv']) && $_FILES['enseignant_cv']['error'] === UPLOAD_ERR_OK) {
-                $uploadDir = 'C:/xampp/htdocs/G_universites/public/cv_enseignant/';
-                $cvFileName = uniqid() . '_' . basename($_FILES['enseignant_cv']['name']);
-                $cvFilePath = $uploadDir . $cvFileName;
-                if (move_uploaded_file($_FILES['enseignant_cv']['tmp_name'], $cvFilePath)) {
-                    $cv = $cvFileName;
-                } else {
-                    $errors[] = "Échec du téléversement du fichier CV.";
-                }
-            } else {
-                $cv = $enseignantData->enseignant_cv; 
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $statut = $_POST['enseignant_statut'];
+
+        // Traitement du fichier CV
+        if (isset($_FILES['enseignant_cv']) && $_FILES['enseignant_cv']['error'] === UPLOAD_ERR_OK) {
+            $uploadDir = 'C:/xampp/htdocs/G_universite/public/cv_enseignant/';
+            $cvFileName = uniqid() . '_' . basename($_FILES['enseignant_cv']['name']);
+            $cvFilePath = $uploadDir . $cvFileName;
+
+            // Supprimer l'ancien fichier si nécessaire
+            if (!empty($enseignantData->enseignant_cv) && file_exists('C:/xampp/htdocs/G_universite/public/' . $enseignantData->enseignant_cv)) {
+                unlink('C:/xampp/htdocs/G_universite/public/' . $enseignantData->enseignant_cv);
             }
 
-            // Préparer les données
-            $data = [
-                'id' => $id,
-                'enseignant_statut' => $statut,
-                'enseignant_grade' => $statut === 'CDI' ? $_POST['enseignant_grade'] : null,
-                'enseignant_matricule' => $statut === 'CDI' ? $_POST['enseignant_matricule'] : null,
-                'enseignant_nom' => $_POST['enseignant_nom'],
-                'enseignant_prenom' => $_POST['enseignant_prenom'],
-                'enseignant_date_naissance' => $_POST['enseignant_date_naissance'],
-                'enseignant_email' => $_POST['enseignant_email'],
-                'enseignant_telephone' => $_POST['enseignant_telephone'],
-                'enseignant_diplome' => $_POST['enseignant_diplome'],
-                'enseignant_cv' => $cv ?? null,
-            ];
+            if (move_uploaded_file($_FILES['enseignant_cv']['tmp_name'], $cvFilePath)) {
+                $cv = 'cv_enseignant/' . $cvFileName; // Chemin relatif
+            } else {
+                $errors[] = "Échec du téléversement du fichier CV.";
+            }
+        } else {
+            $cv = $enseignantData->enseignant_cv; 
+        }
+
+        // Préparer les données
+        $data = [
+            'id' => $id,
+            'enseignant_statut' => $statut,
+            'enseignant_grade' => $statut === 'CDI' ? $_POST['enseignant_grade'] : null,
+            'enseignant_matricule' => $statut === 'CDI' ? $_POST['enseignant_matricule'] : null,
+            'enseignant_nom' => $_POST['enseignant_nom'],
+            'enseignant_prenom' => $_POST['enseignant_prenom'],
+            'enseignant_date_naissance' => $_POST['enseignant_date_naissance'],
+            'enseignant_email' => $_POST['enseignant_email'],
+            'enseignant_telephone' => $_POST['enseignant_telephone'],
+            'enseignant_diplome' => $_POST['enseignant_diplome'],
+            'enseignant_cv' => $cv ?? null,
+        ];
+
+        // Mise à jour
+        if (empty($errors)) {
+            $result = $enseignant->modification($data);
+
+            // Rechargez les données après modification
+            if ($result) {
+                $enseignantData = $enseignant->FetchSelectWhere("*", "enseignants", "enseignant_id=:id", ["id" => $id]);
+            }
+        }
+    }
+
+    // Charger la vue avec les données de l'enseignant et les erreurs
+    $this->view('modifier_enseignant', ['enseignant' => $enseignantData, 'errors' => $errors]);
+}
+
+
+    // public function update($id) {
+    //     $enseignant = new Enseignant();
+    //     $errors = []; 
+    //     $enseignantData = $enseignant->FetchSelectWhere("*", "enseignants", "enseignant_id=:id", ["id" => $id]);
+    //     // Vérifiez si les données sont récupérées
+    //     if (!$enseignantData) {
+    //         $errors[] = "L'enseignant avec l'ID spécifié n'existe pas.";
+    //         $this->view('modifier_enseignant', ['errors' => $errors]);
+    //         return;
+    //     }
+
+    //     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    //         $statut = $_POST['enseignant_statut'];
+    //         // Traitement du fichier CV
+    //         if (isset($_FILES['enseignant_cv']) && $_FILES['enseignant_cv']['error'] === UPLOAD_ERR_OK) {
+    //             $uploadDir = 'C:/xampp/htdocs/G_universite/public/cv_enseignant/';
+    //             $cvFileName = uniqid() . '_' . basename($_FILES['enseignant_cv']['name']);
+    //             $cvFilePath = $uploadDir . $cvFileName;
+    //             if (move_uploaded_file($_FILES['enseignant_cv']['tmp_name'], $cvFilePath)) {
+    //                 $cv = $cvFileName;
+    //             } else {
+    //                 $errors[] = "Échec du téléversement du fichier CV.";
+    //             }
+    //         } else {
+    //             $cv = $enseignantData->enseignant_cv; 
+    //         }
+
+    //         // Préparer les données
+    //         $data = [
+    //             'id' => $id,
+    //             'enseignant_statut' => $statut,
+    //             'enseignant_grade' => $statut === 'CDI' ? $_POST['enseignant_grade'] : null,
+    //             'enseignant_matricule' => $statut === 'CDI' ? $_POST['enseignant_matricule'] : null,
+    //             'enseignant_nom' => $_POST['enseignant_nom'],
+    //             'enseignant_prenom' => $_POST['enseignant_prenom'],
+    //             'enseignant_date_naissance' => $_POST['enseignant_date_naissance'],
+    //             'enseignant_email' => $_POST['enseignant_email'],
+    //             'enseignant_telephone' => $_POST['enseignant_telephone'],
+    //             'enseignant_diplome' => $_POST['enseignant_diplome'],
+    //             'enseignant_cv' => $cv ?? null,
+    //         ];
 
         
-            // Si aucune erreur, procéder à la mise à jour
-            if (empty($errors)) {
-                $result = $enseignant-> modification($data);      
-            }
-        }
+    //         // Si aucune erreur, procéder à la mise à jour
+    //         if (empty($errors)) {
+    //             $result = $enseignant-> modification($data);      
+    //         }
+    //     }
 
-        // Charger la vue avec les données de l'enseignant et les erreurs
-        $this->view('modifier_enseignant', ['enseignant' => $enseignantData, 'errors' => $errors]);
-    }
+    //     // Charger la vue avec les données de l'enseignant et les erreurs
+    //     $this->view('modifier_enseignant', ['enseignant' => $enseignantData, 'errors' => $errors]);
+    // }
 
     public function delete($id) {
         $perso = new Enseignant();     

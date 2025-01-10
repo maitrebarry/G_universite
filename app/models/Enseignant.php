@@ -3,7 +3,7 @@ class Enseignant extends Model{
 
 
 
-         public $errors = [];
+    public $errors = [];
 
     private function upload_cv($file)
     {
@@ -19,7 +19,7 @@ class Enseignant extends Model{
 
             if ($file_size <= $taillemax) {
                 if (in_array($file_extension, $extensions_valides)) {
-                    $destination = 'C:/xampp/htdocs/G_universites/public/cv_enseignant/' . $file_name;
+                    $destination = 'C:/xampp/htdocs/G_universite/public/cv_enseignant/' . $file_name;
                     if (move_uploaded_file($file_tmp, $destination)) {
                         return '/cv_enseignant/' . $file_name; // Chemin relatif enregistré dans la base
                     } else {
@@ -95,42 +95,35 @@ class Enseignant extends Model{
             } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $this->errors[] = "Le format de l'adresse email est invalide.";
             }
-
             // Vérification de l'unicité de l'email
             if ($this->user_verify('enseignant_email', 'enseignants', $email) > 0) {
                 $this->errors[] = "Cet email est déjà enregistré, veuillez choisir un autre.";
             }
-
             // Validation du numéro de téléphone
             $validation_result = $this->telephone_numero_verification1($telephone);
             if (is_array($validation_result)) {
                 $this->errors = array_merge($this->errors, $validation_result);
             }
-
             // Vérification de l'unicité du numéro de téléphone
             if ($this->user_verify('enseignant_telephone', 'enseignants', $telephone) > 0) {
                 $this->errors[] = $messages['duplicate_phone'];
             }
-
             // Gestion des champs si statut est "VCT"
             if ($statut === "VCT") {
                 $grade = null;
                 // $heures = null;
                 $matricule = null;
-            }
-
+            }            
             // Si des erreurs sont présentes, arrêter l'insertion et sauver les données de l'utilisateur
             if (!empty($this->errors)) {
                 $this->save_input_data(); 
                 return;
-            }
-
+            }       
             // Insertion dans la base de données
             $bdd = $this->connect();
             $insertion_enseignant = $bdd->prepare("INSERT INTO enseignants 
                 (enseignant_statut, enseignant_grade, enseignant_matricule, enseignant_nom, enseignant_prenom, enseignant_date_naissance, enseignant_email, enseignant_telephone, enseignant_diplome, enseignant_cv) 
                 VALUES (:enseignant_statut, :enseignant_grade, :enseignant_matricule, :enseignant_nom, :enseignant_prenom, :enseignant_date_naissance, :enseignant_email, :enseignant_telephone, :enseignant_diplome, :enseignant_cv)");
-
             $insertion = $insertion_enseignant->execute([
                 ":enseignant_statut" => $statut,
                 ":enseignant_grade" => $grade, 

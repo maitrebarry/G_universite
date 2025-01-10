@@ -97,7 +97,7 @@
                                                                 <td><?= htmlspecialchars($enseignant->enseignant_diplome, ENT_QUOTES, 'UTF-8'); ?></td>
                                                                 <td>
                                                                     <?php if (!empty($enseignant->enseignant_cv)): ?>
-                                                                        <a href="<?= ROOT ?>/<?= htmlspecialchars(str_replace("C:\\xampp\\htdocs\\G_universites\\public\\", "", $enseignant->enseignant_cv), ENT_QUOTES, 'UTF-8'); ?>" target="_blank">
+                                                                        <a href="<?= ROOT ?>/<?= htmlspecialchars(str_replace("C:\\xampp\\htdocs\\G_universite\\public\\", "", $enseignant->enseignant_cv), ENT_QUOTES, 'UTF-8'); ?>" target="_blank">
                                                                             <i class="bx bx-file" title="Voir le CV"></i>
                                                                         </a>
                                                                     <?php else: ?>

@@ -1,3 +1,4 @@
+
 $(document).ready(function () {
   // Initialisation au chargement de la page
   toggleStatutElements();
