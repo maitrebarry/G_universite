@@ -57,9 +57,9 @@
                                         </a>
                                     </li>
                                     <li class="nav-item mb-1">
-                                        <a class="nav-link  " href="<?= ROOT ?>/Semestres/Liste">
+                                        <a class="nav-link  " href="<?= ROOT ?>/Salles/Liste">
                                             <i class="fa-solid fa-user me-2"></i>
-                                            <span class="align-middle">Semestre</span>
+                                            <span class="align-middle">Salle</span>
                                         </a>
                                     </li>
                                     <li class="nav-item mb-1">
@@ -69,7 +69,7 @@
                                         </a>
                                     </li>
                                     <li class="nav-item mb-1">
-                                        <a class="nav-link " href="<?= ROOT ?>/Utilisateurs/liste_utilisateur">
+                                        <a class="nav-link " href="<?= ROOT ?>/Utilisateurs/Liste">
                                             <i class="fa-solid fa-calendar me-2"></i>
                                             <span class="align-middle">Utilisateur</span>
                                         </a>
@@ -109,25 +109,30 @@
                                                         <th class="text-center dt-no-sorting">Action</th>
                                                     </tr>
                                                 </thead>
-
+                                                <?php foreach ($datas  as $data): ?>
                                                 <tbody>
                                                    
                                                         <tr>
-                                                            <td></td>
-                                                            <td></td>
+                                                            <td><?= $data->nom_salle ?></td>
+                                                            <td><?= $data->capacite_salle ?></td>
                                                             <td class="text-center py-1">
                                                                 <div class="dropdown">
                                                                     <span class="bx bx-dots-horizontal-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="menu"></span>
                                                                     <div class="dropdown-menu dropdown-menu-right">
                                                                         <a class="dropdown-item edit-btn" data-toggle="modal" data-target="#default"
-                                                                            href="#"><i class="bx bx-edit-alt mr-1"></i>Modifier</a>
-                                                                        <a class="dropdown-item" href=""><i class="bx bx-trash mr-1"></i>Supprimer</a>
+                                                                            href="#"
+                                                                            data-id_salle=<?= $data->id_salle ?>
+                                                                            data-nom_salle=<?= $data->nom_salle ?>
+                                                                            data-capacite_salle=<?= $data->capacite_salle ?>
+                                                                            ><i class="bx bx-edit-alt mr-1"></i>Modifier</a>
+                                                                        <a class="dropdown-item" href="<?= ROOT ?>/Salles/supprimer/<?= $data->id_salle ?>"><i class="bx bx-trash mr-1"></i>Supprimer</a>
                                                                     </div>
                                                                 </div>
                                                             </td>
                                                         </tr>
                                                  
                                                 </tbody>
+                                                <?php endforeach ?>
                                             </table>
                                             <!-- fin de la  partie liste de salle -->
                                         </div>
@@ -150,11 +155,11 @@
                                                     <div class="row">
                                                         <div class="col mb-6">
                                                             <label for="nameBasic" class="form-label">Nom salle<span class="text-danger fs-6">*</span></label>
-                                                            <input type="text" id="nameBasic" value="" class="form-control" name="nom_semestre" placeholder="Nom salle" required />
+                                                            <input type="text" id="nameBasic" value="" class="form-control" name="nom_salle" placeholder="Nom salle" required />
                                                         </div>
                                                         <div class="col mb-6">
                                                             <label for="nameBasic" class="form-label">Capacité salle<span class="text-danger fs-6">*</span></label>
-                                                            <input type="number" id="nameBasic" value="" class="form-control" name="sigle_semestre" placeholder="Capacité salle" required />
+                                                            <input type="number" id="nameBasic" value="" class="form-control" name="capacite_salle" placeholder="Capacité salle" required />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -175,28 +180,28 @@
                             </form>
                             <!-- fin insertion des données -->
                             <!-- modification -->
-                            <form  method="post"  action="<?= ROOT ?>/Semestres/editSemestre">
+                            <form  method="post"  action="<?= ROOT ?>/Salles/update">
                                 <div class="modal-primary mr-1 mb-1 d-inline-block" id="">
                                     <div class="modal fade text-left" id="default" tabindex="-1" role="dialog" aria-labelledby="myModalLabel160" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
                                             <div class="modal-content">
                                                 <div class="modal-header bg-primary">
-                                                    <h5 class="modal-title white" id="myModalLabel160"> Modification de Semestre</h5>
+                                                    <h5 class="modal-title white" id="myModalLabel160"> Modification de Salle</h5>
                                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                         <i class="bx bx-x"></i>
                                                     </button>
-                                                    <input type="hidden" id="inputIdmodule" value="" name="id_semestre"/>
+                                                    <input type="hidden" id="inputIdSalle" value="" name="id_salle"/>
                                                     <!-- <input type="hidden" id="inputIdmodule" name="id_module"> -->
                                                 </div>
                                                 <div class="modal-body">
                                                     <div class="row">
                                                         <div class="col mb-6">
-                                                            <label for="inputnomSemestre" class="form-label">Nom Semestre<span class="text-danger fs-6">*</span></label>
-                                                            <input type="text" id="inputnomSemestre" value="" class="form-control" name="nom_semestre" placeholder="Nom Semestre" required />
+                                                            <label for="inputnomSalle" class="form-label">Nom Salle<span class="text-danger fs-6">*</span></label>
+                                                            <input type="text" id="inputnomSalle" value="" class="form-control" name="nom_salle" placeholder="Nom Salle" required />
                                                         </div>
                                                         <div class="col mb-6">
                                                             <label for="inputsigleModule" class="form-label">Cycle <span class="text-danger fs-6">*</span></label>
-                                                            <input type="text" id="inputsigleModule" value="" class="form-control" name="sigle_semestre" placeholder="Sigle Semestre" required />
+                                                            <input type="text" id="inputcapaciteSalle" value="" class="form-control" name="capacite_salle" placeholder="Capacite Salle" required />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -205,7 +210,7 @@
                                                         <i class="bx bx-x d-block d-sm-none"></i>
                                                         <span class="d-none d-sm-block">Annuler</span>
                                                     </button>
-                                                    <button type="submit" class="btn btn-primary ml-1" name="editmodule">
+                                                    <button type="submit" class="btn btn-primary ml-1" name="modifier">
                                                         <i class="bx bx-check d-block d-sm-none"></i>
                                                         <span class="d-none d-sm-block">Modifier</span>
                                                     </button>
@@ -234,10 +239,10 @@
     <?php $this->view("Partials/footer") ?>
     <!-- inclusion du partie footer fin-->
  <!-- Ajoutez un input caché pour la baseURL -->
+ <script src="<?= ROOT ?>/assets/mon_js/modification_salle.js"></script>
 
 
 
- <script src="<?=ROOT ?>/assets/mon_js/modification_Semestre.js"></script>
 </body>
 <!-- END: Body-->
 

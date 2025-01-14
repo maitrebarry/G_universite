@@ -241,6 +241,7 @@ td {
 
 </html>
 <script src="<?= ROOT ?>/assets/mon_js/edt.js"></script>
+<script src="<?= ROOT ?>/assets/mon_js/contrainte_date_edt.js"></script>
 <script>
 var infoFiliere = [];
 $("#filiere").change(async function() {

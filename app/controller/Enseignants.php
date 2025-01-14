@@ -9,21 +9,22 @@ class Enseignants extends Controller
     public function lsite_enseignant() {
        
         $commandeModel = new Enseignant(); 
-        $enseignat_CDI = $commandeModel->getEnseignantCDI();
-         $enseignat_VCT = $commandeModel->getEnseignantVCT();
+        $enseignat_enseignat_PERMANANT = $commandeModel->getEnseignantCDI();
+         $enseignat_NON_PERMANANT = $commandeModel->getEnseignantVCT();
         //  var_dump($enseignat_CDI);
         //  var_dump($enseignat_VCT);
         //  exit;
             $this->view('liste_enseignant',
             [ 
-                    'enseignat_CDI' => $enseignat_CDI,
-                    'enseignat_VCT' => $enseignat_VCT 
+                    'enseignat_CDI' => $enseignat_enseignat_PERMANANT,
+                    'enseignat_VCT' => $enseignat_NON_PERMANANT 
                   ]);
 
     }
    
     public function ajouter_enseignant() {
         $enseignant = new Enseignant();
+          $filiere = $enseignant->SelectAllData("*", "grade");
         if (isset($_POST["envoyer"])) {
             // Nettoyage des données utilisateur
             $_POST = array_map('trim', $_POST);
@@ -52,73 +53,106 @@ class Enseignants extends Controller
         // Chargement de la vue avec les données nécessaires
         $this->view("ajouter_enseignant", [
             'errors' => $errors,
+            'filiere' => $filiere,
             'input_values' => $input_values
         ]);
     }
 
     public function update($id) {
-    $enseignant = new Enseignant();
-    $errors = []; 
-    $enseignantData = $enseignant->FetchSelectWhere("*", "enseignants", "enseignant_id=:id", ["id" => $id]);
+        $enseignant = new Enseignant();
+        $errors = [];
+
+        // Récupérer les données de l'enseignant avec le grade via une jointure
+        $select = "
+            SELECT enseignants.*, grade.nom_grade 
+            FROM enseignants
+            LEFT JOIN grade ON grade.id_grade = enseignants.id_grade
+            WHERE enseignants.enseignant_id = :id
+        ";
+        $enseignantData = $enseignant->select_data_table_join_where($select, ['id' => $id]);
+
+        // Vérifiez si l'enseignant existe
+        if (empty($enseignantData)) {
+            $errors[] = "L'enseignant avec l'ID spécifié n'existe pas.";
+            $this->view('modifier_enseignant', ['errors' => $errors]);
+            return;
+        }
+        $enseignantData = $enseignantData[0]; 
+
+        // Récupérer la liste des grades pour le formulaire
+        $grades = $enseignant->SelectAllData("*","grade");
     
-    if (!$enseignantData) {
-        $errors[] = "L'enseignant avec l'ID spécifié n'existe pas.";
-        $this->view('modifier_enseignant', ['errors' => $errors]);
-        return;
-    }
+        // Traitement lors de la soumission du formulaire
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $statut = $_POST['enseignant_statut'];
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $statut = $_POST['enseignant_statut'];
+            // Gestion du fichier CV
+            if (isset($_FILES['enseignant_cv']) && $_FILES['enseignant_cv']['error'] === UPLOAD_ERR_OK) {
+                $uploadDir = 'C:/xampp/htdocs/G_universite/public/cv_enseignant/';
+                $cvFileName = uniqid() . '_' . basename($_FILES['enseignant_cv']['name']);
+                $cvFilePath = $uploadDir . $cvFileName;
 
-        // Traitement du fichier CV
-        if (isset($_FILES['enseignant_cv']) && $_FILES['enseignant_cv']['error'] === UPLOAD_ERR_OK) {
-            $uploadDir = 'C:/xampp/htdocs/G_universite/public/cv_enseignant/';
-            $cvFileName = uniqid() . '_' . basename($_FILES['enseignant_cv']['name']);
-            $cvFilePath = $uploadDir . $cvFileName;
+                // Supprimez l'ancien fichier si nécessaire
+                if (!empty($enseignantData->enseignant_cv) && file_exists('C:/xampp/htdocs/G_universite/public/' . $enseignantData->enseignant_cv)) {
+                    unlink('C:/xampp/htdocs/G_universite/public/' . $enseignantData->enseignant_cv);
+                }
 
-            // Supprimer l'ancien fichier si nécessaire
-            if (!empty($enseignantData->enseignant_cv) && file_exists('C:/xampp/htdocs/G_universite/public/' . $enseignantData->enseignant_cv)) {
-                unlink('C:/xampp/htdocs/G_universite/public/' . $enseignantData->enseignant_cv);
-            }
-
-            if (move_uploaded_file($_FILES['enseignant_cv']['tmp_name'], $cvFilePath)) {
-                $cv = 'cv_enseignant/' . $cvFileName; // Chemin relatif
+                if (move_uploaded_file($_FILES['enseignant_cv']['tmp_name'], $cvFilePath)) {
+                    $cv = 'cv_enseignant/' . $cvFileName; 
+                } else {
+                    $errors[] = "Échec du téléversement du fichier CV.";
+                }
             } else {
-                $errors[] = "Échec du téléversement du fichier CV.";
+                $cv = $enseignantData->enseignant_cv; 
             }
-        } else {
-            $cv = $enseignantData->enseignant_cv; 
-        }
 
-        // Préparer les données
-        $data = [
-            'id' => $id,
-            'enseignant_statut' => $statut,
-            'enseignant_grade' => $statut === 'CDI' ? $_POST['enseignant_grade'] : null,
-            'enseignant_matricule' => $statut === 'CDI' ? $_POST['enseignant_matricule'] : null,
-            'enseignant_nom' => $_POST['enseignant_nom'],
-            'enseignant_prenom' => $_POST['enseignant_prenom'],
-            'enseignant_date_naissance' => $_POST['enseignant_date_naissance'],
-            'enseignant_email' => $_POST['enseignant_email'],
-            'enseignant_telephone' => $_POST['enseignant_telephone'],
-            'enseignant_diplome' => $_POST['enseignant_diplome'],
-            'enseignant_cv' => $cv ?? null,
-        ];
-
-        // Mise à jour
-        if (empty($errors)) {
-            $result = $enseignant->modification($data);
-
-            // Rechargez les données après modification
-            if ($result) {
-                $enseignantData = $enseignant->FetchSelectWhere("*", "enseignants", "enseignant_id=:id", ["id" => $id]);
+            // Validation supplémentaire pour les permanents
+            if ($statut === 'PERMANANT') {
+                if (empty($_POST['id_grade'])) {
+                    $errors[] = "Le grade est obligatoire pour un enseignant permanent.";
+                }
+                if (empty($_POST['enseignant_matricule'])) {
+                    $errors[] = "Le matricule est obligatoire pour un enseignant permanent.";
+                }
             }
-        }
+
+            // Préparer les données pour la mise à jour
+            $data = [
+                'id' => $id,
+                'enseignant_statut' => $statut,
+                'id_grade' => $statut === 'PERMANANT' ? (int)$_POST['id_grade'] : null,
+                'enseignant_matricule' => $statut === 'PERMANANT' ? $_POST['enseignant_matricule'] : null,
+                'enseignant_nom' => $_POST['enseignant_nom'],
+                'enseignant_prenom' => $_POST['enseignant_prenom'],
+                'enseignant_date_naissance' => $_POST['enseignant_date_naissance'],
+                'enseignant_email' => $_POST['enseignant_email'],
+                'enseignant_telephone' => $_POST['enseignant_telephone'],
+                'enseignant_diplome' => $_POST['enseignant_diplome'],
+                'enseignant_cv' => $cv ?? null,
+            ];
+
+            // Mise à jour si aucune erreur
+            if (empty($errors)) {
+                $result = $enseignant->modification($data);
+
+                if ($result) {
+                    // Rechargez les données après modification
+                    $enseignantData = $enseignant->select_data_table_join_where($select, ['id' => $id])[0];
+                } else {
+                    $errors[] = "Échec de la mise à jour de l'enseignant.";
+                }
+            }
     }
 
-    // Charger la vue avec les données de l'enseignant et les erreurs
-    $this->view('modifier_enseignant', ['enseignant' => $enseignantData, 'errors' => $errors]);
-}
+    // Charger la vue avec les données mises à jour
+    $this->view('modifier_enseignant', [
+        'enseignant' => $enseignantData,
+        'grades' => $grades,
+        'errors' => $errors
+    ]);
+    }
+
+
 
 
     // public function update($id) {

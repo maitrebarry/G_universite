@@ -183,7 +183,10 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-primary">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title white" id="myModalLabel160"> Enregistrement d'emargement</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="bx bx-x"></i>
+                    </button>
                 </div>
                 <div class="modal-body border-top border-4 border-primary">
                     <form method="POST" action="" class='form' >
@@ -299,10 +302,11 @@
     <div class="modal fade" id="modalEmargementUpdate" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title w-100 text-center" id="modalCenterTitle">Modifier Emargement</h4>
-                    <input type="hidden" id="baseURL" value="<?= ROOT ?>">
-                    <input type="hidden" id="id" name="id_emargement">
+                <div class="modal-header bg-primary">
+                    <h5 class="modal-title white" id="myModalLabel160"> Modification d'emargement</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="bx bx-x"></i>
+                    </button>
                 </div>
                 <div class="modal-body">
                     <form method="POST" id="modalEmargementUpdate" action="<?=ROOT?>/Enseignants/update_emargement/<?= $resultat->id_emargement  ?>" >
