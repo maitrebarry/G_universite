@@ -1,10 +1,8 @@
 <?php $this->view("Partials/header") ?>
 
 <body class="vertical-layout vertical-menu-modern boxicon-layout no-card-shadow 2-columns navbar-sticky footer-static" data-open="click" data-menu="vertical-menu-modern" data-col="2-columns">
-
     <?php $this->view("Partials/navbar") ?>
     <?php $this->view("Partials/seibar") ?>
-
     <div class="app-content content">
         <div class="content-overlay"></div>
         <div class="content-wrapper">
@@ -23,16 +21,14 @@
                         </div>
                     </div>
                 </div>
-            </div>
-                
+            </div>              
             <div class="content-body">
                 <section class="simple-validation">
                 <?php $this->view("set_flash"); ?> 
                     <div class="row">
                         <div class="col-md-12">
                             <div class="card ">
-                                <div class="card card-animated-border-top">  
-                                                 
+                                <div class="card card-animated-border-top">                                                  
                                     <div class="card-content">
                                      <?php if (!empty($errors)): ?>
                                         <div class="alert bg-rgba-danger alert-dismissible mb-2" role="alert">
@@ -117,10 +113,10 @@
                                                 </div>
 
                                                 <div class="row">
-                                                    <div class="col-md-6">
+                                                   <div class="col-md-6">
                                                         <label class="form-label">Téléphone<span class="text-danger">*</span></label>
                                                         <input name="telephone" id="telephone" type="text" class="form-control" placeholder="Téléphone" 
-                                                        value="<?= htmlspecialchars($input_values['telephone'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+                                                        value="<?= htmlspecialchars($input_values['telephone'] ?? '', ENT_QUOTES, 'UTF-8') ?>" oninput="formatPhoneNumber(this)">
                                                     </div>
                                                     <div class="col-md-6">
                                                         <label class="form-label">Diplôme<span class="text-danger">*</span></label>
@@ -131,7 +127,6 @@
                                                         </select>
                                                     </div>
                                                 </div>
-
                                                 <!-- Bouton envoyer -->
                                                 <div class="col-12 d-flex justify-content-end mt-4">
                                                     <button name="envoyer" type="submit" class="btn btn-primary">Envoyer</button>
@@ -148,13 +143,10 @@
             </div>
         </div>
     </div>
-
     <?php $this->view("Partials/foot") ?>
     <?php $this->view("Partials/footer") ?>
-
-    
-    
   <script src="<?= ROOT ?>/assets/mon_js/validation_enseignant.js"></script>
+  <script src="<?= ROOT ?>/assets/mon_js/formate_numberphone.js"></script>
   <script >
         function toggleFields() {
             const statut = document.getElementById("statut").value;
@@ -172,6 +164,6 @@
                 cvContainer.style.display = "block";
             }
         }
-    </script>
+  </script>
 </body>
 </html>

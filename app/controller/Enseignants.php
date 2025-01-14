@@ -29,19 +29,15 @@ class Enseignants extends Controller
             // Nettoyage des données utilisateur
             $_POST = array_map('trim', $_POST);
             $cv_file = $_FILES['cv'] ?? null;
-
             // Appel de la méthode d'enregistrement
             $enseignant->enregistrement($cv_file, $_POST);
-
             if (!empty($enseignant->errors)) {
                 $_SESSION['input'] = $_POST;
                 $_SESSION['errors'] = $enseignant->errors;
             } else {
                 // Nettoyer les sessions en cas de succès
                 unset($_SESSION['input']);
-                unset($_SESSION['errors']);
-
-            
+                unset($_SESSION['errors']);           
             }
         }
 
@@ -151,9 +147,6 @@ class Enseignants extends Controller
         'errors' => $errors
     ]);
     }
-
-
-
 
     // public function update($id) {
     //     $enseignant = new Enseignant();

@@ -20,17 +20,13 @@
 
 <!-- inclusion du partie header -->
 <?php $this->view("Partials/header") ?>
-
 <body class="vertical-layout vertical-menu-modern boxicon-layout no-card-shadow 2-columns  navbar-sticky footer-static" data-open="click" data-menu="vertical-menu-modern" data-col="2-columns">
-
     <!-- inclusion du partie header -->
     <?php $this->view("Partials/navbar") ?>
     <!-- inclusion du partie header fin-->
-
     <!-- inclusion du partie sidebar-->
     <?php $this->view("Partials/seibar") ?>
     <!-- inclusion du partie sidebar fin-->
-
     <!-- Content -->
     <div class="app-content content">
         <div class="content-overlay"></div>
@@ -110,7 +106,7 @@
                                             </div>
                                             <div class="col-sm-6">
                                                 <label class="form-label">Téléphone</label>
-                                                <input type="text" name="enseignant_telephone" class="form-control" value="<?= htmlspecialchars($enseignant->enseignant_telephone) ?>" />
+                                                <input type="text" name="enseignant_telephone" class="form-control" value="<?= htmlspecialchars($enseignant->enseignant_telephone) ?>" oninput="formatPhoneNumber(this)" />
                                             </div>
                                         </div>
 
@@ -167,24 +163,22 @@
     <!-- inclusion du partie footer -->
     <?php $this->view("Partials/foot") ?>
     <?php $this->view("Partials/footer") ?>
-
     <script>
-      function toggleFields() {
-    const statut = document.getElementById("statut").value;
-    const matriculeContainer = document.getElementById("matricule-container");
-    const cvContainer = document.getElementById("cv-container");
+        function toggleFields() {
+            const statut = document.getElementById("statut").value;
+            const matriculeContainer = document.getElementById("matricule-container");
+            const cvContainer = document.getElementById("cv-container");
 
-    if (statut === "PERMANANT") {
-        matriculeContainer.style.display = "flex";
-        cvContainer.parentElement.style.display = "none"; 
-    } else {
-        matriculeContainer.style.display = "none";
-        cvContainer.parentElement.style.display = "flex"; 
-    }
-}
-
-document.addEventListener('DOMContentLoaded', toggleFields);
-
+            if (statut === "PERMANANT") {
+                matriculeContainer.style.display = "flex";
+                cvContainer.parentElement.style.display = "none"; 
+            } else {
+                matriculeContainer.style.display = "none";
+                cvContainer.parentElement.style.display = "flex"; 
+            }
+        }
+        document.addEventListener('DOMContentLoaded', toggleFields);
     </script>
+    <script src="<?= ROOT ?>/assets/mon_js/formate_numberphone.js"></script>
 </body>
 </html>

@@ -63,8 +63,18 @@ class Enseignant extends Model{
             $prenom = $_POST['prenom'] ?? '';
             $date_naissance = $_POST['date_naissance'] ?? '';
             $email = $_POST['email'] ?? '';
-            $telephone = $_POST['telephone'] ?? '';
             $diplome = $_POST['diplome'] ?? '';
+            $telephone = $_POST['telephone'] ?? ''; 
+
+            // Supprimer les espaces ou autres caractères non numériques
+            $telephone = preg_replace('/\D/', '', $telephone); 
+            // Reformater le numéro
+            if (strlen($telephone) == 8) { 
+                $telephone = substr($telephone, 0, 2) . ' ' . 
+                            substr($telephone, 2, 2) . ' ' . 
+                            substr($telephone, 4, 2) . ' ' . 
+                            substr($telephone, 6, 2);
+            }
 
             // Messages d'erreur pour la validation du téléphone
             $messages = [
@@ -73,7 +83,6 @@ class Enseignant extends Model{
                 'first_digit_range' => "Le premier chiffre doit être compris entre 3 et 9.",
                 'duplicate_phone' => "Ce numéro de téléphone est déjà utilisé.",
             ];
-
             // Validation du CV
             $cv = $this->upload_cv($file);
 
@@ -217,7 +226,7 @@ class Enseignant extends Model{
     } else {
          $this->errors[]="Échec de la mise à jour";
     }
-}
+   }
 
      // enregistrer les emargements
     public function enregistrer_emargement($data) {
