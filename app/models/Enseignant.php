@@ -1,8 +1,6 @@
 <?php 
 class Enseignant extends Model{
 
-
-
     public $errors = [];
 
     private function upload_cv($file)

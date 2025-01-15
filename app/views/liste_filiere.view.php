@@ -45,7 +45,7 @@
                             <?php $this->view("set_flash"); ?>
                         </div>
                         <div class="col-12">
-                            <div class="card">
+                            <div class="card  card-animated-border-top">
 
                                 <div class="card-content">
                                     <a href="<?= ROOT ?>/Filieres/ajouter_Filiere"><button class="btn btn-primary"
@@ -54,8 +54,7 @@
 
 
                                         <div class="table-responsive">
-                                            <table id="table-extended-chechbox"
-                                                class="table table-bordered table-striped">
+                                        <table class="table zero-configuration table-bordered" style="width:100%">
                                                 <thead>
                                                     <tr>
 

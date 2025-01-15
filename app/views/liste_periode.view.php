@@ -28,7 +28,7 @@ $this->view("Partials/header") ?>
                                 <ol class="breadcrumb p-0 mb-0">
                                     <li class="breadcrumb-item"><a href="index.html"><i class="bx bx-home-alt"></i></a>
                                     </li>
-                                    <li class="breadcrumb-item"><a href="#">Gestion des Années Universitaire</a>
+                                    <li class="breadcrumb-item"><a href="#">Gestion des periode</a>
                                     </li>
                                     <li class="breadcrumb-item active">Liste
                                     </li>
@@ -37,7 +37,7 @@ $this->view("Partials/header") ?>
 
                                 <div class="ms-auto">
                                     <button type="button" class="btn btn-primary" style="float: right;" data-toggle="modal" data-target="#primary">
-                                        <i class="bx bx-plus"></i>Anne Universitaire
+                                        <i class="bx bx-plus"></i>Période
                                     </button>
                                 </div>
                             </div>
@@ -67,9 +67,9 @@ $this->view("Partials/header") ?>
                                         </a>
                                     </li>
                                     <li class="nav-item mb-1">
-                                        <a class="nav-link  active" href="<?= ROOT ?>/Annees_universite/Liste">
+                                        <a class="nav-link  active" href="<?= ROOT ?>/Periodes/Liste">
                                             <i class="fa-solid fa-calendar me-2"></i>
-                                            <span class="align-middle">Années Universitaire</span>
+                                            <span class="align-middle">Periode</span>
                                         </a>
                                     </li>
                                     <li class="nav-item mb-1">
@@ -105,18 +105,21 @@ $this->view("Partials/header") ?>
                                             <table class="table zero-configuration table-bordered" style="width:100%">
                                                 <thead>
                                                     <tr>
-                                                        <th>Années Scolaires</th>
+                                                       
                                                         <th>Date de début</th>
                                                         <th>Date de fin</th>
+                                                        <th>Status</th>
                                                         <th class="text-center dt-no-sorting">Action</th>
                                                     </tr>
                                                 </thead>
                                                 <?php foreach ($datas  as $data): ?>
                                                     <tbody>
                                                         <tr>
-                                                            <td><?= $data->anne_scolaire ?></td>
-                                                            <td><?= $data->date_debut ?></td>
-                                                            <td><?= $data->date_fin ?></td>
+                                                          
+                                                          
+                                                            <td><?= date_format(date_create($data->date_debut), 'd-m-Y'); ?></td>
+                                                            <td><?= date_format(date_create($data->date_fin), 'd-m-Y'); ?></td>
+                                                            <td class="text-primary"><span class=" badge badge-light-primary"><?= $data->status ?></span></td>
                                                             <td class="text-center ">
                                                                 <div class=" dropdown">
                                                                     <span class="bx bx-dots-horizontal-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="menu">
@@ -155,21 +158,20 @@ $this->view("Partials/header") ?>
                                                     </button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <div class="row">
-
+                                                    <!-- <div class="row">
                                                         <div class="col mb-3">
                                                             <label for="nameBasic" class="form-label">Années Scolaires <span class="text-danger fs-6">*</span></label>
-                                                            <input type="text" id="nameBasic" value="" name="anne_scolaire" class="form-control" placeholder="Années Scolaires" required />
+                                                            <input type="text" id="nameBasic" value="" name="anne_scolaire" class="form-control" placeholder="Années Scolaires" />
                                                         </div>
-                                                    </div>
+                                                    </div> -->
                                                     <div class="row g-2">
                                                         <div class="col mb-0">
-                                                            <label for="emailBasic" class="form-label">Date de début</label>
-                                                            <input type="date" id="emailBasic" value="" name="date_debut" class="form-control" placeholder="Date de début" />
+                                                            <label for="dateDebut" class="form-label">Date de début</label>
+                                                            <input type="date" id="dateDebut" name="date_debut" class="form-control" placeholder="Date de début" />
                                                         </div>
                                                         <div class="col mb-0">
-                                                            <label for="dobBasic" class="form-label">Date de fin</label>
-                                                            <input type="date" id="dobBasic" value="" class="form-control" name="date_fin" placeholder="Date de fin" />
+                                                            <label for="dateFin" class="form-label">Date de fin</label>
+                                                            <input type="date" id="dateFin" name="date_fin" class="form-control" placeholder="Date de fin" readonly />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -246,7 +248,17 @@ $this->view("Partials/header") ?>
     <?php $this->view("Partials/footer") ?>
     <script src="<?= ROOT ?>/assets/mon_js/modification_anne.js"></script>
 
-
+    <script>
+        document.getElementById('dateDebut').addEventListener('change', function() {
+            const dateDebut = new Date(this.value);
+            if (!isNaN(dateDebut)) { // Vérifie si la date est valide
+                const dateFin = new Date(dateDebut);
+                dateFin.setMonth(dateFin.getMonth() + 6); // Ajoute 6 mois
+                const isoDate = dateFin.toISOString().split('T')[0]; // Format ISO (YYYY-MM-DD)
+                document.getElementById('dateFin').value = isoDate;
+            }
+        });
+    </script>
     <!-- inclusion du partie footer fin-->
 </body>
 <!-- END: Body-->
