@@ -64,9 +64,9 @@
                                         </a>
                                     </li>
                                     <li class="nav-item mb-1">
-                                        <a class="nav-link " href="<?= ROOT ?>/Annees_universites/Liste">
+                                        <a class="nav-link " href="<?= ROOT ?>/Periodes/Liste">
                                             <i class="fa-solid fa-calendar me-2"></i>
-                                            <span class="align-middle">Années Universitaire</span>
+                                            <span class="align-middle">Période</span>
                                         </a>
                                     </li>
                                     <li class="nav-item mb-1">

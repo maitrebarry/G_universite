@@ -64,12 +64,12 @@
                                         <ul class="nav nav-pills nav-justified" role="tablist">
                                             <li class="nav-item waves-effect waves-light">
                                                 <a class="nav-link active" data-toggle="tab" href="#contractuels" role="tab">
-                                                    <span class="d-none d-sm-block">Liste des enseignants vacataires </span>
+                                                    <span class="d-none d-sm-block">Liste des enseignants non permanants </span>
                                                 </a>
                                             </li>
                                             <li class="nav-item waves-effect waves-light">
                                                 <a class="nav-link" data-toggle="tab" href="#vacataires" role="tab">
-                                                    <span class="d-none d-sm-block">Liste des enseignants contractuels </span>
+                                                    <span class="d-none d-sm-block">Liste des enseignants permanants </span>
                                                 </a>
                                             </li>
                                         </ul>
@@ -139,7 +139,7 @@
                                                             <tr> 
                                                                 <td><?= htmlspecialchars($enseignant->enseignant_nom . ' ' . $enseignant->enseignant_prenom, ENT_QUOTES, 'UTF-8'); ?></td>
                                                                 <td><?= htmlspecialchars($enseignant->enseignant_matricule, ENT_QUOTES, 'UTF-8'); ?></td>
-                                                                <td><?= htmlspecialchars($enseignant->enseignant_grade, ENT_QUOTES, 'UTF-8'); ?></td>
+                                                                <td><?= htmlspecialchars($enseignant->nom_grade, ENT_QUOTES, 'UTF-8'); ?></td>
                                                                 <td><?= htmlspecialchars($enseignant->enseignant_telephone, ENT_QUOTES, 'UTF-8'); ?></td>
                                                                 <td><?= htmlspecialchars($enseignant->enseignant_diplome, ENT_QUOTES, 'UTF-8'); ?></td>
                                                                 <td>

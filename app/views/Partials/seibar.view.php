@@ -95,8 +95,8 @@ $current_page = basename($_SERVER['REQUEST_URI']); // Récupère le nom de la pa
                             <span class="menu-item">Inscription</span>
                         </a>
                     </li>
-                    <li class="<?= ($current_page == 'form-input-groups.html') ? 'active' : '' ?>">
-                        <a href="form-input-groups.html">
+                    <li class="<?= ($current_page == 'Reinsciptions') ? 'active' : '' ?>">
+                        <a href="<?= ROOT ?>/Reinsciptions">
                             <i class="bx bx-right-arrow-alt"></i>
                             <span class="menu-item">Réinscription</span>
                         </a>
