@@ -1,8 +1,198 @@
+// Contantes pour les heures de l'edt
+const heureEdt = {
+  "edt-row": {
+    1: { heureDebut: "08:00", heureFin: "10:00" },
+    2: { heureDebut: "10:15", heureFin: "13:15" },
+    3: { heureDebut: "14:00", heureFin: "16:00" },
+    4: { heureDebut: "16:00", heureFin: "19:00" },
+  },
+  "edt-column": {
+    1: { heureDebut: "08:00", heureFin: "10:00" },
+    2: { heureDebut: "10:15", heureFin: "12:15" },
+    3: { heureDebut: "14:00", heureFin: "16:00" },
+    4: { heureDebut: "16:00", heureFin: "18:00" },
+  },
+};
+const typeEdt = ["cm", "td", "tp", "tpe"];
+
+function addHeure(heureDebut, heureFin, type) {
+  var newRow = document.createElement("tr");
+  isExams =
+    $("#table-extended-chechbox tbody").find("tr").length === 0
+      ? "selected"
+      : "";
+
+  newRow.innerHTML = `                         
+        <td>
+            <div class='row'>
+                <div class='col-sm-6'>
+                    <input type='time' class='form-control heureDebut'>
+                </div>
+                <div class='col-sm-6'>
+                    <input type='time' class='form-control heureFin'>
+                </div>
+            </div>
+        </td>
+        <td>
+            <select class='select2 form-control tache'>
+                <option value='x' class='text-center' ${
+                  type == "x" ? "selected" : ""
+                }>X</option>
+                <option value='cm' class='text-center' ${
+                  type == "cm" ? "selected" : ""
+                }>CM</option>
+                <option value='td' class='text-center' ${
+                  type == "td" ? "selected" : ""
+                }>TD</option>
+                <option value='tp' class='text-center' ${
+                  type == "tp" ? "selected" : ""
+                }>TP</option>
+                <option value='tpe' class='text-center' ${
+                  type == "tpe" ? "selected" : ""
+                }>TPE</option>
+                <option value='examen' class='text-center' ${
+                  type == "examen" ? "selected" : ""
+                }>EXAMEN</option>
+            </select>
+        </td>
+        <td>
+            <select class='select2 form-control tache'>
+                <option value='x' class='text-center' ${
+                  type == "x" ? "selected" : ""
+                }>X</option>
+                <option value='cm' class='text-center' ${
+                  type == "cm" ? "selected" : ""
+                }>CM</option>
+                <option value='td' class='text-center' ${
+                  type == "td" ? "selected" : ""
+                }>TD</option>
+                <option value='tp' class='text-center' ${
+                  type == "tp" ? "selected" : ""
+                }>TP</option>
+                <option value='tpe' class='text-center' ${
+                  type == "tpe" ? "selected" : ""
+                }>TPE</option>
+                <option value='examen' class='text-center' ${
+                  type == "examen" ? "selected" : ""
+                }>EXAMEN</option>
+            </select>
+        </td>
+        <td>
+            <select class='select2 form-control tache'>
+                <option value='x' class='text-center' ${
+                  type == "x" ? "selected" : ""
+                }>X</option>
+                <option value='cm' class='text-center' ${
+                  type == "cm" ? "selected" : ""
+                }>CM</option>
+                <option value='td' class='text-center' ${
+                  type == "td" ? "selected" : ""
+                }>TD</option>
+                <option value='tp' class='text-center' ${
+                  type == "tp" ? "selected" : ""
+                }>TP</option>
+                <option value='tpe' class='text-center' ${
+                  type == "tpe" ? "selected" : ""
+                }>TPE</option>
+                <option value='examen' class='text-center' ${
+                  type == "examen" ? "selected" : ""
+                }>EXAMEN</option>
+            </select>
+        </td>
+        <td>
+            <select class='select2 form-control tache'>
+                <option value='x' class='text-center' ${
+                  type == "x" ? "selected" : ""
+                }>X</option>
+                <option value='cm' class='text-center' ${
+                  type == "cm" ? "selected" : ""
+                }>CM</option>
+                <option value='td' class='text-center' ${
+                  type == "td" ? "selected" : ""
+                }>TD</option>
+                <option value='tp' class='text-center' ${
+                  type == "tp" ? "selected" : ""
+                }>TP</option>
+                <option value='tpe' class='text-center' ${
+                  type == "tpe" ? "selected" : ""
+                }>TPE</option>
+                <option value='examen' class='text-center' ${
+                  type == "examen" ? "selected" : ""
+                }>EXAMEN</option>
+            </select>
+        </td>
+        <td>
+            <select class='select2 form-control tache'>
+                <option value='x' class='text-center' ${
+                  type == "x" ? "selected" : ""
+                }>X</option>
+                <option value='cm' class='text-center' ${
+                  type == "cm" ? "selected" : ""
+                }>CM</option>
+                <option value='td' class='text-center' ${
+                  type == "td" ? "selected" : ""
+                }>TD</option>
+                <option value='tp' class='text-center' ${
+                  type == "tp" ? "selected" : ""
+                }>TP</option>
+                <option value='tpe' class='text-center' ${
+                  type == "tpe" ? "selected" : ""
+                }>TPE</option>
+                <option value='examen' class='text-center' ${
+                  type == "examen" ? "selected" : ""
+                }>EXAMEN</option>
+            </select>
+        </td>
+       
+        <td>
+            <select class='select2 form-control tache'>
+                <option value='x' class='text-center'>X</option>
+                <option value='cm' class='text-center'>CM</option>
+                <option value='td' class='text-center'>TD</option>
+                <option value='tp' class='text-center'>TP</option>
+                <option value='tpe' class='text-center'>TPE</option>
+                <option value='examen' class='text-center' ${isExams} >EXAMEN</option>
+            </select>
+        </td>
+                                                    
+    `;
+  document.querySelector("#table-extended-chechbox tbody").appendChild(newRow);
+  row = document.querySelector(
+    "#table-extended-chechbox tbody"
+  ).lastElementChild;
+  row.querySelector(".heureDebut").value = heureDebut;
+  row.querySelector(".heureFin").value = heureFin;
+}
+
+function removeHeure() {
+  var tableBody = document.querySelector("#table-extended-chechbox tbody");
+  var rows = tableBody.querySelectorAll("tr");
+  if (rows.length > 1) {
+    // Empêche la suppression de la première ligne
+    tableBody.removeChild(rows[rows.length - 1]);
+  }
+}
+
+function genererEdt(heureTotal, model = "edt-row", type = 1) {
+  document.querySelector("#table-extended-chechbox tbody").innerHTML = "";
+  const ligne = heureTotal / 8;
+  heure = heureEdt[model];
+  // const nbrCm = parseInt($(".cm").val(), 10);
+  // const nbrTd = parseInt($(".td").val(), 10);
+  // const nbrTp = parseInt($(".tp").val(), 10);
+
+  for (let index = 1; index < ligne; index++) {
+    const heureDebut = heure[index].heureDebut;
+    const heureFin = heure[index].heureFin;
+    addHeure(heureDebut, heureFin, typeEdt[type]);
+  }
+}
+
 // Fonction pour définir l'année scolaire par défaut
 function setDefaultAcademicYear() {
   const currentYear = new Date().getFullYear(); // Année en cours
-  const nextYear = currentYear + 1; // Année suivante
-  const academicYear = `${currentYear}-${nextYear}`; // Format "2024-2025"
+  const lastYear = currentYear - 1; // Année suivante
+  const academicYear = `${lastYear}-${currentYear}`; // Format "2024-2025"
 
   // Affecter la valeur par défaut à l'input
   document.getElementById("anneeUniversitaire").value = academicYear;
@@ -37,6 +227,24 @@ async function infosFiliere(idFiliere) {
     console.error(error);
   }
   var infoFiliere;
+}
+
+function promotionsFiliere(infoFiliere) {
+  const promotionContainer = $("#promotions");
+  promotionContainer.empty();
+  promotionContainer.append(
+    `<option value="" disabled selected>Selectionner une Promotion</option>`
+  );
+  const promotions = infoFiliere["promotions"];
+  promotions.forEach((promotion) => {
+    const option = `<option value='${
+      promotion.id_promotion
+    }' class='text-center' data-id='${promotion.id_parcours}'>
+    ${promotion.sigle_filiere.toUpperCase()}-${promotion.sigle_semestre.toUpperCase()}( ${
+      promotion.annee_universitaire
+    } )</option>`;
+    promotionContainer.append(option);
+  });
 }
 
 function semestresFiliere(infoFiliere) {
@@ -87,97 +295,17 @@ function infoModule(idModule, infoFiliere) {
         $(".td").val(module.td);
         $(".tp").val(module.tp);
         $(".tpe").val(module.tpe);
+        const heureTotal =
+          parseInt(module.cm, 10) +
+          parseInt(module.td, 10) +
+          parseInt(module.tp, 10) +
+          parseInt(module.tpe, 10);
+        genererEdt(heureTotal);
       }
     });
   } else {
     $("#infoModule").addClass("d-none");
-  }
-}
-
-function addHeure() {
-  var newRow = document.createElement("tr");
-  newRow.innerHTML = `                         
-        <td>
-            <div class='row'>
-                <div class='col-sm-6'>
-                    <input type='time' class='form-control heureDebut'>
-                </div>
-                <div class='col-sm-6'>
-                    <input type='time' class='form-control heureFin'>
-                </div>
-            </div>
-        </td>
-        <td>
-            <select class='select2 form-control tache'>
-                <option value='x' class='text-center'>X</option>
-                <option value='cm' class='text-center' selected>CM</option>
-                <option value='td' class='text-center'>TD</option>
-                <option value='tp' class='text-center'>TP</option>
-                <option value='tpe' class='text-center'>TPE</option>
-                <option value='examen' class='text-center'>EXAMEN</option>
-            </select>
-        </td>
-        <td>
-            <select class='select2 form-control tache'>
-                <option value='x' class='text-center'>X</option>
-                <option value='cm' class='text-center' selected>CM</option>
-                <option value='td' class='text-center'>TD</option>
-                <option value='tp' class='text-center'>TP</option>
-                <option value='tpe' class='text-center'>TPE</option>
-                <option value='examen' class='text-center'>EXAMEN</option>
-            </select>
-        </td>
-        <td>
-            <select class='select2 form-control tache'>
-                <option value='x' class='text-center'>X</option>
-                <option value='cm' class='text-center' selected>CM</option>
-                <option value='td' class='text-center'>TD</option>
-                <option value='tp' class='text-center'>TP</option>
-                <option value='tpe' class='text-center'>TPE</option>
-                <option value='examen' class='text-center'>EXAMEN</option>
-            </select>
-        </td>
-        <td>
-            <select class='select2 form-control tache'>
-                <option value='x' class='text-center'>X</option>
-                <option value='cm' class='text-center' selected>CM</option>
-                <option value='td' class='text-center'>TD</option>
-                <option value='tp' class='text-center'>TP</option>
-                <option value='tpe' class='text-center'>TPE</option>
-                <option value='examen' class='text-center'>EXAMEN</option>
-            </select>
-        </td>
-        <td>
-            <select class='select2 form-control tache'>
-                <option value='x' class='text-center'>X</option>
-                <option value='cm' class='text-center' selected>CM</option>
-                <option value='td' class='text-center'>TD</option>
-                <option value='tp' class='text-center'>TP</option>
-                <option value='tpe' class='text-center'>TPE</option>
-                <option value='examen' class='text-center'>EXAMEN</option>
-            </select>
-        </td>
-        <td>
-            <select class='select2 form-control tache'>
-                <option value='x' class='text-center'>X</option>
-                <option value='cm' class='text-center'>CM</option>
-                <option value='td' class='text-center'>TD</option>
-                <option value='tp' class='text-center'>TP</option>
-                <option value='tpe' class='text-center'>TPE</option>
-                <option value='examen' class='text-center' selected>EXAMEN</option>
-            </select>
-        </td>
-                                                    
-    `;
-  document.querySelector("#table-extended-chechbox tbody").appendChild(newRow);
-}
-
-function removeHeure() {
-  var tableBody = document.querySelector("#table-extended-chechbox tbody");
-  var rows = tableBody.querySelectorAll("tr");
-  if (rows.length > 1) {
-    // Empêche la suppression de la première ligne
-    tableBody.removeChild(rows[rows.length - 1]);
+    document.querySelector("#table-extended-chechbox tbody").innerHTML = "";
   }
 }
 
@@ -191,19 +319,17 @@ function ajouterEdt(url = ROOT + "/ajouter_EDT", action = "ajouter_EDT") {
 
   // la recuperation des données de base de l'emploi
   const idFiliere = $("#filiere").val();
-  const idParcours = $("#semestres").val();
+  const idPromotion = $("#promotions").val();
   const idModule = $("#modules").val();
   const idEnseignant = $("#enseignants").val();
   const idSalle = $("#salles").val();
-  const anneeUniversitaire = $("#anneeUniversitaire").val();
   const dateDebut = $("#dateDebut").val();
   edt = {
     idFiliere: idFiliere,
-    idParcours: idParcours,
+    idPromotion: idPromotion,
     idModule: idModule,
     idEnseignant: idEnseignant,
     idSalle: idSalle,
-    anneeUniversitaire: anneeUniversitaire,
     dateDebut: dateDebut,
   };
 

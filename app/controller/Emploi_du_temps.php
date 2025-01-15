@@ -10,7 +10,7 @@ class Emploi_du_temps extends Controller
         $this->view('liste_EDT', ['edts' => $edts, 'filieres' => $filieres]);
     }
 
-    public function ajouter_EDT()
+    public function ajouter_EDT($idFiliere = null)
     {
         if (isset($_POST['action']) && $_POST['action'] === "ajouter_EDT") {
             @$edt = $_POST['edt'];
@@ -25,7 +25,7 @@ class Emploi_du_temps extends Controller
         $enseignants = $filiereModel->SelectAllData("*", "enseignants");
         $salles = $filiereModel->SelectAllData("*", "salle");
         $jours = $filiereModel->SelectAllData("*", "jour");
-        $this->view("ajouter_EDT", ['filieres' => $filieres, "enseignants" => $enseignants, "salles" => $salles, "jours" => $jours]);
+        $this->view("ajouter_EDT", ['filieres' => $filieres, "enseignants" => $enseignants, "salles" => $salles, "jours" => $jours, 'idFiliere' => $idFiliere]);
     }
 
 
@@ -49,6 +49,8 @@ class Emploi_du_temps extends Controller
             $idFiliere = $_POST['idFiliere'];
             $filiereModel = new Filiere();
             $infoFiliere = $filiereModel->apercu_filiere($idFiliere);
+            $promotions = $filiereModel->listePromotions($idFiliere);
+            $infoFiliere['promotions'] = $promotions;
             header("Content-Type:application/json");
             echo json_encode($infoFiliere);
         }

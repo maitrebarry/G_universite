@@ -1,14 +1,14 @@
 <style>
-input {
+    input {
 
-    padding: 8px;
-    font-size: 16px;
-    text-align: center;
-}
+        padding: 8px;
+        font-size: 16px;
+        text-align: center;
+    }
 
-td {
-    padding: 15px 5px !important;
-}
+    td {
+        padding: 15px 5px !important;
+    }
 </style>
 <!-- inclusion du partie header -->
 <?php $this->view("Partials/header") ?>
@@ -57,15 +57,19 @@ td {
                                 <div class="card-header border-bottom-3 border-bottom-black mb-1">
                                     <h4
                                         class="card-title text-bold-700 mb-1 text-success d-flex justify-content-between align-items-center">
-                                        Instut Universitaire de Formation Professionnel
+                                        <div>
+                                            <img src="" alt="" class=" img-sm img-thumbnail mr-1" style="width: 150px;">
+                                            <span>Instut Universitaire de
+                                                Formation Professionnel</span>
+                                        </div>
                                         <span class=" d-block text-right text-dark">
                                             Formation Initiale
                                         </span>
                                     </h4>
                                     <h5 class="text-center">
-                                        Edt Du
+                                        Edt du
                                         <span class=" h6 au "><?php echo $infosEdt->edt->date_debut ?> au
-                                            <?php echo $infosEdt->edt->date_debut ?></span>
+                                            <?php echo $infosEdt->edt->date_fin ?></span>
                                     </h5>
                                 </div>
                                 <div class="card-content">
@@ -77,7 +81,7 @@ td {
                                                     for="single-select">Filiere</label>
                                                 <div class="form-group">
                                                     <h6 class="text-center text-bold-500 text-body">
-                                                        <?php echo strtoupper($infosEdt->semestre->sigle_filiere) ?>
+                                                        <?php echo strtoupper($infosEdt->promotion->sigle_filiere) ?>
                                                     </h6>
                                                 </div>
                                             </div>
@@ -87,7 +91,7 @@ td {
                                                     universitaire</label>
                                                 <div class="form-group">
                                                     <h6 class="text-center text-bold-500 text-body">
-                                                        <?php echo $infosEdt->edt->annee_universitaire ?>
+                                                        <?php echo $infosEdt->promotion->annee_universitaire ?>
                                                     </h6>
                                                 </div>
                                             </div>
@@ -96,7 +100,7 @@ td {
                                                     for="single-select">Niveau</label>
                                                 <div class="form-group">
                                                     <h6 class="text-center text-bold-500 text-body">
-                                                        <?php echo strtoupper($infosEdt->semestre->sigle_semestre) ?>
+                                                        <?php echo strtoupper($infosEdt->promotion->sigle_semestre) ?>
                                                     </h6>
                                                 </div>
                                             </div>
@@ -118,43 +122,43 @@ td {
                                                     <tr>
                                                         <th class="text-center">Horaire</th>
                                                         <?php foreach ($jours as $jour): ?>
-                                                        <th class="jour" data-id="<?php echo $jour->id_jour ?>">
-                                                            <?php echo strtoupper($jour->nom_jour) ?></th>
+                                                            <th class="jour" data-id="<?php echo $jour->id_jour ?>">
+                                                                <?php echo strtoupper($jour->nom_jour) ?></th>
                                                         <?php endforeach ?>
 
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <?php foreach ($horairesEdt as $horaire): ?>
-                                                    <tr>
-                                                        <td>
-                                                            <div class='row'>
-                                                                <div class='col-sm-6'>
-                                                                    <input type='time' class='form-control'
-                                                                        value="<?php echo $horaire->heure_debut ?>"
-                                                                        disabled>
+                                                        <tr>
+                                                            <td>
+                                                                <div class='row'>
+                                                                    <div class='col-sm-6'>
+                                                                        <input type='time' class='form-control'
+                                                                            value="<?php echo $horaire->heure_debut ?>"
+                                                                            disabled>
+                                                                    </div>
+                                                                    <div class='col-sm-6'>
+                                                                        <input type='time' class='form-control'
+                                                                            value="<?php echo $horaire->heure_fin ?>"
+                                                                            disabled>
+                                                                    </div>
                                                                 </div>
-                                                                <div class='col-sm-6'>
-                                                                    <input type='time' class='form-control'
-                                                                        value="<?php echo $horaire->heure_fin ?>"
-                                                                        disabled>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <?php foreach ($horaire->taches as $tache): ?>
-                                                        <td>
-                                                            <?php if (strtoupper($tache->type_tache) != "X"): ?>
-                                                            <span class=" text-center d-block text-bold-6 00">
-                                                                <?php echo strtoupper($infosEdt->module->nom_module) ?>
-                                                            </span>
-                                                            <span style="font-size: 11px;"
-                                                                class=" text-muted text-body text-center text-italic d-block">
-                                                                <?php echo strtoupper($tache->type_tache) ?>
-                                                            </span>
-                                                            <?php endif ?>
-                                                        </td>
-                                                        <?php endforeach ?>
-                                                    </tr>
+                                                            </td>
+                                                            <?php foreach ($horaire->taches as $tache): ?>
+                                                                <td>
+                                                                    <?php if (strtoupper($tache->type_tache) != "X"): ?>
+                                                                        <span class=" text-center d-block text-bold-6 00">
+                                                                            <?php echo strtoupper($infosEdt->module->nom_module) ?>
+                                                                        </span>
+                                                                        <span style="font-size: 11px;"
+                                                                            class=" text-muted text-body text-center text-italic d-block">
+                                                                            <?php echo strtoupper($tache->type_tache) ?>
+                                                                        </span>
+                                                                    <?php endif ?>
+                                                                </td>
+                                                            <?php endforeach ?>
+                                                        </tr>
                                                     <?php endforeach ?>
                                                 </tbody>
                                             </table>
@@ -162,7 +166,7 @@ td {
 
                                         <div>
                                             <h6 class="text-bold-600">
-                                                <span><?php echo $infosEdt->semestre->sigle_filiere ?> - </span>
+                                                <span><?php echo $infosEdt->promotion->sigle_filiere ?> - </span>
                                                 <span>
                                                     <?php echo $infosEdt->edt->enseignant_prenom . ' ' . $infosEdt->edt->enseignant_nom ?>
                                                 </span>

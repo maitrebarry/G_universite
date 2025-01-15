@@ -1,13 +1,13 @@
-<?php if ( $action == 'semestre' ): ?>
+<?php if ($action == 'semestre'): ?>
 <!-- le formulaire pour ajouter un semestre -->
-<div class = 'section' id = "semestre_<?php echo $semestre['semestreId'] ?>">
-<h4 class = 'text-center'>
-<?php echo $semestre[ 'semestreName' ] ?>
-</h4>
-<table class = 'table table-bordered' id = "tableSemestre_<?php echo $semestre['semestreId'] ?>">
-<thead>
-<tr>
-<th>Unité d'Enseignement (UE)</th>
+<div class='section' id="semestre_<?php echo $semestre['semestreId'] ?>">
+    <h4 class='text-center'>
+        <?php echo $semestre['semestreName'] ?>
+    </h4>
+    <table class='table table-bordered' id="tableSemestre_<?php echo $semestre['semestreId'] ?>">
+        <thead>
+            <tr>
+                <th>Unité d'Enseignement (UE)</th>
                 <th>Modules</th>
                 <th>Actions</th>
             </tr>
@@ -22,7 +22,7 @@
 </div>
 <?php endif ?>
 
-<?php if ( $action == 'ue' ): ?>
+<?php if ($action == 'ue'): ?>
 
 <!-- le formulaire pour ajouter un ue -->
 <tr class='ue-item'>
@@ -34,7 +34,7 @@
     <td>
         <div class="w-100 h-100 d-flex justify-content-around ">
             <button type='button' class='btn btn-primary'
-                onclick="addModule( <?php echo $semestre[ 'semestreId' ] ?>, this )"><i
+                onclick="addModule( <?php echo $semestre['semestreId'] ?>, this )"><i
                     class=' bx bxs-plus-square '></i>&nbsp;
                 Module</button>
         </div>
@@ -50,16 +50,17 @@
 </tr>
 <?php endif ?>
 
-<?php if ( $action == 'module' ): ?>
+<?php if ($action == 'module'): ?>
 
 <!-- le formulaire pour ajouter un module -->
 <li class='module-item row border'>
     <!-- Module  -->
     <div class="col-12  ">
         <label class='text-center' for='modules'>Module</label>
-        <select id='modules' class='select2 form-control module'>
-            <?php foreach($modules as $module): ?>
-            <option value="<?php echo $module->id_module?>">
+        <select id='modulessqfsqd' class='select2 form-control module'>
+            <option value="" disabled selected>Selectionner une Promotion</option>
+            <?php foreach ($modules as $module): ?>
+            <option value="<?php echo $module->id_module ?>">
                 <?php echo strtoupper($module->nom_module) ?>(
                 <?php echo strtoupper($module->sigle_module) ?> )
             </option>
@@ -68,22 +69,16 @@
     </div>
 
     <!-- CODE -->
-    <div class='col-4 m-auto'>
+    <div class='col-5 m-auto mb-1'>
         <label>ECUE</label>
         <input type='text' class='form-control code'>
     </div>
     <!-- COEFICIENT -->
-    <div class='col-4 m-auto'>
+    <div class='col-5 m-auto mb-1'>
         <label>Coéficient</label>
         <input type='number' class='form-control coeficient'>
     </div>
-    <!-- TOTAL -->
-    <div class='col-12 row'>
-        <div class="col-4 m-auto ">
-            <label>TOTAL</label>
-            <input type='number' class='form-control'>
-        </div>
-    </div>
+
     <!-- CM -->
     <div class='col-3'>
         <label>CM</label>
@@ -104,13 +99,19 @@
         <label>TPE</label>
         <input type='number' class='form-control tpe'>
     </div>
-
+    <!-- TOTAL -->
+    <div class='col-12 row mt-1'>
+        <div class="col-4 m-auto ">
+            <label>VHT</label>
+            <input type='number' class='form-control disabled vht'>
+        </div>
+    </div>
     <!-- SUPPRIMER -->
     <div class="col-12 mt-1 d-flex justify-content-around">
         <button type='button' class='btn btn-danger' onclick='removeModule(this)'>
             <i class="bx bxs-minus-square"></i>&nbsp;
-Module
-</button>
-</div>
+            Module
+        </button>
+    </div>
 </li>
 <?php endif ?>

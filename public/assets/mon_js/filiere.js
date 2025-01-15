@@ -68,6 +68,10 @@ function addModule(semestreId, button) {
     },
     success: function (response) {
       moduleContainer.insertAdjacentHTML("beforeend", response);
+      li = moduleContainer.lastElementChild;
+      li.querySelector(".coeficient").addEventListener("keyup", function () {
+        calculerHeureModule(li, this.value);
+      });
     },
     error: function (error) {
       console.log(error.status);
@@ -85,6 +89,20 @@ function removeUE(button) {
 function removeModule(button) {
   const moduleItem = button.closest(".module-item");
   moduleItem.remove();
+}
+
+// Calcul des heures d'un module
+function calculerHeureModule(li, credit) {
+  const vht = credit * 20;
+  const cm = vht;
+  const td = 0;
+  const tp = 0;
+  const tpe = 0;
+  li.querySelector(".cm").value = cm;
+  li.querySelector(".td").value = td;
+  li.querySelector(".tp").value = tp;
+  li.querySelector(".tpe").value = tpe;
+  li.querySelector(".vht").value = vht;
 }
 
 // Sauvegarder la filière et afficher l'information
