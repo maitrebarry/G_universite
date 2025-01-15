@@ -303,12 +303,10 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-primary">
-                    <h4 class="modal-title w-100 text-center modal-title white"  id="modalCenterTitle">Modifier Emargement</h4>
+                    <h5 class="modal-title white" id="myModalLabel160"> Modification d'emargement</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                        <i class="bx bx-x"></i>
                     </button>
-                    <input type="hidden" id="baseURL" value="<?= ROOT ?>">
-                    <input type="hidden" id="id" name="id_emargement">
                 </div>
                 <div class="modal-body">
                     <form method="POST" id="modalEmargementUpdate" action="<?= ROOT ?>/Enseignants/update_emargement/<?= $resultat->id_emargement  ?>">

@@ -61,8 +61,18 @@ class Enseignant extends Model{
             $prenom = $_POST['prenom'] ?? '';
             $date_naissance = $_POST['date_naissance'] ?? '';
             $email = $_POST['email'] ?? '';
-            $telephone = $_POST['telephone'] ?? '';
             $diplome = $_POST['diplome'] ?? '';
+            $telephone = $_POST['telephone'] ?? ''; 
+
+            // Supprimer les espaces ou autres caractères non numériques
+            $telephone = preg_replace('/\D/', '', $telephone); 
+            // Reformater le numéro
+            if (strlen($telephone) == 8) { 
+                $telephone = substr($telephone, 0, 2) . ' ' . 
+                            substr($telephone, 2, 2) . ' ' . 
+                            substr($telephone, 4, 2) . ' ' . 
+                            substr($telephone, 6, 2);
+            }
 
             // Messages d'erreur pour la validation du téléphone
             $messages = [
@@ -71,7 +81,6 @@ class Enseignant extends Model{
                 'first_digit_range' => "Le premier chiffre doit être compris entre 3 et 9.",
                 'duplicate_phone' => "Ce numéro de téléphone est déjà utilisé.",
             ];
-
             // Validation du CV
             $cv = $this->upload_cv($file);
 
@@ -107,10 +116,12 @@ class Enseignant extends Model{
                 $this->errors[] = $messages['duplicate_phone'];
             }
             // Gestion des champs si statut est "VCT"
-            if ($statut === "VCT") {
+            if ($statut === "NON_PERMANANT") {
                 $grade = null;
                 // $heures = null;
                 $matricule = null;
+            }else{
+                $cv=null;
             }            
             // Si des erreurs sont présentes, arrêter l'insertion et sauver les données de l'utilisateur
             if (!empty($this->errors)) {
@@ -120,11 +131,11 @@ class Enseignant extends Model{
             // Insertion dans la base de données
             $bdd = $this->connect();
             $insertion_enseignant = $bdd->prepare("INSERT INTO enseignants 
-                (enseignant_statut, enseignant_grade, enseignant_matricule, enseignant_nom, enseignant_prenom, enseignant_date_naissance, enseignant_email, enseignant_telephone, enseignant_diplome, enseignant_cv) 
-                VALUES (:enseignant_statut, :enseignant_grade, :enseignant_matricule, :enseignant_nom, :enseignant_prenom, :enseignant_date_naissance, :enseignant_email, :enseignant_telephone, :enseignant_diplome, :enseignant_cv)");
+                (enseignant_statut, id_grade, enseignant_matricule, enseignant_nom, enseignant_prenom, enseignant_date_naissance, enseignant_email, enseignant_telephone, enseignant_diplome, enseignant_cv) 
+                VALUES (:enseignant_statut, :id_grade, :enseignant_matricule, :enseignant_nom, :enseignant_prenom, :enseignant_date_naissance, :enseignant_email, :enseignant_telephone, :enseignant_diplome, :enseignant_cv)");
             $insertion = $insertion_enseignant->execute([
                 ":enseignant_statut" => $statut,
-                ":enseignant_grade" => $grade, 
+                ":id_grade" => $grade, 
                 // ":enseignant_heures_semesre" => $heures, 
                 ":enseignant_matricule" => $matricule, 
                 ":enseignant_nom" => $nom,
@@ -139,65 +150,82 @@ class Enseignant extends Model{
                     $this->set_flash("Enseignant ajouté avec succès", 'success');
                     $this->redirect("Enseignants/lsite_enseignant");
                 } else {
-                    $this->set_flash("Échec de la mise à jour", 'error');
+                    $this->errors[]="Échec de la mise à jour";
                 }
 
     }
 
      // Sélectionner les enseignants CDI
     public function getEnseignantCDI() {
-        $select = "*";  
-        $fields = "enseignants";  
-        $whereValue = "enseignant_statut = :statut";  
-        $value = ['statut' => 'CDI'];  
-        return $this->FetchSelectWhere2($select, $fields, $whereValue, $value);
+        $select = "
+            SELECT enseignants.*, grade.nom_grade 
+            FROM enseignants
+            JOIN grade ON grade.id_grade = enseignants.id_grade
+            WHERE enseignants.enseignant_statut = :statut
+        ";
+        $execute_data = ['statut' => 'PERMANANT',];
+        return $this->select_data_table_join_where($select, $execute_data);
     }
+
     // Sélectionner les enseignants VCT
     public function getEnseignantVCT() {    
         $select = "*";  
         $fields = "enseignants";  
         $whereValue = "enseignant_statut = :statut";  
-        $value = ['statut' => 'VACT'];  
+        $value = ['statut' => 'NON_PERMANANT'];  
         return $this->FetchSelectWhere2($select, $fields, $whereValue, $value);
     }
 
-    public function modification($data) {
-        $sql = "UPDATE enseignants 
-                SET enseignant_statut = :enseignant_statut, 
-                    enseignant_grade = :enseignant_grade, 
-                    enseignant_matricule = :enseignant_matricule, 
-                    enseignant_nom = :enseignant_nom, 
-                    enseignant_prenom = :enseignant_prenom, 
-                    enseignant_date_naissance = :enseignant_date_naissance, 
-                    enseignant_email = :enseignant_email, 
-                    enseignant_telephone = :enseignant_telephone, 
-                    enseignant_diplome = :enseignant_diplome, 
-                    enseignant_cv = :enseignant_cv 
-                WHERE enseignant_id = :id";
-
-        $params = [
-            ':enseignant_statut' => $data['enseignant_statut'],
-            ':enseignant_grade' => $data['enseignant_grade'],
-            ':enseignant_matricule' => $data['enseignant_matricule'],
-            ':enseignant_nom' => $data['enseignant_nom'],
-            ':enseignant_prenom' => $data['enseignant_prenom'],
-            ':enseignant_date_naissance' => $data['enseignant_date_naissance'],
-            ':enseignant_email' => $data['enseignant_email'],
-            ':enseignant_telephone' => $data['enseignant_telephone'],
-            ':enseignant_diplome' => $data['enseignant_diplome'],
-            ':enseignant_cv' => $data['enseignant_cv'],
-            ':id' => $data['id']
-        ];
-
-        $result = $this->insertion_update_simples($sql, $params);
-
-        if ($result) {
-            $this->set_flash("Enseignant mis à jour avec succès", 'success');
-             $this->redirect("Enseignants/lsite_enseignant");
-        } else {
-            $this->set_flash("Échec de la mise à jour", 'error');
+   public function modification($data) {
+    // Validation des données
+    if (isset($data['enseignant_statut']) && $data['enseignant_statut'] === 'PERMANENT') {
+        if (empty($data['id_grade'])) {
+            $this->errors[]="Erreur : Le grade est obligatoire pour un enseignant permanent.";
+            return;
         }
     }
+
+    // Requête SQL
+    $sql = "UPDATE enseignants 
+            SET enseignant_statut = :enseignant_statut, 
+                id_grade = :id_grade, 
+                enseignant_matricule = :enseignant_matricule, 
+                enseignant_nom = :enseignant_nom, 
+                enseignant_prenom = :enseignant_prenom, 
+                enseignant_date_naissance = :enseignant_date_naissance, 
+                enseignant_email = :enseignant_email, 
+                enseignant_telephone = :enseignant_telephone, 
+                enseignant_diplome = :enseignant_diplome, 
+                enseignant_cv = :enseignant_cv 
+            WHERE enseignant_id = :id";
+
+    // Paramètres
+    $params = [
+        ':enseignant_statut' => $data['enseignant_statut'],
+        ':id_grade' => $data['id_grade'], // Référence à la table des grades
+        ':enseignant_matricule' => $data['enseignant_matricule'],
+        ':enseignant_nom' => $data['enseignant_nom'],
+        ':enseignant_prenom' => $data['enseignant_prenom'],
+        ':enseignant_date_naissance' => $data['enseignant_date_naissance'],
+        ':enseignant_email' => $data['enseignant_email'],
+        ':enseignant_telephone' => $data['enseignant_telephone'],
+        ':enseignant_diplome' => $data['enseignant_diplome'],
+        ':enseignant_cv' => $data['enseignant_cv'],
+        ':id' => $data['id']
+    ];
+
+    // Exécution de la requête
+    $result = $this->insertion_update_simples($sql, $params);
+
+    // Gestion des résultats
+    if ($result) {
+        $this->set_flash("Enseignant mis à jour avec succès", 'success');
+        $this->redirect("Enseignants/lsite_enseignant");
+    } else {
+         $this->errors[]="Échec de la mise à jour";
+    }
+   }
+
      // enregistrer les emargements
     public function enregistrer_emargement($data) {
         $sql = 'INSERT INTO emargement (id_enseignant, id_filiere, id_semestre, nh_programme, 
@@ -294,40 +322,39 @@ class Enseignant extends Model{
         return $result ? $result->cumul_heures_programmees : 0;
     }
    
+    public function mettre_a_jour_emargement($id, $data) { 
+        $sql = 'UPDATE emargement SET 
+                    id_enseignant = :id_enseignant, 
+                    id_filiere = :id_filiere, 
+                    id_semestre = :id_semestre, 
+                    nh_programme = :nh_programme, 
+                    heures_supp = :heures_supp, 
+                    date_debut = :date_debut, 
+                    date_fin = :date_fin, 
+                    statut = :statut';
 
-public function mettre_a_jour_emargement($id, $data) { 
-    $sql = 'UPDATE emargement SET 
-                id_enseignant = :id_enseignant, 
-                id_filiere = :id_filiere, 
-                id_semestre = :id_semestre, 
-                nh_programme = :nh_programme, 
-                heures_supp = :heures_supp, 
-                date_debut = :date_debut, 
-                date_fin = :date_fin, 
-                statut = :statut';
+        $params = [
+            ':id_enseignant' => $data['id_enseignant'],
+            ':id_filiere' => $data['id_filiere'],
+            ':id_semestre' => $data['id_semestre'],
+            ':nh_programme' => $data['nh_programme'],
+            ':heures_supp' => $data['heures_supp'],
+            ':date_debut' => $data['date_debut'],
+            ':date_fin' => $data['date_fin'],
+            ':statut' => $data['statut'],
+            ':id' => $id
+        ];
 
-    $params = [
-        ':id_enseignant' => $data['id_enseignant'],
-        ':id_filiere' => $data['id_filiere'],
-        ':id_semestre' => $data['id_semestre'],
-        ':nh_programme' => $data['nh_programme'],
-        ':heures_supp' => $data['heures_supp'],
-        ':date_debut' => $data['date_debut'],
-        ':date_fin' => $data['date_fin'],
-        ':statut' => $data['statut'],
-        ':id' => $id
-    ];
+        if ($data['statut'] == "1") {
+            $sql .= ', heures_dues = :heures_dues, grade = :grade';
+            $params[':heures_dues'] = $data['heures_dues'];
+            $params[':grade'] = $data['grade'];
+        }
 
-    if ($data['statut'] == "1") {
-        $sql .= ', heures_dues = :heures_dues, grade = :grade';
-        $params[':heures_dues'] = $data['heures_dues'];
-        $params[':grade'] = $data['grade'];
+        $sql .= ' WHERE id_emargement = :id';
+
+        return $this->insertion_update_simples($sql, $params);
     }
-
-    $sql .= ' WHERE id_emargement = :id';
-
-    return $this->insertion_update_simples($sql, $params);
-}
 
 
 
