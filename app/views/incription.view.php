@@ -1,14 +1,40 @@
+
 <?php $this->view("Partials/header") ?>
 
 <body class="vertical-layout vertical-menu-modern boxicon-layout no-card-shadow 2-columns navbar-sticky footer-static" data-open="click" data-menu="vertical-menu-modern" data-col="2-columns">
 
     <?php $this->view("Partials/navbar") ?>
     <?php $this->view("Partials/seibar") ?>
+    <style>
+        .frais-total {
+            background-color: #e0f7fa; /* Bleu clair */
+            border: 2px solid #00acc1; /* Bordure bleu cyan */
+            font-weight: bold;
+            color: #006064; /* Texte cyan foncé */
+        }
 
+        .frais-paye {
+            background-color: #d1f7c4; /* Vert pâle */
+            border: 2px solid #4caf50; /* Bordure verte */
+            font-weight: bold;
+            color: #2e7d32; /* Texte vert foncé */
+        }
+
+        .frais-restant {
+            background-color: #f8d7da; /* Rouge pâle */
+
+            font-weight: bold;
+            color: #c62828; /* Texte rouge foncé */
+        }
+    </style>
     <div class="app-content content">
         <div class="content-overlay"></div>
         <div class="content-wrapper">
         <div class="content-header row">
+        <?php $this->view("set_flash") ?>
+                        <?php foreach ($errors as $error) {
+                                     
+                                      } ?>
                 <div class="content-header-left col-12 mb-2 mt-1">
                     <div class="row breadcrumbs-top">
                         <div class="col-12">
@@ -32,231 +58,329 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="card icon-tab card-animated-border-top">
-                            
                                 <div class="card-content mt-2">
                                     <div class="card-body">
-                                        <form action="#" class="wizard-validation">
-                                            <h6>
+                                        <div class="bs-stepper stepper-form-one">
+                                            <div class="bs-stepper-header" role="tablist">
+                                                <div class="step" data-target="#defaultStep-one">
                                                 <i class="step-icon"></i>
-                                                <span class="fonticon-wrap">
+
+                                                    <button type="button" class="step-trigger" role="tab">
+                                                   
                                                 <i class="fa-solid fa-restroom fa-2xl"></i>
                                                
                                                 </span>
-                                                <span>Informations de l'Etudiants</span>
-                                            </h6>
-                                            <fieldset>
-                                                <div class="row">
-                                                    <div class="col-12">
-                                                        <h6 class="py-50">Informations de l'Etudiants</h6>
-                                                    </div>
-                                                    <div class="col-sm-4">
-                                                        <div class="form-group">
-                                                            <label>Nom && Prénom<span class="text-danger">*</span></label>
-                                                            <input type="text" class="form-control required" placeholder="Nom && Prénom"  >
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-sm-4">
-                                                        <div class="form-group">
-                                                            <label>Genre<span class="text-danger">*</span></label>
-                                                            <select class="form-select form-control ">
-                                                                <option value="" disabled>Choisissez le sexe</option>
-                                                                <option value="">Féminin</option>
-                                                                <option value="">Masculin</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-sm-4">
-                                                        <div class="form-group">
-                                                            <label>Date de naissance<span class="text-danger">*</span></label>
-                                                            <input type="date" class="form-control" placeholder="Date de naissance">
-                                                        </div>
-                                                    </div>
-
+                                                        <span class="bs-stepper-label">Informations de l'Etudiants
+                                                        </span>
+                                                    </button>
                                                 </div>
-                                                <div class="row">
-                                                    <div class="col-sm-4">
-                                                        <div class="form-group">
-                                                            <label>Lieu de naissance<span class="text-danger">*</span></label>
-                                                            <input type="text" class="form-control" placeholder="Lieu de naissance">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-sm-4">
-                                                        <div class="form-group">
-                                                            <label>Cercle de Naissance<span class="text-danger">*</span></label>
-                                                            <input type="text" class="form-control" placeholder="Cercle de Naissance">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-sm-4">
-                                                        <div class="form-group">
-                                                            <label>Commune de Naissance<span class="text-danger">*</span></label>
-                                                            <input type="text" class="form-control" placeholder="Commune de Naissance">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-sm-4">
-                                                        <div class="form-group">
-                                                            <label>Nationalité<span class="text-danger">*</span></label>
-                                                            <input type="text" class="form-control" placeholder="Nationalité">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>Numero Télephone<span class="text-danger">*</span> </label>
-                                                            <input type="number" class="form-control" placeholder="Numero Télephone ">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>Email<span class="text-danger">*</span></label>
-                                                            <input type="mail" class="form-control" placeholder="Email">
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </fieldset>
-                                            <h6>
-                                                <i class="step-icon"></i>
+                                                <div class="line"></div>
+                                                <div class="step" data-target="#defaultStep-two">
+                                                    <button type="button" class="step-trigger" role="tab">
+                                                    <i class="step-icon"></i>
                                                 <span class="fonticon-wrap">
                                               
                                                 <i class="fa-solid fa-user-group fa-xl"></i>
                                                 <i class="fa-solid fa-graduation-cap fa-xl"></i>
                                                 
                                                 </span>
-                                                <span>Parents et Diplome </span>
-                                            </h6>
-                                            <fieldset>
-                                                <div class="row">
-                                                    <div class="col-12">
-                                                        <h6 class="py-50">information parents</h6>
-                                                    </div>
-                                                    <div class="col-sm-4">
-                                                        <div class="form-group">
-                                                            <label>Prénom père<span class="text-danger">*</span></label>
-                                                            <input type="text" class="form-control " placeholder="Prénom père">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-sm-4">
-                                                        <div class="form-group">
-                                                            <label>Nom && Prenom mère<span class="text-danger">*</span></label>
-                                                            <input type="text" class="form-control " placeholder="Nom && Prenom mère">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-sm-4">
-                                                        <div class="form-group">
-                                                            <label>Lieu résidence des parents<span class="text-danger">*</span></label>
-                                                            <input type="text" class="form-control" placeholder="Date de naissance">
-                                                        </div>
-                                                    </div>
-
+                                                        <span class="bs-stepper-label">Parents et Diplome
+                                                        </span>
+                                                    </button>
                                                 </div>
-                                                <hr>
-                                                <div class="col-12">
-                                                    <h6 class="py-50">Diplome</h6>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-sm-4">
-                                                        <div class="form-group">
-                                                            <label>Diplome<span class="text-danger">*</span></label>
-                                                            <input type="text" class="form-control " placeholder="Diplome">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-sm-4">
-                                                        <div class="form-group">
-                                                            <label>Numero de place<span class="text-danger">*</span></label>
-                                                            <input type="number" class="form-control" placeholder="Numero de place">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>Serie<span class="text-danger">*</span> </label>
-                                                            <input type="text" class="form-control" placeholder="Serie ">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-sm-4">
-                                                        <div class="form-group">
-                                                            <label>Anneés diplome<span class="text-danger">*</span></label>
-                                                            <input type="number" class="form-control" placeholder="Anneés diplome">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-sm-4">
-                                                        <div class="form-group">
-                                                            <label>Pays<span class="text-danger">*</span></label>
-                                                            <input type="text" class="form-control" placeholder="Pays">
-                                                        </div>
-                                                    </div>
 
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>Academie<span class="text-danger">*</span></label>
-                                                            <input type="text" class="form-control" placeholder="Academie">
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </fieldset>
-                                            <!-- body content of step 2 end-->
-                                            <!-- Step 3-->
-                                            <h6>
-                                                <i class="step-icon"></i>
+                                                <div class="line"></div>
+                                                <div class="step" data-target="#defaultStep-three">
+                                                    <button type="button" class="step-trigger" role="tab">
+                                                    <i class="step-icon"></i>
                                                 <span class="fonticon-wrap">
                                                 <i class="fa-solid fa-building-columns fa-xl"></i>
                                                 <i class="fa-solid fa-user  fa-xl" ></i>
                                               
                                                 </span>
-                                                <span>Profile et universiter</span>
-                                            </h6>
-                                            <fieldset>
-                                                <div class="row">
-                                                    <div class="col-12">
-                                                        <h6 class="py-50">Profile et universiter</h6>
-                                                    </div>
-                                                    <form action="" method="POST" class=" row g-3 form" enctype="multipart/form-data">
-                                                        <div class="card-body">
-                                                            <div class="box-body">
-                                                                <div class="row">
-                                                                    <div class="col-md-4">
-
-                                                                        <label >Matricule<span class="text-danger">*</span></label>
-                                                                        <input type="text" class="form-control required" placeholder="Matricule" >
-
-                                                                    </div>
-                                                                    <div class="col-md-4">
-                                                                        <label >N étudiants<span class="text-danger">*</span></label>
-                                                                        <input type="text" class="form-control" placeholder="N étudiants">
-                                                                    </div>
-                                                                    <div class="col-md-4">
-                                                                        <label >Années univertisaire<span class="text-danger">*</span></label>
-                                                                        <input name="text" id="email" type="text" class="form-control" placeholder="Années univertisaire">
+                                                        <span class="bs-stepper-label">
+                                                            <span class="bs-stepper-title">Profile et universiter
+                                                            </span>
+                                                        </span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <form action="" method="post" enctype="multipart/form-data">
+                                                <div class="bs-stepper-content  "   >
+                                                    <div id="defaultStep-one" class="content" role="" style="margin:0;">
+                                                        <fieldset>
+                                                            <div class="row">
+                                                                
+                                                                <div class="col-sm-4">
+                                                                    <div class="form-group">
+                                                                        <label>Nom && Prénom<span class="text-danger">*</span></label>
+                                                                        <input type="text" class="form-control required" placeholder="Nom && Prénom" name="nom_prenom_etudiant" >
                                                                     </div>
                                                                 </div>
-                                                                <div class="row">
-                                                                    <div class="col-md-4">
-                                                                        <div class="form-group">
-                                                                            <label >Statut<span class="text-danger">*</span></label>
-                                                                            <select class="form-select form-control">
-                                                                                <option value="" disabled>Choisissez la Statut</option>
+                                                                <div class="col-sm-4">
+                                                                    <div class="form-group">
+                                                                        <label>Genre<span class="text-danger">*</span></label>
+                                                                        <select class="form-select form-control " name="genre_etudiant">
+                                                                            <option value="" disabled>Choisissez le sexe</option>
+                                                                            <option value="Féminin">Féminin</option>
+                                                                            <option value="Masculin">Masculin</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-4">
+                                                                    <div class="form-group">
+                                                                        <label>Date de naissance<span class="text-danger">*</span></label>
+                                                                        <input type="date" class="form-control" placeholder="Date de naissance" name="date_naissance_etudiant">
+                                                                    </div>
+                                                                </div>
 
-                                                                            </select>
-                                                                        </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-4">
+                                                                    <div class="form-group">
+                                                                        <label>Lieu de naissance<span class="text-danger">*</span></label>
+                                                                        <input type="text" class="form-control" placeholder="Lieu de naissance" name="lieu_naissance_etudiant">
                                                                     </div>
-                                                                    <div class="col-md-4">
-                                                                        <div class="form-group">
-                                                                            <label >Filière<span class="text-danger">*</span></label>
-                                                                            <select class="form-select form-control">
-                                                                                <option value="" disabled>Choisissez la Filière</option>
-                                                                            </select>
-                                                                        </div>
+                                                                </div>
+                                                                <div class="col-sm-4">
+                                                                    <div class="form-group">
+                                                                        <label>Cercle de Naissance<span class="text-danger">*</span></label>
+                                                                        <input type="text" class="form-control" placeholder="Cercle de Naissance" name="cercleNais">
                                                                     </div>
-                                                                    <div class="col-md-4">
-                                                                        <label class="form-label">Profile<span class="text-danger">*</span></label>
-                                                                        <input  type="file" class="form-control" >
+                                                                </div>
+                                                                <div class="col-sm-4">
+                                                                    <div class="form-group">
+                                                                        <label>Commune de Naissance<span class="text-danger">*</span></label>
+                                                                        <input type="text" class="form-control" placeholder="Commune de Naissance" name="commNais">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-4">
+                                                                    <div class="form-group">
+                                                                        <label>Nationalité<span class="text-danger">*</span></label>
+                                                                        <input type="text" class="form-control" placeholder="Nationalité" name="nationnalite">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>Numero Télephone<span class="text-danger">*</span> </label>
+                                                                        <input type="number" class="form-control" placeholder="Numero Télephone " name="contact_etudiant">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>Email<span class="text-danger">*</span></label>
+                                                                        <input type="mail" class="form-control" placeholder="Email">
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        </fieldset>
+                                                        <div class="button-action mt-5" >
+                                                            <button type="button"
+                                                                class="btn bg-secondary btn-prev me-3"
+                                                                style="color:white" disabled>Prev</button>
+                                                            <button type="button" class="btn bg-primary btn-nxt"
+                                                                style="color:white;float:right;" >Next</button>
+                                                        </div>
+                                                    </div>
+                                                    <div id="defaultStep-two" class="content" role="tabpanel" style="margin:0;">
+                                                        <fieldset>
+                                                            <div class="row">
+                                                                <div class="col-sm-4">
+                                                                    <div class="form-group">
+                                                                        <label>Prénom père<span class="text-danger">*</span></label>
+                                                                        <input type="text" class="form-control " placeholder="Prénom père" name="prenompere">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-4">
+                                                                    <div class="form-group">
+                                                                        <label>Nom && Prenom mère<span class="text-danger">*</span></label>
+                                                                        <input type="text" class="form-control " placeholder="Nom && Prenom mère" name="prenomnommere">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-4">
+                                                                    <div class="form-group">
+                                                                        <label>Lieu résidence des parents<span class="text-danger">*</span></label>
+                                                                        <input type="text" class="form-control" placeholder="Date de naissance" name="lieuresidenceparents">
                                                                     </div>
                                                                 </div>
                                                             </div>
+                                                            <hr>
+                                                            <div class="col-12">
+                                                                <h6 class="py-50">Diplome</h6>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-4">
+                                                                    <div class="form-group">
+                                                                        <label>Diplome<span class="text-danger">*</span></label>
+                                                                        <select class="form-select form-control" name="diplome">
+                                                                            <option value="" disabled>Choisissez le diplome</option>
+                                                                            <option value="Bac" >Bac</option>
+                                                                            <option value="BT" >BT</option>
+                                                                            <option value="IFM" >IFM</option>
+                                                                        </select>
+                                                                        <input type="text" class="form-control " placeholder="" name="">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-4">
+                                                                    <div class="form-group">
+                                                                        <label>Numero de place<span class="text-danger">*</span></label>
+                                                                        <input type="number" class="form-control" placeholder="Numero de place" name="numplace">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>Serie<span class="text-danger">*</span> </label>
+                                                                        <input type="text" class="form-control" placeholder="Serie " name="serie">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-4">
+                                                                    <div class="form-group">
+                                                                        <label>Anneés diplome<span class="text-danger">*</span></label>
+                                                                        <input type="number" class="form-control" placeholder="Anneés diplome" name="anneediplome">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-4">
+                                                                    <div class="form-group">
+                                                                        <label>Pays<span class="text-danger">*</span></label>
+                                                                        <input type="text" class="form-control" placeholder="Pays" name="pays">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4">
+                                                                    <div class="form-group">
+                                                                        <label>Academie<span class="text-danger">*</span></label>
+                                                                        <input type="text" class="form-control" placeholder="Academie" name="academie">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </fieldset>
+                                                        <div class="button-action mt-5">
+                                                            <button type="button"
+                                                                class="btn bg-secondary btn-prev me-3"
+                                                                style="color:white">Prev</button>
+                                                            <button type="button" class="btn bg-primary btn-nxt"
+                                                                style="color:white;float:right;">Next</button>
                                                         </div>
-                                                    </form>
-                                            </fieldset>
-                                           
-                                        </form>
+                                                    </div>
+                                                    <div id="defaultStep-three" class="content" role="tabpanel" style="margin:0;">
+                                                        <fieldset>
+                                                            <!-- <div class="col-12">
+                                                                <h6 class="py-50">Profile et universiter</h6>
+                                                            </div> -->
+                                                        
+                                                            <div class="row">
+                                                                <div class="col-md-3 mb-2">
+                                                                    <label >Matricule<span class="text-danger">*</span></label>
+                                                                    <input type="text" class="form-control required" name="matricule_etudiant" placeholder="Matricule" >
+
+                                                                </div>
+                                                                <div class="col-md-3  mb-2">
+                                                                    <label >N étudiants<span class="text-danger">*</span></label>
+                                                                    <input type="text" class="form-control" name="numetudiant" placeholder="N étudiants">
+                                                                </div>
+                                                                <div class="col-md-3  mb-2">
+                                                                    <label >Années univertisaire<span class="text-danger">*</span></label>
+                                                                    <select class="form-select form-control" name="id_promotion" id="id_promotion">
+                                                                            <option value="" >Choisissez Années univertisaire</option>
+                                                                            <?php foreach ($listePromotion as $Promotion): ?>
+                                                                                <option value="<?= htmlspecialchars($Promotion->id_promotion); ?>">
+                                                                                    <?= htmlspecialchars($Promotion->annee_universitaire); ?>
+                                                                                </option>
+                                                                            <?php endforeach; ?>
+                                                                        </select>
+                                                                </div>
+                                                                <div class="col-md-3  mb-2">
+                                                                    <label class="form-label">Profile<span class="text-danger">*</span></label>
+                                                                    <input  type="file" name="profilname" class="form-control" >
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="row">
+                                                            <!-- Champ Statut -->
+                                                            <div class="col-md-3 mb-2">
+                                                                <div class="form-group">
+                                                                    <label>Statut<span class="text-danger">*</span></label>
+                                                                    <select class="form-select form-control" name="id_statut" id="statut">
+                                                                        <option value="" disabled selected>Choisissez le Statut</option>
+                                                                        <option value="Regle">Regulier</option>
+                                                                        <option value="Cl">CL</option>
+                                                                        <option value="Proffesionnel">Proffesionnel</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Type de Professionnel -->
+                                                            <div class="col-md-3 mb-2" id="type-prof-container" style="display: none;">
+                                                                <div class="form-group">
+                                                                    <label>Type de Professionnel<span class="text-danger">*</span></label>
+                                                                    <select class="form-select form-control" name="type_professionnel" id="type-professionnel">
+                                                                        <option value="" disabled selected>Choisissez le Type</option>
+                                                                        <option value="Etatique">Professionnel Étatique</option>
+                                                                        <option value="Simple">Professionnel Collectivite</option>
+                                                                        <option value="Prive">Professionnel Privé</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Frais d'inscription -->
+                                                            <div class="col-md-3 mb-2" id="prix-container" style="display: none;">
+                                                                <div class="form-group">
+                                                                    <label class="form-label">Frais d'Inscription</label>
+                                                                    <input type="number" class="form-control" id="frais-inscription" name="frais_inscription" placeholder="Frais d'inscription" readonly>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Frais de Formation -->
+                                                            <div class="col-md-3 mb-2" id="formation-container" style="display: none;">
+                                                                <div class="form-group">
+                                                                    <label class="form-label">Frais de Formation</label>
+                                                                    <input type="number" class="form-control" id="montant" name="montant_paye" placeholder="Prix de Formation" readonly>
+                                                                </div>
+                                                            </div>
+                                                                <div class="col-md-3 mb-2">
+                                                                    <div class="form-group">
+                                                                        <label>Filière<span class="text-danger">*</span></label>
+                                                                        <select class="form-select form-control" name="id_filiere" required>
+                                                                            <option value="" disabled selected>Choisissez la Filière</option>
+                                                                            <?php foreach ($filieres as $filiere): ?>
+                                                                                <option value="<?= htmlspecialchars($filiere->id_filiere); ?>">
+                                                                                    <?= htmlspecialchars($filiere->nom_filiere); ?>
+                                                                                </option>
+                                                                            <?php endforeach; ?>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                              
+                                                                   <!-- Total des Frais -->
+                                                            <div class="col-md-3 mb-2" id="total-container" style="display: none;">
+                                                                <div class="form-group">
+                                                                    <label class="form-label">Total des Frais</label>
+                                                                    <input type="number" class="form-control frais-total" id="total-frais" name="total_frais" placeholder="Total des frais" readonly>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="form-label">Somme payée</label>
+                                                                    <input type="number" class="form-control frais-paye" id="montant_paye" name="montant_paye" placeholder="Montant payé" value="0" min="0">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="montant-restant">Somme restante :</label>
+                                                                    <input type="number" class="form-control frais-restant" id="montant-restant" name="montant_restant" readonly>
+                                                                </div>
+                                                            </div>
+                                                            </div>
+                                                        </fieldset>
+                                                        <div class="button-action mt-3">
+                                                            <button type="button"
+                                                                class="btn bg-primary btn-prev me-3"
+                                                                style="color:white">Prev</button>
+                                                            <button class="btn bg-success me-3" type="submit" name="ddddddd"
+                                                                
+                                                                style="color:white;float:right;">Enregistre</button>
+                                    
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -264,11 +388,6 @@
                     </div>
                 </section>
                 <!-- Form wizard with icon tabs section end -->
-
-
-
-
-
             </div>
         </div>
     </div>
@@ -276,9 +395,107 @@
     <?php $this->view("Partials/foot") ?>
     <?php $this->view("Partials/footer") ?>
 
-
-
-
 </body>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const fraisParStatut = {
+        "Regle": 6000,
+        "Cl": 6000,
+        "Proffesionnel": 6000
+    };
 
+    const fraisParTypeProfessionnel = {
+        "Etatique": 6000,
+        "Simple": 6000,
+        "Prive": 6000
+    };
+
+    const fraisFormationParStatut = {
+        "Regle": 0,
+        "Cl": 75000,
+        "Proffesionnel": 100000
+    };
+
+    const fraisFormationParTypeProfessionnel = {
+        "Etatique": 25000,
+        "Simple": 23000,
+        "Prive": 27000
+    };
+
+    const statutSelect = document.getElementById('statut');
+    const typeProfessionnelSelect = document.getElementById('type-professionnel');
+    const fraisInscriptionInput = document.getElementById('frais-inscription');
+    const montantInput = document.getElementById('montant');
+    const montantPayeInput = document.getElementById('montant_paye');
+    const totalFraisInput = document.getElementById('total-frais');
+    const montantRestantInput = document.getElementById('montant-restant');
+    const typeProfContainer = document.getElementById('type-prof-container');
+    const prixContainer = document.getElementById('prix-container');
+    const formationContainer = document.getElementById('formation-container');
+    const totalContainer = document.getElementById('total-container');
+
+    statutSelect.addEventListener('change', function () {
+        const statutSelectionne = this.value;
+
+        if (statutSelectionne === "Proffesionnel") {
+            typeProfContainer.style.display = 'block';
+            prixContainer.style.display = 'none';
+            formationContainer.style.display = 'none';
+            fraisInscriptionInput.value = '';
+            montantInput.value = '';
+        } else {
+            typeProfContainer.style.display = 'none';
+            prixContainer.style.display = 'block';
+            formationContainer.style.display = 'block';
+            fraisInscriptionInput.value = fraisParStatut[statutSelectionne] || 0;
+            montantInput.value = fraisFormationParStatut[statutSelectionne] || 0;
+        }
+        mettreAJourTotal();
+    });
+
+    typeProfessionnelSelect.addEventListener('change', function () {
+        const typeSelectionne = this.value;
+
+        fraisInscriptionInput.value = fraisParTypeProfessionnel[typeSelectionne] || 0;
+        montantInput.value = fraisFormationParTypeProfessionnel[typeSelectionne] || 0;
+
+        prixContainer.style.display = 'block';
+        formationContainer.style.display = 'block';
+
+        mettreAJourTotal();
+    });
+
+    montantPayeInput.addEventListener('input', mettreAJourTotal);
+
+    function mettreAJourTotal() {
+        const fraisInscription = parseFloat(fraisInscriptionInput.value) || 0;
+        const fraisFormation = parseFloat(montantInput.value) || 0;
+        const montantPaye = parseFloat(montantPayeInput.value) || 0;
+        const totalFrais = fraisInscription + fraisFormation;
+
+        totalFraisInput.value = totalFrais;
+        montantRestantInput.value = Math.max(totalFrais - montantPaye, 0);
+
+        totalContainer.style.display = totalFrais > 0 ? 'block' : 'none';
+    }
+});
+document.getElementById('montant_paye').addEventListener('input', function () {
+    const totalFrais = parseFloat(document.getElementById('total-frais').value) || 0;
+    const montantPaye = parseFloat(this.value) || 0;
+    const montantRestant = totalFrais - montantPaye;
+
+    const restantInput = document.getElementById('montant-restant');
+    restantInput.value = montantRestant;
+
+    if (montantRestant > 0) {
+        restantInput.style.backgroundColor = '#f8d7da'; // Rouge pâle
+        restantInput.style.color = '#c62828'; // Texte rouge foncé
+    } else {
+        restantInput.style.backgroundColor = '#d1f7c4'; // Vert pâle
+        restantInput.style.color = '#2e7d32'; // Texte vert foncé
+    }
+});
+
+</script>
+        
 </html>

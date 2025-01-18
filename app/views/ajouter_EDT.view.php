@@ -250,7 +250,7 @@ $("#filiere").change(async function() {
     idSemestre = $("#semestres").val();
     modulesSemestre(idSemestre, infoFiliere);
     infoModule($("#infoModule").val(), infoFiliere);
-    console.log(infoFiliere);
+
 
 })
 

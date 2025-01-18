@@ -156,7 +156,6 @@
 
     
     <script src="<?= ROOT ?>/assets/mon_js/ajax_gVCT_CDI.js"></script>
-    <script src="<?= ROOT ?>/assets/mon_js/validation_enseignant.js"></script>
   
 
 </body>
