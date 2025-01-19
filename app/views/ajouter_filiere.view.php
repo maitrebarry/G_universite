@@ -129,7 +129,7 @@ body {
                                     <div class="card-body card-dashboard">
                                         <div class="container">
                                             <div class="section">
-                                                <div class="semestre d-flex justify-content-center align-items-center">
+                                                <div class="semestre d-flex justify-content-center align-items-center ">
                                                     <label for="idSemestre" class="form-label col-md-4">Selectionner un
                                                         Semestre</label>
                                                     <select id="idSemestre" class="select2 form-control col-md-4"

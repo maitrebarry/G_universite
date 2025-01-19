@@ -48,7 +48,6 @@ class Emploi_du_temp  extends Model
             $requetteTache = "INSERT INTO tache(type_tache, id_horaire, id_jour) VALUES (:typeTache, :idHoraire, :idJour)";
             foreach ($horaires as $horaire) {
                 $this->e(extract($horaire));
-                echo 'Heure : ' . $heureDebut;
                 if (empty(trim($heureDebut)) || empty(trim($heureFin))) {
                     throw new Exception("Données Horaires Invalide");
                 }
@@ -176,7 +175,27 @@ class Emploi_du_temp  extends Model
     public function listeEdts()
     {
         $edts = [];
-        $listeEdts = $this->SelectAllDataOrder(" id_edt", "edt", "id_edt");
+        $listeEdts = $this->SelectAllDataOrder("id_edt", "edt", "id_edt");
+        foreach ($listeEdts as $edt) {
+            $infoEdt = $this->getInfoEdt($edt->id_edt);
+            $edts[] =  $infoEdt;
+        }
+
+        return $edts;
+    }
+
+
+    public function trierListeEdt($idFiliere, $idPromotion = null)
+    {
+        $whereCondition = "id_filiere=? AND id_promotion=?";
+        $whereValues = [$idFiliere, $idPromotion];
+        if ($idPromotion == null || empty($idPromotion)) {
+            $whereCondition = "id_filiere=?";
+            $whereValues = [$idFiliere];
+        }
+        $edts = [];
+
+        $listeEdts = $this->FetchAllSelectWhere("id_edt", "edt", $whereCondition, $whereValues);
         foreach ($listeEdts as $edt) {
             $infoEdt = $this->getInfoEdt($edt->id_edt);
             $edts[] =  $infoEdt;

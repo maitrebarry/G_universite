@@ -57,8 +57,9 @@
                                 <div class="card-header border-bottom-3 border-bottom-black mb-1">
                                     <h4
                                         class="card-title text-bold-700 mb-1 text-success d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <img src="" alt="" class=" img-sm img-thumbnail mr-1" style="width: 150px;">
+                                        <div class=" d-flex align-items-lg-center">
+                                            <img src="<?= ROOT ?>/assets/images/logo.jpg" alt=""
+                                                class=" img-thumbnail mr-1 d-block" style="width: 100px;">
                                             <span>Instut Universitaire de
                                                 Formation Professionnel</span>
                                         </div>
@@ -74,7 +75,6 @@
                                 </div>
                                 <div class="card-content">
                                     <div class="card-body">
-
                                         <div class="row">
                                             <div class="col-sm-3">
                                                 <label class="form-label d-block text-center text-bold-600 mb-1"
@@ -132,16 +132,14 @@
                                                     <?php foreach ($horairesEdt as $horaire): ?>
                                                         <tr>
                                                             <td>
-                                                                <div class='row'>
+                                                                <div class='row m-auto'>
                                                                     <div class='col-sm-6'>
-                                                                        <input type='time' class='form-control'
-                                                                            value="<?php echo $horaire->heure_debut ?>"
-                                                                            disabled>
+                                                                        <h6><?php echo substr($horaire->heure_debut, 0, 5) ?>
+                                                                        </h6>
                                                                     </div>
                                                                     <div class='col-sm-6'>
-                                                                        <input type='time' class='form-control'
-                                                                            value="<?php echo $horaire->heure_fin ?>"
-                                                                            disabled>
+                                                                        <h6><?php echo substr($horaire->heure_fin, 0, 5) ?>
+                                                                        </h6>
                                                                     </div>
                                                                 </div>
                                                             </td>
@@ -149,7 +147,7 @@
                                                                 <td>
                                                                     <?php if (strtoupper($tache->type_tache) != "X"): ?>
                                                                         <span class=" text-center d-block text-bold-6 00">
-                                                                            <?php echo strtoupper($infosEdt->module->nom_module) ?>
+                                                                            <?php echo (strlen($infosEdt->module->nom_module) < 20) ? strtoupper($infosEdt->module->nom_module) : strtoupper($infosEdt->module->sigle_module) ?>
                                                                         </span>
                                                                         <span style="font-size: 11px;"
                                                                             class=" text-muted text-body text-center text-italic d-block">
@@ -161,6 +159,16 @@
                                                         </tr>
                                                     <?php endforeach ?>
                                                 </tbody>
+                                                <?php if (strlen($infosEdt->module->nom_module) >= 20): ?>
+                                                    <caption class=" mt-1">
+                                                        <h6>
+                                                            <span
+                                                                class=" text-bold-700"><?php echo  strtoupper($infosEdt->module->sigle_module) ?></span>
+                                                            <span> =
+                                                                <?php echo strtoupper($infosEdt->module->nom_module) ?></span>
+                                                        </h6>
+                                                    </caption>
+                                                <?php endif ?>
                                             </table>
                                         </div>
 
