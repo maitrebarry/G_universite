@@ -60,19 +60,13 @@ $current_page = basename($_SERVER['REQUEST_URI']); // Récupère le nom de la pa
             </li>
 
             <!-- Enseignants -->
-            <li class="nav-item <?= ($current_page == 'Enseignants') ? 'active' : '' ?>">
+           <li class="nav-item <?= ($current_page == 'Enseignants') ? 'active' : '' ?>">
                 <a class="nav-link" href="<?= ROOT ?>/Enseignants">
-                    <i class="bx bx-droplet"></i>
+                    <i class="bx bx-user"></i> 
                     <span class="menu-title">Enseignants</span>
                 </a>
             </li>
-            <!-- Émargement  -->
-            <li class="nav-item <?= ($current_page == 'Emargements') ? 'active' : '' ?>">
-                <a class="nav-link" href="<?= ROOT ?>/Enseignants/liste_emargement">
-                    <i class="bx bx-droplet"></i>
-                    <span class="menu-title">Émargement </span>
-                </a>
-            </li>
+
             <!-- Emploi du temps -->
             <li class="nav-item <?= ($current_page == 'Emploi_du_temps') ? 'active' : '' ?>">
                 <a class="nav-link" href="<?= ROOT ?>/Emploi_du_temps">

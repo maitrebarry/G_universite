@@ -103,11 +103,11 @@ class Emploi_du_temp  extends Model
             $connection->beginTransaction();
 
             // la recuperation de l'edt
-            $requetteEdt = "SELECT id_edt, date_creation, date_debut, date_fin, statut, id_module, id_promotion,
-                edt.id_enseignant, enseignant_prenom, enseignant_nom, enseignant_telephone, enseignant_grade, 
-                edt.id_salle, nom_salle, capacite_salle FROM edt
-                INNER JOIN enseignants ON edt.id_enseignant=enseignants.enseignant_id
-                INNER JOIN salle ON edt.id_salle=salle.id_salle  WHERE id_edt=? ";
+            $requetteEdt = "SELECT id_edt, date_creation, date_debut, date_fin, statut, id_module, id_promotion, edt.id_enseignant, enseignant_prenom, enseignant_nom, enseignant_telephone, id_grade, edt.id_salle, nom_salle, capacite_salle 
+                FROM edt 
+                INNER JOIN enseignants ON edt.id_enseignant = enseignants.enseignant_id 
+                INNER JOIN salle ON edt.id_salle = salle.id_salle 
+                WHERE id_edt = ?;";
             $resultat = $this->select_data_table_join_where($requetteEdt, [$idEdt]);
             $edt = $resultat[0];
             $idModule = $edt->id_module;
