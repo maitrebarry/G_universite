@@ -1,6 +1,6 @@
 <?php
 class Model extends Database{
-    // protected $pdo;
+    protected $pdo;
 
     // public function __construct() {
     //     $this->pdo = $this->bdd(); // Utilisez bdd() pour obtenir la connexion PDO

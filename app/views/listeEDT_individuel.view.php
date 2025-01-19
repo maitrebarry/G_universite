@@ -91,7 +91,7 @@
                             <div class="breadcrumb-wrapper col-12">
                                 <ol class="breadcrumb p-0 mb-0">
                                     <li class="breadcrumb-item"><a href="<?= ROOT ?>"><i class="bx bx-home-alt"></i></a></li>
-                                    <li class="breadcrumb-item active">Liste D'EDT INDIVUDIEL</li>
+                                    <li class="breadcrumb-item active">LISTE D'EDT INDIVUDIEL</li>
                                 </ol>
                             </div>
                         </div>
@@ -118,6 +118,10 @@
                                     </div>
                                 </div>
                             <?php endif; ?>
+                                <div class=" d-flex align-items-lg-center">
+                                    <img src="<?= ROOT ?>/assets/images/logo.jpg" alt=""
+                                    class=" img-thumbnail mr-1 d-block" style="width: 100px;">                                   
+                                </div>
                             <div class="header">
                                 <h1>INSTITUT UNIVERSITAIRE DE LA FORMATION PROFESSIONNELLE (IUFP)</h1>
                                 <h2>EMPLOI DU TEMPS INDIVIDUEL : du <?= date('d-m-Y', strtotime($date_debut)); ?> au <?= date('d-m-Y', strtotime($date_fin)); ?></h2>
@@ -163,46 +167,75 @@
                                     </div>
                                 </div>
                             </div>
-                           <div class="form-group mb-3 text-center">
-                                <label style="font-weight: bold;">Afficher l'emploi du temps :</label>
-                                <div style="display: flex; justify-content: center; gap: 20px; align-items: center; margin-top: 10px;">
-                                    <div>
-                                        <input type="radio" name="affichage" id="edt_actuel" value="actuel" 
-                                            <?= ($status != 'achevé') ? 'checked' : '' ?> 
-                                            style="transform: scale(1.3); margin-right: 5px;">
-                                        <label for="edt_actuel" style="font-size: 0.7rem; font-style: italic;">Actuel</label>
-                                    </div>
+                          <div class="form-group mb-3 text-center">
+    <label style="font-weight: bold;">Afficher l'emploi du temps :</label>
+    <div style="display: flex; justify-content: center; gap: 20px; align-items: center; margin-top: 10px;">
+        <div>
+            <input type="radio" name="affichage" id="edt_actuel" value="actuel" <?= ($status != 'achevé') ? 'checked' : '' ?> style="transform: scale(1.3); margin-right: 5px;">
+            <label for="edt_actuel" style="font-size: 0.7rem; font-style: italic;">Actuel</label>
+        </div>
+        <div>
+            <input type="radio" name="affichage" id="edt_passe" value="passe" <?= ($status == 'achevé') ? 'checked' : '' ?> style="transform: scale(1.3); margin-right: 5px;">
+            <label for="edt_passe" style="font-size: 0.7rem; font-style: italic;">Passé</label>
+        </div>
+    </div>
+</div>
 
-                                    <div>
-                                        <input type="radio" name="affichage" id="edt_passe" value="passe" 
-                                            <?= ($status == 'achevé') ? 'checked' : '' ?> 
-                                            style="transform: scale(1.3); margin-right: 5px;">
-                                        <label for="edt_passe" style="font-size: 0.7rem; font-style: italic;">Passé</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="formulaire_recherche" class="row" style="display: <?= ($status == 'achevé') ? 'block' : 'none'; ?>;">
-                                <form method="post" action="" class="row">
-                                    <div class="form-group col-3">
-                                        <label for="status">Statut de la période :</label>
-                                            <select name="status" id="status" class="form-control">
-                                                <option value="inachevé" <?= ($status == 'inachevé') ? 'selected' : '' ?>>Inachevé</option>
-                                                <option value="achevé" <?= ($status == 'achevé') ? 'selected' : '' ?> >Achevé</option>
-                                            </select>
-                                    </div>
-                                    <div class="form-group col-3">
-                                        <label for="date_debut">Date de début :</label>
-                                        <input type="date" name="date_debut" id="date_debut" value="<?= htmlspecialchars($date_debut, ENT_QUOTES, 'UTF-8') ?>" class="form-control">
-                                    </div>
-                                    <div class="form-group col-3">
-                                        <label for="date_fin">Date de fin :</label>
-                                        <input type="date" name="date_fin" id="date_fin" value="<?= htmlspecialchars($date_fin, ENT_QUOTES, 'UTF-8') ?>" class="form-control">
-                                    </div>
-                                    <div class="form-group col-3 d-flex align-items-end">
-                                        <button type="submit" class="btn btn-primary w-100">Rechercher</button>
-                                    </div>
-                                </form>
-                            </div>
+<div id="formulaire_recherche" class="row" style="display: <?= ($status == 'achevé') ? 'block' : 'none'; ?>;">
+    <form method="post" action="" class="row">
+        <div class="form-group col-3">
+            <label for="status">Statut de la période :</label>
+            <select name="status" id="status" class="form-control" style="color: <?= ($status == 'achevé') ? 'red' : 'black'; ?>;">
+                <option value="inachevé" <?= ($status == 'inachevé') ? 'selected' : '' ?>>Inachevé</option>
+                <option value="achevé" <?= ($status == 'achevé') ? 'selected' : '' ?>>Achevé</option>
+            </select>
+        </div>
+        <div class="form-group col-3">
+            <label for="date_debut">Date de début :</label>
+            <input type="date" name="date_debut" id="date_debut" value="<?= htmlspecialchars($date_debut, ENT_QUOTES, 'UTF-8') ?>" class="form-control">
+        </div>
+        <div class="form-group col-3">
+            <label for="date_fin">Date de fin :</label>
+            <input type="date" name="date_fin" id="date_fin" value="<?= htmlspecialchars($date_fin, ENT_QUOTES, 'UTF-8') ?>" class="form-control">
+        </div>
+        <div class="form-group col-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">Rechercher</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    const edtActuel = document.getElementById('edt_actuel');
+    const edtPasse = document.getElementById('edt_passe');
+    const formulaireRecherche = document.getElementById('formulaire_recherche');
+    const statusSelect = document.getElementById('status');
+
+    edtActuel.addEventListener('change', () => {
+        if (edtActuel.checked) {
+            formulaireRecherche.style.display = 'none';
+            statusSelect.value = "inachevé";
+            statusSelect.style.color = "black"; // Remet la couleur par défaut
+        }
+    });
+
+    edtPasse.addEventListener('change', () => {
+        if (edtPasse.checked) {
+            formulaireRecherche.style.display = 'block';
+            statusSelect.value = "achevé";
+            statusSelect.style.color = "red"; // Change la couleur en rouge
+        }
+    });
+
+    // Applique la couleur initiale en fonction du statut actuel
+    document.addEventListener('DOMContentLoaded', () => {
+        if (statusSelect.value === "achevé") {
+            statusSelect.style.color = "red";
+        } else {
+            statusSelect.style.color = "black";
+        }
+    });
+</script>
+
                             <div class="table-container">
                                 <table class="table table-bordered">
                                     <thead>
@@ -285,19 +318,6 @@
     <?php $this->view("Partials/foot") ?>
     <?php $this->view("Partials/footer") ?>
     <script src="<?= ROOT ?>/assets/mon_js/sweet_alert_suppression.js"></script>
-    <script>
-        const edtActuel = document.getElementById('edt_actuel');
-        const edtPasse = document.getElementById('edt_passe');
-        const formulaireRecherche = document.getElementById('formulaire_recherche');
-        edtActuel.addEventListener('change', () => {
-            if (edtActuel.checked) {
-                formulaireRecherche.style.display = 'none';
-            }
-        });
-        edtPasse.addEventListener('change', () => {
-            if (edtPasse.checked) {
-                formulaireRecherche.style.display = 'block';
-            }
-        });
-    </script>
+   
+
 </body>

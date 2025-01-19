@@ -1,7 +1,9 @@
 <!-- inclusion du partie header -->
 <?php $this->view("Partials/header") ?>
 
-<body class="vertical-layout vertical-menu-modern boxicon-layout no-card-shadow 2-columns  navbar-sticky footer-static  " data-open="click" data-menu="vertical-menu-modern" data-col="2-columns">
+<body
+    class="vertical-layout vertical-menu-modern boxicon-layout no-card-shadow 2-columns  navbar-sticky footer-static  "
+    data-open="click" data-menu="vertical-menu-modern" data-col="2-columns">
 
     <!-- inclusion du partie header -->
     <?php $this->view("Partials/navbar") ?>
@@ -44,29 +46,23 @@
                                 <div class="card-content">
                                     <div class="card-body">
                                         <p class="mb-1">Filtré par</p>
-                                        <div class="row">
-                                            <div class="col-md-6">
-
+                                        <div class="row ">
+                                            <div class="col-md-6 m-auto">
                                                 <div class="form-group">
-                                                    <label class="form-label" for="single-select ">Filiere</label>
-                                                    <select class="select2 form-control">
-                                                        <option value="square">Square</option>
-                                                        <option value="rectangle">Rectangle</option>
-                                                        <option value="rombo">Rombo</option>
-                                                        <option value="romboid">Romboid</option>
-                                                        <option value="trapeze">Trapeze</option>
-                                                        <option value="traible">Triangle</option>
-                                                        <option value="polygon">Polygon</option>
+                                                    <label class="form-label" for="single-select ">Promotion</label>
+                                                    <select class="select2 form-control" id="id_promotion"
+                                                        name="id_promotion">
+                                                        <option value="">Promotion</option>
+                                                        <?php foreach ($listeFilieres as $listeFiliere): ?>
+                                                        <option
+                                                            value="<?= htmlspecialchars($listeFiliere->id_promotion); ?>">
+                                                            <?= htmlspecialchars($listeFiliere->sigle_filiere."-".$listeFiliere->sigle_semestre ."(".$listeFiliere->annee_universitaire.")"); ?>
+                                                        </option>
+                                                        <?php endforeach; ?>
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="single-select ">Annee</label>
-                                                    <input type="" class="form-control pickadate-months-year" placeholder="Select Date">
 
-                                                </div>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -78,27 +74,24 @@
                             <div class="card card-animated-border-top ">
 
                                 <div class="card-content">
-                                    <a href="<?= ROOT ?>/Etudiants/incrit_etudiant"><button class="btn btn-primary" style="float:right;"><i class="bx bx-plus"></i>&nbsp; Nouveau </button></a>
+                                    <a href="<?= ROOT ?>/Etudiants/incrit_etudiant"><button class="btn btn-primary"
+                                            style="float:right;"><i class="bx bx-plus"></i>&nbsp; Nouveau </button></a>
                                     <div class="card-body card-dashboard">
-
 
                                         <div class="table-responsive">
                                             <table class="table zero-configuration">
                                                 <thead>
                                                     <tr>
                                                         <th>Nom && Prénom</th>
-                                                        <th>statut</th>
+                                                        <th>Matricule</th>
+                                                        <th>Status</th>
+                                                        <th>Filliere</th>
                                                         <th>Diplome</th>
-                                                        <th>Contact</th>
-                                                        <th>MATRICULE</th>
+                                                        <th> Action</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
+                                                <tbody id="table_etudiant">
+
                                                 </tbody>
                                             </table>
                                         </div>
@@ -124,7 +117,38 @@
     <!-- inclusion du partie footer-->
     <?php $this->view("Partials/footer") ?>
     <!-- inclusion du partie footer fin-->
-     
+    <script>
+    $(document).ready(function() {
+        $('#id_promotion').change(function() {
+            const id_promotion = $('#id_promotion').val();
+
+
+            if (id_promotion != null) {
+                $.ajax({
+                    url: '<?=ROOT?>/Etudiants/trier_liste_etudiant',
+                    type: 'POST',
+                    data: {
+                        id_promotion: id_promotion
+                    },
+                    success: function(response) {
+                        // console.log(response);
+                        $('#table_etudiant').html(response);
+
+                    },
+                    error: function(xhr) {
+                        alert("Erreur AJAX : " + xhr.responseText);
+                    }
+                });
+            }
+        });
+
+        // Suppression des lignes du tableau
+        $(document).on('click', '.remove', function(e) {
+            e.preventDefault();
+            $(this).closest("tr").remove();
+        });
+    });
+    </script>
 </body>
 <!-- END: Body-->
 
