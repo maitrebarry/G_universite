@@ -180,7 +180,7 @@ class Filieres extends Controller
 
         $filiereModel = new Filiere();
         $promotions = $filiereModel->listePromotions($idFiliere);
-        $this->view("liste_promotion", ["promotions" => $promotions]);
+        $this->view("liste_promotion", ["promotions" => $promotions, "idFiliere" => $idFiliere]);
     }
     //! Fin de la gestion d'une promotion
 

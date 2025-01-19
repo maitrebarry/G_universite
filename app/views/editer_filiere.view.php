@@ -128,14 +128,14 @@ body {
                                         <?php endif ?>
 
                                         <?php if ($action != 'del'): ?>
-                                        <div class="col-md-3 mb-1">
+                                        <div class="col-md-4 mb-1">
                                             <a href="<?php echo ROOT . '/Filieres/supprimer_element_filiere/' . $filiere->id_filiere ?>"
                                                 class="btn btn-light-danger d-block actionEdit" id="delButton">
                                                 <i class="bx bx-trash mr-1"></i> Supprimer
                                                 ELement</a>
                                         </div>
                                         <?php endif ?>
-                                        <div class="col-md-4 mb-1">
+                                        <div class="col-md-3 mb-1">
                                             <a href="<?= ROOT ?>/Filieres/apercu_Filiere/<?php echo $filiere->id_filiere ?>"
                                                 class="btn btn-light-secondary d-block actionEdit" id="delButton">
                                                 <i class="bx bx-show mr-1"></i>Aperçu

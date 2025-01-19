@@ -220,48 +220,56 @@ td {
             </div>
         </div>
 
-        <div class="modal-primary mr-1 mb-1 d-inline-block">
-            <div class="modal fade text-left" id="menuConfig" tabindex="-1" role="dialog"
+        <div class="modal-primary mr-1 mb-1 d-inline-block ">
+            <div class=" modal fade text-left" id="menuConfig" tabindex="-1" role="dialog"
                 aria-labelledby="myModalLabel160" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
                     <div class="modal-content">
-
                         <div class="modal-body">
-                            <div class="row">
-                                <div class=" col-12 row">
+                            <div class=" row">
+                                <div class=" col-12 row mb-1">
                                     <h6 class=" col-12 text-center">Models Edt</h6>
-                                    <div class="col-12 border p-2 d-flex justify-content-center">
+                                    <div class="col-12 border p-2 d-flex justify-content-center ">
 
-                                        <div style="width: 200px" class="cursor-pointer">
+                                        <div style="width: 300px" class="cursor-pointer ">
                                             <span class=" text-center">Horizontal</span>
-                                            <img class="img img-thumbnail d-block"
-                                                src="<?= ROOT ?>/assets/images/model-row.png" alt="model-row">
+                                            <img class="img img-thumbnail d-block border border-primary"
+                                                src="<?= ROOT ?>/assets/images/model-row.png" alt="model-row"
+                                                id="model-row" style="border-width: 2px !important;"
+                                                data-model="edt-row">
                                         </div>
 
-                                        <div style=" width:200px; " class="ml-2 cursor-pointer">
+                                        <div style=" width:300px; " class="ml-2 cursor-pointer">
                                             <span class=" text-center">Vertical</span>
-                                            <img class="img img-thumbnail d-block"
-                                                src="<?= ROOT ?>/assets/images/model-column.png" alt="model-column">
+                                            <img class="img img-thumbnail d-block border"
+                                                src="<?= ROOT ?>/assets/images/model-column.png" alt="model-column"
+                                                id="model-column" style="border-width: 2px !important;"
+                                                data-model="edt-column">
                                         </div>
                                     </div>
                                 </div>
                                 <div class=" col-12 row">
                                     <h6 class=" col-12 text-center">Type de Cours</h6>
-                                    <div class="col-12 border p-2 d-flex justify-content-center">
+                                    <div class="col-12 border d-flex justify-content-center p-2">
 
-                                        <div class="checkbox mr-4"> <input type="checkbox" name="" id="cm"
-                                                class=" checkbox__input" checked>
-                                            <label for="cm"></label>CM
+                                        <div class=" radio radio-primary mr-4"> <input type="radio" name="type" id="cm"
+                                                class="type" checked value="0">
+                                            <label for="cm">CM</label>
                                         </div>
 
-                                        <div class="checkbox mr-4"> <input type="checkbox" name="" id="td"
-                                                class=" checkbox__input">
-                                            <label for="td"></label>TD
+                                        <div class="radio radio-primary mr-4"> <input type="radio" name="type" id="td"
+                                                class="type" value="1">
+                                            <label for="td">TD</label>
                                         </div>
 
-                                        <div class="checkbox mr-4"> <input type="checkbox" name="" id="tp"
-                                                class=" checkbox__input">
-                                            <label for="tp"></label>TP
+                                        <div class="radio radio-primary form-group mr-4"> <input type="radio"
+                                                name="type" id="tp" class="type" value="2">
+                                            <label for="tp">TP</label>
+                                        </div>
+
+                                        <div class="radio radio-primary form-group mr-4"> <input type="radio"
+                                                name="type" id="all" class="type" value="3">
+                                            <label for="all">All</label>
                                         </div>
 
                                     </div>
@@ -271,7 +279,7 @@ td {
                         <div class="modal-footer">
                             <button type="button" class="btn  btn-link" data-dismiss="modal">
                                 <i class="bx bx-x d-block d-sm-none"></i>
-                                <span class="d-none d-sm-block">Annuler</span>
+                                <span class="d-none d-sm-block">Fermer</span>
                             </button>
                         </div>
 
@@ -348,5 +356,36 @@ $(document).ready(async function() {
     idSemestre = $("#promotions option:selected").data("id");
     modulesSemestre(idSemestre, infoFiliere);
     infoModule($("#infoModule").val(), infoFiliere);
+})
+
+
+$('#model-row').click(function() {
+    $('#model-column').removeClass('border-primary');
+    $(this).addClass("border-primary");
+    $(this).css('transition', 'all 0.5s');
+    const heuresModule = calculerHeuresModuleEdt();
+    const model = $(this).data('model');
+    const type = parseInt($('input[name="type"]:checked').val(), 10);
+    genererEdt(heuresModule, model, type);
+
+
+})
+$('#model-column').click(function() {
+    $('#model-row').removeClass('border-primary');
+    $(this).addClass("border-primary");
+    $(this).css('transition', 'all 0.5s');
+    const heuresModule = calculerHeuresModuleEdt();
+    const model = $(this).data('model');
+    const type = parseInt($('input[name="type"]:checked').val(), 10);
+    genererEdt(heuresModule, model, type);
+})
+
+$('.type').click(function() {
+    const heuresModule = calculerHeuresModuleEdt();
+    const model = ($('#model-row').hasClass("border-primary")) ? $('#model-row').data('model') : $(
+        '#model-column').data('model')
+    const type = parseInt($('input[name="type"]:checked').val(), 10);
+
+    genererEdt(heuresModule, model, type);
 })
 </script>
