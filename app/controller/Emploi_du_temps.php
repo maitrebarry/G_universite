@@ -10,6 +10,17 @@ class Emploi_du_temps extends Controller
         $this->view('liste_EDT', ['edts' => $edts, 'filieres' => $filieres]);
     }
 
+    public function trier_liste_edt()
+    {
+        if (isset($_POST['action']) && $_POST['action'] == "trier_edt") {
+            @$idFiliere = $_POST['idFiliere'];
+            @$idPromotion = $_POST['idPromotion'];
+            $edtModel = new Emploi_du_temp();
+            $edts = $edtModel->trierListeEdt($idFiliere, $idPromotion);
+            $this->view("post_liste_edt", ["edts" => $edts]);
+        }
+    }
+
     public function ajouter_EDT($idFiliere = null)
     {
         if (isset($_POST['action']) && $_POST['action'] === "ajouter_EDT") {

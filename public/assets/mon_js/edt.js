@@ -1,10 +1,11 @@
+const ROOT = "HTTP://localhost/G_universite/public/Emploi_du_temps";
 // Contantes pour les heures de l'edt
-const heureEdt = {
+const horaireEdt = {
   "edt-row": {
     1: { heureDebut: "08:00", heureFin: "10:00" },
-    2: { heureDebut: "10:15", heureFin: "13:15" },
+    2: { heureDebut: "10:15", heureFin: "12:15" },
     3: { heureDebut: "14:00", heureFin: "16:00" },
-    4: { heureDebut: "16:00", heureFin: "19:00" },
+    4: { heureDebut: "16:00", heureFin: "18:00" },
   },
   "edt-column": {
     1: { heureDebut: "08:00", heureFin: "10:00" },
@@ -15,7 +16,86 @@ const heureEdt = {
 };
 const typeEdt = ["cm", "td", "tp", "tpe"];
 
-function addHeure(heureDebut, heureFin, type) {
+function calculerHeuresModuleEdt() {
+  const heureTotal = parseInt($("#vht").val(), 10);
+  const heureCm = parseInt($(".cm").val(), 10);
+  const heureTd = parseInt($(".td").val(), 10);
+  const heureTp = parseInt($(".tp").val(), 10);
+  const heureTpe = parseInt($(".tpe").val(), 10);
+  const heuresModule = {
+    heureCm: heureCm,
+    heureTd: heureTd,
+    heureTp: heureTp,
+    heureTpe: heureTpe,
+    heureTotal: heureTotal,
+  };
+  return heuresModule;
+}
+
+function genererCoursEdt(type) {
+  let coursJour;
+  if (type.toUpperCase() !== "all") {
+    coursJour = {
+      l: type,
+      m: type,
+      mer: type,
+      j: type,
+      v: type,
+    };
+  }
+  return coursJour;
+}
+
+function genererEdt(heuresModule, model = "edt-row", type = 0) {
+  document.querySelector("#table-extended-chechbox tbody").innerHTML = "";
+  heureTotal = heuresModule.heureTotal;
+  horaire = horaireEdt[model];
+  if (model == "edt-row") {
+    if (typeEdt[type].toUpperCase() !== "all") {
+      ligne = heureTotal / 8 > 4 ? 4 : heureTotal / 8;
+
+      for (let index = 1; index <= ligne; index++) {
+        const horaireDebut = horaire[index].heureDebut;
+        const horaireFin = horaire[index].heureFin;
+        coursJour = genererCoursEdt(typeEdt[type]);
+
+        addHeure(horaireDebut, horaireFin, coursJour);
+      }
+    }
+  } else if (model == "edt-column") {
+    if (typeEdt[type].toUpperCase() !== "all") {
+      let coursJour = {
+        l: typeEdt[type],
+        m: typeEdt[type],
+        mer: typeEdt[type],
+        j: typeEdt[type],
+        v: typeEdt[type],
+      };
+      // nbrCm = heuresModule.heureCm / 2;
+      // nbrTd = heuresModule.heureTd / 2;
+      // nbrTp = heuresModule.heureTp / 2;
+      // nbrTpe = heuresModule.heureTpe / 2;
+
+      for (let index = 1; index <= 4; index++) {
+        const horaireDebut = horaire[index].heureDebut;
+        const horaireFin = horaire[index].heureFin;
+        nbrTotal = Math.ceil(heureTotal / 8);
+        for (let clee in coursJour) {
+          if (nbrTotal-- <= 0) {
+            coursJour[clee] = "x";
+          }
+          if (heureTotal % 8 != 0 && index > heureTotal / 8 && nbrTotal == 0) {
+            coursJour[clee] = "x";
+          }
+        }
+
+        addHeure(horaireDebut, horaireFin, coursJour);
+      }
+    }
+  }
+}
+
+function addHeure(horaireDebut, horaireFin, coursJour) {
   var newRow = document.createElement("tr");
   isExams =
     $("#table-extended-chechbox tbody").find("tr").length === 0
@@ -26,120 +106,120 @@ function addHeure(heureDebut, heureFin, type) {
         <td>
             <div class='row'>
                 <div class='col-sm-6'>
-                    <input type='time' class='form-control heureDebut'>
+                    <input type='time' class='form-control horaireDebut'>
                 </div>
                 <div class='col-sm-6'>
-                    <input type='time' class='form-control heureFin'>
+                    <input type='time' class='form-control horaireFin'>
                 </div>
             </div>
         </td>
         <td>
             <select class='select2 form-control tache'>
                 <option value='x' class='text-center' ${
-                  type == "x" ? "selected" : ""
+                  coursJour.l == "x" ? "selected" : ""
                 }>X</option>
                 <option value='cm' class='text-center' ${
-                  type == "cm" ? "selected" : ""
+                  coursJour.l == "cm" ? "selected" : ""
                 }>CM</option>
                 <option value='td' class='text-center' ${
-                  type == "td" ? "selected" : ""
+                  coursJour.l == "td" ? "selected" : ""
                 }>TD</option>
                 <option value='tp' class='text-center' ${
-                  type == "tp" ? "selected" : ""
+                  coursJour.l == "tp" ? "selected" : ""
                 }>TP</option>
                 <option value='tpe' class='text-center' ${
-                  type == "tpe" ? "selected" : ""
+                  coursJour.l == "tpe" ? "selected" : ""
                 }>TPE</option>
                 <option value='examen' class='text-center' ${
-                  type == "examen" ? "selected" : ""
+                  coursJour.l == "examen" ? "selected" : ""
                 }>EXAMEN</option>
             </select>
         </td>
         <td>
             <select class='select2 form-control tache'>
                 <option value='x' class='text-center' ${
-                  type == "x" ? "selected" : ""
+                  coursJour.m == "x" ? "selected" : ""
                 }>X</option>
                 <option value='cm' class='text-center' ${
-                  type == "cm" ? "selected" : ""
+                  coursJour.m == "cm" ? "selected" : ""
                 }>CM</option>
                 <option value='td' class='text-center' ${
-                  type == "td" ? "selected" : ""
+                  coursJour.m == "td" ? "selected" : ""
                 }>TD</option>
                 <option value='tp' class='text-center' ${
-                  type == "tp" ? "selected" : ""
+                  coursJour.m == "tp" ? "selected" : ""
                 }>TP</option>
                 <option value='tpe' class='text-center' ${
-                  type == "tpe" ? "selected" : ""
+                  coursJour.m == "tpe" ? "selected" : ""
                 }>TPE</option>
                 <option value='examen' class='text-center' ${
-                  type == "examen" ? "selected" : ""
+                  coursJour.m == "examen" ? "selected" : ""
                 }>EXAMEN</option>
             </select>
         </td>
         <td>
             <select class='select2 form-control tache'>
                 <option value='x' class='text-center' ${
-                  type == "x" ? "selected" : ""
+                  coursJour.mer == "x" ? "selected" : ""
                 }>X</option>
                 <option value='cm' class='text-center' ${
-                  type == "cm" ? "selected" : ""
+                  coursJour.mer == "cm" ? "selected" : ""
                 }>CM</option>
                 <option value='td' class='text-center' ${
-                  type == "td" ? "selected" : ""
+                  coursJour.mer == "td" ? "selected" : ""
                 }>TD</option>
                 <option value='tp' class='text-center' ${
-                  type == "tp" ? "selected" : ""
+                  coursJour.mer == "tp" ? "selected" : ""
                 }>TP</option>
                 <option value='tpe' class='text-center' ${
-                  type == "tpe" ? "selected" : ""
+                  coursJour.mer == "tpe" ? "selected" : ""
                 }>TPE</option>
                 <option value='examen' class='text-center' ${
-                  type == "examen" ? "selected" : ""
+                  coursJour.mer == "examen" ? "selected" : ""
                 }>EXAMEN</option>
             </select>
         </td>
         <td>
             <select class='select2 form-control tache'>
                 <option value='x' class='text-center' ${
-                  type == "x" ? "selected" : ""
+                  coursJour.j == "x" ? "selected" : ""
                 }>X</option>
                 <option value='cm' class='text-center' ${
-                  type == "cm" ? "selected" : ""
+                  coursJour.j == "cm" ? "selected" : ""
                 }>CM</option>
                 <option value='td' class='text-center' ${
-                  type == "td" ? "selected" : ""
+                  coursJour.j == "td" ? "selected" : ""
                 }>TD</option>
                 <option value='tp' class='text-center' ${
-                  type == "tp" ? "selected" : ""
+                  coursJour.j == "tp" ? "selected" : ""
                 }>TP</option>
                 <option value='tpe' class='text-center' ${
-                  type == "tpe" ? "selected" : ""
+                  coursJour.j == "tpe" ? "selected" : ""
                 }>TPE</option>
                 <option value='examen' class='text-center' ${
-                  type == "examen" ? "selected" : ""
+                  coursJour.j == "examen" ? "selected" : ""
                 }>EXAMEN</option>
             </select>
         </td>
         <td>
             <select class='select2 form-control tache'>
                 <option value='x' class='text-center' ${
-                  type == "x" ? "selected" : ""
+                  coursJour.v == "x" ? "selected" : ""
                 }>X</option>
                 <option value='cm' class='text-center' ${
-                  type == "cm" ? "selected" : ""
+                  coursJour.v == "cm" ? "selected" : ""
                 }>CM</option>
                 <option value='td' class='text-center' ${
-                  type == "td" ? "selected" : ""
+                  coursJour.v == "td" ? "selected" : ""
                 }>TD</option>
                 <option value='tp' class='text-center' ${
-                  type == "tp" ? "selected" : ""
+                  coursJour.v == "tp" ? "selected" : ""
                 }>TP</option>
                 <option value='tpe' class='text-center' ${
-                  type == "tpe" ? "selected" : ""
+                  coursJour.v == "tpe" ? "selected" : ""
                 }>TPE</option>
                 <option value='examen' class='text-center' ${
-                  type == "examen" ? "selected" : ""
+                  coursJour.v == "examen" ? "selected" : ""
                 }>EXAMEN</option>
             </select>
         </td>
@@ -160,8 +240,8 @@ function addHeure(heureDebut, heureFin, type) {
   row = document.querySelector(
     "#table-extended-chechbox tbody"
   ).lastElementChild;
-  row.querySelector(".heureDebut").value = heureDebut;
-  row.querySelector(".heureFin").value = heureFin;
+  row.querySelector(".horaireDebut").value = horaireDebut;
+  row.querySelector(".horaireFin").value = horaireFin;
 }
 
 function removeHeure() {
@@ -170,21 +250,6 @@ function removeHeure() {
   if (rows.length > 1) {
     // Empêche la suppression de la première ligne
     tableBody.removeChild(rows[rows.length - 1]);
-  }
-}
-
-function genererEdt(heureTotal, model = "edt-row", type = 1) {
-  document.querySelector("#table-extended-chechbox tbody").innerHTML = "";
-  const ligne = heureTotal / 8;
-  heure = heureEdt[model];
-  // const nbrCm = parseInt($(".cm").val(), 10);
-  // const nbrTd = parseInt($(".td").val(), 10);
-  // const nbrTp = parseInt($(".tp").val(), 10);
-
-  for (let index = 1; index < ligne; index++) {
-    const heureDebut = heure[index].heureDebut;
-    const heureFin = heure[index].heureFin;
-    addHeure(heureDebut, heureFin, typeEdt[type]);
   }
 }
 
@@ -209,7 +274,6 @@ function formatAcademicYear(event) {
   }
 }
 
-const ROOT = "HTTP://localhost/G_universite/public/Emploi_du_temps";
 async function infosFiliere(idFiliere) {
   try {
     response = await $.ajax({
@@ -295,12 +359,31 @@ function infoModule(idModule, infoFiliere) {
         $(".td").val(module.td);
         $(".tp").val(module.tp);
         $(".tpe").val(module.tpe);
+
+        heureCm = parseInt(module.cm, 10);
+        heureTd = parseInt(module.td, 10);
+        heureTp = parseInt(module.tp, 10);
+        heureTpe = parseInt(module.tpe, 10);
+
         const heureTotal =
           parseInt(module.cm, 10) +
           parseInt(module.td, 10) +
-          parseInt(module.tp, 10) +
-          parseInt(module.tpe, 10);
-        genererEdt(heureTotal);
+          parseInt(module.tp, 10);
+        $(".vht").val(heureTotal);
+
+        const heuresModule = {
+          heureCm: heureCm,
+          heureTd: heureTd,
+          heureTp: heureTp,
+          heureTpe: heureTpe,
+          heureTotal: heureTotal,
+        };
+
+        const model = $("#model-row").hasClass("border-primary")
+          ? $("#model-row").data("model")
+          : $("#model-column").data("model");
+        const type = parseInt($('input[name="type"]:checked').val(), 10);
+        genererEdt(heuresModule, model, type);
       }
     });
   } else {
@@ -335,8 +418,8 @@ function ajouterEdt(url = ROOT + "/ajouter_EDT", action = "ajouter_EDT") {
 
   // La recuperation des horaires et des taches
   $("#table-extended-chechbox tbody tr").each(function () {
-    const heureDebut = $(this).find(".heureDebut").val();
-    const heureFin = $(this).find(".heureFin").val();
+    const heureDebut = $(this).find(".horaireDebut").val();
+    const heureFin = $(this).find(".horaireFin").val();
     const taches = [];
     $(this)
       .find("td")
@@ -376,7 +459,8 @@ function ajouterEdt(url = ROOT + "/ajouter_EDT", action = "ajouter_EDT") {
 
       // location.reload();
       document.getElementById("message").innerHTML = response;
-      if (response.includes("success") && action === "ajouter_EDT") {
+      if (response.includes("success")) {
+        document.querySelector("#table-extended-chechbox tbody").innerHTML = "";
       }
       // Réinitialiser après sauvegarde
 
@@ -385,6 +469,29 @@ function ajouterEdt(url = ROOT + "/ajouter_EDT", action = "ajouter_EDT") {
         behavior: "smooth",
       });
     },
+    error: function (error) {
+      console.log(error.status);
+    },
+  });
+  // Fin de l'envoi des données avec Ajax
+}
+
+// Trier la liste des edts
+function trierListeEdt(idFiliere, idPromotion) {
+  // Debut de l'envoi des données avec Ajax
+  $.ajax({
+    method: "POST",
+    url: ROOT + "/trier_liste_edt",
+    data: {
+      action: "trier_edt",
+      idFiliere: idFiliere,
+      idPromotion: idPromotion,
+    },
+    success: function (response) {
+      console.log(response);
+      $("#listeEdts").html(response);
+    },
+
     error: function (error) {
       console.log(error.status);
     },

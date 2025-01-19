@@ -54,32 +54,23 @@
                                                 <div class="col-1">
                                                     <i class="bx bx-dialpad text-primary"></i>
                                                 </div>
-                                                <div class="col-3 ">
+                                                <div class="col-4 ">
                                                     <select class="select2 form-control text-center" id="filieres">
                                                         <option value="0" disabled selected>Filieres</option>
                                                         <?php foreach ($filieres as $filiere): ?>
-                                                            <option value="<?php echo $filiere->id_filiere ?>">
-                                                                <?php echo strtoupper($filiere->sigle_filiere) ?>
-                                                            </option>
+                                                        <option value="<?php echo $filiere->id_filiere ?>">
+                                                            <?php echo strtoupper($filiere->sigle_filiere) ?>
+                                                        </option>
                                                         <?php endforeach ?>
                                                     </select>
                                                 </div>
-                                                <div class="col-4 col-md-3">
-                                                    <select class="select2 form-control text-center" id="semestres">
-                                                        <option value="0" disabled selected>Semestres</option>
+                                                <div class="col-4">
+                                                    <select class="select2 form-control text-center" id="promotions">
+                                                        <option value="" disabled selected>Promotions
+                                                        </option>
                                                     </select>
                                                 </div>
-                                                <div class="col-4 col-md-3">
-                                                    <select class="select2 form-control text-center"
-                                                        id="anneeUniversitaires">
-                                                        <option value="0" disabled selected>Annee universitaire</option>
-                                                        <?php foreach ($filieres as $filiere): ?>
-                                                            <option value="<?php echo $filiere->id_filiere ?>">
-                                                                <?php echo strtoupper($filiere->nom_filiere . '(' . $filiere->sigle_filiere . ')') ?>
-                                                            </option>
-                                                        <?php endforeach ?>
-                                                    </select>
-                                                </div>
+
 
 
                                             </div>
@@ -104,67 +95,67 @@
                                                         <th>Action</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody>
+                                                <tbody id="listeEdts">
                                                     <?php foreach ($edts as $edt): ?>
-                                                        <?php
+                                                    <?php
                                                         $edtInfo = $edt->edt;
                                                         $promotion = $edt->promotion;
                                                         $module = $edt->module;
                                                         ?>
-                                                        <tr style="font-size: 13px;">
-                                                            <td class="h6 d-flex" style="font-weight: bolder;">
-                                                                <?php if ($edtInfo->statut == 0): ?>
-                                                                    <div class="badge badge-warning badge-icon">
-                                                                        <span>x</span>
-                                                                    </div>
-                                                                <?php endif ?>
-                                                                <?php if ($edtInfo->statut == 1): ?>
-                                                                    <div class="badge badge-success badge-icon">
-                                                                        <span>v</span>
-                                                                    </div>
-                                                                <?php endif ?>
-                                                                <span
-                                                                    class="px-1"><?php echo strtoupper($promotion->sigle_filiere) ?></span>
-                                                            </td>
-                                                            <td>
-                                                                <?php echo strtoupper($promotion->sigle_filiere . '-' . $promotion->sigle_semestre . '( ' . $promotion->annee_universitaire . ' )') ?>
-                                                            </td>
-                                                            <td>
-                                                                <?php echo strtoupper($module->nom_module) ?>
-                                                            </td>
-                                                            <td class="h6 text-bold-700 text-italic"
-                                                                style="font-size: 13px;">
-                                                                <?php echo strtoupper($edtInfo->enseignant_prenom . ' ' . $edtInfo->enseignant_nom) ?>
-                                                            </td>
+                                                    <tr style="font-size: 13px;">
+                                                        <td class="h6 d-flex" style="font-weight: bolder;">
+                                                            <?php if ($edtInfo->statut == 0): ?>
+                                                            <div class="badge badge-warning badge-icon">
+                                                                <span>x</span>
+                                                            </div>
+                                                            <?php endif ?>
+                                                            <?php if ($edtInfo->statut == 1): ?>
+                                                            <div class="badge badge-success badge-icon">
+                                                                <span>v</span>
+                                                            </div>
+                                                            <?php endif ?>
+                                                            <span
+                                                                class="px-1"><?php echo strtoupper($promotion->sigle_filiere) ?></span>
+                                                        </td>
+                                                        <td>
+                                                            <?php echo strtoupper($promotion->sigle_filiere . '-' . $promotion->sigle_semestre . '( ' . $promotion->annee_universitaire . ' )') ?>
+                                                        </td>
+                                                        <td>
+                                                            <?php echo strtoupper($module->nom_module) ?>
+                                                        </td>
+                                                        <td class="h6 text-bold-700 text-italic"
+                                                            style="font-size: 13px;">
+                                                            <?php echo strtoupper($edtInfo->enseignant_prenom . ' ' . $edtInfo->enseignant_nom) ?>
+                                                        </td>
 
-                                                            <td>
-                                                                <?php echo strtoupper($edtInfo->nom_salle) ?>
-                                                            </td>
-                                                            <td>
-                                                                <div class="badge badge-light-primary mr-1 mb-1">
-                                                                    <?php echo strtoupper($edtInfo->date_debut) ?>
+                                                        <td>
+                                                            <?php echo strtoupper($edtInfo->nom_salle) ?>
+                                                        </td>
+                                                        <td>
+                                                            <div class="badge badge-light-primary mr-1 mb-1">
+                                                                <?php echo strtoupper($edtInfo->date_debut) ?>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-center dt-no-sorting">
+                                                            <div class="dropdown">
+                                                                <span
+                                                                    class="bx bx-dots-horizontal-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer"
+                                                                    data-toggle="dropdown" aria-haspopup="true"
+                                                                    aria-expanded="false" role="menu">
+                                                                </span>
+                                                                <div class="dropdown-menu dropdown-menu-right">
+                                                                    <a class="dropdown-item"
+                                                                        href="<?= ROOT ?>/Emploi_du_temps/apercu_EDT/<?php echo $edtInfo->id_edt ?>">
+                                                                        <i class="bx bx-edit-alt mr-1"></i> Aperçu
+                                                                    </a>
+                                                                    <a class="dropdown-item" href="#"><i
+                                                                            class="bx bx-edit-alt mr-1"></i> Editer</a>
+                                                                    <a class="dropdown-item" href="#"><i
+                                                                            class="bx bx-trash mr-1"></i> Supprimer</a>
                                                                 </div>
-                                                            </td>
-                                                            <td class="text-center dt-no-sorting">
-                                                                <div class="dropdown">
-                                                                    <span
-                                                                        class="bx bx-dots-horizontal-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer"
-                                                                        data-toggle="dropdown" aria-haspopup="true"
-                                                                        aria-expanded="false" role="menu">
-                                                                    </span>
-                                                                    <div class="dropdown-menu dropdown-menu-right">
-                                                                        <a class="dropdown-item"
-                                                                            href="<?= ROOT ?>/Emploi_du_temps/apercu_EDT/<?php echo $edtInfo->id_edt ?>">
-                                                                            <i class="bx bx-edit-alt mr-1"></i> Aperçu
-                                                                        </a>
-                                                                        <a class="dropdown-item" href="#"><i
-                                                                                class="bx bx-edit-alt mr-1"></i> Editer</a>
-                                                                        <a class="dropdown-item" href="#"><i
-                                                                                class="bx bx-trash mr-1"></i> Supprimer</a>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
                                                     <?php endforeach ?>
                                                 </tbody>
 
@@ -196,13 +187,17 @@
 <!-- END: Body-->
 <script src="<?= ROOT ?>/assets/mon_js/edt.js"></script>
 <script>
-    var infoFiliere = [];
-    $("#filieres").change(async function() {
+var infoFiliere = [];
+$("#filieres").change(async function() {
 
-        infoFiliere = await infosFiliere($(this).val());
-        semestresFiliere(infoFiliere);
+    infoFiliere = await infosFiliere($(this).val());
+    promotionsFiliere(infoFiliere);
+    trierListeEdt($(this).val(), $("#promotions").val());
 
-    })
+})
+$("#promotions").change(async function() {
+    await trierListeEdt($("#filieres").val(), $(this).val());
+})
 </script>
 
 </html>

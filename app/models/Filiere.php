@@ -408,8 +408,8 @@ class Filiere  extends Model
                 throw new Exception("Filiere Introuvable : !Veuillez bien verifier vos données");
             }
 
-            $isPromotionExiste = $this->user_verify("annee_universitaire", "promotion", $anneeUniversitaire);
-            if ($isPromotionExiste > 0) {
+            $isPromotionExiste = $this->FetchSelectWhere("*", "promotion", "annee_universitaire=? AND id_filiere=?", [$anneeUniversitaire, $idFiliere]);
+            if ($isPromotionExiste != null || !empty($isPromotionExiste)) {
                 throw new Exception("Repetition de Promotion : !Cette filière a dejà la promotion $anneeUniversitaire");
             }
 
@@ -422,16 +422,16 @@ class Filiere  extends Model
             ]);
             if (!$isPromotionAdd) {
                 $this->set_flash("Erreur de Connection à la basse de donnés : !Veuillez ressayer plus tard");
-                $this->redirect("Filieres/");
+                $this->redirect("Filieres/liste_promotion/$idFiliere");
                 return;
             }
 
             $this->set_flash("La promotion a été ajouter avec succès", "success");
-            $this->redirect("Filieres/");
+            $this->redirect("Filieres/liste_promotion/$idFiliere");
             return;
         } catch (Exception $e) {
             $this->set_flash($e->getMessage(), "warning");
-            $this->redirect("Filieres/");
+            $this->redirect("Filieres/liste_promotion/$idFiliere");
             return;
         }
     }
