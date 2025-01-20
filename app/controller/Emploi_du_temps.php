@@ -21,6 +21,7 @@ class Emploi_du_temps extends Controller
         }
     }
 
+
     public function ajouter_EDT($idFiliere = null)
     {
         if (isset($_POST['action']) && $_POST['action'] === "ajouter_EDT") {

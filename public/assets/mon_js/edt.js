@@ -1,17 +1,17 @@
 const ROOT = "HTTP://localhost/G_universite/public/Emploi_du_temps";
 // Contantes pour les heures de l'edt
 const horaireEdt = {
-  "edt-row": {
+  simple: {
     1: { heureDebut: "08:00", heureFin: "10:00" },
     2: { heureDebut: "10:15", heureFin: "12:15" },
     3: { heureDebut: "14:00", heureFin: "16:00" },
     4: { heureDebut: "16:00", heureFin: "18:00" },
   },
-  "edt-column": {
+  complexe: {
     1: { heureDebut: "08:00", heureFin: "10:00" },
-    2: { heureDebut: "10:15", heureFin: "12:15" },
+    2: { heureDebut: "10:15", heureFin: "13:15" },
     3: { heureDebut: "14:00", heureFin: "16:00" },
-    4: { heureDebut: "16:00", heureFin: "18:00" },
+    4: { heureDebut: "16:00", heureFin: "19:00" },
   },
 };
 const typeEdt = ["cm", "td", "tp", "tpe"];
@@ -41,6 +41,7 @@ function genererCoursEdt(type) {
       mer: type,
       j: type,
       v: type,
+      s: type,
     };
   }
   return coursJour;
@@ -49,7 +50,7 @@ function genererCoursEdt(type) {
 function genererEdt(heuresModule, model = "edt-row", type = 0) {
   document.querySelector("#table-extended-chechbox tbody").innerHTML = "";
   heureTotal = heuresModule.heureTotal;
-  horaire = horaireEdt[model];
+  horaire = heureTotal <= 40 ? horaireEdt["simple"] : horaireEdt["complexe"];
   if (model == "edt-row") {
     if (typeEdt[type].toUpperCase() !== "all") {
       ligne = heureTotal / 8 > 4 ? 4 : heureTotal / 8;
@@ -70,11 +71,8 @@ function genererEdt(heuresModule, model = "edt-row", type = 0) {
         mer: typeEdt[type],
         j: typeEdt[type],
         v: typeEdt[type],
+        s: typeEdt[type],
       };
-      // nbrCm = heuresModule.heureCm / 2;
-      // nbrTd = heuresModule.heureTd / 2;
-      // nbrTp = heuresModule.heureTp / 2;
-      // nbrTpe = heuresModule.heureTpe / 2;
 
       for (let index = 1; index <= 4; index++) {
         const horaireDebut = horaire[index].heureDebut;
@@ -97,8 +95,10 @@ function genererEdt(heuresModule, model = "edt-row", type = 0) {
 
 function addHeure(horaireDebut, horaireFin, coursJour) {
   var newRow = document.createElement("tr");
+  heureTotal = calculerHeuresModuleEdt().heureTotal;
   isExams =
-    $("#table-extended-chechbox tbody").find("tr").length === 0
+    $("#table-extended-chechbox tbody").find("tr").length === 0 &&
+    heureTotal <= 40
       ? "selected"
       : "";
 
@@ -226,11 +226,21 @@ function addHeure(horaireDebut, horaireFin, coursJour) {
        
         <td>
             <select class='select2 form-control tache'>
-                <option value='x' class='text-center'>X</option>
-                <option value='cm' class='text-center'>CM</option>
-                <option value='td' class='text-center'>TD</option>
-                <option value='tp' class='text-center'>TP</option>
-                <option value='tpe' class='text-center'>TPE</option>
+                <option value='x' class='text-center' ${
+                  coursJour.s == "x" && heureTotal > 40 ? "selected" : ""
+                }>X</option>
+                <option value='cm' class='text-center' ${
+                  coursJour.s == "cm" && heureTotal > 40 ? "selected" : ""
+                }>CM</option>
+                <option value='td' class='text-center' ${
+                  coursJour.s == "td" && heureTotal > 40 ? "selected" : ""
+                }>TD</option>
+                <option value='tp' class='text-center' ${
+                  coursJour.s == "tp" && heureTotal > 40 ? "selected" : ""
+                }>TP</option>
+                <option value='tpe' class='text-center' ${
+                  coursJour.s == "tpe" && heureTotal > 40 ? "selected" : ""
+                }>TPE</option>
                 <option value='examen' class='text-center' ${isExams} >EXAMEN</option>
             </select>
         </td>
