@@ -1,6 +1,6 @@
 <?php
 class Model extends Database{
-    // protected $pdo;
+    protected $pdo;
 
     // public function __construct() {
     //     $this->pdo = $this->bdd(); // Utilisez bdd() pour obtenir la connexion PDO
@@ -163,15 +163,15 @@ public function VerifyFields($fields = []) {
 
     // Sélectionne une seule donnée avec une jointure et une condition WHERE
 // Sélectionne plusieurs données avec une jointure et une condition WHERE
-public function select_data_table_join_where($select, $execute_data = [])
-{
-    $bdd = $this->bdd();
-    $stm = $bdd->prepare($select);
-    $stm->execute($execute_data);
-    // Utilisation de fetchAll pour récupérer toutes les lignes
-    $data = $stm->fetchAll(PDO::FETCH_OBJ);
-    return $data;
-}
+    public function select_data_table_join_where($select, $execute_data = [])
+    {
+        $bdd = $this->bdd();
+        $stm = $bdd->prepare($select);
+        $stm->execute($execute_data);
+        // Utilisation de fetchAll pour récupérer toutes les lignes
+        $data = $stm->fetchAll(PDO::FETCH_OBJ);
+        return $data;
+    }
 
     public function select_data_table_join_where_limite($select, $execute_data = [], $limit = null)
     {
@@ -283,6 +283,7 @@ public function select_data_table_join_where_limite_emarg_uni($select, $execute_
         $que->closeCursor();
         return $count;
     }
+    
 
     // Sélectionne toutes les données sans condition
     public function SelectAllData($select, $fields){

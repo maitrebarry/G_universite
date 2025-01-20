@@ -1,3 +1,9 @@
+<?php
+ // Récupère le nom de la page actuelle
+
+$current_page = basename($_SERVER['REQUEST_URI']);
+
+?>
 <style>
     .nav-item.active>.nav-link {
         background-color: #007bff;
@@ -14,13 +20,7 @@
     }
 </style>
 
-<?php
 
-$current_page = basename($_SERVER['REQUEST_URI']); // Récupère le nom de la page actuelle
-
-
-
-?>
 
 <div class="main-menu menu-fixed menu-light menu-accordion menu-shadow" data-scroll-to-active="true">
     <div class="navbar-header">
@@ -62,15 +62,17 @@ $current_page = basename($_SERVER['REQUEST_URI']); // Récupère le nom de la pa
             <!-- Enseignants -->
             <li class="nav-item <?= ($current_page == 'Enseignants') ? 'active' : '' ?>">
                 <a class="nav-link" href="<?= ROOT ?>/Enseignants">
-                    <i class="bx bx-droplet"></i>
+                    <i class="bx bx-user"></i> 
                     <span class="menu-title">Enseignants</span>
                 </a>
             </li>
-            <!-- Émargement  -->
-            <li class="nav-item <?= ($current_page == 'Emargements') ? 'active' : '' ?>">
-                <a class="nav-link" href="<?= ROOT ?>/Enseignants/liste_emargement">
+
+
+          <!--  Notes-->
+            <li class="nav-item <?= ($current_page == 'Notes') ? 'active' : '' ?>">
+                <a class="nav-link" href="<?= ROOT ?>/Notes">
                     <i class="bx bx-droplet"></i>
-                    <span class="menu-title">Émargement </span>
+                    <span class="menu-title">Notes </span>
                 </a>
             </li>
             <!-- Emploi du temps -->
@@ -80,8 +82,6 @@ $current_page = basename($_SERVER['REQUEST_URI']); // Récupère le nom de la pa
                     <span class="menu-title">EDT</span>
                 </a>
             </li>
-
-            <!-- Étudiants (Sous-menus) -->
             <!-- Étudiants (Sous-menus) -->
             <li class="nav-item <?= $is_etudiant_active ? '' : '' ?>"> <!-- Pas de classe 'active' pour le parent -->
                 <a class="nav-link" href="#">

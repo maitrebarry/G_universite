@@ -37,7 +37,8 @@
 
     <script src="<?=ROOT?>/assets/js/scripts/forms/select/form-select2.js"></script>
     <script src="<?= ROOT ?>/assets/js/scripts/extensions/sweet-alerts.js"></script>
-    <script src="<?=ROOT?>/assets/js/scripts/forms/wizard-steps.js"></script>
+    <script src="<?=ROOT?>/assets/js/scripts/forms/bsStepper.min.js"></script>
+    <script src="<?=ROOT?>/assets/js/scripts/forms/custom-bsStepper.min.js"></script>
 
     <!-- END: Page JS-->
  
