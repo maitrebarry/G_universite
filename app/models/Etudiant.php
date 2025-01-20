@@ -53,92 +53,6 @@ class Etudiant  extends Model{
         return $default_image; // Retourne le fichier par défaut en cas d'erreur
     }
 
-    // public function enregistrementEtudiant($post, $file) {
-    //     $errors = [];
-    //     extract($post);
-    
-    //     // Validation des champs obligatoires
-    //     if (empty($nom_prenom_etudiant)) {
-    //         $errors[] = "Le nom et prénom de l'étudiant est requis.";
-    //     }
-    //     if (empty($date_naissance_etudiant)) {
-    //         $errors[] = "La date de naissance est requise.";
-    //     }
-    //     if (!filter_var($contact_etudiant, FILTER_VALIDATE_INT)) {
-    //         $errors[] = "Le numéro de contact est invalide.";
-    //     }
-    
-    //     // Upload du CV
-    //     $profilname = $this->upload_cv($file);
-    //     if (!$profilname) {
-    //         $errors[] = "Erreur lors de l'upload du CV.";
-    //     }
-    
-    //     if (!empty($errors)) {
-    //         $this->set_flash(implode('<br>', $errors), 'danger');
-    //         return false;
-    //     }
-    
-    //     // Insertion des données
-    //     $insertion = $this->insertion_update_simples(
-    //         'INSERT INTO etudiant(nom_prenom_etudiant, date_naissance_etudiant, lieu_naissance_etudiant, genre_etudiant, matricule_etudiant, contact_etudiant, diplome, id_statut, id_filiere, id_promotion, numetudiant, prenompere, prenomnommere, cercleNais, commNais, nationnalite, anneediplome, serie, pays, academie, numplace, profilname) 
-    //         VALUES(:nom_prenom_etudiant, :date_naissance_etudiant, :lieu_naissance_etudiant, :genre_etudiant, :matricule_etudiant, :contact_etudiant, :diplome, :id_statut, :id_filiere, :id_promotion, :numetudiant, :prenompere, :prenomnommere, :cercleNais, :commNais, :nationnalite, :anneediplome, :serie, :pays, :academie, :numplace, :profilname)',
-    //         [
-    //             ':nom_prenom_etudiant' => $nom_prenom_etudiant,
-    //             ':date_naissance_etudiant' => $date_naissance_etudiant,
-    //             ':lieu_naissance_etudiant' => $lieu_naissance_etudiant,
-    //             ':genre_etudiant' => $genre_etudiant,
-    //             ':matricule_etudiant' => $matricule_etudiant,
-    //             ':contact_etudiant' => $contact_etudiant,
-    //             ':diplome' => $diplome,
-    //             ':id_statut' => $id_statut,
-    //             ':id_filiere' => $id_filiere,
-    //             ':id_promotion' => $id_promotion,
-    //             ':numetudiant' => $numetudiant,
-    //             ':prenompere' => $prenompere,
-    //             ':prenomnommere' => $prenomnommere,
-    //             ':cercleNais' => $cercleNais,
-    //             ':commNais' => $commNais,
-    //             ':nationnalite' => $nationnalite,
-    //             ':anneediplome' => $anneediplome,
-    //             ':serie' => $serie,
-    //             ':pays' => $pays,
-    //             ':academie' => $academie,
-    //             ':numplace' => $numplace,
-    //             ':profilname' => $profilname
-    //         ]
-    //     );
-    
-    //     if ($insertion) {
-    //         $this->set_flash('Étudiant ajouté avec succès', 'primary');
-    //         return true;
-    //     } else {
-    //         $this->set_flash('Erreur lors de l\'ajout de l\'étudiant', 'danger');
-    //         return false;
-    //     }
-    // }
-    // function enregistrementPaiement($post) { 
-    //     // Validation des variables
-    //     $errors = [];
-    //     $this->e(extract($_POST));
-
-    //     $insertion = $this->insertion_update_simples(
-    //         'INSERT INTO payement(montant, idEtudt,anne,date) 
-    //         VALUES(:montant, :idEtudt, :anne, :date)',
-    //         [
-    //             ':montant' => $montant,
-    //             ':idEtudt' => $idEtudt,
-    //             ':annee' => $annee,
-    //             ':date' => $date
-    //         ]
-    //     );
-
-    //     if ($insertion == true) {
-    //         $this->set_flash('Paiement ajouté avec succès', 'primary');
-    //     } else {
-    //         $this->set_flash('Paiement non ajouté');
-    //     }
-    // }
     public function enregistrementEtudiantAvecPaiement($post, $file) {
         $errors = [];
         extract($post);
@@ -383,6 +297,60 @@ class Etudiant  extends Model{
         return $info_etudiant;
 
     }
+        // Récupérer les informations d'un étudiant par ID
+        public function getById($id)
+        {
+            $stmt = $this->pdo->prepare("SELECT * FROM etudiant WHERE id_etudiant = :id");
+            $stmt->execute([':id' => $id]);
+            return $stmt->fetch();
+        }
+    
+        // Récupérer l'historique des paiements pour un étudiant donné
+        public function getPaymentsByStudentId($id)
+        {
+            $stmt = $this->pdo->prepare("SELECT * FROM payement WHERE idEtudt = :id ORDER BY date DESC");
+            $stmt->execute([':id' => $id]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+    // Méthode pour ajouter un paiement
+public function ajouterPaiement() {
+    // Vérifiez si le formulaire est soumis
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // Récupération des valeurs du formulaire
+        $id_etudiant = $_POST['id_etudiant'];
+        $montant_paye = $_POST['montant_paye'];
+
+        // Récupération du total payé existant
+        $totalPayéActuel = $this->getTotalPayé($id_etudiant); // Fonction à définir pour obtenir le total payé actuel
+
+        // Mise à jour du paiement dans la table `payement`
+        $this->updatePaiement($id_etudiant, $montant_paye);
+
+        // Rediriger vers une autre page après la mise à jour (par exemple, une page de confirmation ou le formulaire de paiement)
+       // header("Location: /etudiants"); // Remplacez par l'URL de destination souhaitée
+       $this->set_flash('paiement ajoutés avec succès.', 'primary');
+        exit();
+    }
+}
+
+// Fonction pour récupérer le total payé existant pour un étudiant
+private function getTotalPayé($id_etudiant) {
+    // Effectuer la requête pour obtenir le total des paiements pour cet étudiant
+    $stmt = $this->pdo->prepare("SELECT SUM(montant_paye) as total_payé FROM payement WHERE idEtudt = ?");
+    $stmt->execute([$id_etudiant]);
+    $result = $stmt->fetch();
+    return $result['total_payé'] ? $result['total_payé'] : 0;
+}
+
+// Fonction pour mettre à jour la table `payement` avec le paiement ajouté
+private function updatePaiement($id_etudiant, $montant_paye) {
+    // Insertion du paiement dans la table `payement`
+    $stmt = $this->pdo->prepare("INSERT INTO payement (idEtudt, montant_paye, date) VALUES (?, ?, NOW())");
+    $stmt->execute([$id_etudiant, $montant_paye]);
+}
+
+    
+
 }
     
 

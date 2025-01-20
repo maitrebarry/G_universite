@@ -55,10 +55,45 @@ class Etudiants extends Controller
          ]);
       }
     }
-    
-    public function paiement_etudiant($id){
+  
+        // Afficher la page de paiement pour un étudiant spécifique
+        public function paiement_etudiant($id)
+        {
+           
+            // Récupérer l'étudiant par son ID
+            $student = new Etudiant();
+            $etudiant = $student->getById($id); // Appel de la méthode non statique
         
-        $this->view('paiement_inscription'); 
-    }  
+            // Vérifier si l'étudiant existe
+            if ($etudiant) {
+                // Récupérer l'historique des paiements pour cet étudiant
+                $payments = $student->getPaymentsByStudentId($id);
+         // Calculer le montant total payé
+         $totalPaid = 0;
+         foreach ($payments as $payment) {
+             $totalPaid += $payment['montant_paye']; // Additionner tous les paiements
+         }
+         
+         // Calculer le montant restant
+         $remainingAmount = $etudiant['total_frais'] - $totalPaid;
+         
+         // Passer les informations à la vue
+         $this->view('paiement_inscription', [
+             'etudiant' => $etudiant,
+             'payments' => $payments,
+             'remainingAmount' => $remainingAmount
+         ]);
+         if (isset($_POST["paie"])) {
+            // la méthode d'enregistrement
+             $student->ajouterPaiement();
+         }
+     } else {
+         $this->view('paiement_inscription', ['error' => 'Étudiant introuvable.']);
+     }
+     
+ }
+        
 
+    
+    
 }
