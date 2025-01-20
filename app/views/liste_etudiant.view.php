@@ -12,7 +12,7 @@
             <div class="dropdown-menu dropdown-menu-right">
                 <a class="dropdown-item edit-btn"
                     href="<?= ROOT ?>/Etudiants/paiement_etudiant/<?=$etudiant->id_etudiant?>"><i
-                        class="bx bx-edit-alt mr-1"></i> Paiement</a>
+                        class="bx bx-money mr-1"></i> Paiement</a>
                 <a class="dropdown-item" href=""><i class="bx bx-trash mr-1"></i> delete</a>
             </div>
         </div>
