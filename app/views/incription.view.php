@@ -184,76 +184,75 @@
                                                         </div>
                                                     </div>
                                                     <div id="defaultStep-two" class="content" role="tabpanel" style="margin:0;">
-                                                        <fieldset>
-                                                            <div class="row">
-                                                                <div class="col-sm-4">
-                                                                    <div class="form-group">
-                                                                        <label>Prénom père<span class="text-danger">*</span></label>
-                                                                        <input type="text" class="form-control " placeholder="Prénom père" name="prenompere">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-sm-4">
-                                                                    <div class="form-group">
-                                                                        <label>Nom && Prenom mère<span class="text-danger">*</span></label>
-                                                                        <input type="text" class="form-control " placeholder="Nom && Prenom mère" name="prenomnommere">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-sm-4">
-                                                                    <div class="form-group">
-                                                                        <label>Lieu résidence des parents<span class="text-danger">*</span></label>
-                                                                        <input type="text" class="form-control" placeholder="Date de naissance" name="lieuresidenceparents">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <hr>
-                                                            <div class="col-12">
-                                                                <h6 class="py-50">Diplome</h6>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-sm-4">
-                                                                    <div class="form-group">
-                                                                        <label>Diplome<span class="text-danger">*</span></label>
-                                                                        <select class="form-select form-control" name="diplome">
-                                                                            <option value="" disabled>Choisissez le diplome</option>
-                                                                            <option value="Bac" >Bac</option>
-                                                                            <option value="BT" >BT</option>
-                                                                            <option value="IFM" >IFM</option>
-                                                                        </select>
-                                                                        <input type="text" class="form-control " placeholder="" name="">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-sm-4">
-                                                                    <div class="form-group">
-                                                                        <label>Numero de place<span class="text-danger">*</span></label>
-                                                                        <input type="number" class="form-control" placeholder="Numero de place" name="numplace">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-4">
-                                                                    <div class="form-group">
-                                                                        <label>Serie<span class="text-danger">*</span> </label>
-                                                                        <input type="text" class="form-control" placeholder="Serie " name="serie">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-sm-4">
-                                                                    <div class="form-group">
-                                                                        <label>Anneés diplome<span class="text-danger">*</span></label>
-                                                                        <input type="number" class="form-control" placeholder="Anneés diplome" name="anneediplome">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-sm-4">
-                                                                    <div class="form-group">
-                                                                        <label>Pays<span class="text-danger">*</span></label>
-                                                                        <input type="text" class="form-control" placeholder="Pays" name="pays">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-4">
-                                                                    <div class="form-group">
-                                                                        <label>Academie<span class="text-danger">*</span></label>
-                                                                        <input type="text" class="form-control" placeholder="Academie" name="academie">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </fieldset>
+                                                    <fieldset class="border p-4 rounded shadow-sm">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Prénom du Père <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" placeholder="Prénom du Père" name="prenompere">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Nom et Prénom de la Mère <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" placeholder="Nom et Prénom de la Mère" name="prenomnommere">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Lieu de Résidence des Parents <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" placeholder="Lieu de Résidence" name="lieuresidenceparents">
+            </div>
+        </div>
+    </div>
+
+    <hr class="my-2">
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Diplôme <span class="text-danger">*</span></label>
+                <select class="form-select form-control" name="diplome">
+                    <option value="" disabled selected>Choisissez le Diplôme</option>
+                    <option value="Bac">Bac</option>
+                    <option value="BT">BT</option>
+                    <option value="IFM">IFM</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Numéro de Place <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" placeholder="Numéro de Place" name="numplace">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Série <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" placeholder="Série" name="serie">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Année du Diplôme <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" placeholder="Année du Diplôme" name="anneediplome">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Pays <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" placeholder="Pays" name="pays">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Académie <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" placeholder="Académie" name="academie">
+            </div>
+        </div>
+    </div>
+</fieldset>
+
                                                         <div class="button-action mt-5">
                                                             <button type="button"
                                                                 class="btn bg-secondary btn-prev me-3"
@@ -353,6 +352,7 @@
                                                               
                                                                    <!-- Total des Frais -->
                                                             <div class="col-md-3 mb-2" id="total-container" style="display: none;">
+                                                                
                                                                 <div class="form-group">
                                                                     <label class="form-label">Total des Frais</label>
                                                                     <input type="number" class="form-control frais-total" id="total-frais" name="total_frais" placeholder="Total des frais" readonly>
