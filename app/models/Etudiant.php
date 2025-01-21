@@ -85,8 +85,8 @@ class Etudiant  extends Model{
         try {
             // Insertion des données de l'étudiant
             $insertionEtudiant = $this->insertion_update_simples(
-                'INSERT INTO etudiant(nom_prenom_etudiant, date_naissance_etudiant, lieu_naissance_etudiant, genre_etudiant, matricule_etudiant, contact_etudiant, diplome, id_statut, id_filiere, id_promotion, numetudiant, prenompere, prenomnommere, cercleNais, commNais, nationnalite, anneediplome, serie, pays, academie, numplace, profilname, total_frais) 
-                VALUES(:nom_prenom_etudiant, :date_naissance_etudiant, :lieu_naissance_etudiant, :genre_etudiant, :matricule_etudiant, :contact_etudiant, :diplome, :id_statut, :id_filiere, :id_promotion, :numetudiant, :prenompere, :prenomnommere, :cercleNais, :commNais, :nationnalite, :anneediplome, :serie, :pays, :academie, :numplace, :profilname, :total_frais)',
+                'INSERT INTO etudiant(nom_prenom_etudiant, date_naissance_etudiant, lieu_naissance_etudiant, genre_etudiant, matricule_etudiant, contact_etudiant, diplome, id_statut, id_promotion, numetudiant, prenompere, prenomnommere, cercleNais, commNais, nationnalite, anneediplome, serie, pays, academie,lieuresidenceparents, numplace, profilname, total_frais) 
+                VALUES(:nom_prenom_etudiant, :date_naissance_etudiant, :lieu_naissance_etudiant, :genre_etudiant, :matricule_etudiant, :contact_etudiant, :diplome, :id_statut, :id_promotion, :numetudiant, :prenompere, :prenomnommere, :cercleNais, :commNais, :nationnalite, :anneediplome, :serie, :pays, :academie, :lieuresidenceparents,:numplace, :profilname, :total_frais)',
                 [
                     ':nom_prenom_etudiant' => $nom_prenom_etudiant,
                     ':date_naissance_etudiant' => $date_naissance_etudiant,
@@ -96,7 +96,6 @@ class Etudiant  extends Model{
                     ':contact_etudiant' => $contact_etudiant,
                     ':diplome' => $diplome,
                     ':id_statut' => $id_statut,
-                    ':id_filiere' => $id_filiere,
                     ':id_promotion' => $id_promotion,
                     ':numetudiant' => $numetudiant,
                     ':prenompere' => $prenompere,
@@ -108,6 +107,7 @@ class Etudiant  extends Model{
                     ':serie' => $serie,
                     ':pays' => $pays,
                     ':academie' => $academie,
+                    ':lieuresidenceparents' => $lieuresidenceparents,
                     ':numplace' => $numplace,
                     ':profilname' => $profilname,
                     ':total_frais' => $total_frais
@@ -283,11 +283,14 @@ class Etudiant  extends Model{
         
     }
     public function trie_liste_etudiant($id_promotion){
-        $query = "SELECT *
-                  FROM etudiant
-                  INNER JOIN filiere ON etudiant.id_filiere = filiere.id_filiere
-                  
-                  WHERE etudiant.id_promotion = :id_promotion";
+
+        $query = "SELECT * 
+                    FROM etudiant
+                    INNER JOIN promotion ON etudiant.id_promotion = promotion.id_promotion
+                    INNER JOIN filiere ON promotion.id_filiere = filiere.id_filiere
+                    INNER JOIN parcours ON promotion.id_parcours = parcours.id_parcours
+                    INNER JOIN semestre ON parcours.id_semestre = semestre.id_semestre
+                    WHERE etudiant.id_promotion = :id_promotion";
         $bdd=$this->bdd();
         $stmt = $bdd->prepare($query);
         $stmt->bindParam(':id_promotion', $id_promotion, PDO::PARAM_INT);
@@ -313,25 +316,44 @@ class Etudiant  extends Model{
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
     // Méthode pour ajouter un paiement
+// Méthode pour ajouter un paiement
 public function ajouterPaiement() {
     // Vérifiez si le formulaire est soumis
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Récupération des valeurs du formulaire
-        $id_etudiant = $_POST['id_etudiant'];
-        $montant_paye = $_POST['montant_paye'];
+        $id_etudiant = $_POST['id_etudiant'] ?? null;
+        $montant_paye = $_POST['montant_paye'] ?? null;
+
+        // Valider que les champs ne sont pas vides
+        if (empty($id_etudiant) || empty($montant_paye)) {
+            $this->set_flash('Tous les champs sont obligatoires.', 'danger');
+            return;
+        }
+
+        // Valider que le montant est un nombre positif
+        if (!is_numeric($montant_paye) || $montant_paye <= 0) {
+            $this->set_flash('Le montant doit être un nombre positif.', 'danger');
+            return;
+        }
+
+        // Vérifier si l'étudiant existe
+        $etudiant = $this->getById($id_etudiant);
+        if (!$etudiant) {
+            $this->set_flash('Étudiant non trouvé.', 'danger');
+            return;
+        }
 
         // Récupération du total payé existant
-        $totalPayéActuel = $this->getTotalPayé($id_etudiant); // Fonction à définir pour obtenir le total payé actuel
+        $totalPayéActuel = $this->getTotalPayé($id_etudiant);
 
         // Mise à jour du paiement dans la table `payement`
         $this->updatePaiement($id_etudiant, $montant_paye);
 
-        // Rediriger vers une autre page après la mise à jour (par exemple, une page de confirmation ou le formulaire de paiement)
-       // header("Location: /etudiants"); // Remplacez par l'URL de destination souhaitée
-       $this->set_flash('paiement ajoutés avec succès.', 'primary');
-        exit();
+        // Message de succès
+        $this->set_flash('Paiement ajouté avec succès.', 'success');
     }
 }
+
 
 // Fonction pour récupérer le total payé existant pour un étudiant
 private function getTotalPayé($id_etudiant) {
@@ -344,10 +366,13 @@ private function getTotalPayé($id_etudiant) {
 
 // Fonction pour mettre à jour la table `payement` avec le paiement ajouté
 private function updatePaiement($id_etudiant, $montant_paye) {
-    // Insertion du paiement dans la table `payement`
+    if ($montant_paye <= 0) {
+        throw new InvalidArgumentException('Le montant payé doit être supérieur à zéro.');
+    }
     $stmt = $this->pdo->prepare("INSERT INTO payement (idEtudt, montant_paye, date) VALUES (?, ?, NOW())");
     $stmt->execute([$id_etudiant, $montant_paye]);
 }
+
 
     
 

@@ -362,7 +362,6 @@ class Filiere  extends Model
             $this->set_flash("Filière Modifiée avec succès", "success");
         } catch (Exception $e) {
             $connection->rollBack();
-            echo $e->getMessage();
             $this->set_flash($e->getMessage() . " : !Veuillez bien verifier vos données");
             return false;
         }
@@ -392,4 +391,75 @@ class Filiere  extends Model
             return;
         }
     }
+
+    //! Debut de la gestion d'une promotion
+    // Ajouter une promotion
+    public function ajouterPromotion()
+    {
+        try {
+            // if (!$this->isArrayDataValid($_POST)) {
+            //     throw new Exception("Données Non Valid : !Veuillez bien verifier vos données");
+            // }
+
+            $this->e(extract($_POST));
+
+            $isFiliereExiste = $this->user_verify("id_filiere", "filiere", $idFiliere);
+            if ($isFiliereExiste < 0) {
+                throw new Exception("Filiere Introuvable : !Veuillez bien verifier vos données");
+            }
+
+            $isPromotionExiste = $this->FetchSelectWhere("*", "promotion", "annee_universitaire=? AND id_filiere=?", [$anneeUniversitaire, $idFiliere]);
+            if ($isPromotionExiste != null || !empty($isPromotionExiste)) {
+                throw new Exception("Repetition de Promotion : !Cette filière a dejà la promotion $anneeUniversitaire");
+            }
+
+            $requette = "INSERT INTO promotion( annee_universitaire, id_filiere, id_parcours)
+             VALUES (:anneeUniversitaire, :idFiliere, :idParcours)";
+            $isPromotionAdd = $this->insertion_update_simples($requette, [
+                "anneeUniversitaire" => $anneeUniversitaire,
+                "idFiliere" => $idFiliere,
+                "idParcours" => $idParcours
+            ]);
+            if (!$isPromotionAdd) {
+                $this->set_flash("Erreur de Connection à la basse de donnés : !Veuillez ressayer plus tard");
+                $this->redirect("Filieres/liste_promotion/$idFiliere");
+                return;
+            }
+
+            $this->set_flash("La promotion a été ajouter avec succès", "success");
+            $this->redirect("Filieres/liste_promotion/$idFiliere");
+            return;
+        } catch (Exception $e) {
+            $this->set_flash($e->getMessage(), "warning");
+            $this->redirect("Filieres/liste_promotion/$idFiliere");
+            return;
+        }
+    }
+
+    // Liste des promotions d'une filière
+    public function listePromotions($idFiliere)
+    {
+        try {
+            $this->e(extract($_POST));
+
+            $isFiliereExiste = $this->user_verify("id_filiere", "filiere", $idFiliere);
+            if ($isFiliereExiste < 0) {
+                throw new Exception("Filiere Introuvable : !Veuillez bien verifier vos données");
+            }
+
+            $requette = "SELECT id_promotion, annee_universitaire, statut, promotion.id_parcours, nom_filiere, sigle_filiere, nom_semestre, sigle_semestre 
+            FROM promotion INNER JOIN filiere ON promotion.id_filiere=filiere.id_filiere
+            INNER JOIN parcours ON promotion.id_parcours=parcours.id_parcours INNER JOIN semestre ON parcours.id_semestre=semestre.id_semestre
+            WHERE promotion.id_filiere=?";
+
+            $promotions = $this->select_data_table_join_where($requette, [$idFiliere]);
+            return $promotions;
+        } catch (Exception $e) {
+            $this->set_flash($e->getMessage(), "warning");
+            $this->redirect("Filieres/");
+            return;
+        }
+    }
+
+    //! Fin de la gestion d'une promotion
 }

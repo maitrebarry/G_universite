@@ -68,28 +68,19 @@ td {
                                                             <option value="0" disabled selected>Selectionner une Filiere
                                                             </option>
                                                             <?php foreach ($filieres as $filiere): ?>
-                                                            <option value="<?php echo $filiere->id_filiere ?>">
-                                                                <?php echo strtoupper($filiere->nom_filiere . '(' . $filiere->sigle_filiere . ')') ?>
+                                                            <option value="<?php echo $filiere->id_filiere ?>"
+                                                                <?= ($idFiliere != null && $idFiliere == $filiere->id_filiere) ? 'selected' : '' ?>>
+                                                                <?php echo strtoupper($filiere->sigle_filiere) ?>
                                                             </option>
                                                             <?php endforeach ?>
                                                         </select>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-3">
+                                                    <label class="form-label" for="single-select">Promotion</label>
                                                     <div class="form-group">
-                                                        <label class="form-label" for="anneeUniversitaire">Année
-                                                            universitaire</label>
-                                                        <input type="text" id="anneeUniversitaire"
-                                                            name="anneeUniversitaire" placeholder="YYYY-YYYY"
-                                                            maxlength="9" oninput="formatAcademicYear(event)"
-                                                            class="form-control" />
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-3">
-                                                    <label class="form-label" for="single-select">Niveau</label>
-                                                    <div class="form-group">
-                                                        <select class="select2 form-control" id="semestres">
-                                                            <option value="" disabled selected>Selectioner un Semestre
+                                                        <select class="select2 form-control" id="promotions">
+                                                            <option value="" disabled selected>Selectioner une Promotion
                                                             </option>
 
                                                         </select>
@@ -109,13 +100,23 @@ td {
                                             </div>
 
                                             <div class="row d-flex justify-content-between align-items-center p-1 ">
-                                                <div class=" col-4 m-0">
-                                                    <!-- Bouton pour ajouter une nouvelle ligne -->
-                                                    <i class="bx bx-plus btn btn-secondary" id="add-row"></i>
-                                                    <!-- Bouton pour supprimer la dernière ligne -->
-                                                    <i class="bx bx-minus btn btn-danger" id="remove-row"></i>
+                                                <div
+                                                    class="col-12 row d-flex justify-content-between align-items-center">
+                                                    <div class=" col-4 m-0">
+                                                        <!-- Bouton pour ajouter une nouvelle ligne -->
+                                                        <i class="bx bx-plus btn btn-secondary" id="add-row"></i>
+                                                        <!-- Bouton pour supprimer la dernière ligne -->
+                                                        <i class="bx bx-minus btn btn-danger" id="remove-row"></i>
+                                                    </div>
+                                                    <div class="col-2">
+                                                        <button type="button" class="btn btn-primary"
+                                                            data-toggle="modal" data-target="#menuConfig"><i
+                                                                class="bx bxs-cog"></i>
+                                                            Paramètrage</button>
+                                                    </div>
                                                 </div>
-                                                <div class="col-7 row d-none" id="infoModule">
+                                                <div class=" offset-6 col-6 row d-none float-right" id="infoModule">
+                                                    <input type="hidden" id="vht" class="vht">
                                                     <!-- CM -->
                                                     <div class='col-6 col-lg-3'>
                                                         <label class="d-block text-center">CM</label>
@@ -204,13 +205,7 @@ td {
                                                             id="dateDebut" value="<?php echo date("d/m/Y") ?>">
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-3 ">
-                                                    <label class="form-label" for="dateDebut">Date de Fin :</label>
-                                                    <div class="form-group w-100 d-flex justify-content-end ">
-                                                        <input type="date" class="form-control" name="dateDebut"
-                                                            id="dateFin" value="<?php echo date("d/m/Y") ?>">
-                                                    </div>
-                                                </div>
+
                                             </div>
                                             <button type="submit" style="float: right;"
                                                 class="btn btn-primary">Enregistrer</button><br>
@@ -224,8 +219,79 @@ td {
                 <!-- formulaire -->
             </div>
         </div>
+
+        <div class="modal-primary mr-1 mb-1 d-inline-block ">
+            <div class=" modal fade text-left" id="menuConfig" tabindex="-1" role="dialog"
+                aria-labelledby="myModalLabel160" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div class=" row">
+                                <div class=" col-12 row mb-1">
+                                    <h6 class=" col-12 text-center">Models Edt</h6>
+                                    <div class="col-12 border p-2 d-flex justify-content-center ">
+
+                                        <div style="width: 300px" class="cursor-pointer ">
+                                            <span class=" text-center">Horizontal</span>
+                                            <img class="img img-thumbnail d-block border border-primary"
+                                                src="<?= ROOT ?>/assets/images/model-row.png" alt="model-row"
+                                                id="model-row" style="border-width: 2px !important;"
+                                                data-model="edt-row">
+                                        </div>
+
+                                        <div style=" width:300px; " class="ml-2 cursor-pointer">
+                                            <span class=" text-center">Vertical</span>
+                                            <img class="img img-thumbnail d-block border"
+                                                src="<?= ROOT ?>/assets/images/model-column.png" alt="model-column"
+                                                id="model-column" style="border-width: 2px !important;"
+                                                data-model="edt-column">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class=" col-12 row">
+                                    <h6 class=" col-12 text-center">Type de Cours</h6>
+                                    <div class="col-12 border d-flex justify-content-center p-2">
+
+                                        <div class=" radio radio-primary mr-4"> <input type="radio" name="type" id="cm"
+                                                class="type" checked value="0">
+                                            <label for="cm">CM</label>
+                                        </div>
+
+                                        <div class="radio radio-primary mr-4"> <input type="radio" name="type" id="td"
+                                                class="type" value="1">
+                                            <label for="td">TD</label>
+                                        </div>
+
+                                        <div class="radio radio-primary form-group mr-4"> <input type="radio"
+                                                name="type" id="tp" class="type" value="2">
+                                            <label for="tp">TP</label>
+                                        </div>
+
+                                        <div class="radio radio-primary form-group mr-4"> <input type="radio"
+                                                name="type" id="all" class="type" value="3">
+                                            <label for="all">All</label>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn  btn-link" data-dismiss="modal">
+                                <i class="bx bx-x d-block d-sm-none"></i>
+                                <span class="d-none d-sm-block">Fermer</span>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
     <!-- fin: Content-->
+
+
 
     <div class="sidenav-overlay"></div>
     <div class="drag-target"></div>
@@ -241,38 +307,32 @@ td {
 
 </html>
 <script src="<?= ROOT ?>/assets/mon_js/edt.js"></script>
+<script src="<?= ROOT ?>/assets/mon_js/contrainte_date_edt.js"></script>
 <script>
 var infoFiliere = [];
 $("#filiere").change(async function() {
 
     infoFiliere = await infosFiliere($(this).val());
-    semestresFiliere(infoFiliere);
-    idSemestre = $("#semestres").val();
+    promotionsFiliere(infoFiliere);
+    idSemestre = $("#promotions option:selected").data("id");
     modulesSemestre(idSemestre, infoFiliere);
     infoModule($("#infoModule").val(), infoFiliere);
 
 
 })
 
-$("#semestres").change(function() {
-    modulesSemestre($(this).val(), infoFiliere);
+$("#promotions").change(function() {
+    idSemestre = $("#promotions option:selected").data("id");
+    modulesSemestre(idSemestre, infoFiliere);
     infoModule($("#infoModule").val(), infoFiliere);
-
 })
+
 
 $("#modules").change(function() {
     infoModule($(this).val(), infoFiliere);
+
 })
 
-$(document).ready(function() {
-    setDefaultAcademicYear();
-    addHeure();
-    $('#edtForm').submit(function(event) {
-        event.preventDefault();
-        ajouterEdt();
-
-    })
-})
 // JavaScript pour ajouter une ligne à la table
 document.getElementById('add-row').addEventListener('click', function() {
     addHeure();
@@ -282,4 +342,50 @@ document.getElementById('add-row').addEventListener('click', function() {
 document.getElementById('remove-row').addEventListener('click', function() {
     removeHeure();
 });
+
+$(document).ready(async function() {
+
+    $('#edtForm').submit(function(event) {
+        event.preventDefault();
+        ajouterEdt();
+
+    })
+
+    infoFiliere = await infosFiliere($("#filiere").val());
+    promotionsFiliere(infoFiliere);
+    idSemestre = $("#promotions option:selected").data("id");
+    modulesSemestre(idSemestre, infoFiliere);
+    infoModule($("#infoModule").val(), infoFiliere);
+})
+
+
+$('#model-row').click(function() {
+    $('#model-column').removeClass('border-primary');
+    $(this).addClass("border-primary");
+    $(this).css('transition', 'all 0.5s');
+    const heuresModule = calculerHeuresModuleEdt();
+    const model = $(this).data('model');
+    const type = parseInt($('input[name="type"]:checked').val(), 10);
+    genererEdt(heuresModule, model, type);
+
+
+})
+$('#model-column').click(function() {
+    $('#model-row').removeClass('border-primary');
+    $(this).addClass("border-primary");
+    $(this).css('transition', 'all 0.5s');
+    const heuresModule = calculerHeuresModuleEdt();
+    const model = $(this).data('model');
+    const type = parseInt($('input[name="type"]:checked').val(), 10);
+    genererEdt(heuresModule, model, type);
+})
+
+$('.type').click(function() {
+    const heuresModule = calculerHeuresModuleEdt();
+    const model = ($('#model-row').hasClass("border-primary")) ? $('#model-row').data('model') : $(
+        '#model-column').data('model')
+    const type = parseInt($('input[name="type"]:checked').val(), 10);
+
+    genererEdt(heuresModule, model, type);
+})
 </script>

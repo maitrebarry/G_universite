@@ -1,3 +1,7 @@
+<?php
+// Récupère le nom de la page actuelle
+$current_page = basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
+?>
 <style>
     .nav-item.active>.nav-link {
         background-color: #007bff;
@@ -13,14 +17,6 @@
         font-weight: bold;
     }
 </style>
-
-<?php
-
-$current_page = basename($_SERVER['REQUEST_URI']); // Récupère le nom de la page actuelle
-
-
-
-?>
 
 <div class="main-menu menu-fixed menu-light menu-accordion menu-shadow" data-scroll-to-active="true">
     <div class="navbar-header">
@@ -45,7 +41,7 @@ $current_page = basename($_SERVER['REQUEST_URI']); // Récupère le nom de la pa
         <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation">
             <!-- Tableau de bord -->
             <li class="nav-item <?= ($current_page == 'index') ? 'active' : '' ?>">
-                <a class="nav-link" href="<?= ROOT ?>/index">
+                <a class="nav-link" href="<?= ROOT ?>/Homes">
                     <i class="bx bx-home-alt"></i>
                     <span class="menu-title">Tableau Bord</span>
                 </a>
@@ -62,64 +58,66 @@ $current_page = basename($_SERVER['REQUEST_URI']); // Récupère le nom de la pa
             <!-- Enseignants -->
             <li class="nav-item <?= ($current_page == 'Enseignants') ? 'active' : '' ?>">
                 <a class="nav-link" href="<?= ROOT ?>/Enseignants">
-                    <i class="bx bx-droplet"></i>
+                    <i class="bx bx-user"></i> 
                     <span class="menu-title">Enseignants</span>
                 </a>
             </li>
-            <!-- Émargement  -->
-            <li class="nav-item <?= ($current_page == 'Emargements') ? 'active' : '' ?>">
-                <a class="nav-link" href="<?= ROOT ?>/Enseignants/liste_emargement">
+
+            <!-- Notes -->
+            <li class="nav-item <?= ($current_page == 'Notes') ? 'active' : '' ?>">
+                <a class="nav-link" href="<?= ROOT ?>/Notes">
                     <i class="bx bx-droplet"></i>
-                    <span class="menu-title">Émargement </span>
+                    <span class="menu-title">Notes</span>
                 </a>
             </li>
+
             <!-- Emploi du temps -->
             <li class="nav-item <?= ($current_page == 'Emploi_du_temps') ? 'active' : '' ?>">
                 <a class="nav-link" href="<?= ROOT ?>/Emploi_du_temps">
-                    <i class="bx bx-droplet"></i>
+                    <i class="bx bx-calendar"></i>
                     <span class="menu-title">EDT</span>
                 </a>
             </li>
 
             <!-- Étudiants (Sous-menus) -->
-            <!-- Étudiants (Sous-menus) -->
-            <li class="nav-item <?= $is_etudiant_active ? '' : '' ?>"> <!-- Pas de classe 'active' pour le parent -->
+            <li class="nav-item <?= (strpos($_SERVER['REQUEST_URI'], 'Etudiants') !== false) ?  : '' ?>">
                 <a class="nav-link" href="#">
                     <i class="bx bx-check"></i>
                     <span class="menu-title">Étudiants</span>
                 </a>
                 <ul class="menu-content">
-                    <li class="<?= ($current_page == 'Etudiants.') ? 'active' : '' ?>">
+                    <li class="<?= ($current_page == 'Etudiants') ? 'active' : '' ?>">
                         <a href="<?= ROOT ?>/Etudiants">
                             <i class="bx bx-right-arrow-alt"></i>
-                            <span class="menu-item">Inscription</span>
+                            <span class="menu-item">Inscription individuels</span>
                         </a>
                     </li>
-                    <li class="<?= ($current_page == 'form-input-groups.html') ? 'active' : '' ?>">
-                        <a href="form-input-groups.html">
+                    <li class="<?= ($current_page == 'liste_inscription_groupe') ? 'active' : '' ?>">
+                        <a href="<?= ROOT ?>/Etudiants/liste_inscription_groupe">
+                            <i class="bx bx-right-arrow-alt"></i>
+                            <span class="menu-item">Inscription par groupe</span>
+                        </a>
+                    </li>
+                    <li class="<?= ($current_page == 'Reinsciptions') ? 'active' : '' ?>">
+                        <a href="<?= ROOT ?>/Reinsciptions">
                             <i class="bx bx-right-arrow-alt"></i>
                             <span class="menu-item">Réinscription</span>
                         </a>
                     </li>
-                    <li class="<?= ($current_page == 'form-number-input.html') ? 'active' : '' ?>">
-                        <a href="form-number-input.html">
-                            <i class="bx bx-right-arrow-alt"></i>
-                            <span class="menu-item">Liste</span>
-                        </a>
-                    </li>
                 </ul>
             </li>
+
             <!-- Configuration -->
-            <li class="nav-item <?= ($current_page == 'Modules/liste') ? 'active' : '' ?>">
+            <li class="nav-item <?= ($current_page == 'Modules/listeModule') ? 'active' : '' ?>">
                 <a class="nav-link" href="<?= ROOT ?>/Modules/listeModule">
-                    <i class="bx bx-droplet"></i>
+                    <i class="bx bx-cog"></i>
                     <span class="menu-title">Configuration</span>
                 </a>
-
             </li>
         </ul>
     </div>
 </div>
+
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const currentPage = window.location.pathname.split("/").pop(); // Récupère le nom de la page
@@ -130,12 +128,7 @@ $current_page = basename($_SERVER['REQUEST_URI']); // Récupère le nom de la pa
             if (link) {
                 const linkPage = link.getAttribute("href").split("/").pop();
                 if (linkPage === currentPage) {
-                    // Vérifie si c'est un sous-menu
-                    if (item.closest(".menu-content")) {
-                        item.classList.add("active");
-                    } else {
-                        item.classList.add("active");
-                    }
+                    item.classList.add("active");
                 }
             }
         });

@@ -2,7 +2,6 @@
 <?php $this->view("Partials/header") ?>
 
 <body class="vertical-layout vertical-menu-modern boxicon-layout no-card-shadow 2-columns  navbar-sticky footer-static  " data-open="click" data-menu="vertical-menu-modern" data-col="2-columns">
-
     <!-- inclusion du partie header -->
     <?php $this->view("Partials/navbar") ?>
     <!-- inclusion du partie header fin-->
@@ -25,11 +24,10 @@
                                 <ol class="breadcrumb p-0 mb-0">
                                     <li class="breadcrumb-item"><a href="index.html"><i class="bx bx-home-alt"></i></a>
                                     </li>
-                                    <li class="breadcrumb-item"><a href="#">Gestion des filière</a>
+                                    <li class="breadcrumb-item"><a href="#">Gestion des modules</a>
                                     </li>
                                     <li class="breadcrumb-item active">Liste
                                     </li>
-
                                 </ol>
                                 <div class="ms-auto">
                                     <button type="button" class="btn btn-primary" style="float: right;" data-toggle="modal" data-target="#primary">
@@ -64,9 +62,9 @@
                                         </a>
                                     </li>
                                     <li class="nav-item mb-1">
-                                        <a class="nav-link " href="<?= ROOT ?>/Annees_universites/Liste">
+                                        <a class="nav-link " href="<?= ROOT ?>/Periodes/Liste">
                                             <i class="fa-solid fa-calendar me-2"></i>
-                                            <span class="align-middle">Années Universitaire</span>
+                                            <span class="align-middle">Période</span>
                                         </a>
                                     </li>
                                     <li class="nav-item mb-1">
@@ -87,11 +85,9 @@
                     </div>
                 </div>
                 <!-- /Navigation -->
-
                 <!-- Options -->
                 <div class="col-12 col-lg-9 pt-4 pt-lg-0">
                     <div class="tab-content p-0">
-                        <!-- Store Details Tab -->
                         <div class="tab-pane fade show active" id="store_details" role="tabpanel">
 
                             <div class="row mb-4">
@@ -101,12 +97,12 @@
                                     <div class="card card-animated-border-top ">
                                         <div class="card-body">
 
-                                            <!-- partie liste de l'école -->
+                                            <!-- partie liste de modules -->
                                             <table class="table zero-configuration table-bordered" style="width:100%">
                                                 <thead>
                                                     <tr>
-                                                        <th>Nom Filiere </th>
-                                                        <th>Code Filère</th>
+                                                        <th>Nom module </th>
+                                                        <th>Code module</th>
                                                         <th class="text-center dt-no-sorting">Action</th>
                                                     </tr>
                                                 </thead>
@@ -134,7 +130,7 @@
                                                     <?php endforeach ?>
                                                 </tbody>
                                             </table>
-                                            <!-- fin de la  partie liste de l'école -->
+                                            <!-- fin de la  partie liste de modules -->
                                         </div>
                                     </div>
                                 </div>
@@ -162,7 +158,7 @@
                                                         </div>
                                                         <div class="col-md-6">
                                                             <div class="form-group">
-                                                                <label for="inputsigleModule">Sigle du Module</label>
+                                                                <label for="inputsigleModule">Code du Module</label>
                                                                 <input type="text" class="form-control" id="inputsigleModule" name="sigle_module" required>
                                                             </div>
                                                         </div>
@@ -187,7 +183,7 @@
                                     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header bg-primary">
-                                                <h5 class="modal-title white" id="myModalLabel160"> Enregistrements de filière</h5>
+                                                <h5 class="modal-title white" id="myModalLabel160"> Enregistrements de modules</h5>
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                     <i class="bx bx-x"></i>
                                                 </button>
@@ -200,8 +196,8 @@
                                                             <input type="text" id="nameBasic" value="" class="form-control" name="nom_module" placeholder="Nom module" required />
                                                         </div>
                                                         <div class="col mb-6">
-                                                            <label for="nameBasic" class="form-label">Sigle module <span class="text-danger fs-6">*</span></label>
-                                                            <input type="text" id="nameBasic" value="" class="form-control" name="sigle_module" placeholder="Sigle module" required />
+                                                            <label for="nameBasic" class="form-label">code module <span class="text-danger fs-6">*</span></label>
+                                                            <input type="text" id="nameBasic" value="" class="form-control" name="sigle_module" placeholder="code module" required />
                                                         </div>
                                                     </div>
 
@@ -222,9 +218,6 @@
                                 </div>
                             </div>
                             <!-- fin insertion des données -->
-
-
-
                         </div>
                     </div>
                 </div>

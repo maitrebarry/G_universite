@@ -45,7 +45,7 @@
                             <?php $this->view("set_flash"); ?>
                         </div>
                         <div class="col-12">
-                            <div class="card">
+                            <div class="card  card-animated-border-top">
 
                                 <div class="card-content">
                                     <a href="<?= ROOT ?>/Filieres/ajouter_Filiere"><button class="btn btn-primary"
@@ -54,8 +54,7 @@
 
 
                                         <div class="table-responsive">
-                                            <table id="table-extended-chechbox"
-                                                class="table table-bordered table-striped">
+                                            <table class="table zero-configuration table-bordered" style="width:100%">
                                                 <thead>
                                                     <tr>
 
@@ -98,11 +97,23 @@
                                                                             class="bx bx-edit-alt mr-1"></i> Editer</a>
                                                                     <a class="dropdown-item" href="#"><i
                                                                             class="bx bx-trash mr-1"></i> Supprimer</a>
+                                                                    <div class=" dropdown-divider"></div>
                                                                     <a class="dropdown-item ajouterPromotion"
                                                                         data-toggle="modal" data-target="#menuPromotion"
                                                                         href="#"
-                                                                        data-id="<?php echo $filiere->id_filiere ?>">
-                                                                        <i class="bx bx-plus"></i>&nbsp; Promotion
+                                                                        data-id="<?php echo $filiere->id_filiere ?>"
+                                                                        data-nom="<?php echo $filiere->sigle_filiere ?>">
+                                                                        <i class="bx bx-plus mr-1"></i>Promotion
+                                                                    </a>
+
+                                                                    <a class="dropdown-item"
+                                                                        href="<?= ROOT ?>/Filieres/liste_promotion/<?php echo $filiere->id_filiere ?>">
+                                                                        <i class="bx bx-show mr-1"></i>Promotions
+                                                                    </a>
+                                                                    <div class=" dropdown-divider"></div>
+                                                                    <a class="dropdown-item "
+                                                                        href="<?= ROOT ?>/Emploi_du_temps/ajouter_EDT/<?php echo $filiere->id_filiere ?>">
+                                                                        <i class="bx bx-plus mr-1"></i>Edt
                                                                     </a>
                                                                 </div>
                                                             </div>
@@ -163,37 +174,41 @@
                                             <div class="modal-primary mr-1 mb-1 d-inline-block modal-lg">
                                                 <div class="modal fade text-left" id="menuPromotion" tabindex="-1"
                                                     role="dialog" aria-labelledby="myModalLabel160" aria-hidden="true">
-                                                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
+                                                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg"
                                                         role="document">
                                                         <div class="modal-content">
                                                             <div class="modal-header bg-primary">
                                                                 <h5 class="modal-title white" id="myModalLabel160">
-                                                                    Crétion de Promotion de <span>GI</span></h5>
+                                                                    Crétion de Promotion de <span
+                                                                        class="nomFiliere text-bold-700">
+                                                                </h5>
                                                                 <button type="button" class="close" data-dismiss="modal"
                                                                     aria-label="Close">
                                                                     <i class="bx bx-x"></i>
                                                                 </button>
                                                             </div>
-                                                            <form action="" method="post">
+                                                            <form action="<?= ROOT ?>/Filieres/ajouter_promotion"
+                                                                method="post">
                                                                 <div class="modal-body">
-                                                                    <div class="row">
+                                                                    <div
+                                                                        class="row m-auto d-flex justify-content-around">
                                                                         <input type="hidden" name="idFiliere"
                                                                             id="filiere">
-                                                                        <div class="col mb-6">
+                                                                        <div class="col-4 mb-2">
                                                                             <label for="nameBasic"
                                                                                 class="form-label">Annee
                                                                                 Universitaire<span
                                                                                     class="text-danger fs-6">*</span></label>
-                                                                            <input type="text" id="nameBasic" value=""
-                                                                                class="form-control"
-                                                                                name="annneeUniverstaire"
-                                                                                placeholder="Nom module" required />
+                                                                            <input type="text" id="anneeUniversitaire"
+                                                                                name="anneeUniversitaire"
+                                                                                placeholder="YYYY-YYYY" maxlength="9"
+                                                                                class="form-control text-center" />
                                                                         </div>
-                                                                        <div class="col mb-6">
+                                                                        <div class="col-6 mb-2">
                                                                             <label for="nameBasic" class="form-label">
                                                                                 Semestre <span
                                                                                     class="text-danger fs-6">*</span></label>
-                                                                            <select name="idsemestre" id="semestres"
+                                                                            <select name="idParcours" id="semestres"
                                                                                 class="select2 form-control">
 
                                                                             </select>
@@ -210,7 +225,7 @@
                                                                     </button>
                                                                     <button type="submit"
                                                                         class="btn btn-primary ml-1 d-none d-sm-block"
-                                                                        name="saveFiliere">
+                                                                        name="savePromotion">
                                                                         <i class="bx bx-check d-block d-sm-none"></i>
                                                                         Enregistrer
                                                                     </button>
@@ -220,7 +235,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!-- fin insertion des données -->
                                             <!-- fin insertion des données -->
                                         </div>
                                     </div>
@@ -266,13 +280,19 @@
         $(this).attr("href", "<?= ROOT ?>/Filieres/supprimer_element_filiere/" + idFiliere)
     })
 
-    $('#ajouterPromotion').click(async function() {
+    $('.ajouterPromotion').click(async function() {
         let idFiliere = $(this).data("id");
-
+        $("#filiere").val(idFiliere);
+        $(".nomFiliere").html($(this).data("nom"));
         infoFiliere = await infosFiliere(idFiliere);
         semestresFiliere(infoFiliere);
+    })
 
-
+    $(document).ready(function() {
+        setDefaultAcademicYear();
+        $('#anneeUniversitaire').keyup(function(event) {
+            formatAcademicYear(event);
+        })
     })
     </script>
 </body>

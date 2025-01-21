@@ -185,74 +185,73 @@
                                                     </div>
                                                     <div id="defaultStep-two" class="content" role="tabpanel" style="margin:0;">
                                                     <fieldset class="border p-4 rounded shadow-sm">
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label>Prénom du Père <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" placeholder="Prénom du Père" name="prenompere">
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label>Nom et Prénom de la Mère <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" placeholder="Nom et Prénom de la Mère" name="prenomnommere">
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label>Lieu de Résidence des Parents <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" placeholder="Lieu de Résidence" name="lieuresidenceparents">
-            </div>
-        </div>
-    </div>
+                                                        <div class="row">
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label>Prénom du Père <span class="text-danger">*</span></label>
+                                                                    <input type="text" class="form-control" placeholder="Prénom du Père" name="prenompere">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label>Nom et Prénom de la Mère <span class="text-danger">*</span></label>
+                                                                    <input type="text" class="form-control" placeholder="Nom et Prénom de la Mère" name="prenomnommere">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label>Lieu de Résidence des Parents <span class="text-danger">*</span></label>
+                                                                    <input type="text" class="form-control" placeholder="Lieu de Résidence" name="lieuresidenceparents">
+                                                                </div>
+                                                            </div>
+                                                        </div>
 
-    <hr class="my-2">
+                                                        <hr class="my-2">
 
-    <div class="row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label>Diplôme <span class="text-danger">*</span></label>
-                <select class="form-select form-control" name="diplome">
-                    <option value="" disabled selected>Choisissez le Diplôme</option>
-                    <option value="Bac">Bac</option>
-                    <option value="BT">BT</option>
-                    <option value="IFM">IFM</option>
-                </select>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label>Numéro de Place <span class="text-danger">*</span></label>
-                <input type="number" class="form-control" placeholder="Numéro de Place" name="numplace">
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label>Série <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" placeholder="Série" name="serie">
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label>Année du Diplôme <span class="text-danger">*</span></label>
-                <input type="number" class="form-control" placeholder="Année du Diplôme" name="anneediplome">
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label>Pays <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" placeholder="Pays" name="pays">
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label>Académie <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" placeholder="Académie" name="academie">
-            </div>
-        </div>
-    </div>
-</fieldset>
-
+                                                        <div class="row">
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label>Diplôme <span class="text-danger">*</span></label>
+                                                                    <select class="form-select form-control" name="diplome">
+                                                                        <option value="" disabled selected>Choisissez le Diplôme</option>
+                                                                        <option value="Bac">Bac</option>
+                                                                        <option value="BT">BT</option>
+                                                                        <option value="IFM">IFM</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label>Numéro de Place <span class="text-danger">*</span></label>
+                                                                    <input type="number" class="form-control" placeholder="Numéro de Place" name="numplace">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label>Série <span class="text-danger">*</span></label>
+                                                                    <input type="text" class="form-control" placeholder="Série" name="serie">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label>Année du Diplôme <span class="text-danger">*</span></label>
+                                                                    <input type="number" class="form-control" placeholder="Année du Diplôme" name="anneediplome">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label>Pays <span class="text-danger">*</span></label>
+                                                                    <input type="text" class="form-control" placeholder="Pays" name="pays">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label>Académie <span class="text-danger">*</span></label>
+                                                                    <input type="text" class="form-control" placeholder="Académie" name="academie">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </fieldset>
                                                         <div class="button-action mt-5">
                                                             <button type="button"
                                                                 class="btn bg-secondary btn-prev me-3"
@@ -274,19 +273,20 @@
 
                                                                 </div>
                                                                 <div class="col-md-3  mb-2">
-                                                                    <label >N étudiants<span class="text-danger">*</span></label>
-                                                                    <input type="text" class="form-control" name="numetudiant" placeholder="N étudiants">
+                                                                    <label >Matricule CENOU<span class="text-danger">*</span></label>
+                                                                    <input type="text" class="form-control" name="numetudiant" placeholder="Matricule CENOU">
                                                                 </div>
                                                                 <div class="col-md-3  mb-2">
                                                                     <label >Années univertisaire<span class="text-danger">*</span></label>
                                                                     <select class="form-select form-control" name="id_promotion" id="id_promotion">
                                                                             <option value="" >Choisissez Années univertisaire</option>
-                                                                            <?php foreach ($listePromotion as $Promotion): ?>
-                                                                                <option value="<?= htmlspecialchars($Promotion->id_promotion); ?>">
-                                                                                    <?= htmlspecialchars($Promotion->annee_universitaire); ?>
-                                                                                </option>
+                                                                            <?php foreach ($listePromotion as $Promotion): ?>  
+                                                                            <option
+                                                                                value="<?= htmlspecialchars($Promotion->id_promotion); ?>">
+                                                                                <?= htmlspecialchars($Promotion->sigle_filiere."-".$Promotion->sigle_semestre ."(".$Promotion->annee_universitaire.")"); ?>
+                                                                            </option>
                                                                             <?php endforeach; ?>
-                                                                        </select>
+                                                                    </select>
                                                                 </div>
                                                                 <div class="col-md-3  mb-2">
                                                                     <label class="form-label">Profile<span class="text-danger">*</span></label>
@@ -296,77 +296,75 @@
 
                                                             <div class="row">
                                                             <!-- Champ Statut -->
-                                                            <div class="col-md-3 mb-2">
-                                                                <div class="form-group">
-                                                                    <label>Statut<span class="text-danger">*</span></label>
-                                                                    <select class="form-select form-control" name="id_statut" id="statut">
-                                                                        <option value="" disabled selected>Choisissez le Statut</option>
-                                                                        <option value="Regle">Regulier</option>
-                                                                        <option value="Cl">CL</option>
-                                                                        <option value="Proffesionnel">Proffesionnel</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-
-                                                            <!-- Type de Professionnel -->
-                                                            <div class="col-md-3 mb-2" id="type-prof-container" style="display: none;">
-                                                                <div class="form-group">
-                                                                    <label>Type de Professionnel<span class="text-danger">*</span></label>
-                                                                    <select class="form-select form-control" name="type_professionnel" id="type-professionnel">
-                                                                        <option value="" disabled selected>Choisissez le Type</option>
-                                                                        <option value="Etatique">Professionnel Étatique</option>
-                                                                        <option value="Simple">Professionnel Collectivite</option>
-                                                                        <option value="Prive">Professionnel Privé</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-
-                                                            <!-- Frais d'inscription -->
-                                                            <div class="col-md-3 mb-2" id="prix-container" style="display: none;">
-                                                                <div class="form-group">
-                                                                    <label class="form-label">Frais d'Inscription</label>
-                                                                    <input type="number" class="form-control" id="frais-inscription" name="frais_inscription" placeholder="Frais d'inscription" readonly>
-                                                                </div>
-                                                            </div>
-
-                                                            <!-- Frais de Formation -->
-                                                            <div class="col-md-3 mb-2" id="formation-container" style="display: none;">
-                                                                <div class="form-group">
-                                                                    <label class="form-label">Frais de Formation</label>
-                                                                    <input type="number" class="form-control" id="montant" name="montant_paye" placeholder="Prix de Formation" readonly>
-                                                                </div>
-                                                            </div>
                                                                 <div class="col-md-3 mb-2">
                                                                     <div class="form-group">
-                                                                        <label>Filière<span class="text-danger">*</span></label>
-                                                                        <select class="form-select form-control" name="id_filiere" required>
-                                                                            <option value="" disabled selected>Choisissez la Filière</option>
-                                                                            <?php foreach ($filieres as $filiere): ?>
-                                                                                <option value="<?= htmlspecialchars($filiere->id_filiere); ?>">
-                                                                                    <?= htmlspecialchars($filiere->nom_filiere); ?>
-                                                                                </option>
-                                                                            <?php endforeach; ?>
+                                                                        <label>Statut<span class="text-danger">*</span></label>
+                                                                        <select class="form-select form-control" name="id_statut" id="statut">
+                                                                            <option value="" disabled selected>Choisissez le Statut</option>
+                                                                            <option value="Regle">Regulier</option>
+                                                                            <option value="Cl">CL</option>
+                                                                            <option value="Proffesionnel">Proffesionnel</option>
                                                                         </select>
                                                                     </div>
                                                                 </div>
+
+                                                                <!-- Type de Professionnel -->
+                                                                <div class="col-md-3 mb-2" id="type-prof-container" style="display: none;">
+                                                                    <div class="form-group">
+                                                                        <label>Type de Professionnel<span class="text-danger">*</span></label>
+                                                                        <select class="form-select form-control" name="type_professionnel" id="type-professionnel">
+                                                                            <option value="" disabled selected>Choisissez le Type</option>
+                                                                            <option value="Etatique">Professionnel Étatique</option>
+                                                                            <option value="Simple">Professionnel Collectivite</option>
+                                                                            <option value="Prive">Professionnel Privé</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+
+                                                                <!-- Frais d'inscription -->
+                                                                <div class="col-md-2 mb-2" id="prix-container" style="display: none;">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Frais d'Inscription</label>
+                                                                        <input type="number" class="form-control" id="frais-inscription" name="frais_inscription" placeholder="Frais d'inscription" readonly>
+                                                                    </div>
+                                                                </div>
+
+                                                                 <!-- Frais de Formation -->
+                                                                <div class="col-md-2 mb-2" id="formation-container" style="display: none;">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Frais de Formation</label>
+                                                                        <input type="number" class="form-control" id="montant" name="montant_paye" placeholder="Prix de Formation" readonly>
+                                                                    </div>
+                                                                </div>
+                                                               
                                                               
                                                                    <!-- Total des Frais -->
-                                                            <div class="col-md-3 mb-2" id="total-container" style="display: none;">
-                                                                
-                                                                <div class="form-group">
-                                                                    <label class="form-label">Total des Frais</label>
-                                                                    <input type="number" class="form-control frais-total" id="total-frais" name="total_frais" placeholder="Total des frais" readonly>
+                                                            <div class="col-md-5" id="total-container" style="display: none;">
+                                                               <!-- Total des Frais -->
+
+                                                                <div class="row align-items-end">
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Total</label>
+                                                                            <input type="number" class="form-control frais-total" id="total-frais" name="total_frais" placeholder="Total des frais" readonly>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Somme payée</label>
+                                                                            <input type="number" class="form-control frais-paye" id="montant_paye" name="montant_paye" placeholder="Montant payé" value="" min="0">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <div class="form-group">
+                                                                            <label for="montant-restant">Somme restante :</label>
+                                                                            <input type="number" class="form-control frais-restant" id="montant-restant" name="montant_restant" readonly>
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
-                                                                <div class="form-group">
-                                                                    <label class="form-label">Somme payée</label>
-                                                                    <input type="number" class="form-control frais-paye" id="montant_paye" name="montant_paye" placeholder="Montant payé" value="0" min="0">
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label for="montant-restant">Somme restante :</label>
-                                                                    <input type="number" class="form-control frais-restant" id="montant-restant" name="montant_restant" readonly>
-                                                                </div>
+
                                                             </div>
-                                                            </div>
+                                                        </div>
                                                         </fieldset>
                                                         <div class="button-action mt-3">
                                                             <button type="button"
@@ -417,9 +415,9 @@
     };
 
     const fraisFormationParTypeProfessionnel = {
-        "Etatique": 25000,
-        "Simple": 23000,
-        "Prive": 27000
+        "Etatique": 150000,
+        "Simple": 150000,
+        "Prive": 200000
     };
 
     const statutSelect = document.getElementById('statut');
@@ -449,6 +447,11 @@
             formationContainer.style.display = 'block';
             fraisInscriptionInput.value = fraisParStatut[statutSelectionne] || 0;
             montantInput.value = fraisFormationParStatut[statutSelectionne] || 0;
+              // Calculer la somme payée automatiquement
+              const fraisInscription = parseFloat(fraisInscriptionInput.value) || 0;
+            const fraisFormation = parseFloat(montantInput.value) || 0;
+            const sommePayee = (2 / 3) * fraisFormation + fraisInscription;
+            montantPayeInput.value = sommePayee.toFixed(2); // Affichage avec deux décimales
         }
         mettreAJourTotal();
     });
@@ -461,6 +464,11 @@
 
         prixContainer.style.display = 'block';
         formationContainer.style.display = 'block';
+        // Calculer la somme payée automatiquement
+        const fraisInscription = parseFloat(fraisInscriptionInput.value) || 0;
+        const fraisFormation = parseFloat(montantInput.value) || 0;
+        const sommePayee = (2 / 3) * fraisFormation + fraisInscription;
+        montantPayeInput.value = sommePayee.toFixed(2);
 
         mettreAJourTotal();
     });

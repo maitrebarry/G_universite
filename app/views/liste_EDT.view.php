@@ -54,7 +54,7 @@
                                                 <div class="col-1">
                                                     <i class="bx bx-dialpad text-primary"></i>
                                                 </div>
-                                                <div class="col-3 ">
+                                                <div class="col-4 ">
                                                     <select class="select2 form-control text-center" id="filieres">
                                                         <option value="0" disabled selected>Filieres</option>
                                                         <?php foreach ($filieres as $filiere): ?>
@@ -64,22 +64,13 @@
                                                         <?php endforeach ?>
                                                     </select>
                                                 </div>
-                                                <div class="col-4 col-md-3">
-                                                    <select class="select2 form-control text-center" id="semestres">
-                                                        <option value="0" disabled selected>Semestres</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-4 col-md-3">
-                                                    <select class="select2 form-control text-center"
-                                                        id="anneeUniversitaires">
-                                                        <option value="0" disabled selected>Annee universitaire</option>
-                                                        <?php foreach ($filieres as $filiere): ?>
-                                                        <option value="<?php echo $filiere->id_filiere ?>">
-                                                            <?php echo strtoupper($filiere->nom_filiere . '(' . $filiere->sigle_filiere . ')') ?>
+                                                <div class="col-4">
+                                                    <select class="select2 form-control text-center" id="promotions">
+                                                        <option value="" disabled selected>Promotions
                                                         </option>
-                                                        <?php endforeach ?>
                                                     </select>
                                                 </div>
+
 
 
                                             </div>
@@ -92,55 +83,57 @@
 
 
                                         <div class="table-responsive col-12">
-                                            <table class="table zero-configuration">
+                                            <table class="table zero-configuration ">
                                                 <thead>
                                                     <tr>
                                                         <th>Filière</th>
-                                                        <th>Niveau</th>
+                                                        <th>Promotion</th>
                                                         <th>Module</th>
                                                         <th>Professeur</th>
-                                                        <th>Année Universitaire</th>
                                                         <th>Salle</th>
                                                         <th>Date Debut</th>
                                                         <th>Action</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody>
+                                                <tbody id="listeEdts">
                                                     <?php foreach ($edts as $edt): ?>
+                                                    <?php
+                                                        $edtInfo = $edt->edt;
+                                                        $promotion = $edt->promotion;
+                                                        $module = $edt->module;
+                                                        ?>
                                                     <tr style="font-size: 13px;">
                                                         <td class="h6 d-flex" style="font-weight: bolder;">
-                                                            <?php if ($edt->edt->statut == 0): ?>
+                                                            <?php if ($edtInfo->statut == 0): ?>
                                                             <div class="badge badge-warning badge-icon">
                                                                 <span>x</span>
                                                             </div>
                                                             <?php endif ?>
-                                                            <?php if ($edt->edt->statut == 1): ?>
+                                                            <?php if ($edtInfo->statut == 1): ?>
                                                             <div class="badge badge-success badge-icon">
                                                                 <span>v</span>
                                                             </div>
                                                             <?php endif ?>
                                                             <span
-                                                                class="px-1"><?php echo strtoupper($edt->semestre->sigle_filiere) ?></span>
+                                                                class="px-1"><?php echo strtoupper($promotion->sigle_filiere) ?></span>
                                                         </td>
                                                         <td>
-                                                            <?php echo strtoupper($edt->semestre->sigle_semestre) ?>
+                                                            <?php echo strtoupper($promotion->sigle_filiere . '-' . $promotion->sigle_semestre . '( ' . $promotion->annee_universitaire . ' )') ?>
                                                         </td>
                                                         <td>
-                                                            <?php echo strtoupper($edt->module->nom_module) ?>
+                                                            <?php echo strtoupper($module->nom_module) ?>
                                                         </td>
                                                         <td class="h6 text-bold-700 text-italic"
                                                             style="font-size: 13px;">
-                                                            <?php echo strtoupper($edt->edt->enseignant_prenom . ' ' . $edt->edt->enseignant_nom) ?>
+                                                            <?php echo strtoupper($edtInfo->enseignant_prenom . ' ' . $edtInfo->enseignant_nom) ?>
                                                         </td>
+
                                                         <td>
-                                                            <?php echo strtoupper($edt->edt->annee_universitaire) ?>
-                                                        </td>
-                                                        <td>
-                                                            <?php echo strtoupper($edt->edt->nom_salle) ?>
+                                                            <?php echo strtoupper($edtInfo->nom_salle) ?>
                                                         </td>
                                                         <td>
                                                             <div class="badge badge-light-primary mr-1 mb-1">
-                                                                <?php echo strtoupper($edt->edt->date_debut) ?>
+                                                                <?php echo strtoupper($edtInfo->date_debut) ?>
                                                             </div>
                                                         </td>
                                                         <td class="text-center dt-no-sorting">
@@ -152,7 +145,7 @@
                                                                 </span>
                                                                 <div class="dropdown-menu dropdown-menu-right">
                                                                     <a class="dropdown-item"
-                                                                        href="<?= ROOT ?>/Emploi_du_temps/apercu_EDT/<?php echo $edt->edt->id_edt ?>">
+                                                                        href="<?= ROOT ?>/Emploi_du_temps/apercu_EDT/<?php echo $edtInfo->id_edt ?>">
                                                                         <i class="bx bx-edit-alt mr-1"></i> Aperçu
                                                                     </a>
                                                                     <a class="dropdown-item" href="#"><i
@@ -198,8 +191,12 @@ var infoFiliere = [];
 $("#filieres").change(async function() {
 
     infoFiliere = await infosFiliere($(this).val());
-    semestresFiliere(infoFiliere);
+    promotionsFiliere(infoFiliere);
+    trierListeEdt($(this).val(), $("#promotions").val());
 
+})
+$("#promotions").change(async function() {
+    await trierListeEdt($("#filieres").val(), $(this).val());
 })
 </script>
 

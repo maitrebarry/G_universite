@@ -1,14 +1,17 @@
 <?php
 class Emploi_du_temp  extends Model
 {
-
+    // la methode pour pour retourner la dernière peridode crée
+    public function getCurrentPeriode()
+    {
+        $periode = $this->FetchSelectWhere("*", "periode", "status LIKE 'inachevé'");
+        return $periode;
+    }
 
     // la methode pour ajouter un edt
     public function ajouterEdt($edt, $horaires)
     {
-
         try {
-
             $connection = $this->bdd();
             // le debut de la transaction
             $connection->beginTransaction();
@@ -17,20 +20,24 @@ class Emploi_du_temp  extends Model
             if (!$this->isArrayDataValid($edt)) {
                 throw new Exception("Données Edt Invalide");
             }
-
+            $periode = $this->getCurrentPeriode();
             $this->e(extract($edt));
-            $requetteEdt = "INSERT INTO edt(date_creation, date_debut, statut, annee_universitaire, id_filiere, id_parcours, id_module, id_enseignant, id_salle) 
-            VALUES (:dateCreation, :dateDebut, :statut, :anneeUniversitaire, :idFiliere, :idParcours, :idModule, :idEnseignant, :idSalle)";
+            $requetteEdt = "INSERT INTO edt(date_creation, date_debut, date_Fin, statut, id_filiere, id_promotion, id_module, id_enseignant, id_salle, id_periode) 
+            VALUES (:dateCreation, :dateDebut, :dateFin, :statut, :idFiliere, :idPromotion, :idModule, :idEnseignant, :idSalle, :idPeriode)";
+            $dateFin = new DateTime($dateDebut);
+            $dateFin->add(new DateInterval('P7D'));
             $param = [
                 "dateCreation" => date("Y-m-d"),
                 "dateDebut" => $dateDebut,
+                "dateFin" => $dateFin->format("Y-m-d"),
                 "statut" => 0,
-                "anneeUniversitaire" => $anneeUniversitaire,
                 "idFiliere" => $idFiliere,
-                "idParcours" => $idParcours,
+                "idPromotion" => $idPromotion,
                 "idModule" => $idModule,
                 "idEnseignant" => $idEnseignant,
                 "idSalle" => $idSalle,
+                "idPeriode" => $periode->id_periode,
+
 
             ];
             $reponse = $this->insertion_update_simples_insert_id($requetteEdt, $param);
@@ -46,7 +53,6 @@ class Emploi_du_temp  extends Model
             $requetteTache = "INSERT INTO tache(type_tache, id_horaire, id_jour) VALUES (:typeTache, :idHoraire, :idJour)";
             foreach ($horaires as $horaire) {
                 $this->e(extract($horaire));
-                echo 'Heure : ' . $heureDebut;
                 if (empty(trim($heureDebut)) || empty(trim($heureFin))) {
                     throw new Exception("Données Horaires Invalide");
                 }
@@ -101,8 +107,8 @@ class Emploi_du_temp  extends Model
             $connection->beginTransaction();
 
             // la recuperation de l'edt
-            $requetteEdt = "SELECT id_edt, date_creation, date_debut, statut, annee_universitaire, id_module,
-                edt.id_enseignant, enseignant_prenom, enseignant_nom, enseignant_telephone, enseignant_grade, 
+            $requetteEdt = "SELECT id_edt, date_creation, date_debut, date_fin, statut, id_module, id_promotion,
+                edt.id_enseignant, enseignant_prenom, enseignant_nom, enseignant_telephone,   
                 edt.id_salle, nom_salle, capacite_salle FROM edt
                 INNER JOIN enseignants ON edt.id_enseignant=enseignants.enseignant_id
                 INNER JOIN salle ON edt.id_salle=salle.id_salle  WHERE id_edt=? ";
@@ -110,27 +116,30 @@ class Emploi_du_temp  extends Model
             $edt = $resultat[0];
             $idModule = $edt->id_module;
             $edt->date_debut = date_format(new DateTime($edt->date_debut), "d-m-Y");
+            $edt->date_fin = date_format(new DateTime($edt->date_fin), "d-m-Y");
+
             // la recuperation du module de l'emploi
             $requetteModule = "SELECT id_ue_module, ue_module.id_ue, ue_module.id_module, code_module, coeficient, cm, td, tp, tpe, module.nom_module,
                             module.sigle_module, ue.nom_ue, ue.id_parcours FROM ue_module INNER JOIN module ON ue_module.id_module=module.id_module 
                             INNER JOIN ue ON ue_module.id_ue=ue.id_ue WHERE id_ue_module=? LIMIT 1";
             $resultat = $this->select_data_table_join_where($requetteModule, [$idModule]);
             $module = $resultat[0];
-            $idParcours = $module->id_parcours;
 
-            // la recuperation du semestre
-            $requetteSemestre = "SELECT id_parcours, parcours.id_semestre, parcours.id_filiere, nom_semestre, sigle_semestre,
-                nom_filiere, sigle_filiere FROM parcours  INNER JOIN semestre ON  parcours.id_semestre=semestre.id_semestre 
-                INNER JOIN filiere ON  parcours.id_filiere=filiere.id_filiere WHERE id_parcours=? LIMIT 1";
-            $resultat = $this->select_data_table_join_where($requetteSemestre, [$idParcours]);
-            $semestre = $resultat[0];
+
+            // la recuperation de la promotion
+            $requettePromotion = "SELECT id_promotion, annee_universitaire, statut, promotion.id_parcours, nom_filiere, sigle_filiere, nom_semestre, sigle_semestre 
+            FROM promotion INNER JOIN filiere ON promotion.id_filiere=filiere.id_filiere
+            INNER JOIN parcours ON promotion.id_parcours=parcours.id_parcours INNER JOIN semestre ON parcours.id_semestre=semestre.id_semestre
+            WHERE id_promotion=?";
+            $resultat = $this->select_data_table_join_where($requettePromotion, [$edt->id_promotion]);
+            $promotion = $resultat[0];
 
             // la fin de la transaction
             $connection->commit();
 
             $infoEdt = [
                 "module" => $module,
-                "semestre" => $semestre,
+                "promotion" => $promotion,
                 "edt" => $edt
             ];
             return (object) $infoEdt;
@@ -171,7 +180,27 @@ class Emploi_du_temp  extends Model
     public function listeEdts()
     {
         $edts = [];
-        $listeEdts = $this->SelectAllDataOrder(" id_edt", "edt", "id_edt");
+        $listeEdts = $this->SelectAllDataOrder("id_edt", "edt", "id_edt");
+        foreach ($listeEdts as $edt) {
+            $infoEdt = $this->getInfoEdt($edt->id_edt);
+            $edts[] =  $infoEdt;
+        }
+
+        return $edts;
+    }
+
+
+    public function trierListeEdt($idFiliere, $idPromotion = null)
+    {
+        $whereCondition = "id_filiere=? AND id_promotion=?";
+        $whereValues = [$idFiliere, $idPromotion];
+        if ($idPromotion == null || empty($idPromotion)) {
+            $whereCondition = "id_filiere=?";
+            $whereValues = [$idFiliere];
+        }
+        $edts = [];
+
+        $listeEdts = $this->FetchAllSelectWhere("id_edt", "edt", $whereCondition, $whereValues);
         foreach ($listeEdts as $edt) {
             $infoEdt = $this->getInfoEdt($edt->id_edt);
             $edts[] =  $infoEdt;

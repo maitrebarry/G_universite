@@ -9,6 +9,7 @@ class Filieres extends Controller
         $this->view('liste_filiere', ['filieres' => $listeFilieres]);
     }
 
+    // Ajouter une filière
     public function ajouter_filiere()
     {
         if (isset($_POST['action']) && $_POST['action'] == "ajouter_filiere") {
@@ -29,7 +30,6 @@ class Filieres extends Controller
     }
 
     // la fonction pour jerer l'ajout des semestres des semestres, des ue et des modules dans une filière
-
     public function post_ajouter_filiere()
     {
         if (isset($_POST['action'])) {
@@ -45,6 +45,7 @@ class Filieres extends Controller
         }
     }
 
+    // Voir l'apperçu d'une filière
     public function apercu_filiere($idFiliere = null)
     {
         if ($idFiliere != null && is_numeric($idFiliere)) {
@@ -56,6 +57,7 @@ class Filieres extends Controller
         }
     }
 
+    // Editer une filière
     public function editer_filiere($idFiliere = null)
     {
         if ($idFiliere != null && is_numeric($idFiliere)) {
@@ -91,6 +93,7 @@ class Filieres extends Controller
         }
     }
 
+    // ajouter des élements dans une filière
     public function ajouter_element_filiere($idFiliere = null)
     {
         if ($idFiliere != null && is_numeric($idFiliere)) {
@@ -125,6 +128,8 @@ class Filieres extends Controller
             exit();
         }
     }
+
+    // Supprimer des élements dans une filière
     public function supprimer_element_filiere($idFiliere = null)
     {
         $filiereModel = new Filiere();
@@ -153,4 +158,30 @@ class Filieres extends Controller
             $filiereModel->supprimerElementFiliere($action, $id);
         }
     }
+
+
+    //! Debut de la gestion d'une promotion
+    // Ajouter une promotion
+    public function ajouter_promotion()
+    {
+        if (strtoupper($_SERVER['REQUEST_METHOD']) === "POST") {
+
+            $filiereModel = new Filiere();
+            $filiereModel->ajouterPromotion();
+        }
+    }
+
+    // Liste des promotions
+    public function liste_promotion($idFiliere = null)
+    {
+        if ($idFiliere == null || !is_numeric($idFiliere)) {
+            exit();
+        }
+
+        $filiereModel = new Filiere();
+        $promotions = $filiereModel->listePromotions($idFiliere);
+        $this->view("liste_promotion", ["promotions" => $promotions, "idFiliere" => $idFiliere]);
+    }
+    //! Fin de la gestion d'une promotion
+
 }

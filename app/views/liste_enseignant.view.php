@@ -64,19 +64,19 @@
                                         <ul class="nav nav-pills nav-justified" role="tablist">
                                             <li class="nav-item waves-effect waves-light">
                                                 <a class="nav-link active" data-toggle="tab" href="#contractuels" role="tab">
-                                                    <span class="d-none d-sm-block">Liste des enseignants vacataires </span>
+                                                    <span class="d-none d-sm-block">Liste des enseignants non permanants </span>
                                                 </a>
                                             </li>
                                             <li class="nav-item waves-effect waves-light">
                                                 <a class="nav-link" data-toggle="tab" href="#vacataires" role="tab">
-                                                    <span class="d-none d-sm-block">Liste des enseignants contractuels </span>
+                                                    <span class="d-none d-sm-block">Liste des enseignants permanants </span>
                                                 </a>
                                             </li>
                                         </ul>
 
                                         <!-- Tab panes -->
                                         <div class="tab-content mt-3">
-                                            <!-- Liste des enseignants contractuels -->
+                                            <!-- Liste des enseignants non permanants -->
                                             <div class="tab-pane active" id="contractuels" role="tabpanel">
                                                 <div class="table-responsive">
                                                     <table id="table_contractuels" class="table table-striped table-bordered" style="width:100%">
@@ -104,15 +104,23 @@
                                                                         <i class="bx bx-block" title="Aucun CV disponible"></i>
                                                                     <?php endif; ?>
                                                                 </td>
-                                                                <td>
-                                                                    <a href="<?= ROOT ?>/Enseignants/update/<?= $enseignant->enseignant_id; ?>" title="Modifier">
-                                                                        <i class="bx bx-edit" style="color: #5A8DEE; cursor: pointer;"></i>
-                                                                    </a>
-                                                                        <a href="<?= ROOT ?>/Enseignants/delete/<?= $enseignant->enseignant_id; ?>" onclick="return confirm('Voulez-vous vraiment supprimer cet enseignant ?');" title="Supprimer">
-                                                                            <i class="bx bx-trash" style="color: #EA5455; cursor: pointer;"></i>
-                                                                        </a>
-
-                                                                </td>
+                                                                 <td class="text-center ">
+                                                                    <div class=" dropdown">
+                                                                        <span class="bx bx-dots-horizontal-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="menu">
+                                                                        </span>
+                                                                        <div class="dropdown-menu dropdown-menu-right">                                                                           
+                                                                           <a class="dropdown-item" href="<?= ROOT ?>/Enseignants/listeEDT_individuel/<?= $enseignant->enseignant_id; ?>" style="font-size: 16px;">
+                                                                                <i class="fa-solid fa-calendar-plus mr-2" style="color: #7367F0; font-size: 18px;"></i> EDT INDIVIDUEL
+                                                                            </a>
+                                                                            <a class="dropdown-item" href="<?= ROOT ?>/Enseignants/update/<?= $enseignant->enseignant_id; ?>" style="font-size: 16px;">
+                                                                                <i class="bx bx-edit mr-2" style="color: #17a2b8; font-size: 18px;"></i> Modifier
+                                                                            </a>
+                                                                            <a class="dropdown-item" href="<?= ROOT ?>/Enseignants/delete/<?= $enseignant->enseignant_id; ?>" style="font-size: 16px;">
+                                                                                <i class="bx bx-trash mr-2" style="color: #dc3545; font-size: 18px;"></i> Supprimer
+                                                                            </a>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>                                                        
                                                             </tr>
                                                             <?php endforeach; ?>
                                                         </tbody>
@@ -120,7 +128,7 @@
                                                 </div>
                                             </div>
 
-                                            <!-- Liste des enseignants vacataires -->
+                                            <!-- Liste des enseignants permanants -->
                                             <div class="tab-pane" id="vacataires" role="tabpanel">
                                                 <div class="table-responsive">
                                                     <table id="table_vacataires" class="table table-striped table-bordered" style="width:100%">
@@ -139,16 +147,25 @@
                                                             <tr> 
                                                                 <td><?= htmlspecialchars($enseignant->enseignant_nom . ' ' . $enseignant->enseignant_prenom, ENT_QUOTES, 'UTF-8'); ?></td>
                                                                 <td><?= htmlspecialchars($enseignant->enseignant_matricule, ENT_QUOTES, 'UTF-8'); ?></td>
-                                                                <td><?= htmlspecialchars($enseignant->enseignant_grade, ENT_QUOTES, 'UTF-8'); ?></td>
+                                                                <td><?= htmlspecialchars($enseignant->nom_grade, ENT_QUOTES, 'UTF-8'); ?></td>
                                                                 <td><?= htmlspecialchars($enseignant->enseignant_telephone, ENT_QUOTES, 'UTF-8'); ?></td>
                                                                 <td><?= htmlspecialchars($enseignant->enseignant_diplome, ENT_QUOTES, 'UTF-8'); ?></td>
-                                                                <td>
-                                                                     <a href="<?= ROOT ?>/Enseignants/update/<?= $enseignant->enseignant_id; ?>" title="Modifier">
-                                                                        <i class="bx bx-edit" style="color: #5A8DEE; cursor: pointer;"></i>
-                                                                    </a>
-                                                                        <a  href="<?= ROOT ?>/Enseignants/delete/<?= $enseignant->enseignant_id; ?>" onclick="return confirm('Voulez-vous vraiment supprimer cet enseignant ?');" title="Supprimer">
-                                                                            <i class="bx bx-trash" style="color: #EA5455; cursor: pointer;"></i>
-                                                                        </a>
+                                                                <td class="text-center ">
+                                                                    <div class=" dropdown">
+                                                                        <span class="bx bx-dots-horizontal-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="menu">
+                                                                        </span>
+                                                                        <div class="dropdown-menu dropdown-menu-right">                                                                           
+                                                                          <a class="dropdown-item" href="<?= ROOT ?>/Enseignants/listeEDT_individuel/<?= $enseignant->enseignant_id; ?>" style="font-size: 16px;">
+                                                                                <i class="fa-solid fa-calendar-plus mr-2" style="color: #7367F0; font-size: 18px;"></i> EDT INDIVIDUEL
+                                                                            </a>
+                                                                            <a class="dropdown-item" href="<?= ROOT ?>/Enseignants/update/<?= $enseignant->enseignant_id; ?>" style="font-size: 16px;">
+                                                                                <i class="bx bx-edit mr-2" style="color: #17a2b8; font-size: 18px;"></i> Modifier
+                                                                            </a>
+                                                                            <a class="dropdown-item" href="<?= ROOT ?>/Enseignants/delete/<?= $enseignant->enseignant_id; ?>" style="font-size: 16px;">
+                                                                                <i class="bx bx-trash mr-2" style="color: #dc3545; font-size: 18px;"></i> Supprimer
+                                                                            </a>
+                                                                        </div>
+                                                                    </div>
                                                                 </td>
                                                             </tr>
                                                             <?php endforeach; ?>
