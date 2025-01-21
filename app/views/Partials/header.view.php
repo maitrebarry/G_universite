@@ -1,3 +1,10 @@
+<?php
+if (!isset($_SESSION['id_utilisateur'])) {
+    // Si l'utilisateur n'est pas connecté, redirigez-le vers la page de connexion
+$this->redirect("Logins");
+   
+}
+?>
 <!DOCTYPE html>
 <html class="loading" lang="en" data-textdirection="ltr">
 <!-- BEGIN: Head-->
