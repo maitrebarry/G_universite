@@ -508,3 +508,14 @@ function trierListeEdt(idFiliere, idPromotion) {
   });
   // Fin de l'envoi des données avec Ajax
 }
+
+// Imprimer un edt
+function imprimerEdt(nomEdt) {
+  printJS({
+    printable: "edt",
+    type: "html",
+    documentTitle: nomEdt,
+    targetStyles: ["*"],
+    style: `@page{size:landscape}`,
+  });
+}
