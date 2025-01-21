@@ -1,5 +1,8 @@
 <?php $this->view("Partials/header") ?>
-
+<style>.text-center .btn {
+    margin: 5px; /* Ajoute un espacement entre les boutons */
+}
+</style>
 <body class="vertical-layout vertical-menu-modern boxicon-layout no-card-shadow 2-columns navbar-sticky footer-static" data-open="click" data-menu="vertical-menu-modern" data-col="2-columns">
 
     <?php $this->view("Partials/navbar") ?>
@@ -76,9 +79,14 @@
                                             </div>
 
                                             <!-- Bouton centré -->
+                                             
+                                           <!-- Boutons pour soumettre ou aller à la liste des étudiants -->
                                             <div class="text-center mt-3">
                                                 <button type="submit" name="paie" class="btn btn-success">Effectuer le Paiement</button>
+                                                <a href="<?= ROOT?>/Etudiants/" class="btn btn-primary">Liste des Étudiants</a>
                                             </div>
+
+                                            <div id="payment-status" class="text-center mt-2"></div>
                                         </form>
 
                                         <!-- Historique des paiements -->
@@ -123,10 +131,35 @@ function updateRemaining() {
     var totalPaid = parseFloat(document.getElementById('total-paid').value);
 
     var remainingAmount = totalDue - (totalPaid + amountPaid);
+    // Vérifie que le montant restant est positif
+    if (remainingAmount < 0) {
+        alert("Le montant payé dépasse le montant dû !");
+        document.getElementById('amount-paid').value = ""; // Réinitialise le champ
+        remainingAmount = totalDue - totalPaid; // Recalcule sans le montant incorrect
+    }
     document.getElementById('remaining-amount').value = remainingAmount.toFixed(2);
 }
+function updatePaymentStatus() {
+    var remainingAmount = parseFloat(document.getElementById('remaining-amount').value);
+    var statusDiv = document.getElementById('payment-status');
+
+    if (remainingAmount === 0) {
+        statusDiv.innerHTML = '<span class="badge badge-success">Paiement complet</span>';
+    } else if (remainingAmount > 0) {
+        statusDiv.innerHTML = '<span class="badge badge-warning">Paiement partiel</span>';
+    } else {
+        statusDiv.innerHTML = '<span class="badge badge-danger">Montant dépassé</span>';
+    }
+}
+
+// Appeler cette fonction chaque fois que l'utilisateur entre un montant
+document.getElementById('amount-paid').addEventListener('input', function () {
+    updateRemaining();
+    updatePaymentStatus();
+});
 
     </script>
+    
 
 </body>
 
