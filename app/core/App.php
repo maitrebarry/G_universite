@@ -2,7 +2,7 @@
 
 class App
 {
-   protected  $controller="Homes";
+   protected  $controller="Logins";
    protected  $method="index";
    protected  $params=[];
      function __construct(){
@@ -26,7 +26,7 @@ class App
      }
 
      private function getURL(){
-         $url=isset($_GET["url"])?$_GET["url"]:"Homes";
+         $url=isset($_GET["url"])?$_GET["url"]:"Logins";
          return explode("/",filter_var(trim($url,'/')),
              FILTER_SANITIZE_URL);
      }

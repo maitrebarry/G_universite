@@ -18,6 +18,10 @@ class Controller
            require_once("app/views/404.view.php");
        }
    }
-
+   public  function redirect($page)
+   {
+       header("Location:".ROOT."/".trim($page,"/"));
+       exit();
+   }
 
 }

@@ -94,6 +94,8 @@ class Etudiants extends Controller
  }
         
 
-    
+ public function liste_inscription_groupe(){
+    $this->view('liste_inscription_groupe');
+}
     
 }
