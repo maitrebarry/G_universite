@@ -29,7 +29,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="content-body">
                 <section id="student-payment">
                     <div class="row">
@@ -54,7 +53,7 @@
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <label for="total-paid">Montant Total Payé</label>
+                                                        <label for="total-paid">Montant Payé</label>
                                                         <?php 
                                                         $totalPaid = 0;
                                                         foreach ($payments as $payment) {
@@ -66,13 +65,13 @@
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <label for="amount-paid">Montant Payé (Nouveau)</label>
+                                                        <label for="amount-paid">Montant à Payer</label>
                                                         <input type="number" id="amount-paid" class="form-control bg-light" name="montant_paye" placeholder="Entrer le montant payé" required oninput="updateRemaining()">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <label for="remaining-amount">Montant Restant à Payer</label>
+                                                        <label for="remaining-amount">Montant Restant</label>
                                                         <input type="number" id="remaining-amount" class="form-control bg-danger text-white" value="<?= htmlspecialchars($etudiant['total_frais'] - $totalPaid) ?>" readonly>
                                                     </div>
                                                 </div>
