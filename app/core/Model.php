@@ -225,7 +225,7 @@ public function select_data_table_join_where_limite_emarg_uni($select, $execute_
     }
 
     // Compte le nombre total de résultats
-    public function selectCount($fields,$select=[],){
+    public function selectCount($fields,$select=[]){
         $bdd = $this->bdd();
         $que = $bdd->prepare("SELECT $select FROM $fields");
         $que->execute();

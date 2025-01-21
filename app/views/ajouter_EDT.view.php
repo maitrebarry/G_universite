@@ -60,7 +60,7 @@ td {
                                 <div class="card-content">
                                     <div class="card-body">
                                         <form method="POST" class="form-horizontal" novalidate id="edtForm">
-                                            <div class="row">
+                                            <div class="row d-flex justify-content-around align-items-center">
                                                 <div class="col-sm-3">
                                                     <label class="form-label" for="single-select">Filiere</label>
                                                     <div class="form-group">
@@ -97,6 +97,12 @@ td {
                                                         </select>
                                                     </div>
                                                 </div>
+                                                 <div class="col-sm-3">
+                                                    <button type="button" class="btn btn-primary"
+                                                        data-toggle="modal" data-target="#menuConfig"><i
+                                                            class="bx bxs-cog"></i>
+                                                        Paramètrage</button>
+                                                </div>
                                             </div>
 
                                             <div class="row d-flex justify-content-between align-items-center p-1 ">
@@ -108,12 +114,7 @@ td {
                                                         <!-- Bouton pour supprimer la dernière ligne -->
                                                         <i class="bx bx-minus btn btn-danger" id="remove-row"></i>
                                                     </div>
-                                                    <div class="col-2">
-                                                        <button type="button" class="btn btn-primary"
-                                                            data-toggle="modal" data-target="#menuConfig"><i
-                                                                class="bx bxs-cog"></i>
-                                                            Paramètrage</button>
-                                                    </div>
+                                                   
                                                 </div>
                                                 <div class=" offset-6 col-6 row d-none float-right" id="infoModule">
                                                     <input type="hidden" id="vht" class="vht">

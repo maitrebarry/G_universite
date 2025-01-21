@@ -105,7 +105,7 @@
                                                 <thead>
                                                     <tr>
                                                         <th>Nom</th>
-                                                        <th>Cycle</th>
+                                                        <th>Code</th>
                                                         <th class="text-center dt-no-sorting">Action</th>
                                                     </tr>
                                                 </thead>
@@ -113,8 +113,9 @@
                                                 <tbody>
                                                     <?php foreach ($datas as $semestre): ?>
                                                         <tr>
+                                                             <td><?= $semestre->nom_semestre ?></td>
                                                             <td><?= $semestre->sigle_semestre ?></td>
-                                                            <td><?= $semestre->nom_semestre ?></td>
+                                                           
                                                             <td class="text-center py-1">
                                                                 <div class="dropdown">
                                                                     <span class="bx bx-dots-horizontal-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="menu"></span>
@@ -157,7 +158,7 @@
                                                             <input type="text" id="nameBasic" value="" class="form-control" name="nom_semestre" placeholder="Nom Semestre" required />
                                                         </div>
                                                         <div class="col mb-6">
-                                                            <label for="nameBasic" class="form-label">Cycle <span class="text-danger fs-6">*</span></label>
+                                                            <label for="nameBasic" class="form-label">Code <span class="text-danger fs-6">*</span></label>
                                                             <input type="text" id="nameBasic" value="" class="form-control" name="sigle_semestre" placeholder="Sigle Semestre" required />
                                                         </div>
                                                     </div>
@@ -199,7 +200,7 @@
                                                             <input type="text" id="inputnomSemestre" value="" class="form-control" name="nom_semestre" placeholder="Nom Semestre" required />
                                                         </div>
                                                         <div class="col mb-6">
-                                                            <label for="inputsigleModule" class="form-label">Cycle <span class="text-danger fs-6">*</span></label>
+                                                            <label for="inputsigleModule" class="form-label">Code <span class="text-danger fs-6">*</span></label>
                                                             <input type="text" id="inputsigleModule" value="" class="form-control" name="sigle_semestre" placeholder="Sigle Semestre" required />
                                                         </div>
                                                     </div>

@@ -38,16 +38,15 @@
             </div>
             <div class="content-body">
                 <!-- formulaire -->
+                  <?php $this->view("set_flash"); ?>
                 <section id="table-chechbox">
 
                     <div class="row">
-                        <div>
-                            <?php $this->view("set_flash"); ?>
-                        </div>
+                       
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-content">
-
+                                     
                                     <div class="d-flex justify-content-between align-items-center p-1 m-0">
                                         <div>
                                             <h6>

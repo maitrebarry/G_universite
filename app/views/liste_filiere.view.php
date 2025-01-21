@@ -21,7 +21,7 @@
                 <div class="content-header-left col-12 mb-2 mt-1">
                     <div class="row breadcrumbs-top">
                         <div class="col-12">
-                            <h5 class="content-header-title float-left pr-1 mb-0">Enregistrements du filière</h5>
+                            <h5 class="content-header-title float-left pr-1 mb-0"> FILIÈRE </h5>
                             <div class="breadcrumb-wrapper col-12">
                                 <ol class="breadcrumb p-0 mb-0">
                                     <li class="breadcrumb-item"><a href="index.html"><i class="bx bx-home-alt"></i></a>
@@ -47,7 +47,7 @@
                         <div class="col-12">
                             <div class="card  card-animated-border-top">
 
-                                <div class="card-content">
+                                <div class="card-content mt-1 mr-1">
                                     <a href="<?= ROOT ?>/Filieres/ajouter_Filiere"><button class="btn btn-primary"
                                             style="float:right;"><i class="bx bx-plus"></i>&nbsp; FILIERE </button></a>
                                     <div class="card-body card-dashboard">

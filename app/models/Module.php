@@ -27,7 +27,7 @@ class Module extends Model{
       $modification= $this->insertion_update_simples($req, $params);
 
     if($modification == true){
-      $this->set_flash("modification faite avec ssssss");
+      $this->set_flash("modification faite avec succès","success");
       $this->redirect("Modules/listeModule");
     }
 
