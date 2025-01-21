@@ -83,7 +83,7 @@
 
 
                                         <div class="table-responsive col-12">
-                                            <table class="table zero-configuration">
+                                            <table class="table zero-configuration ">
                                                 <thead>
                                                     <tr>
                                                         <th>Filière</th>
