@@ -7,34 +7,16 @@
 )
 ?>
 <style>
-/* @media print {
-    body * {
-        visibility: hidden;
+    input {
+
+        padding: 8px;
+        font-size: 16px;
+        text-align: center;
     }
 
-    #edt,
-    #edt * {
-        visibility: visible;
+    td {
+        padding: 15px 5px !important;
     }
-
-    #edt {
-
-        position: absolute;
-        left: 0;
-        top: 0;
-    }
-} */
-
-input {
-
-    padding: 8px;
-    font-size: 16px;
-    text-align: center;
-}
-
-td {
-    padding: 15px 5px !important;
-}
 </style>
 <!-- inclusion du partie header -->
 <?php $this->view("Partials/header") ?>
@@ -150,57 +132,57 @@ td {
 
                                         <div class=" w-100">
                                             <table id="table-extended-chechbox"
-                                                class="table table-striped table-bordered">
+                                                class="table table-striped table-bordered table-responsive-md">
                                                 <thead>
                                                     <tr>
                                                         <th class="text-center">Horaire</th>
                                                         <?php foreach ($jours as $jour): ?>
-                                                        <th class="jour" data-id="<?php echo $jour->id_jour ?>">
-                                                            <?php echo strtoupper($jour->nom_jour) ?></th>
+                                                            <th class="jour" data-id="<?php echo $jour->id_jour ?>">
+                                                                <?php echo strtoupper($jour->nom_jour) ?></th>
                                                         <?php endforeach ?>
 
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <?php foreach ($horairesEdt as $horaire): ?>
-                                                    <tr>
-                                                        <td>
-                                                            <div class='row m-auto'>
-                                                                <div class='col-sm-6'>
-                                                                    <h6><?php echo substr($horaire->heure_debut, 0, 5) ?>
-                                                                    </h6>
+                                                        <tr>
+                                                            <td>
+                                                                <div class='row m-auto'>
+                                                                    <div class='col-sm-6'>
+                                                                        <h6><?php echo substr($horaire->heure_debut, 0, 5) ?>
+                                                                        </h6>
+                                                                    </div>
+                                                                    <div class='col-sm-6'>
+                                                                        <h6><?php echo substr($horaire->heure_fin, 0, 5) ?>
+                                                                        </h6>
+                                                                    </div>
                                                                 </div>
-                                                                <div class='col-sm-6'>
-                                                                    <h6><?php echo substr($horaire->heure_fin, 0, 5) ?>
-                                                                    </h6>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <?php foreach ($horaire->taches as $tache): ?>
-                                                        <td>
-                                                            <?php if (strtoupper($tache->type_tache) != "X"): ?>
-                                                            <span class=" text-center d-block text-bold-6 00">
-                                                                <?php echo (strlen($infosEdt->module->nom_module) < 20) ? strtoupper($infosEdt->module->nom_module) : strtoupper($infosEdt->module->sigle_module) ?>
-                                                            </span>
-                                                            <span style="font-size: 11px;"
-                                                                class=" text-muted text-body text-center text-italic d-block">
-                                                                <?php echo strtoupper($tache->type_tache) ?>
-                                                            </span>
-                                                            <?php endif ?>
-                                                        </td>
-                                                        <?php endforeach ?>
-                                                    </tr>
+                                                            </td>
+                                                            <?php foreach ($horaire->taches as $tache): ?>
+                                                                <td>
+                                                                    <?php if (strtoupper($tache->type_tache) != "X"): ?>
+                                                                        <span class=" text-center d-block text-bold-6 00">
+                                                                            <?php echo (strlen($infosEdt->module->nom_module) < 20) ? strtoupper($infosEdt->module->nom_module) : strtoupper($infosEdt->module->sigle_module) ?>
+                                                                        </span>
+                                                                        <span style="font-size: 11px;"
+                                                                            class=" text-muted text-body text-center text-italic d-block">
+                                                                            <?php echo strtoupper($tache->type_tache) ?>
+                                                                        </span>
+                                                                    <?php endif ?>
+                                                                </td>
+                                                            <?php endforeach ?>
+                                                        </tr>
                                                     <?php endforeach ?>
                                                 </tbody>
                                                 <?php if (strlen($infosEdt->module->nom_module) >= 20): ?>
-                                                <caption class=" mt-1">
-                                                    <h6>
-                                                        <span
-                                                            class=" text-bold-700"><?php echo  strtoupper($infosEdt->module->sigle_module) ?></span>
-                                                        <span> =
-                                                            <?php echo strtoupper($infosEdt->module->nom_module) ?></span>
-                                                    </h6>
-                                                </caption>
+                                                    <caption class=" mt-1">
+                                                        <h6>
+                                                            <span
+                                                                class=" text-bold-700"><?php echo  strtoupper($infosEdt->module->sigle_module) ?></span>
+                                                            <span> =
+                                                                <?php echo strtoupper($infosEdt->module->nom_module) ?></span>
+                                                        </h6>
+                                                    </caption>
                                                 <?php endif ?>
                                             </table>
                                         </div>
@@ -213,24 +195,24 @@ td {
                                                 </span>
                                             </h6>
                                         </div>
-                                        <div class=" mt-4 text-right mr-2" style="min-width:75vw">
-                                            <div class=" text-center d-flex justify-content-end " style="
-                                                min-width:75vw">
-                                                <h6 class=" text-muted text-right" style="min-width:75vw">Segou, le
+                                        <div class=" mt-4 text-right mr-2" style="min-width:70vw">
+                                            <div class="d-flex justify-content-end " style="
+                                                min-width:70vw">
+                                                <h6 class=" text-muted text-right" style="min-width:70vw">Segou, le
                                                     <?php echo $infosEdt->edt->date_creation ?></h6>
                                             </div>
-                                            <div class="my-1" style="min-width:75vw">
+                                            <div class="my-1" style="min-width:70vw">
                                                 <h6 class=" text-bold-600 text-center d-flex justify-content-end w-100"
-                                                    style="min-width:75vw">
+                                                    style="min-width:70vw">
                                                     Le
                                                     Chef de DER ST</h6>
                                                 <h6 class="mt-1 d-flex text-center justify-content-end w-100"
-                                                    style="min-width:75vw">
+                                                    style="min-width:70vw">
                                                     Signature
                                                 </h6>
                                             </div>
-                                            <div class=" d-flex justify-content-end" style="min-width:75vw">
-                                                <h6 class=" text-right" style="min-width:75vw">Dr Amadou K dit Amadou Le
+                                            <div class=" d-flex justify-content-end" style="min-width:70vw">
+                                                <h6 class=" text-right" style="min-width:70vw">Dr Amadou K dit Amadou Le
                                                     Grand <br> Maître
                                                     Assistant </h6>
                                             </div>

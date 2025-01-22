@@ -198,10 +198,14 @@ function ajouterFiliere(
 
       // location.reload();
       document.getElementById("message").innerHTML = response;
-      if (response.includes("success") && action === "ajouter_filiere") {
-        document.getElementById("nomFiliere").value = "";
-        document.getElementById("sigleFiliere").value = "";
-        document.getElementById("semestresTable").innerHTML = "";
+      if (response.includes("success")) {
+        if (action === "ajouter_filiere") {
+          document.getElementById("nomFiliere").value = "";
+          document.getElementById("sigleFiliere").value = "";
+          document.getElementById("semestresTable").innerHTML = "";
+        } else {
+          window.location.reload();
+        }
       }
       // Réinitialiser après sauvegarde
 

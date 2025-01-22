@@ -417,6 +417,7 @@ function ajouterEdt(url = ROOT + "/ajouter_EDT", action = "ajouter_EDT") {
   const idEnseignant = $("#enseignants").val();
   const idSalle = $("#salles").val();
   const dateDebut = $("#dateDebut").val();
+  const heureTotal = parseInt($("#vht").val(), 10);
   edt = {
     idFiliere: idFiliere,
     idPromotion: idPromotion,
@@ -424,6 +425,7 @@ function ajouterEdt(url = ROOT + "/ajouter_EDT", action = "ajouter_EDT") {
     idEnseignant: idEnseignant,
     idSalle: idSalle,
     dateDebut: dateDebut,
+    heureTotal: heureTotal,
   };
 
   // La recuperation des horaires et des taches
@@ -470,7 +472,7 @@ function ajouterEdt(url = ROOT + "/ajouter_EDT", action = "ajouter_EDT") {
       // location.reload();
       document.getElementById("message").innerHTML = response;
       if (response.includes("success")) {
-        document.querySelector("#table-extended-chechbox tbody").innerHTML = "";
+        document.getElementById("#corpsEdt").innerHTML = "";
       }
       // Réinitialiser après sauvegarde
 
@@ -516,6 +518,24 @@ function imprimerEdt(nomEdt) {
     type: "html",
     documentTitle: nomEdt,
     targetStyles: ["*"],
-    style: `@page{size:landscape}`,
+    style: `@page{size:landscape}
+  
+    body * {
+        visibility: hidden;
+    }
+
+    #edt,
+    #edt * {
+        visibility: visible;
+    }
+
+    #edt {
+
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+          `,
   });
+  alert("hdshfsdqSSS555");
 }
