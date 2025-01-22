@@ -408,7 +408,12 @@ class Filiere  extends Model
                 throw new Exception("Filiere Introuvable : !Veuillez bien verifier vos données");
             }
 
-            $isPromotionExiste = $this->FetchSelectWhere("*", "promotion", "annee_universitaire=? AND id_filiere=?", [$anneeUniversitaire, $idFiliere]);
+            $isPromotionExiste = $this->FetchSelectWhere(
+                "*",
+                "promotion",
+                "annee_universitaire=? AND id_filiere=? AND id_parcours=?",
+                [$anneeUniversitaire, $idFiliere, $idParcours]
+            );
             if ($isPromotionExiste != null || !empty($isPromotionExiste)) {
                 throw new Exception("Repetition de Promotion : !Cette filière a dejà la promotion $anneeUniversitaire");
             }

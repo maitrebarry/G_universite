@@ -1,14 +1,14 @@
 <style>
-input {
+    input {
 
-    padding: 8px;
-    font-size: 16px;
-    text-align: center;
-}
+        padding: 8px;
+        font-size: 16px;
+        text-align: center;
+    }
 
-td {
-    padding: 15px 5px !important;
-}
+    td {
+        padding: 15px 5px !important;
+    }
 </style>
 <!-- inclusion du partie header -->
 <?php $this->view("Partials/header") ?>
@@ -68,10 +68,10 @@ td {
                                                             <option value="0" disabled selected>Selectionner une Filiere
                                                             </option>
                                                             <?php foreach ($filieres as $filiere): ?>
-                                                            <option value="<?php echo $filiere->id_filiere ?>"
-                                                                <?= ($idFiliere != null && $idFiliere == $filiere->id_filiere) ? 'selected' : '' ?>>
-                                                                <?php echo strtoupper($filiere->sigle_filiere) ?>
-                                                            </option>
+                                                                <option value="<?php echo $filiere->id_filiere ?>"
+                                                                    <?= ($idFiliere != null && $idFiliere == $filiere->id_filiere) ? 'selected' : '' ?>>
+                                                                    <?php echo strtoupper($filiere->sigle_filiere) ?>
+                                                                </option>
                                                             <?php endforeach ?>
                                                         </select>
                                                     </div>
@@ -152,13 +152,13 @@ td {
                                                         <tr>
                                                             <th class="text-center">Horaire</th>
                                                             <?php foreach ($jours as $jour): ?>
-                                                            <th class="jour" data-id="<?php echo $jour->id_jour ?>">
-                                                                <?php echo strtoupper($jour->nom_jour) ?></th>
+                                                                <th class="jour" data-id="<?php echo $jour->id_jour ?>">
+                                                                    <?php echo strtoupper($jour->nom_jour) ?></th>
                                                             <?php endforeach ?>
 
                                                         </tr>
                                                     </thead>
-                                                    <tbody>
+                                                    <tbody class="corpsEdt">
 
                                                     </tbody>
                                                 </table>
@@ -172,14 +172,14 @@ td {
                                                             <option value="" disabled selected>Sélectionner un
                                                                 enseignant</option>
                                                             <?php foreach ($enseignants as $enseignant): ?>
-                                                            <option value="<?php echo $enseignant->enseignant_id ?>">
-                                                                <?php echo  strtoupper(
+                                                                <option value="<?php echo $enseignant->enseignant_id ?>">
+                                                                    <?php echo  strtoupper(
                                                                         $enseignant->enseignant_nom . "  "
                                                                             . $enseignant->enseignant_prenom . "("
                                                                             . $enseignant->enseignant_telephone . ")"
                                                                     )
                                                                     ?>
-                                                            </option>
+                                                                </option>
                                                             <?php endforeach ?>
                                                             <!-- Ajoutez ici les options des enseignants -->
                                                         </select>
@@ -192,9 +192,9 @@ td {
                                                             <option value="" disabled selected>Selectionner une Salle
                                                             </option>
                                                             <?php foreach ($salles as $salle): ?>
-                                                            <option value="<?php echo $salle->id_salle ?>">
-                                                                <?php echo strtoupper($salle->nom_salle) . "(" . $salle->capacite_salle . ")" ?>
-                                                            </option>
+                                                                <option value="<?php echo $salle->id_salle ?>">
+                                                                    <?php echo strtoupper($salle->nom_salle) . "(" . $salle->capacite_salle . ")" ?>
+                                                                </option>
                                                             <?php endforeach ?>
                                                         </select>
                                                     </div>
@@ -310,83 +310,93 @@ td {
 <script src="<?= ROOT ?>/assets/mon_js/edt.js"></script>
 <script src="<?= ROOT ?>/assets/mon_js/contrainte_date_edt.js"></script>
 <script>
-var infoFiliere = [];
-$("#filiere").change(async function() {
+    var infoFiliere = [];
+    $("#filiere").change(async function() {
 
-    infoFiliere = await infosFiliere($(this).val());
-    promotionsFiliere(infoFiliere);
-    idSemestre = $("#promotions option:selected").data("id");
-    modulesSemestre(idSemestre, infoFiliere);
-    infoModule($("#infoModule").val(), infoFiliere);
+        infoFiliere = await infosFiliere($(this).val());
+        promotionsFiliere(infoFiliere);
+        idSemestre = $("#promotions option:selected").data("id");
+        modulesSemestre(idSemestre, infoFiliere);
+        infoModule($("#infoModule").val(), infoFiliere);
 
-
-})
-
-$("#promotions").change(function() {
-    idSemestre = $("#promotions option:selected").data("id");
-    modulesSemestre(idSemestre, infoFiliere);
-    infoModule($("#infoModule").val(), infoFiliere);
-})
-
-
-$("#modules").change(function() {
-    infoModule($(this).val(), infoFiliere);
-
-})
-
-// JavaScript pour ajouter une ligne à la table
-document.getElementById('add-row').addEventListener('click', function() {
-    addHeure();
-});
-
-// JavaScript pour supprimer la dernière ligne de la table
-document.getElementById('remove-row').addEventListener('click', function() {
-    removeHeure();
-});
-
-$(document).ready(async function() {
-
-    $('#edtForm').submit(function(event) {
-        event.preventDefault();
-        ajouterEdt();
 
     })
 
-    infoFiliere = await infosFiliere($("#filiere").val());
-    promotionsFiliere(infoFiliere);
-    idSemestre = $("#promotions option:selected").data("id");
-    modulesSemestre(idSemestre, infoFiliere);
-    infoModule($("#infoModule").val(), infoFiliere);
-})
+    $("#promotions").change(function() {
+        idSemestre = $("#promotions option:selected").data("id");
+        modulesSemestre(idSemestre, infoFiliere);
+        infoModule($("#infoModule").val(), infoFiliere);
+    })
 
 
-$('#model-row').click(function() {
-    $('#model-column').removeClass('border-primary');
-    $(this).addClass("border-primary");
-    $(this).css('transition', 'all 0.5s');
-    const heuresModule = calculerHeuresModuleEdt();
-    const model = $(this).data('model');
-    const type = parseInt($('input[name="type"]:checked').val(), 10);
-    genererEdt(heuresModule, model, type);
+    $("#modules").change(function() {
+        infoModule($(this).val(), infoFiliere);
+
+    })
+
+    // JavaScript pour ajouter une ligne à la table
+    document.getElementById('add-row').addEventListener('click', function() {
+        $('#table-extended-chechbox tbody tr').each(function(index) {
+            if (index == $('#table-extended-chechbox tbody tr').length - 1) {
+                horaireDebut = $(this).find('.horaireFin').val()
+            }
+        })
+        heure = horaireDebut.split(':');
+        horaireFin = (parseInt(heure[0], 10) + 2) + ':' + heure[1];
+        const type = parseInt($('input[name="type"]:checked').val(), 10);
+        genererCoursEdt(typeEdt[type]);
+        addHeure(horaireDebut, horaireFin, coursJour);
+
+    });
+
+    // JavaScript pour supprimer la dernière ligne de la table
+    document.getElementById('remove-row').addEventListener('click', function() {
+        removeHeure();
+    });
+
+    $(document).ready(async function() {
+
+        $('#edtForm').submit(function(event) {
+            event.preventDefault();
+            ajouterEdt();
+
+        })
+
+        infoFiliere = await infosFiliere($("#filiere").val());
+        promotionsFiliere(infoFiliere);
+        idSemestre = $("#promotions option:selected").data("id");
+        modulesSemestre(idSemestre, infoFiliere);
+        infoModule($("#infoModule").val(), infoFiliere);
+    })
 
 
-})
-$('#model-column').click(function() {
-    $('#model-row').removeClass('border-primary');
-    $(this).addClass("border-primary");
-    $(this).css('transition', 'all 0.5s');
-    const heuresModule = calculerHeuresModuleEdt();
-    const model = $(this).data('model');
-    const type = parseInt($('input[name="type"]:checked').val(), 10);
-    genererEdt(heuresModule, model, type);
-})
+    $('#model-row').click(function() {
+        $('#model-column').removeClass('border-primary');
+        $(this).addClass("border-primary");
+        $(this).css('transition', 'all 0.5s');
+        const heuresModule = calculerHeuresModuleEdt();
+        const model = $(this).data('model');
+        const type = parseInt($('input[name="type"]:checked').val(), 10);
+        genererEdt(heuresModule, model, type);
 
-$('.type').click(function() {
-    const heuresModule = calculerHeuresModuleEdt();
-    const model = ($('#model-row').hasClass("border-primary")) ? $('#model-row').data('model') : $(
-        '#model-column').data('model')
-    const type = parseInt($('input[name="type"]:checked').val(), 10);
 
-    genererEdt(heuresModule, model, type);
-})
+    })
+    $('#model-column').click(function() {
+        $('#model-row').removeClass('border-primary');
+        $(this).addClass("border-primary");
+        $(this).css('transition', 'all 0.5s');
+        const heuresModule = calculerHeuresModuleEdt();
+        const model = $(this).data('model');
+        const type = parseInt($('input[name="type"]:checked').val(), 10);
+        genererEdt(heuresModule, model, type);
+    })
+
+    $('.type').click(function() {
+        const heuresModule = calculerHeuresModuleEdt();
+        const model = ($('#model-row').hasClass("border-primary")) ? $('#model-row').data('model') : $(
+            '#model-column').data('model')
+        const type = parseInt($('input[name="type"]:checked').val(), 10);
+
+        genererEdt(heuresModule, model, type);
+    })
 </script>

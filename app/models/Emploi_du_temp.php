@@ -4,7 +4,7 @@ class Emploi_du_temp  extends Model
     // la methode pour pour retourner la dernière peridode crée
     public function getCurrentPeriode()
     {
-        $periode = $this->FetchSelectWhere("*", "periode", "status LIKE 'inachevé'");
+        $periode = $this->FetchSelectWhere("*", "periode", "status = 'inachevé' ");
         return $periode;
     }
 
@@ -22,8 +22,8 @@ class Emploi_du_temp  extends Model
             }
             $periode = $this->getCurrentPeriode();
             $this->e(extract($edt));
-            $requetteEdt = "INSERT INTO edt(date_creation, date_debut, date_Fin, statut, id_filiere, id_promotion, id_module, id_enseignant, id_salle, id_periode) 
-            VALUES (:dateCreation, :dateDebut, :dateFin, :statut, :idFiliere, :idPromotion, :idModule, :idEnseignant, :idSalle, :idPeriode)";
+            $requetteEdt = "INSERT INTO edt(date_creation, date_debut, date_Fin, statut, heure_total, id_filiere, id_promotion, id_module, id_enseignant, id_salle, id_periode) 
+            VALUES (:dateCreation, :dateDebut, :dateFin, :statut, :heureTotal, :idFiliere, :idPromotion, :idModule, :idEnseignant, :idSalle, :idPeriode)";
             $dateFin = new DateTime($dateDebut);
             $dateFin->add(new DateInterval('P7D'));
             $param = [
@@ -31,6 +31,7 @@ class Emploi_du_temp  extends Model
                 "dateDebut" => $dateDebut,
                 "dateFin" => $dateFin->format("Y-m-d"),
                 "statut" => 0,
+                "heureTotal" => $heureTotal,
                 "idFiliere" => $idFiliere,
                 "idPromotion" => $idPromotion,
                 "idModule" => $idModule,
