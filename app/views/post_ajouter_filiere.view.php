@@ -58,7 +58,7 @@
     <div class="col-12  ">
         <label class='text-center' for='modules'>Module</label>
         <select id='modulessqfsqd' class='select2 form-control module'>
-            <option value="" disabled selected>Selectionner une Promotion</option>
+            <option value="" disabled selected>Selectionner un Module</option>
             <?php foreach ($modules as $module): ?>
             <option value="<?php echo $module->id_module ?>">
                 <?php echo strtoupper($module->nom_module) ?>(
@@ -75,7 +75,7 @@
     </div>
     <!-- COEFICIENT -->
     <div class='col-5 m-auto mb-1'>
-        <label>Coéficient</label>
+        <label>Crédit</label>
         <input type='number' class='form-control coeficient'>
     </div>
 

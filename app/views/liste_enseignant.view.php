@@ -19,7 +19,7 @@
                 <div class="content-header-left col-12 mb-2 mt-1">
                     <div class="row breadcrumbs-top">
                         <div class="col-12">
-                            <h5 class="content-header-title float-left pr-1 mb-0">Enregistrements de l'Enseignant</h5>
+                            <h5 class="content-header-title float-left pr-1 mb-0">ENSEIGNANTS</h5>
                             <div class="breadcrumb-wrapper col-12">
                                 <ol class="breadcrumb p-0 mb-0">
                                     <li class="breadcrumb-item"><a href="index.html"><i class="bx bx-home-alt"></i></a></li>
@@ -53,7 +53,7 @@
                                         </div>
                                     </div>
                                 <?php endif; ?>
-                                <div class="card-content">
+                                <div class="card-content mt-1 mr-1">
                                     <div class="d-flex justify-content-end mb-2">
                                         <a href="<?= ROOT ?>/Enseignants/ajouter_enseignant">
                                             <button class="btn btn-primary"><i class="bx bx-plus"></i>&nbsp; Enseignant</button>

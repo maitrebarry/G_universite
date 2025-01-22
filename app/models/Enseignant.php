@@ -147,7 +147,7 @@ class Enseignant extends Model{
         ":enseignant_cv" => $cv,
     ]);
     if ($insertion) {
-        $this->set_flash("Enseignant ajouté avec succès", 'success');
+        $this->set_flash("Enseignant ajouté avec succès", 'primary');
         $this->redirect("Enseignants/lsite_enseignant");
     } else {
         $this->errors[]="Échec de la mise à jour";

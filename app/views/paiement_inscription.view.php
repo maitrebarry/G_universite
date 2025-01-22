@@ -1,8 +1,75 @@
 <?php $this->view("Partials/header") ?>
-<style>.text-center .btn {
+<style>
+    .text-center .btn {
     margin: 5px; /* Ajoute un espacement entre les boutons */
-}
+        }
+    /* Champ input par défaut */
+    input.form-control {
+        border: 1px solid #ccc; /* Bordure douce */
+        border-radius: 8px; /* Bordure arrondie */
+        padding: 10px;
+        font-size: 14px;
+        background-color: #f9f9f9; /* Fond clair */
+        transition: 0.3s ease-in-out;
+    }
+
+    /* Champ focus */
+    input.form-control:focus {
+        border-color: #007bff; /* Bordure bleue au focus */
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Effet lumineux */
+        background-color: #fff;
+    }
+
+    /* Champs en lecture seule */
+    input[readonly] {
+        background-color: #e9ecef; /* Fond gris clair */
+        color: #6c757d; /* Texte gris */
+        border: 1px solid #ddd;
+    }
+
+    /* Champ de validation (montant restant) */
+    input.bg-danger {
+        background-color: #f8d7da !important;
+        color: #721c24 !important;
+        border: 1px solid #f5c6cb;
+    }
+
+    /* Champ payé */
+    input.bg-secondary {
+        background-color: #d1ecf1 !important;
+        color: #0c5460 !important;
+        border: 1px solid #bee5eb;
+    }
+
+    /* Boutons */
+    .btn {
+        border-radius: 20px; /* Arrondi des boutons */
+        padding: 10px 20px;
+        font-size: 14px;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        color: white;
+        border: none;
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
 </style>
+
 <body class="vertical-layout vertical-menu-modern boxicon-layout no-card-shadow 2-columns navbar-sticky footer-static" data-open="click" data-menu="vertical-menu-modern" data-col="2-columns">
 
     <?php $this->view("Partials/navbar") ?>
@@ -29,11 +96,10 @@
                     </div>
                 </div>
             </div>
-
             <div class="content-body">
                 <section id="student-payment">
                     <div class="row">
-                        <div class="col-md-8 offset-md-2">
+                        <div class="col-md-12">
                             <div class="card">
                                 <div class="card-header">
                                     <h4 class="card-title">Formulaire de Paiement</h4>
@@ -49,12 +115,12 @@
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label for="total-due">Montant Total Dû</label>
-                                                        <input type="number" id="total-due" class="form-control bg-primary text-white" value="<?= htmlspecialchars($etudiant['total_frais']) ?>" readonly>
+                                                        <input type="number" id="total-due" class="form-control bg-secondary text-white" value="<?= htmlspecialchars($etudiant['total_frais']) ?>" readonly>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <label for="total-paid">Montant Total Payé</label>
+                                                        <label for="total-paid">Montant Payé</label>
                                                         <?php 
                                                         $totalPaid = 0;
                                                         foreach ($payments as $payment) {
@@ -66,13 +132,13 @@
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <label for="amount-paid">Montant Payé (Nouveau)</label>
+                                                        <label for="amount-paid">Montant à Payer</label>
                                                         <input type="number" id="amount-paid" class="form-control bg-light" name="montant_paye" placeholder="Entrer le montant payé" required oninput="updateRemaining()">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <label for="remaining-amount">Montant Restant à Payer</label>
+                                                        <label for="remaining-amount">Montant Restant</label>
                                                         <input type="number" id="remaining-amount" class="form-control bg-danger text-white" value="<?= htmlspecialchars($etudiant['total_frais'] - $totalPaid) ?>" readonly>
                                                     </div>
                                                 </div>
@@ -121,7 +187,6 @@
 
     <?php $this->view("Partials/foot") ?>
     <?php $this->view("Partials/footer") ?>
-
     <!-- Script JavaScript pour calculer le montant restant -->
     <script>
        // Script JavaScript pour mettre à jour le montant restant
