@@ -33,7 +33,10 @@ class Etudiants extends Controller
         $listeFilieres = $filiereModel->SelectAllData("*", "filiere");
      
         // Récupérer les données des promotions
-                 $listePromotion = $filiereModel->SelectAllData("*", "promotion");
+                 $listePromotion = $filiereModel->SelectAllData("*", "promotion 
+                 INNER JOIN filiere ON promotion.id_filiere=filiere.id_filiere 
+                 INNER JOIN parcours ON promotion.id_parcours=parcours.id_parcours 
+                 INNER JOIN semestre ON parcours.id_semestre=semestre.id_semestre");
                 // var_dump($listePromotion);exit;
         
                 // Transmettre les données à la vue
