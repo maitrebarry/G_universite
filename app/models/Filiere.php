@@ -82,7 +82,7 @@ class Filiere  extends Model
                                     'coeficient' => $moduleCoeficient,
                                     'cm' => $moduleCm,
                                     'td' => $moduleTd,
-                                    'tp' => $moduleTd,
+                                    'tp' => $moduleTp,
                                     'tpe' => $moduleTpe,
                                 ];
                                 $this->insertion_update_simples($requetteModule, $param);
@@ -237,7 +237,7 @@ class Filiere  extends Model
                                     'coeficient' => $moduleCoeficient,
                                     'cm' => $moduleCm,
                                     'td' => $moduleTd,
-                                    'tp' => $moduleTd,
+                                    'tp' => $moduleTp,
                                     'tpe' => $moduleTpe,
                                     'idUeModule' => $idUeModule
                                 ];
@@ -392,6 +392,9 @@ class Filiere  extends Model
         }
     }
 
+
+    //! Fin de la gestion d'une promotion
+
     //! Debut de la gestion d'une promotion
     // Ajouter une promotion
     public function ajouterPromotion()
@@ -442,7 +445,7 @@ class Filiere  extends Model
     }
 
     // Liste des promotions d'une filière
-    public function listePromotions($idFiliere)
+    public function listePromotions($idFiliere, $statut = null)
     {
         try {
             $this->e(extract($_POST));
@@ -451,11 +454,14 @@ class Filiere  extends Model
             if ($isFiliereExiste < 0) {
                 throw new Exception("Filiere Introuvable : !Veuillez bien verifier vos données");
             }
-
-            $requette = "SELECT id_promotion, annee_universitaire, statut, promotion.id_parcours, nom_filiere, sigle_filiere, nom_semestre, sigle_semestre 
-            FROM promotion INNER JOIN filiere ON promotion.id_filiere=filiere.id_filiere
+            $statutCondtion = '';
+            if ($statut != null) {
+                $statutCondtion = "AND promotion.statut=$statut";
+            }
+            $requette = "SELECT id_promotion, annee_universitaire, promotion.statut, promotion.id_parcours, promotion.id_filiere, nom_filiere, 
+            sigle_filiere, nom_semestre, sigle_semestre FROM promotion INNER JOIN filiere ON promotion.id_filiere=filiere.id_filiere
             INNER JOIN parcours ON promotion.id_parcours=parcours.id_parcours INNER JOIN semestre ON parcours.id_semestre=semestre.id_semestre
-            WHERE promotion.id_filiere=?";
+            WHERE promotion.id_filiere=? $statutCondtion";
 
             $promotions = $this->select_data_table_join_where($requette, [$idFiliere]);
             return $promotions;
@@ -463,6 +469,38 @@ class Filiere  extends Model
             $this->set_flash($e->getMessage(), "warning");
             $this->redirect("Filieres/");
             return;
+        }
+    }
+
+    // la methode pour changer le status d'une promotion (en attente, en marche, en arret)
+    public function setStatusPromotion($idPromotion, $statut = 1)
+    {
+        try {
+            $isUpdate = $this->insertion_update_simples(
+                "UPDATE promotion SET statut=:statut WHERE id_promotion=:idPromotion LIMIT 1",
+                ['statut' => $statut, 'idPromotion' => $idPromotion]
+            );
+            if ($isUpdate) {
+                switch ($statut) {
+                    case 0:
+                        $message = "Cette promotion est desormais en attente";
+                        break;
+                    case 1:
+                        $message = "Cette promotion est desormais en cours";
+                        break;
+                    case 2:
+                        $message = "Cette promotion est desormais en arrêt";
+                        break;
+
+                    default:
+                        $message = "Cette promotion a été modifier";
+                        break;
+                }
+                $this->set_flash($message, 'primary');
+            }
+            return $isUpdate;
+        } catch (Exception $e) {
+            $this->set_flash($e->getMessage() . ' : Imposible de modifier cette promotion');
         }
     }
 

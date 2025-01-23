@@ -1,14 +1,14 @@
 <style>
-input {
+    input {
 
-    padding: 8px;
-    font-size: 16px;
-    text-align: center;
-}
+        padding: 8px;
+        font-size: 16px;
+        text-align: center;
+    }
 
-td {
-    padding: 8px 5px !important;
-}
+    td {
+        padding: 8px 5px !important;
+    }
 </style>
 <!-- inclusion du partie header -->
 <?php $this->view("Partials/header") ?>
@@ -55,7 +55,7 @@ td {
                         <div class="col-md-12">
                             <div class="card card-animated-border-top">
                                 <div class="card-header">
-                                    <h4 class="card-title text-center">Création d'emploi du temps</h4>
+                                    <h4 class="card-title text-center">Modification d'emploi du temps</h4>
                                 </div>
                                 <div class="card-content">
                                     <div class="card-body">
@@ -68,10 +68,10 @@ td {
                                                             <option value="0" disabled selected>Selectionner une Filiere
                                                             </option>
                                                             <?php foreach ($filieres as $filiere): ?>
-                                                            <option value="<?php echo $filiere->id_filiere ?>"
-                                                                <?= ($idFiliere != null && $idFiliere == $filiere->id_filiere) ? 'selected' : '' ?>>
-                                                                <?php echo strtoupper($filiere->sigle_filiere) ?>
-                                                            </option>
+                                                                <option value="<?php echo $filiere->id_filiere ?>"
+                                                                    <?= ($infosEdt->promotion->id_filiere == $filiere->id_filiere) ? 'selected' : '' ?>>
+                                                                    <?php echo strtoupper($filiere->sigle_filiere) ?>
+                                                                </option>
                                                             <?php endforeach ?>
                                                         </select>
                                                     </div>
@@ -80,7 +80,7 @@ td {
                                                     <label class="form-label" for="single-select">Promotion</label>
                                                     <div class="form-group">
                                                         <select class="select2 form-control" id="promotions"
-                                                            data-id="<?php echo $idPromotion ?>">
+                                                            data-id="<?php echo $infosEdt->promotion->id_promotion ?>">
                                                             <option value="" disabled selected>Selectioner une Promotion
                                                             </option>
 
@@ -91,7 +91,8 @@ td {
                                                     <label class="form-label" for="single-select">Modules</label>
                                                     <div class="form-group">
                                                         <select class="select2 form-control champ" id="modules"
-                                                            name="modules">
+                                                            name="modules"
+                                                            data-id="<?php echo $infosEdt->module->id_ue_module ?>">
                                                             <option value="" disabled selected>Selectioner un Module
                                                             </option>
 
@@ -152,14 +153,62 @@ td {
                                                         <tr>
                                                             <th class="text-center">Horaire</th>
                                                             <?php foreach ($jours as $jour): ?>
-                                                            <th class="jour" data-id="<?php echo $jour->id_jour ?>">
-                                                                <?php echo strtoupper($jour->nom_jour) ?></th>
+                                                                <th class="jour" data-id="<?php echo $jour->id_jour ?>">
+                                                                    <?php echo strtoupper($jour->nom_jour) ?></th>
                                                             <?php endforeach ?>
 
                                                         </tr>
                                                     </thead>
-                                                    <tbody class="corpsEdt">
+                                                    <tbody id="corpsEdt">
+                                                        <?php foreach ($horairesEdt as $horaire): ?>
+                                                            <tr>
+                                                                <td>
+                                                                    <div class='row'>
+                                                                        <div class='col-sm-6'>
+                                                                            <input type='time'
+                                                                                class='form-control horaireDebut'
+                                                                                value="<?php echo substr($horaire->heure_debut, 0, 5) ?>">
+                                                                        </div>
+                                                                        <div class='col-sm-6'>
+                                                                            <input type='time'
+                                                                                class='form-control horaireFin'
+                                                                                value="<?php echo substr($horaire->heure_fin, 0, 5) ?>">
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
 
+                                                                <?php foreach ($horaire->taches as $tache): ?>
+
+                                                                    <td>
+                                                                        <select class='form-control tache'>
+                                                                            <option value='x' class='text-center'
+                                                                                <?php echo (strtolower($tache->type_tache) == 'x') ? 'selected' : '' ?>>
+                                                                                X</option>
+                                                                            <option value='cm' class='text-center'
+                                                                                <?php echo (strtolower($tache->type_tache) == 'cm') ? 'selected' : '' ?>>
+                                                                                CM
+                                                                            </option>
+                                                                            <option value='td' class='text-center'
+                                                                                <?php echo (strtolower($tache->type_tache) == 'td') ? 'selected' : '' ?>>
+                                                                                TD
+                                                                            </option>
+                                                                            <option value='tp' class='text-center'
+                                                                                <?php echo (strtolower($tache->type_tache) == 'tp') ? 'selected' : '' ?>>
+                                                                                TP
+                                                                            </option>
+                                                                            <option value='tpe' class='text-center'
+                                                                                <?php echo (strtolower($tache->type_tache) == 'tpe') ? 'selected' : '' ?>>
+                                                                                TPE
+                                                                            </option>
+                                                                            <option value='examen' class='text-center'
+                                                                                <?php echo (strtolower($tache->type_tache) == 'examen') ? 'selected' : '' ?>>
+                                                                                EXAMEN
+                                                                            </option>
+                                                                        </select>
+                                                                    </td>
+                                                                <?php endforeach ?>
+                                                            </tr>
+                                                        <?php endforeach ?>
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -172,14 +221,15 @@ td {
                                                             <option value="" disabled selected>Sélectionner un
                                                                 enseignant</option>
                                                             <?php foreach ($enseignants as $enseignant): ?>
-                                                            <option value="<?php echo $enseignant->enseignant_id ?>">
-                                                                <?php echo  strtoupper(
+                                                                <option value="<?php echo $enseignant->enseignant_id ?>"
+                                                                    <?= ($infosEdt->edt->id_enseignant == $enseignant->enseignant_id) ? 'selected' : '' ?>>
+                                                                    <?php echo  strtoupper(
                                                                         $enseignant->enseignant_nom . "  "
                                                                             . $enseignant->enseignant_prenom . "("
                                                                             . $enseignant->enseignant_telephone . ")"
                                                                     )
                                                                     ?>
-                                                            </option>
+                                                                </option>
                                                             <?php endforeach ?>
                                                             <!-- Ajoutez ici les options des enseignants -->
                                                         </select>
@@ -192,9 +242,10 @@ td {
                                                             <option value="" disabled selected>Selectionner une Salle
                                                             </option>
                                                             <?php foreach ($salles as $salle): ?>
-                                                            <option value="<?php echo $salle->id_salle ?>">
-                                                                <?php echo strtoupper($salle->nom_salle) . "(" . $salle->capacite_salle . ")" ?>
-                                                            </option>
+                                                                <option value="<?php echo $salle->id_salle ?>"
+                                                                    <?= ($infosEdt->edt->id_salle == $salle->id_salle) ? 'selected' : '' ?>>
+                                                                    <?php echo strtoupper($salle->nom_salle) . "(" . $salle->capacite_salle . ")" ?>
+                                                                </option>
                                                             <?php endforeach ?>
                                                         </select>
                                                     </div>
@@ -204,13 +255,15 @@ td {
                                                         :</label>
                                                     <div class="form-group w-100 d-flex justify-content-end ">
                                                         <input type="date" class="form-control" name="dateDebut"
-                                                            id="dateDebut" value="<?php echo date("d/m/Y") ?>">
+                                                            id="dateDebut"
+                                                            value="<?php echo date_format(new DateTime($infosEdt->edt->date_debut), "Y-m-d") ?>">
                                                     </div>
                                                 </div>
 
                                             </div>
                                             <button type="submit" style="float: right;" class="btn btn-primary"
-                                                id="valider">Enregistrer</button><br>
+                                                data-id="<?php echo $infosEdt->edt->id_edt ?>"
+                                                id="valider">Modifier</button>
                                         </form>
                                     </div>
                                 </div>
@@ -311,103 +364,103 @@ td {
 <script src="<?= ROOT ?>/assets/mon_js/edt.js"></script>
 <script src="<?= ROOT ?>/assets/mon_js/contrainte_date_edt.js"></script>
 <script>
-// la recuperation des liste de promotion d'une filière lors d'une selection de fiilière
-var infoFiliere = [];
-$("#filiere").change(async function() {
-    infoFiliere = await infosFiliere($(this).val());
-    promotionsFiliere(infoFiliere);
-    idSemestre = $("#promotions option:selected").data("id");
-    modulesSemestre(idSemestre, infoFiliere);
-    infoModule($("#infoModule").val(), infoFiliere);
+    // la recuperation des liste de promotion d'une filière lors d'une selection de fiilière
+    var infoFiliere = [];
+    $("#filiere").change(async function() {
+        infoFiliere = await infosFiliere($(this).val());
+        promotionsFiliere(infoFiliere);
+        idSemestre = $("#promotions option:selected").data("id");
+        modulesSemestre(idSemestre, infoFiliere);
+        infoModule($("#infoModule").val(), infoFiliere);
 
-
-})
-
-// la recuperation des modules d'une promotion lors d'une selection de promotion
-$("#promotions").change(function() {
-    idSemestre = $("#promotions option:selected").data("id");
-    modulesSemestre(idSemestre, infoFiliere);
-    infoModule($("#infoModule").val(), infoFiliere);
-})
-
-
-// la recuperation des heures d'un module lors d'une selection de module
-$("#modules").change(function() {
-    infoModule($(this).val(), infoFiliere);
-    getDefaultEnseignantAndSalleModule($("#filiere").val(), $(this).val());
-
-
-})
-
-// les actions lors du rechargement de la page
-$(document).ready(async function() {
-
-    $('#edtForm').submit(function(event) {
-        event.preventDefault();
-        ajouterEdt();
 
     })
 
-    // la recupeation des promotions de la filière selectionner après le rechargement
-    infoFiliere = await infosFiliere($("#filiere").val());
-    idPromotion = $("#promotions").data('id');
-    promotionsFiliere(infoFiliere, idPromotion);
-    idSemestre = $("#promotions option:selected").data("id");
-    modulesSemestre(idSemestre, infoFiliere);
-    infoModule($("#modules").val(), infoFiliere);
-})
-
-
-// Mettre un edt en model horizontal
-$('#model-row').click(function() {
-    $('#model-column').removeClass('border-primary');
-    $(this).addClass("border-primary");
-    $(this).css('transition', 'all 0.5s');
-    const heuresModule = calculerHeuresModuleEdt();
-    const model = $(this).data('model');
-    const type = parseInt($('input[name="type"]:checked').val(), 10);
-    genererEdt(heuresModule, model, type);
-
-
-})
-
-// Mettre un edt en model vertical
-$('#model-column').click(function() {
-    $('#model-row').removeClass('border-primary');
-    $(this).addClass("border-primary");
-    $(this).css('transition', 'all 0.5s');
-    const heuresModule = calculerHeuresModuleEdt();
-    const model = $(this).data('model');
-    const type = parseInt($('input[name="type"]:checked').val(), 10);
-    genererEdt(heuresModule, model, type);
-})
-
-// le changement du type de cours d'un edt
-$('.type').click(function() {
-    const heuresModule = calculerHeuresModuleEdt();
-    const model = ($('#model-row').hasClass("border-primary")) ? $('#model-row').data('model') : $(
-        '#model-column').data('model')
-    const type = parseInt($('input[name="type"]:checked').val(), 10);
-    genererEdt(heuresModule, model, type);
-})
-
-// Ajouter une ligne à un edt
-document.getElementById('add-row').addEventListener('click', function() {
-    $('#table-extended-chechbox tbody tr').each(function(index) {
-        if (index == $('#table-extended-chechbox tbody tr').length - 1) {
-            horaireDebut = $(this).find('.horaireFin').val()
-        }
+    // la recuperation des modules d'une promotion lors d'une selection de promotion
+    $("#promotions").change(function() {
+        idSemestre = $("#promotions option:selected").data("id");
+        modulesSemestre(idSemestre, infoFiliere);
+        infoModule($("#infoModule").val(), infoFiliere);
     })
-    heure = horaireDebut.split(':');
-    horaireFin = (parseInt(heure[0], 10) + 2) + ':' + heure[1];
-    const type = parseInt($('input[name="type"]:checked').val(), 10);
-    genererCoursEdt(typeEdt[type]);
-    addHeure(horaireDebut, horaireFin, coursJour);
 
-});
 
-// Supprimer une ligne d'un edt
-document.getElementById('remove-row').addEventListener('click', function() {
-    removeHeure();
-});
+    // la recuperation des heures d'un module lors d'une selection de module
+    $("#modules").change(function() {
+        infoModule($(this).val(), infoFiliere);
+        getDefaultEnseignantAndSalleModule($("#filiere").val(), $(this).val());
+
+
+    })
+
+    // les actions lors du rechargement de la page
+    $(document).ready(async function() {
+
+        $('#edtForm').submit(function(event) {
+            event.preventDefault();
+            ajouterEdt("http://localhost/G_universite/public/Emploi_du_temps/editer_edt", "editer_edt");
+        })
+
+        // la recupeation des promotions de la filière selectionner après le rechargement
+        infoFiliere = await infosFiliere($("#filiere").val());
+        idPromotion = $("#promotions").data('id');
+        promotionsFiliere(infoFiliere, idPromotion);
+        idSemestre = $("#promotions option:selected").data("id");
+        idModule = $("#modules").data("id");
+        modulesSemestre(idSemestre, infoFiliere, idModule);
+        infoModule($("#modules").val(), infoFiliere, false);
+    })
+
+
+    // Mettre un edt en model horizontal
+    $('#model-row').click(function() {
+        $('#model-column').removeClass('border-primary');
+        $(this).addClass("border-primary");
+        $(this).css('transition', 'all 0.5s');
+        const heuresModule = calculerHeuresModuleEdt();
+        const model = $(this).data('model');
+        const type = parseInt($('input[name="type"]:checked').val(), 10);
+        genererEdt(heuresModule, model, type);
+
+
+    })
+
+    // Mettre un edt en model vertical
+    $('#model-column').click(function() {
+        $('#model-row').removeClass('border-primary');
+        $(this).addClass("border-primary");
+        $(this).css('transition', 'all 0.5s');
+        const heuresModule = calculerHeuresModuleEdt();
+        const model = $(this).data('model');
+        const type = parseInt($('input[name="type"]:checked').val(), 10);
+        genererEdt(heuresModule, model, type);
+    })
+
+    // le changement du type de cours d'un edt
+    $('.type').click(function() {
+        const heuresModule = calculerHeuresModuleEdt();
+        const model = ($('#model-row').hasClass("border-primary")) ? $('#model-row').data('model') : $(
+            '#model-column').data('model')
+        const type = parseInt($('input[name="type"]:checked').val(), 10);
+        genererEdt(heuresModule, model, type);
+    })
+
+    // Ajouter une ligne à un edt
+    document.getElementById('add-row').addEventListener('click', function() {
+        $('#table-extended-chechbox tbody tr').each(function(index) {
+            if (index == $('#table-extended-chechbox tbody tr').length - 1) {
+                horaireDebut = $(this).find('.horaireFin').val()
+            }
+        })
+        heure = horaireDebut.split(':');
+        horaireFin = (parseInt(heure[0], 10) + 2) + ':' + heure[1];
+        const type = parseInt($('input[name="type"]:checked').val(), 10);
+        genererCoursEdt(typeEdt[type]);
+        addHeure(horaireDebut, horaireFin, coursJour);
+
+    });
+
+    // Supprimer une ligne d'un edt
+    document.getElementById('remove-row').addEventListener('click', function() {
+        removeHeure();
+    });
 </script>

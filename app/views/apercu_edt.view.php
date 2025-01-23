@@ -38,7 +38,7 @@
             <div class="content-header row">
                 <div class="content-header-left col-12 mb-2 mt-1">
                     <div class="row breadcrumbs-top d-flex justify-content-between align-items-center">
-                        <div class="col-10">
+                        <div class="col-8">
                             <h5 class="content-header-title float-left pr-1 mb-0">programmation des cours</h5>
                             <div class="breadcrumb-wrapper col-12">
                                 <ol class="breadcrumb p-0 mb-0">
@@ -51,6 +51,12 @@
                                     </li>
                                 </ol>
                             </div>
+                        </div>
+                        <div class="col-2 d-flex justify-content-end">
+                            <a type="button" class=" btn btn-primary"
+                                href="<?= ROOT ?>/Emploi_du_temps/editer_edt/<?php echo $infosEdt->edt->id_edt ?>"><i
+                                    class="bx bx-edit-alt mr-1"></i>
+                                Editer</a>
                         </div>
                         <div class="col-2">
                             <button type="button" class=" btn btn-primary"

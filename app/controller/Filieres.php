@@ -182,6 +182,14 @@ class Filieres extends Controller
         $promotions = $filiereModel->listePromotions($idFiliere);
         $this->view("liste_promotion", ["promotions" => $promotions, "idFiliere" => $idFiliere]);
     }
+
+    public function set_status_promotion($idFiliere, $idPromotion, $statut)
+    {
+        $filiereModel = new Filiere();
+        $isUpdate = $filiereModel->setStatusPromotion($idPromotion, $statut);
+        $this->redirect('/Filieres/liste_promotion/' . $idFiliere);
+        return;
+    }
     //! Fin de la gestion d'une promotion
 
 }

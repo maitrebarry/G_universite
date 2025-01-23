@@ -38,15 +38,15 @@
             </div>
             <div class="content-body">
                 <!-- formulaire -->
-                  <?php $this->view("set_flash"); ?>
+                <?php $this->view("set_flash"); ?>
                 <section id="table-chechbox">
 
                     <div class="row">
-                       
+
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-content">
-                                     
+
                                     <div class="d-flex justify-content-between align-items-center p-1 m-0">
                                         <div>
                                             <h6>
@@ -111,6 +111,34 @@
                                                                             href="<?= ROOT ?>/Filieres/apercu_Filiere/">
                                                                             <i class="bx bx-show mr-1"></i>Aperçu
                                                                         </a>
+                                                                        <?php if ($promotion->statut == 1 || $promotion->statut == 2): ?>
+                                                                            <a class="dropdown-item text-warning statutButton"
+                                                                                href="<?= ROOT . '/Filieres/set_status_promotion/' . $promotion->id_filiere . '/' . $promotion->id_promotion . '/0' ?>"
+                                                                                data-promotion="<?php echo strtoupper($promotion->sigle_filiere . '-' . $promotion->sigle_semestre . '( ' . $promotion->annee_universitaire . ' )') ?>"
+                                                                                data-etat="en attente">
+                                                                                <i class="bx bx-stopwatch mr-1 "></i>Mettre
+                                                                                en Attente
+                                                                            </a>
+                                                                        <?php endif ?>
+                                                                        <?php if ($promotion->statut == 0 || $promotion->statut == 2): ?>
+                                                                            <a class="dropdown-item text-primary statutButton"
+                                                                                href="<?= ROOT . '/Filieres/set_status_promotion/' . $promotion->id_filiere . '/' . $promotion->id_promotion . '/1' ?>"
+                                                                                data-promotion="<?php echo strtoupper($promotion->sigle_filiere . '-' . $promotion->sigle_semestre . '( ' . $promotion->annee_universitaire . ' )') ?>"
+                                                                                data-etat="en marche">
+                                                                                <i class="bx bx-log-in-circle mr-1 "></i>Mettre
+                                                                                en Marche
+                                                                            </a>
+                                                                        <?php endif ?>
+                                                                        <?php if ($promotion->statut == 0 || $promotion->statut == 1): ?>
+                                                                            <a class="dropdown-item text-danger statutButton"
+                                                                                href="<?= ROOT . '/Filieres/set_status_promotion/' . $promotion->id_filiere . '/' . $promotion->id_promotion . '/2' ?>"
+                                                                                data-promotion="<?php echo strtoupper($promotion->sigle_filiere . '-' . $promotion->sigle_semestre . '( ' . $promotion->annee_universitaire . ' )') ?>"
+                                                                                data-etat="en arrêt">
+                                                                                <i class="bx bx-log-out mr-1"></i>Mettre en
+                                                                                Arrêt
+                                                                            </a>
+                                                                        <?php endif ?>
+
                                                                     </div>
                                                                 </div>
                                                             </td>
@@ -197,15 +225,36 @@
     <script src="<?= ROOT ?>/assets/mon_js/edt.js"></script>
     <script>
         var infoFiliere = [];
-        $('.ajouterPromotion').click(async function() {
+        $(' .ajouterPromotion').click(async function() {
             let idFiliere = $(this).data("id");
             $("#filiere").val(idFiliere);
             $(".nomFiliere").html($(this).data("nom"));
             console.log(idFiliere);
-
-            infoFiliere = await infosFiliere(idFiliere);
+            infoFiliere = await
+            infosFiliere(idFiliere);
             semestresFiliere(infoFiliere);
         })
+        $('.statutButton').click(function(event) {
+            event.preventDefault();
+            url = $(this).attr('href');
+            Swal.fire({
+                title: "Êtes vous sûr?",
+                text: "La promotion " + $(this).data('promotion') + " sera mit " + $(this).data('etat'),
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonClass: "btn btn-primary",
+                cancelButtonClass: "btn btn-danger ml-1",
+                buttonsStyling: false,
+            }).then(function(result) {
+                if (result.value) {
+                    window.location.href = url;
+                }
+            });
+
+        })
+
         $(document).ready(function() {
             setDefaultAcademicYear();
             $('#anneeUniversitaire').keyup(function(event) {

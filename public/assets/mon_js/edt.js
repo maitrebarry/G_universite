@@ -14,8 +14,9 @@ const horaireEdt = {
     4: { heureDebut: "16:00", heureFin: "19:00" },
   },
 };
-const typeEdt = ["cm", "td", "tp", "tpe"];
+const typeEdt = ["cm", "td", "tp", "all"];
 
+// calcul des heures total d'un module
 function calculerHeuresModuleEdt() {
   const heureTotal = parseInt($("#vht").val(), 10);
   const heureCm = parseInt($(".cm").val(), 10);
@@ -32,6 +33,7 @@ function calculerHeuresModuleEdt() {
   return heuresModule;
 }
 
+// generer les type de cours d'un edt
 function genererCoursEdt(type) {
   let coursJour;
   if (type.toUpperCase() !== "all") {
@@ -47,52 +49,42 @@ function genererCoursEdt(type) {
   return coursJour;
 }
 
-function genererEdt(heuresModule, model = "edt-row", type = 0) {
-  document.querySelector("#table-extended-chechbox tbody").innerHTML = "";
-  heureTotal = heuresModule.heureTotal;
-  horaire = heureTotal <= 40 ? horaireEdt["simple"] : horaireEdt["complexe"];
-  if (model == "edt-row") {
-    if (typeEdt[type].toUpperCase() !== "all") {
-      ligne = heureTotal / 8 > 4 ? 4 : heureTotal / 8;
+// generer un edt en fonction des nombres d'heures(cm, td, tp)
+function genererEdtMixed(heuresModule, nbrColonne = 4) {
+  let nbrHeureCm = heuresModule.heureCm;
+  let nbrHeureTd = heuresModule.heureTd;
+  let nbrHeureTp = heuresModule.heureTp;
 
-      for (let index = 1; index <= ligne; index++) {
-        const horaireDebut = horaire[index].heureDebut;
-        const horaireFin = horaire[index].heureFin;
-        coursJour = genererCoursEdt(typeEdt[type]);
-
-        addHeure(horaireDebut, horaireFin, coursJour);
-      }
-    }
-  } else if (model == "edt-column") {
-    if (typeEdt[type].toUpperCase() !== "all") {
-      let coursJour = {
-        l: typeEdt[type],
-        m: typeEdt[type],
-        mer: typeEdt[type],
-        j: typeEdt[type],
-        v: typeEdt[type],
-        s: typeEdt[type],
-      };
-
-      for (let index = 1; index <= 4; index++) {
-        const horaireDebut = horaire[index].heureDebut;
-        const horaireFin = horaire[index].heureFin;
-        nbrTotal = Math.ceil(heureTotal / 8);
-        for (let clee in coursJour) {
-          if (nbrTotal-- <= 0) {
-            coursJour[clee] = "x";
-          }
-          if (heureTotal % 8 != 0 && index > heureTotal / 8 && nbrTotal == 0) {
-            coursJour[clee] = "x";
-          }
+  for (let colonne = 0; colonne <= nbrColonne; colonne++) {
+    $("#table-extended-chechbox tbody tr").each(function (index) {
+      const tache = $(this).find(".tache").eq(colonne);
+      if (nbrHeureCm != null && nbrHeureCm > 1) {
+        tache.val("cm");
+        nbrHeureCm -= 2;
+        if (nbrColonne == 5 && (colonne == 1 || colonne == 3)) {
+          nbrHeureCm += 2;
+          nbrHeureCm -= 3;
         }
-
-        addHeure(horaireDebut, horaireFin, coursJour);
+      } else if (nbrHeureTd != null && nbrHeureTd > 1) {
+        tache.val("td");
+        nbrHeureTd -= 2;
+        if (nbrColonne == 5 && (colonne == 1 || colonne == 3)) {
+          nbrHeureCm += 2;
+          nbrHeureCm -= 3;
+        }
+      } else if (nbrHeureTp != null && nbrHeureTp > 1) {
+        tache.val("tp");
+        nbrHeureTp -= 2;
+        if (nbrColonne == 5 && (colonne == 1 || colonne == 3)) {
+          nbrHeureCm += 2;
+          nbrHeureCm -= 3;
+        }
       }
-    }
+    });
   }
 }
 
+// ajouter une ligne à un edt
 function addHeure(horaireDebut, horaireFin, coursJour) {
   var newRow = document.createElement("tr");
   heureTotal = calculerHeuresModuleEdt().heureTotal;
@@ -253,7 +245,7 @@ function addHeure(horaireDebut, horaireFin, coursJour) {
   row.querySelector(".horaireDebut").value = horaireDebut;
   row.querySelector(".horaireFin").value = horaireFin;
 }
-
+// supprimer une ligne d'un edt
 function removeHeure() {
   var tableBody = document.querySelector("#table-extended-chechbox tbody");
   var rows = tableBody.querySelectorAll("tr");
@@ -263,28 +255,57 @@ function removeHeure() {
   }
 }
 
-// Fonction pour définir l'année scolaire par défaut
-function setDefaultAcademicYear() {
-  const currentYear = new Date().getFullYear(); // Année en cours
-  const lastYear = currentYear - 1; // Année suivante
-  const academicYear = `${lastYear}-${currentYear}`; // Format "2024-2025"
+// generer un edt
+function genererEdt(heuresModule, model = "edt-row", type = 3) {
+  document.querySelector("#table-extended-chechbox tbody").innerHTML = "";
+  heureTotal = heuresModule.heureTotal;
+  horaire = heureTotal <= 40 ? horaireEdt["simple"] : horaireEdt["complexe"];
+  if (model == "edt-row") {
+    ligne = heureTotal / 8 >= 4 ? 4 : heureTotal / 8;
 
-  // Affecter la valeur par défaut à l'input
-  document.getElementById("anneeUniversitaire").value = academicYear;
-}
+    for (let index = 1; index <= ligne; index++) {
+      const horaireDebut = horaire[index].heureDebut;
+      const horaireFin = horaire[index].heureFin;
+      coursJour = genererCoursEdt(typeEdt[type]);
+      addHeure(horaireDebut, horaireFin, coursJour);
+    }
+  } else if (model == "edt-column") {
+    let coursJour = {
+      l: typeEdt[type],
+      m: typeEdt[type],
+      mer: typeEdt[type],
+      j: typeEdt[type],
+      v: typeEdt[type],
+      s: typeEdt[type],
+    };
 
-// Fonction pour valider et formater l'input
-function formatAcademicYear(event) {
-  const input = event.target;
-  const value = input.value.replace(/\D/g, ""); // Supprimer tout sauf les chiffres
-  if (value.length === 4) {
-    const currentYear = parseInt(value, 10); // Convertir les 4 premiers caractères en nombre
-    const nextYear = currentYear + 1; // Calculer l'année suivante
-    input.value = `${currentYear}-${nextYear}`; // Appliquer le format "YYYY-YYYY"
+    for (let index = 1; index <= 4; index++) {
+      const horaireDebut = horaire[index].heureDebut;
+      const horaireFin = horaire[index].heureFin;
+      nbrTotal = Math.ceil(heureTotal / 8);
+      for (let clee in coursJour) {
+        if (nbrTotal-- <= 0) {
+          coursJour[clee] = "x";
+        }
+        if (heureTotal % 8 != 0 && index > heureTotal / 8 && nbrTotal == 0) {
+          coursJour[clee] = "x";
+        }
+      }
+
+      addHeure(horaireDebut, horaireFin, coursJour);
+    }
+  }
+  if (typeEdt[type].toUpperCase() === "ALL") {
+    nbrColonne = 4;
+    if (heureTotal > 40) {
+      nbrColonne = 5;
+    }
+    genererEdtMixed(heuresModule, nbrColonne);
   }
 }
 
-async function infosFiliere(idFiliere) {
+// recuperer toute les informations d'une filière à travers son id (promotions et modules )
+async function infosFiliere(idFiliere, source = null) {
   try {
     response = await $.ajax({
       method: "POST",
@@ -292,7 +313,7 @@ async function infosFiliere(idFiliere) {
       dataType: "json",
 
       data: {
-        action: "semestre",
+        source: source,
         idFiliere: idFiliere,
       },
     });
@@ -303,7 +324,8 @@ async function infosFiliere(idFiliere) {
   var infoFiliere;
 }
 
-function promotionsFiliere(infoFiliere) {
+// recuperer les promotions d'une filière à travers son id
+function promotionsFiliere(infoFiliere, idPromotion = "") {
   const promotionContainer = $("#promotions");
   promotionContainer.empty();
   promotionContainer.append(
@@ -313,7 +335,9 @@ function promotionsFiliere(infoFiliere) {
   promotions.forEach((promotion) => {
     const option = `<option value='${
       promotion.id_promotion
-    }' class='text-center' data-id='${promotion.id_parcours}'>
+    }' class='text-center' data-id='${promotion.id_parcours}' ${
+      promotion.id_promotion == idPromotion ? "selected" : ""
+    }>
     ${promotion.sigle_filiere.toUpperCase()}-${promotion.sigle_semestre.toUpperCase()}( ${
       promotion.annee_universitaire
     } )</option>`;
@@ -321,6 +345,7 @@ function promotionsFiliere(infoFiliere) {
   });
 }
 
+// recuperer les semestres d'une filière à travers son id
 function semestresFiliere(infoFiliere) {
   const semestreContainer = $("#semestres");
   semestreContainer.empty();
@@ -334,7 +359,8 @@ function semestresFiliere(infoFiliere) {
   });
 }
 
-function modulesSemestre(idSemestre, infoFiliere) {
+// recuperer les modules d'une promotion à travers l'id du semestre
+function modulesSemestre(idSemestre, infoFiliere, idModule = "") {
   const mouduleContainer = $("#modules");
   mouduleContainer.empty();
 
@@ -350,7 +376,13 @@ function modulesSemestre(idSemestre, infoFiliere) {
       mouduleContainer.append(ueOption);
       modules.forEach((module) => {
         if (module.id_ue == ue.id_ue) {
-          const option = `<option value='${module.id_ue_module}' class='text-center'>${module.nom_module}(${module.code_module})</option>`;
+          const option = `<option value='${
+            module.id_ue_module
+          }' class='text-center' ${
+            module.id_ue_module == idModule ? "selected" : ""
+          }>
+          ${module.nom_module}(${module.code_module})
+          </option>`;
           mouduleContainer.append(option);
         }
       });
@@ -358,7 +390,8 @@ function modulesSemestre(idSemestre, infoFiliere) {
   });
 }
 
-function infoModule(idModule, infoFiliere) {
+// recueperer les information d'un module à travers son id (cm,td,tp,tpe,credit)
+function infoModule(idModule, infoFiliere, makeEdt = true) {
   if (idModule != null && idModule != "") {
     modules = infoFiliere["modules"];
     modules.forEach((module) => {
@@ -388,17 +421,20 @@ function infoModule(idModule, infoFiliere) {
           heureTpe: heureTpe,
           heureTotal: heureTotal,
         };
+        if (heureTotal > 40) {
+        }
 
         const model = $("#model-row").hasClass("border-primary")
           ? $("#model-row").data("model")
           : $("#model-column").data("model");
         const type = parseInt($('input[name="type"]:checked').val(), 10);
-        genererEdt(heuresModule, model, type);
+        if (makeEdt == true) {
+          genererEdt(heuresModule, model, type);
+        }
       }
     });
   } else {
     $("#infoModule").addClass("d-none");
-    document.querySelector("#table-extended-chechbox tbody").innerHTML = "";
   }
 }
 
@@ -418,6 +454,7 @@ function ajouterEdt(url = ROOT + "/ajouter_EDT", action = "ajouter_EDT") {
   const idSalle = $("#salles").val();
   const dateDebut = $("#dateDebut").val();
   const heureTotal = parseInt($("#vht").val(), 10);
+  const idEdt = $("#valider").data("id");
   edt = {
     idFiliere: idFiliere,
     idPromotion: idPromotion,
@@ -426,6 +463,7 @@ function ajouterEdt(url = ROOT + "/ajouter_EDT", action = "ajouter_EDT") {
     idSalle: idSalle,
     dateDebut: dateDebut,
     heureTotal: heureTotal,
+    idEdt: idEdt,
   };
 
   // La recuperation des horaires et des taches
@@ -471,8 +509,12 @@ function ajouterEdt(url = ROOT + "/ajouter_EDT", action = "ajouter_EDT") {
 
       // location.reload();
       document.getElementById("message").innerHTML = response;
-      if (response.includes("success")) {
-        document.getElementById("#corpsEdt").innerHTML = "";
+      if (response.includes("primary") && action == "ajouter_EDT") {
+        document.querySelector("#table-extended-chechbox tbody").innerHTML = "";
+        $(".champ").val("");
+      }
+      if (response.includes("primary") && action == "editer_edt") {
+        window.location.href = ROOT + "/";
       }
       // Réinitialiser après sauvegarde
 
@@ -537,5 +579,50 @@ function imprimerEdt(nomEdt) {
     }
           `,
   });
-  alert("hdshfsdqSSS555");
+}
+
+// Fonction pour définir l'année scolaire par défaut
+function setDefaultAcademicYear() {
+  const currentYear = new Date().getFullYear(); // Année en cours
+  const lastYear = currentYear - 1; // Année suivante
+  const academicYear = `${lastYear}-${currentYear}`; // Format "2024-2025"
+
+  // Affecter la valeur par défaut à l'input
+  document.getElementById("anneeUniversitaire").value = academicYear;
+}
+
+// Fonction pour valider et formater l'input
+function formatAcademicYear(event) {
+  const input = event.target;
+  const value = input.value.replace(/\D/g, ""); // Supprimer tout sauf les chiffres
+  if (value.length === 4) {
+    const currentYear = parseInt(value, 10); // Convertir les 4 premiers caractères en nombre
+    const nextYear = currentYear + 1; // Calculer l'année suivante
+    input.value = `${currentYear}-${nextYear}`; // Appliquer le format "YYYY-YYYY"
+  }
+}
+
+// recuperer un ancien enseignant et une acienne sale d'un ancien edt
+function getDefaultEnseignantAndSalleModule(idFiliere, idModule) {
+  $.ajax({
+    method: "POST",
+    url: ROOT + "/get_ancien_edt",
+    dataType: "json",
+
+    data: {
+      idFiliere: idFiliere,
+      idModule: idModule,
+    },
+    success: function (response) {
+      if (response != null) {
+        ancienEnseignant = response.id_enseignant;
+        ancienneSalle = response.id_salle;
+
+        $("#enseignants").val(ancienEnseignant);
+        $("#salles").val(ancienneSalle);
+        $("#enseignants").addClass("select2");
+      }
+    },
+    error: function (error) {},
+  });
 }

@@ -115,6 +115,12 @@ class Emploi_du_temp  extends Model
                 INNER JOIN salle ON edt.id_salle=salle.id_salle  WHERE id_edt=? ";
             $resultat = $this->select_data_table_join_where($requetteEdt, [$idEdt]);
             $edt = $resultat[0];
+
+            // Validation d'un edt lorsque la date de fin est atteinte
+            if ($edt->statut == 0 && strtotime(date('Y-m-d')) > strtotime($edt->date_fin)) {
+                $this->setStatusEdt($edt->id_edt);
+            }
+
             $idModule = $edt->id_module;
             $edt->date_debut = date_format(new DateTime($edt->date_debut), "d-m-Y");
             $edt->date_fin = date_format(new DateTime($edt->date_fin), "d-m-Y");
@@ -128,8 +134,8 @@ class Emploi_du_temp  extends Model
 
 
             // la recuperation de la promotion
-            $requettePromotion = "SELECT id_promotion, annee_universitaire, statut, promotion.id_parcours, nom_filiere, sigle_filiere, nom_semestre, sigle_semestre 
-            FROM promotion INNER JOIN filiere ON promotion.id_filiere=filiere.id_filiere
+            $requettePromotion = "SELECT id_promotion, annee_universitaire, statut, promotion.id_parcours, promotion.id_filiere, nom_filiere, 
+            sigle_filiere, nom_semestre, sigle_semestre FROM promotion INNER JOIN filiere ON promotion.id_filiere=filiere.id_filiere
             INNER JOIN parcours ON promotion.id_parcours=parcours.id_parcours INNER JOIN semestre ON parcours.id_semestre=semestre.id_semestre
             WHERE id_promotion=?";
             $resultat = $this->select_data_table_join_where($requettePromotion, [$edt->id_promotion]);
@@ -177,20 +183,32 @@ class Emploi_du_temp  extends Model
         return $horairesEdt;
     }
 
-    // la fonction pour recuperer la liste des emplois
+    // la methode pour recuperer un ancien edt d'une promotion
+    public function getAncienEdt($idFiliere, $idModule)
+    {
+        $edt = $this->FetchSelectWhere(
+            '*',
+            'edt',
+            'id_filiere=:idFiliere AND id_module=:idModule',
+            ['idFiliere' => $idFiliere, 'idModule' => $idModule]
+        );
+        return $edt;
+    }
+
+    // la methode pour recuperer la liste des emplois
     public function listeEdts()
     {
         $edts = [];
-        $listeEdts = $this->SelectAllDataOrder("id_edt", "edt", "id_edt");
+        $listeEdts = $this->SelectAllData("id_edt, statut, date_fin", "edt ORDER BY id_edt DESC LIMIT 5");
         foreach ($listeEdts as $edt) {
             $infoEdt = $this->getInfoEdt($edt->id_edt);
             $edts[] =  $infoEdt;
         }
 
-        return $edts;
+        return array_filter($edts);
     }
 
-
+    // la methode pour trier la liste des edts
     public function trierListeEdt($idFiliere, $idPromotion = null)
     {
         $whereCondition = "id_filiere=? AND id_promotion=?";
@@ -208,5 +226,107 @@ class Emploi_du_temp  extends Model
         }
 
         return $edts;
+    }
+
+    // la methode pour valider ou annuler un edt un edt 
+    public function setStatusEdt($idEdt, $statut = 1)
+    {
+        try {
+            $this->insertion_update_simples(
+                'UPDATE edt SET statut=:statut WHERE id_edt=:idEdt LIMIT 1',
+                ['statut' => $statut, 'idEdt' => $idEdt]
+            );
+        } catch (Exception $e) {
+
+            $this->set_flash('Imposible de modifier cet edt');
+        }
+    }
+
+    // la methode pour editer un edt
+    public function editerEdt($edt, $horaires)
+    {
+        try {
+            $connection = $this->bdd();
+            // le debut de la transaction
+            $connection->beginTransaction();
+
+            // La verification des infos de base de l'edt
+            if (!$this->isArrayDataValid($edt)) {
+                throw new Exception("Données Edt Invalide");
+            }
+            $periode = $this->getCurrentPeriode();
+            $this->e(extract($edt));
+            $requetteEdt = "UPDATE  edt SET date_debut=:dateDebut, date_Fin=:dateFin, statut=:statut, heure_total=:heureTotal, id_filiere=:idFiliere, id_promotion=:idPromotion, id_module=:idModule, id_enseignant=:idEnseignant, id_salle=:idSalle, id_periode=:idPeriode
+            WHERE id_edt=:idEdt LIMIT 1";
+            $dateFin = new DateTime($dateDebut);
+            $dateFin->add(new DateInterval('P7D'));
+            $param = [
+                "dateDebut" => $dateDebut,
+                "dateFin" => $dateFin->format("Y-m-d"),
+                "statut" => 0,
+                "heureTotal" => $heureTotal,
+                "idFiliere" => $idFiliere,
+                "idPromotion" => $idPromotion,
+                "idModule" => $idModule,
+                "idEnseignant" => $idEnseignant,
+                "idSalle" => $idSalle,
+                "idPeriode" => $periode->id_periode,
+                "idEdt" => $idEdt,
+            ];
+            $reponse = $this->insertion_update_simples($requetteEdt, $param);
+
+            // la verification des horaires
+            if (empty($horaires)) {
+                throw new Exception("Données Horaires Invalide");
+            }
+            // La suppression des anciens horaires
+            $this->insertion_update_simples("DELETE FROM horaire WHERE id_edt=?", [$idEdt]);
+
+            // les requettes pour inserer les nouveaux horaires ou des taches
+            $requetteHoraire = "INSERT INTO horaire(heure_debut, heure_fin, id_edt) VALUES (:heureDebut, :heureFin, :idEdt)";
+            $requetteTache = "INSERT INTO tache(type_tache, id_horaire, id_jour) VALUES (:typeTache, :idHoraire, :idJour)";
+            foreach ($horaires as $horaire) {
+                $this->e(extract($horaire));
+                if (empty(trim($heureDebut)) || empty(trim($heureFin))) {
+                    throw new Exception("Données Horaires Invalide");
+                }
+                // l'insertion d'un horaire
+                $param = [
+                    "heureDebut" => $heureDebut,
+                    "heureFin" => $heureFin,
+                    "idEdt" => $idEdt,
+                ];
+                $reponse = $this->insertion_update_simples_insert_id($requetteHoraire, $param);
+                $idHoraire = $reponse['lastInsertId'];
+
+                // la verification des taches pour chaque horaire
+                if (empty($taches)) {
+                    throw new Exception("Données HorairesT Invalide");
+                }
+
+                foreach ($taches as $tache) {
+                    if (!$this->isArrayDataValid($tache)) {
+                        throw new Exception("Données HoraireT2 Invalide");
+                    }
+                    $this->e(extract($tache));
+
+                    // l'insertion d'un horaire
+                    $param = [
+                        "typeTache" => $typeTache,
+                        "idHoraire" => $idHoraire,
+                        "idJour" => $idJour,
+                    ];
+                    $this->insertion_update_simples($requetteTache, $param);
+                }
+            }
+
+            // la fin de la transaction
+            $connection->commit();
+            $this->set_flash("EDT ajouté avec succès", "primary");
+        } catch (Exception $e) {
+            $connection->rollBack();
+            $this->set_flash($e->getMessage() . " : !Veuillez bien verifier vos données");
+            return;
+        }
     }
 }
