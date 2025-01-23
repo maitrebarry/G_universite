@@ -51,31 +51,31 @@
                                 <ul class="nav nav-align-left nav-pills flex-column">
                                     <li class="nav-item mb-1">
                                         <a class="nav-link  active " href="<?= ROOT ?>/Modules/listeModule">
-
+                                        <i class="fa-solid fa-book-open-reader me-2"></i>
                                             <span class="align-middle">Modules</span>
                                         </a>
                                     </li>
                                     <li class="nav-item mb-1">
                                         <a class="nav-link " href="<?= ROOT ?>/Semestres/Liste">
-                                            <i class="fa-solid fa-user me-2"></i>
+                                        <i class="fa-solid fa-calendar-day me-2"></i>
                                             <span class="align-middle">Semestre</span>
                                         </a>
                                     </li>
                                     <li class="nav-item mb-1">
                                         <a class="nav-link " href="<?= ROOT ?>/Periodes/Liste">
-                                            <i class="fa-solid fa-calendar me-2"></i>
+                                        <i class="fa-solid fa-calendar-alt me-2"></i>
                                             <span class="align-middle">Période</span>
                                         </a>
                                     </li>
                                     <li class="nav-item mb-1">
                                         <a class="nav-link " href="<?= ROOT ?>/Utilisateurs/liste_utilisateur">
-                                            <i class="fa-solid fa-calendar me-2"></i>
+                                        <i class="fa-solid fa-users me-2"></i>
                                             <span class="align-middle">Utilisateur</span>
                                         </a>
                                     </li>
                                     <li class="nav-item mb-1">
                                         <a class="nav-link " href="<?= ROOT ?>/Salles/Liste">
-                                            <i class="fa-solid fa-calendar me-2"></i>
+                                        <i class="fa-solid fa-door-open me-2"></i>
                                             <span class="align-middle">Salles</span>
                                         </a>
                                     </li>

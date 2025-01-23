@@ -52,39 +52,39 @@
                             <div class="d-flex justify-content-between flex-column mb-3 mb-md-0">
                                 <ul class="nav nav-align-left nav-pills flex-column">
                                     <li class="nav-item mb-1">
-                                        <a class="nav-link   radius-10 " href="<?= ROOT ?>/Modules/listeModule">
-
+                                        <a class="nav-link radius-10" href="<?= ROOT ?>/Modules/listeModule">
+                                            <i class="fa-solid fa-book-open-reader me-2"></i>
                                             <span class="align-middle">Modules</span>
                                         </a>
                                     </li>
                                     <li class="nav-item mb-1">
-                                        <a class="nav-link  " href="<?= ROOT ?>/Semestre/Liste">
-                                            <i class="fa-solid fa-user me-2"></i>
+                                        <a class="nav-link" href="<?= ROOT ?>/Semestre/Liste">
+                                            <i class="fa-solid fa-calendar-day me-2"></i>
                                             <span class="align-middle">Semestre</span>
                                         </a>
                                     </li>
                                     <li class="nav-item mb-1">
-                                        <a class="nav-link " href="<?= ROOT ?>/Periodes/Liste">
-                                            <i class="fa-solid fa-calendar me-2"></i>
+                                        <a class="nav-link" href="<?= ROOT ?>/Periodes/Liste">
+                                            <i class="fa-solid fa-calendar-alt me-2"></i>
                                             <span class="align-middle">Période</span>
                                         </a>
                                     </li>
                                     <li class="nav-item mb-1">
-                                        <a class="nav-link  active" href="<?= ROOT ?>/Utilisateurs/liste_utilisateur">
-                                            <i class="fa-solid fa-calendar me-2"></i>
+                                        <a class="nav-link active" href="<?= ROOT ?>/Utilisateurs/liste_utilisateur">
+                                            <i class="fa-solid fa-users me-2"></i>
                                             <span class="align-middle">Utilisateur</span>
                                         </a>
                                     </li>
                                     <li class="nav-item mb-1">
-                                        <a class="nav-link " href="<?= ROOT ?>/Salles/Liste">
-                                            <i class="fa-solid fa-calendar me-2"></i>
+                                        <a class="nav-link" href="<?= ROOT ?>/Salles/Liste">
+                                            <i class="fa-solid fa-door-open me-2"></i>
                                             <span class="align-middle">Salles</span>
                                         </a>
                                     </li>
-
                                 </ul>
                             </div>
                         </div>
+
                     </div>
                 </div>
                 <!-- /Navigation -->
@@ -121,9 +121,10 @@
                                             <table class="table zero-configuration table-bordered" style="width:100%">
                                                 <thead>
                                                     <tr>
-                                                        <th>Nom && Prénom Utilisateur</th>
+                                                        <th>Nom && Prénom</th>
                                                         <th>Contact</th>
                                                         <th>E Mail</th>
+                                                        <th>Rôle</th>
                                                         <th class="text-center dt-no-sorting">Action</th>
                                                     </tr>
                                                 </thead>
@@ -134,6 +135,7 @@
                                                             <td><?= $listes->nom_prenom ?></td>
                                                             <td><?= $listes->contact_utilisateur ?></td>
                                                             <td><?= $listes->email_utilisateurs ?></td>
+                                                            <td><?= $listes->role ?></td>
                                                             <td class="text-center ">
                                                                 <div class=" dropdown">
                                                                     <span class="bx bx-dots-horizontal-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="menu">
@@ -166,54 +168,87 @@
                                     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header bg-primary">
-                                                <h5 class="modal-title white" id="myModalLabel160"> Enregistre de l'Utilisateur</h5>
+                                                <h5 class="modal-title white" id="myModalLabel160"> Enregistrement de l'Utilisateur</h5>
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                     <i class="bx bx-x"></i>
                                                 </button>
                                             </div>
-                                            <form action="" m method="post" enctype="multipart/form-data" action="<?= ROOT ?>/Utilisateurs/edit_utilisateurs">
+                                            <form action="<?= ROOT ?>/Utilisateurs/liste_utilisateur" method="post" enctype="multipart/form-data">
                                                 <div class="modal-body">
-
                                                     <div class="row">
-                                                        <div class="col mb-4">
-                                                            <label for="nameBasic" class="form-label">Nom && prénom<span class="text-danger fs-6">*</span></label>
-                                                            <input type="text" id="" value="" class="form-control" name="nom_prenom" placeholder="Nom && prénom" required />
+                                                        <h6 class="col-12 text-center">Type de Utilisateur</h6>
+                                                        <div class="col-12 border d-flex justify-content-center p-2 mb-2">
+                                                            <div class="radio radio-primary mr-4">
+                                                                <input type="radio" name="type_utilisateur" id="enseignant" class="type" value="0" checked onchange="toggleNomPrenom()">
+                                                                <label for="enseignant">Utilisateur Enseignant</label>
+                                                            </div>
+                                                            <div class="radio radio-primary mr-4">
+                                                                <input type="radio" name="type_utilisateur" id="utilisateur" class="type" value="1" onchange="toggleNomPrenom()">
+                                                                <label for="utilisateur">Utilisateur simple</label>
+                                                            </div>
                                                         </div>
+                                                    </div>
 
-                                                        <div class="col mb-4">
-                                                            <label for="nameBasic" class="form-label">E_Mail<span class="text-danger fs-6">*</span></label>
-                                                            <input type="mail" id="" value="" class="form-control" name="email_utilisateurs" placeholder="E_Mail" required />
+                                                    <!-- Section des statuts (apparaît seulement si l'utilisateur est un enseignant) -->
+                                                    <div id="statutContainer" class="col-12 d-flex justify-content-center d-none">
+                                                        <div class="radio radio-primary mr-4">
+                                                            <input type="radio" name="statut" id="PERMANANT" class="type" value="PERMANANT" onchange="filterEnseignants()">
+                                                            <label for="PERMANANT">Permanent</label>
                                                         </div>
-                                                        <div class="col mb-4">
-                                                            <label for="nameBasic" class="form-label">Contact<span class="text-danger fs-6">*</span></label>
-                                                            <input type="number" id="" value="" class="form-control" name="contact_utilisateur" placeholder="Contact" required />
+                                                        <div class="radio radio-primary mr-4">
+                                                            <input type="radio" name="statut" id="NON_PERMANANT" class="type" value="NON_PERMANANT" onchange="filterEnseignants()">
+                                                            <label for="NON_PERMANANT">Non Permanent</label>
                                                         </div>
                                                     </div>
                                                     <div class="row">
-
                                                         <div class="col mb-4">
-                                                            <label for="nameBasic" class="form-label">Mot de passe<span class="text-danger fs-6">*</span></label>
-                                                            <input type="text" id="" value="" class="form-control" name="mot_passe" placeholder="Mot de passe" required />
-                                                        </div>
-
-                                                        <div class="col mb-4">
-                                                            <label for="nameBasic" class="form-label">Role<span class="text-danger fs-6">*</span></label>
-                                                            <fieldset class="form-group">
-                                                                <select name="role" id="" class="form-select form-control">
-                                                                    <option value="" disabled>Choisissez votre Role</option>
-                                                                    <option value="SupAdmin">SupAdmin</option>
-                                                                    <option value="Administrateur">Administrateur</option>
-                                                                    <option value="Sécretaire principale">Sécretaire principale</option>
-                                                                    <option value="DR">DR</option>
+                                                            <label for="single-select" class="form-label">Nom && prénom<span class="text-danger fs-6">*</span></label>
+                                                            <div id="nomPrenomContainer">
+                                                                <!-- Par défaut, c'est un champ select pour enseignant -->
+                                                                <select id="nom_prenom" name="nom_prenom" class="select2 form-select form-control" onchange="updateEmailAndContact()">
+                                                                    <option value="" disabled selected>Choisissez un enseignant</option>
+                                                                    <?php foreach ($enseignants as $enseignant): ?>
+                                                                        <option value="<?php echo $enseignant->enseignant_id ?>"
+                                                                            data-email="<?php echo $enseignant->enseignant_email ?>"
+                                                                            data-contact="<?php echo $enseignant->enseignant_telephone ?>"
+                                                                            data-statut="<?php echo $enseignant->enseignant_statut ?>">
+                                                                            <?php echo strtoupper($enseignant->enseignant_nom . " " . $enseignant->enseignant_prenom) ?>
+                                                                        </option>
+                                                                    <?php endforeach ?>
                                                                 </select>
-                                                            </fieldset>
+                                                            </div>
                                                         </div>
-                                                        <div class="col  mb-4">
-                                                            <label for="upload" class="form-label">Télécharger son signature :</label>
+                                                        <div class="col mb-4">
+                                                            <label for="email_utilisateurs" class="form-label">E_Mail<span class="text-danger fs-6">*</span></label>
+                                                            <input type="email" id="email_utilisateurs" class="form-control" name="email_utilisateurs" placeholder="E_Mail" required />
+                                                        </div>
+                                                        <div class="col mb-4">
+                                                            <label for="contact_utilisateur" class="form-label">Contact<span class="text-danger fs-6">*</span></label>
+                                                            <input type="text" id="contact_utilisateur" class="form-control" name="contact_utilisateur" placeholder="Contact" required />
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col mb-4">
+                                                            <label for="mot_passe" class="form-label">Mot de passe<span class="text-danger fs-6">*</span></label>
+                                                            <input type="password" id="mot_passe" class="form-control" name="mot_passe" placeholder="Mot de passe" required />
+                                                        </div>
+                                                        <div class="col mb-4">
+                                                            <label for="role" class=" form-label">Role<span class="text-danger fs-6">*</span></label>
+                                                            <select name="role" id="role" class=" form-select form-control">
+                                                                <option value="" disabled>Choisissez votre Rôle</option>
+                                                                <option value="SupAdmin">SupAdmin</option>
+                                                                <option value="DG">DG</option>
+                                                                <option value="DGA">DGA</option>
+                                                                <option value="Sécretaire principale">SP</option>
+                                                                <option value="Chef DR"> Chef Dr</option>
+                                                                <option value="Enseignant">Enseignant</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col mb-4">
+                                                            <label for="signature" class="form-label">Télécharger son signature :</label>
                                                             <input type="file" name="signature" class="form-control" required />
                                                         </div>
                                                     </div>
-
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-light-secondary" data-dismiss="modal">
@@ -231,76 +266,6 @@
                                 </div>
                             </div>
                             <!--  fin insertion des données-->
-                            <!-- partie modification des données -->
-                            <div class="modal-primary mr-1 mb-1 d-inline-block">
-                                <div class="modal fade text-left" id="large1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel160" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header bg-primary">
-                                                <h5 class="modal-title white" id="myModalLabel160"> Modification de l'Utilisateur</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <i class="bx bx-x"></i>
-                                                </button>
-                                            </div>
-                                            <form method="post" action="<?= ROOT ?>/Utilisateurs/edit_utilisateurs" id="imageForm" enctype="multipart/form-data">
-                                                <div class="modal-body">
-                                                    <input type="hidden" name="id_utilisateur" id="inputid_Utilisateur">
-                                                    <div class="row">
-                                                        <div class="col mb-4">
-                                                            <label for="nameBasic" class="form-label">Nom && prénom<span class="text-danger fs-6">*</span></label>
-                                                            <input type="text" id="inputnom_Prenom" value="" class="form-control" name="nom_prenom" placeholder="Nom && prénom" required />
-                                                        </div>
-
-                                                        <div class="col mb-4">
-                                                            <label for="nameBasic" class="form-label">E_Mail<span class="text-danger fs-6">*</span></label>
-                                                            <input type="mail" id="inputemail_Utilisateurs" value="" class="form-control" name="email_utilisateurs" placeholder="E_Mail" required />
-                                                        </div>
-
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col mb-4">
-                                                            <label for="nameBasic" class="form-label">Contact<span class="text-danger fs-6">*</span></label>
-                                                            <input type="number" id="inputcontact_Utilisateur" value="" class="form-control" name="contact_utilisateur" placeholder="Contact" required />
-                                                        </div>
-                                                        <div class="col mb-4">
-                                                            <label for="nameBasic" class="form-label">Mot de passe<span class="text-danger fs-6">*</span></label>
-                                                            <input type="text" id="inputmot_Passe" value="" class="form-control" name="mot_passe" placeholder="Mot de passe" required />
-                                                        </div>
-
-                                                        <div class="col mb-4">
-                                                            <label for="nameBasic" class="form-label">Role<span class="text-danger fs-6">*</span></label>
-                                                            <fieldset class="form-group">
-                                                                <select name="role" id="inputRole" class="form-select form-control">
-                                                                    <option value="" disabled>Choisissez votre Role</option>
-                                                                    <option value="SupAdmin">SupAdmin</option>
-                                                                    <option value="Administrateur">Administrateur</option>
-                                                                    <option value="Sécretaire principale">Sécretaire principale</option>
-                                                                    <option value="DR">DR</option>
-                                                                </select>
-                                                            </fieldset>
-                                                        </div>
-
-                                                    </div>
-
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-light-secondary" data-dismiss="modal">
-                                                        <i class="bx bx-x d-block d-sm-none"></i>
-                                                        <span class="d-none d-sm-block">Annuler</span>
-                                                    </button>
-                                                    <button type="submit" class="btn btn-primary ml-1" name="edit_user">
-                                                        <i class="bx bx-check d-block d-sm-none"></i>
-                                                        <span class="d-none d-sm-block">Envoyer</span>
-                                                    </button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- partie fin modification des données -->
-
-
 
                         </div>
                     </div>
@@ -319,6 +284,87 @@
     <?php $this->view("Partials/footer") ?>
     <!-- inclusion du partie footer fin-->
     <script src="<?= ROOT ?>/assets/mon_js/modification_utilisateur.js"></script>
+    <script>
+        // Fonction pour afficher/masquer la section en fonction de l'option sélectionnée
+        function toggleNomPrenom() {
+            const enseignantChecked = document.getElementById('enseignant').checked;
+            const statutContainer = document.getElementById('statutContainer');
+            const nomPrenomContainer = document.getElementById('nomPrenomContainer');
+
+            if (enseignantChecked) {
+                // Afficher la section Permanent et Non Permanent
+                statutContainer.classList.remove('d-none');
+                statutContainer.classList.add('d-flex');
+
+                // Afficher les enseignants et leurs statuts
+                nomPrenomContainer.innerHTML = `
+            <select id="nom_prenom" name="nom_prenom" class=" select2 form-select form-control" onchange="updateEmailAndContact()">
+                <option value="" disabled selected>Choisissez un enseignant</option>
+                <?php foreach ($enseignants as $enseignant): ?>
+                    <option value="<?php echo $enseignant->enseignant_id ?>" 
+                        data-email="<?php echo $enseignant->enseignant_email ?>" 
+                        data-contact="<?php echo $enseignant->enseignant_telephone ?>"
+                        data-statut="<?php echo $enseignant->enseignant_statut ?>">
+                        <?php echo strtoupper($enseignant->enseignant_nom . " " . $enseignant->enseignant_prenom) ?>
+                    </option>
+                <?php endforeach ?>
+            </select>
+        `;
+
+            } else {
+                // Masquer la section Permanent et Non Permanent
+                statutContainer.classList.remove('d-flex');
+                statutContainer.classList.add('d-none');
+
+                // Remplacer par un champ texte pour un utilisateur simple
+                nomPrenomContainer.innerHTML = `
+            <input type="text" id="nom_prenom" class="form-control" name="nom_prenom" placeholder="Nom && prénom" required />
+        `;
+                document.getElementById('email_utilisateurs').value = '';
+                document.getElementById('contact_utilisateurs').value = '';
+                document.getElementById('email_utilisateurs').disabled = false;
+                document.getElementById('contact_utilisateur').disabled = false;
+            }
+        }
+
+        // Fonction pour filtrer les enseignants en fonction du statut sélectionné
+        function filterEnseignants() {
+            const statut = document.querySelector('input[name="statut"]:checked') ? document.querySelector('input[name="statut"]:checked').value : null;
+
+            const enseignants = document.querySelectorAll('#nom_prenom option');
+
+            enseignants.forEach(option => {
+                const statutEnseignant = option.getAttribute('data-statut');
+                if (statutEnseignant !== statut && statut) {
+                    option.style.display = 'none'; // Masquer l'enseignant
+                } else {
+                    option.style.display = ''; // Afficher l'enseignant
+                }
+            });
+        }
+
+        // Fonction pour mettre à jour les champs email et contact
+        function updateEmailAndContact() {
+            const selectElement = document.getElementById('nom_prenom');
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            const email = selectedOption.getAttribute('data-email');
+            const contact = selectedOption.getAttribute('data-contact');
+
+            document.getElementById('email_utilisateurs').value = email || '';
+            document.getElementById('contact_utilisateur').value = contact || '';
+
+            const contactField = document.getElementById('contact_utilisateur');
+            contactField.disabled = contact ? true : false;
+            const emailField = document.getElementById('email_utilisateurs');
+            emailField.disabled = contact ? true : false;
+        }
+
+        // Initialisation des éléments à la première ouverture
+        document.addEventListener('DOMContentLoaded', () => {
+            toggleNomPrenom(); // Affiche ou cache les éléments selon le type d'utilisateur
+            filterEnseignants(); // Applique le filtre sur les enseignants si un statut est déjà sélectionné
+        });
+    </script>
 
 </body>
 <!-- END: Body-->

@@ -6,13 +6,15 @@ class Utilisateurs extends Controller
     }
     public function liste_utilisateur(){
         $utilisateur= new Utilisateur();
+        $utilisateurenseignant = new Enseignant(); 
         if(isset($_POST["save_user"])){
-            
+
             $utilisateur->save_utilisateur(["nom_prenom","contact_utilisateur","email_utilisateurs","mot_passe","role"]);   
         }
         //appel du method de recuperation 
         $liste= $utilisateur->SelectAllData('*',"utilisateur");
-       $this->view('liste_utilisateur',['liste'=>$liste]); 
+        $enseignants = $utilisateurenseignant->SelectAllData("*", "enseignants");
+       $this->view('liste_utilisateur',['liste'=>$liste,'enseignants' => $enseignants]); 
     } 
 
     /// methode pour la modification

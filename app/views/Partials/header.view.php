@@ -10,6 +10,7 @@ $this->redirect("Logins");
 <!-- BEGIN: Head-->
 
 <head>
+<link href="https://cdn.jsdelivr.net/npm/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
 
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
