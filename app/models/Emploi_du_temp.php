@@ -186,13 +186,14 @@ class Emploi_du_temp  extends Model
     // la methode pour recuperer un ancien edt d'une promotion
     public function getAncienEdt($idFiliere, $idModule)
     {
-        $edt = $this->FetchSelectWhere(
+
+        $edts = $this->FetchAllSelectWhere(
             '*',
             'edt',
             'id_filiere=:idFiliere AND id_module=:idModule',
             ['idFiliere' => $idFiliere, 'idModule' => $idModule]
         );
-        return $edt;
+        return end($edts);
     }
 
     // la methode pour recuperer la liste des emplois
