@@ -356,14 +356,13 @@ public function ajouterPaiement() {
 
 
 // Fonction pour récupérer le total payé existant pour un étudiant
-private function getTotalPayé($id_etudiant) {
+public function getTotalPayé($id_etudiant) {
     // Effectuer la requête pour obtenir le total des paiements pour cet étudiant
     $stmt = $this->pdo->prepare("SELECT SUM(montant_paye) as total_payé FROM payement WHERE idEtudt = ?");
     $stmt->execute([$id_etudiant]);
     $result = $stmt->fetch();
     return $result['total_payé'] ? $result['total_payé'] : 0;
 }
-
 // Fonction pour mettre à jour la table `payement` avec le paiement ajouté
 private function updatePaiement($id_etudiant, $montant_paye) {
     if ($montant_paye <= 0) {
@@ -371,6 +370,50 @@ private function updatePaiement($id_etudiant, $montant_paye) {
     }
     $stmt = $this->pdo->prepare("INSERT INTO payement (idEtudt, montant_paye, date) VALUES (?, ?, NOW())");
     $stmt->execute([$id_etudiant, $montant_paye]);
+}
+    public function addPayment($data) {
+        $db = $this->pdo;
+        $query = "INSERT INTO payement (idEtudt, montant_paye, date) VALUES (:idEtudt, :montant_paye, :date)";
+        $stmt = $db->prepare($query);
+        return $stmt->execute($data);
+}
+public function getEtudiantsByIds($ids) {
+    $placeholders = implode(',', array_fill(0, count($ids), '?'));
+    $query = "SELECT * FROM etudiant WHERE id_etudiant IN ($placeholders)";
+    $stmt = $this->pdo->prepare($query);
+    $stmt->execute($ids);
+    return $stmt->fetchAll(PDO::FETCH_OBJ);
+}
+public function getPaiements($etudiant_ids) {
+    if (empty($etudiant_ids)) {
+        return [];
+    }
+
+    // Convertir les IDs en une chaîne pour la requête SQL
+    $placeholders = implode(',', array_fill(0, count($etudiant_ids), '?'));
+    $sql = "SELECT * FROM payement WHERE idEtudt IN ($placeholders)";
+
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute($etudiant_ids);
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+public function getTotauxPayesParEtudiants($etudiant_ids) {
+    $placeholders = implode(',', array_fill(0, count($etudiant_ids), '?'));
+    $sql = "SELECT idEtudt, SUM(montant_paye) as total_paye 
+            FROM payement 
+            WHERE idEtudt IN ($placeholders) 
+            GROUP BY idEtudt";
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute($etudiant_ids);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC); // Retourne un tableau associatif
+}
+//Recuperation du montant total
+public function getTotalPaye($id_etudiant) {
+    $stmt = $this->pdo->prepare("SELECT SUM(montant_paye) AS total_payé FROM payement WHERE idEtudt = ?");
+    $stmt->execute([$id_etudiant]);
+    $result = $stmt->fetch();
+    return $result['total_payé'] ? $result['total_payé'] : 0; // Renvoie 0 si aucun paiement effectué
 }
 
 
