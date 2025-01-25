@@ -69,37 +69,46 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="card card-animated-border-top ">
+                 
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card card-animated-border-top ">
+                                    <div class="card-content">
+                                        <a href="<?= ROOT ?>/Etudiants/incrit_etudiant"><button class="btn btn-primary"
+                                                style="float:right;"><i class="bx bx-plus"></i>&nbsp; Nouveau </button></a>
+                                        <div class="card-body card-dashboard">
+                                        <form action="<?= ROOT ?>/Etudiants/paiement_groupe" method="POST">
+                                            <div class="table-responsive">
+                                            
+                                                 <table class="table zero-configuration">
+                                                    <thead class="text-center">
+                                                        <tr>
+                                                            <th>Nom && Prénom</th>
+                                                            <th>Matricule</th>
+                                                            <th>Status</th>
+                                                            <th>Filliere</th>
+                                                            <th>Diplome</th>
+                                                            <th>Paiement</th>
+                                                            <th> Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="table_etudiant" class="text-center">
 
-                                <div class="card-content">
-                                    <a href="<?= ROOT ?>/Etudiants/incrit_etudiant"><button class="btn btn-primary"
-                                            style="float:right;"><i class="bx bx-plus"></i>&nbsp; Nouveau </button></a>
-                                    <div class="card-body card-dashboard">
+                                                    </tbody>
+                                                </table>
+                                               
 
-                                        <div class="table-responsive">
-                                            <table class="table zero-configuration">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Nom && Prénom</th>
-                                                        <th>Matricule</th>
-                                                        <th>Status</th>
-                                                        <th>Filliere</th>
-                                                        <th>Diplome</th>
-                                                        <th> Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="table_etudiant">
-
-                                                </tbody>
-                                            </table>
+                                                <!-- Bouton pour effectuer le paiement -->
+                                                <button type="submit" class="btn btn-primary">Paiement en Groupe</button>
+                                            
+                                            </div>
+                                         </form>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                  
                 </section>
                 <!-- formulaire -->
 
