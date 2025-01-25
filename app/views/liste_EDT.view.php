@@ -39,7 +39,7 @@
             <div class="content-body">
                 <!-- formulaire -->
                 <section id="basic-datatable">
-
+                    <?php $this->view('set_flash'); ?>
                     <div class="row">
                         <div class="col-12">
                             <div class="card card-animated-border-top ">
@@ -74,7 +74,8 @@
 
 
                                             </div>
-                                            <a href="<?= ROOT ?>/Emploi_du_temps/ajouter_EDT" class="col-4 col-md-2">
+                                            <a href="<?= ROOT ?>/Emploi_du_temps/ajouter_EDT" class="col-4 col-md-2"
+                                                id="nouveauEdt">
                                                 <button class="btn btn-primary" style="float:right;">
                                                     <i class="bx bx-plus"></i>&nbsp; Nouveau
                                                 </button>
@@ -148,7 +149,8 @@
                                                                         href="<?= ROOT ?>/Emploi_du_temps/apercu_EDT/<?php echo $edtInfo->id_edt ?>">
                                                                         <i class="bx bx-edit-alt mr-1"></i> Aperçu
                                                                     </a>
-                                                                    <a class="dropdown-item" href="#"><i
+                                                                    <a class="dropdown-item"
+                                                                        href="<?= ROOT ?>/Emploi_du_temps/editer_edt/<?php echo $edtInfo->id_edt ?>"><i
                                                                             class="bx bx-edit-alt mr-1"></i> Editer</a>
                                                                     <a class="dropdown-item" href="#"><i
                                                                             class="bx bx-trash mr-1"></i> Supprimer</a>
@@ -190,13 +192,20 @@
 var infoFiliere = [];
 $("#filieres").change(async function() {
 
-    infoFiliere = await infosFiliere($(this).val());
+    infoFiliere = await infosFiliere($(this).val(), "all");
     promotionsFiliere(infoFiliere);
     trierListeEdt($(this).val(), $("#promotions").val());
+    url = "http://localhost/G_universite/public/Emploi_du_temps/ajouter_EDT"
+    url += '/' + $(this).val() + '/';
+    $('#nouveauEdt').attr('href', url);
+
 
 })
 $("#promotions").change(async function() {
     await trierListeEdt($("#filieres").val(), $(this).val());
+    url = "http://localhost/G_universite/public/Emploi_du_temps/ajouter_EDT"
+    url += '/' + $("#filieres").val() + '/' + $(this).val();
+    $('#nouveauEdt').attr('href', url);
 })
 </script>
 

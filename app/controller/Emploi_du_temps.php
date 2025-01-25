@@ -22,7 +22,7 @@ class Emploi_du_temps extends Controller
     }
 
 
-    public function ajouter_EDT($idFiliere = null)
+    public function ajouter_EDT($idFiliere = null, $idPromotion = null)
     {
         if (isset($_POST['action']) && $_POST['action'] === "ajouter_EDT") {
             @$edt = $_POST['edt'];
@@ -37,7 +37,14 @@ class Emploi_du_temps extends Controller
         $enseignants = $filiereModel->SelectAllData("*", "enseignants");
         $salles = $filiereModel->SelectAllData("*", "salle");
         $jours = $filiereModel->SelectAllData("*", "jour");
-        $this->view("ajouter_EDT", ['filieres' => $filieres, "enseignants" => $enseignants, "salles" => $salles, "jours" => $jours, 'idFiliere' => $idFiliere]);
+        $this->view("ajouter_EDT", [
+            'filieres' => $filieres,
+            "enseignants" => $enseignants,
+            "salles" => $salles,
+            "jours" => $jours,
+            'idFiliere' => $idFiliere,
+            'idPromotion' => $idPromotion
+        ]);
     }
 
 
@@ -61,10 +68,55 @@ class Emploi_du_temps extends Controller
             $idFiliere = $_POST['idFiliere'];
             $filiereModel = new Filiere();
             $infoFiliere = $filiereModel->apercu_filiere($idFiliere);
-            $promotions = $filiereModel->listePromotions($idFiliere);
+            $statut = (@$_POST['source'] == 'all') ? null : 1;
+            $promotions = $filiereModel->listePromotions($idFiliere, $statut);
             $infoFiliere['promotions'] = $promotions;
             header("Content-Type:application/json");
             echo json_encode($infoFiliere);
         }
+    }
+
+    public function get_ancien_edt()
+    {
+        if (isset($_POST['idFiliere'], $_POST['idModule'])) {
+            $edtModel = new Emploi_du_temp();
+            $idFiliere = $_POST['idFiliere'];
+            $idModule = $_POST['idModule'];
+            $edt = $edtModel->getAncienEdt($idFiliere, $idModule);
+            header("Content-Type:application/json");
+            echo json_encode($edt);
+        }
+    }
+
+    public function editer_edt($idEdt = null)
+    {
+        if ($idEdt != null && is_numeric($idEdt)) {
+            $edtModel = new Emploi_du_temp();
+            $infosEdt = $edtModel->getInfoEdt($idEdt);
+            $horairesEdt = $edtModel->getHorairesEdt($idEdt);
+            $jours = $edtModel->SelectAllData("*", "jour");
+            $filiereModel = new Filiere();
+            $filieres = $filiereModel->SelectAllData("*", "filiere");
+            $enseignants = $filiereModel->SelectAllData("*", "enseignants");
+            $salles = $filiereModel->SelectAllData("*", "salle");
+            if ($infosEdt != null && !empty($infosEdt)) {
+                $this->view('editer_edt', [
+                    "infosEdt" => $infosEdt,
+                    "horairesEdt" => $horairesEdt,
+                    "jours" => $jours,
+                    "filieres" => $filieres,
+                    "enseignants" => $enseignants,
+                    "salles" => $salles
+                ]);
+            }
+        } else if ($_POST['action'] == "editer_edt") {
+            @$edt = $_POST['edt'];
+            @$horaires = $_POST['horaires'];
+            $edtModel = new Emploi_du_temp();
+            $edtModel->editerEdt($edt, $horaires);
+            $this->view("set_flash");
+            return;
+        }
+        exit("Edt Introuvable");
     }
 }

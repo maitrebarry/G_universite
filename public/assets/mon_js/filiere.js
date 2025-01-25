@@ -203,7 +203,7 @@ function ajouterFiliere(
           document.getElementById("nomFiliere").value = "";
           document.getElementById("sigleFiliere").value = "";
           document.getElementById("semestresTable").innerHTML = "";
-        } else {
+        } else if (action == "ajouter_element_filiere") {
           window.location.reload();
         }
       }
