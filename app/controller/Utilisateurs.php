@@ -2,7 +2,7 @@
 class Utilisateurs extends Controller
 {
     public function index() {}
-    public function liste_utilisateur()
+    public function liste_utilisateur($id_enseignant=null)
     {
         $utilisateur = new Utilisateur();
         $utilisateurenseignant = new Enseignant();
@@ -18,6 +18,7 @@ class Utilisateurs extends Controller
             utilisateur.nom_prenom AS utilisateur_nom_prenom,
             utilisateur.contact_utilisateur AS utilisateur_contact,
             utilisateur.email_utilisateurs AS utilisateur_email,
+             utilisateur.signature AS signature,
             utilisateur.enseignant_id,
             enseignants.enseignant_nom,
             enseignants.enseignant_prenom,
@@ -34,7 +35,7 @@ class Utilisateurs extends Controller
         $liste = $utilisateur->select_data_table_join_where($select);
 
         $enseignants = $utilisateurenseignant->SelectAllData("*", "enseignants");
-        $this->view('liste_utilisateur', ['liste' => $liste, 'enseignants' => $enseignants]);
+        $this->view('liste_utilisateur', ['liste' => $liste, 'enseignants' => $enseignants,'id_enseignant'=>$id_enseignant]);
     }
 
     /// methode pour la modification
