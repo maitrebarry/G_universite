@@ -30,7 +30,9 @@ class Login extends Model
                 g.nom_grade,
                 u.id_utilisateur,
                 u.role,
-                u.mot_passe
+                u.mot_passe,
+                 u.signature
+
             FROM 
                 enseignants e
             LEFT JOIN 
