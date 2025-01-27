@@ -54,6 +54,7 @@ class Login extends Model
                 $_SESSION['email_utilisateurs'] = $enseignant->enseignant_email;
                 $_SESSION['contact_utilisateur'] = $enseignant->enseignant_telephone;
                 $_SESSION['role'] = $enseignant->role;
+                $_SESSION['signature'] = $enseignant->signature;
 
                 // Ajouter le grade dans la session uniquement si non nul
                 if (!empty($enseignant->nom_grade)) {
@@ -90,7 +91,7 @@ class Login extends Model
                 $_SESSION['email_utilisateurs'] = $utilisateur->email_utilisateurs;
                 $_SESSION['contact_utilisateur'] = $utilisateur->contact_utilisateur;
                 $_SESSION['role'] = $utilisateur->role;
-
+                $_SESSION['signature'] = $utilisateur->signature;
                 // Pas de grade pour un utilisateur classique
                 unset($_SESSION['nom_grade']); // Supprime toute ancienne valeur de grade si existante
 
