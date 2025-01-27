@@ -31,7 +31,7 @@
                                     </li>
                                 </ol>
                                 <div class="ms-auto">
-                                    <button type="button" class="btn btn-primary" style="float: right;" id="utilisateur" data-toggle="modal" data-target="#large" data-id="<?= $id_enseignant ?>">
+                                    <button type="button" class="btn btn-primary" style="float: right;" id="ajouterutilisateur" data-toggle="modal" data-target="#large" data-id="<?= $id_enseignant ?>">
                                         <i class="bx bx-plus"></i>Utilisateur
                                     </button>
                                 </div>
@@ -510,9 +510,9 @@
     </script>
     <script>
         $(document).ready(function(){
-              id_utilisateur=$('#utilisateur').data('id');
+              id_utilisateur=$('#ajouterutilisateur').data('id');
               if(id_utilisateur!==null && id_utilisateur !== ''){
-                $('#utilisateur').click();
+                $('#ajouterutilisateur').click();
                 $('#nom_prenom').val(id_utilisateur);
                 updateEmailAndContact();
               }
