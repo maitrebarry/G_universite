@@ -29,10 +29,9 @@
                                     </li>
                                     <li class="breadcrumb-item active">Liste
                                     </li>
-
                                 </ol>
                                 <div class="ms-auto">
-                                    <button type="button" class="btn btn-primary" style="float: right;" data-toggle="modal" data-target="#large">
+                                    <button type="button" class="btn btn-primary" style="float: right;" id="utilisateur" data-toggle="modal" data-target="#large" data-id="<?= $id_enseignant ?>">
                                         <i class="bx bx-plus"></i>Utilisateur
                                     </button>
                                 </div>
@@ -141,6 +140,7 @@
                                                                     <th>Nom & Prénom</th>
                                                                     <th>Téléphone</th>
                                                                     <th>Email</th>
+                                                                    <th>signature</th>
                                                                     <th width='1%'>Opération</th>
                                                                 </tr>
                                                             </thead>
@@ -151,6 +151,10 @@
                                                                             <td><?= $listes->enseignant_nom . ' ' . $listes->enseignant_prenom ?></td>
                                                                             <td><?= $listes->enseignant_telephone ?></td>
                                                                             <td><?= $listes->enseignant_email ?></td>
+                                                                            <td> 
+                                                                                 <img src="<?= ROOT ?><?= $listes->signature ?>" alt="user image" 
+                                                                            class="d-block rounded img-thumbnail " style="width: 150px;" />
+                                                                        </td>
                                                                             <td class="text-center">
                                                                                 <div class="dropdown">
                                                                                     <span class="bx bx-dots-horizontal-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="menu"></span>
@@ -183,6 +187,7 @@
                                                                     <th>Nom & Prénom</th>
                                                                     <th>Téléphone</th>
                                                                     <th>Email</th>
+                                                                    <th>signature</th>
                                                                     <th width='1%'>Opération</th>
                                                                 </tr>
                                                             </thead>
@@ -193,6 +198,10 @@
                                                                             <td><?= $listes->utilisateur_nom_prenom ?></td>
                                                                             <td><?= $listes->utilisateur_contact ?></td>
                                                                             <td><?= $listes->utilisateur_email ?></td>
+                                                                            <td> 
+                                                                                 <img src="<?= ROOT ?><?= $listes->signature ?>" alt="user image" 
+                                                                            class="d-block rounded img-thumbnail " style="width: 150px;" />
+                                                                        </td>
                                                                             <td class="text-center">
                                                                                 <div class="dropdown">
                                                                                     <span class="bx bx-dots-horizontal-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="menu"></span>
@@ -266,13 +275,15 @@
                                                             <div id="nomPrenomContainer">
                                                                 <!-- Par défaut, c'est un champ select pour enseignant -->
                                                                 <select id="nom_prenom" name="nom_prenom" class="select2 form-control" onchange="updateEmailAndContact()">
-                                                                    <option value="" disabled selected>Choisissez un enseignant</option>
+                                                                    <option value="" disabled >Choisissez un enseignant</option>
                                                                     <?php foreach ($enseignants as $enseignant): ?>
                                                                         <option value="<?php echo $enseignant->enseignant_id ?>"
                                                                             data-email="<?php echo $enseignant->enseignant_email ?>"
                                                                             data-contact="<?php echo $enseignant->enseignant_telephone ?>"
-                                                                            data-statut="<?php echo $enseignant->enseignant_statut ?>">
+                                                                            data-statut="<?php echo $enseignant->enseignant_statut ?>"
+                                                                           >
                                                                             <?php echo strtoupper($enseignant->enseignant_nom . " " . $enseignant->enseignant_prenom) ?>
+
                                                                         </option>
                                                                     <?php endforeach ?>
                                                                 </select>
@@ -496,6 +507,17 @@
             toggleNomPrenom(); // Affiche ou cache les éléments selon le type d'utilisateur
             filterEnseignants(); // Applique le filtre sur les enseignants si un statut est déjà sélectionné
         });
+    </script>
+    <script>
+        $(document).ready(function(){
+              id_utilisateur=$('#utilisateur').data('id');
+              if(id_utilisateur!==null && id_utilisateur !== ''){
+                $('#utilisateur').click();
+                $('#nom_prenom').val(id_utilisateur);
+                updateEmailAndContact();
+              }
+
+        })
     </script>
 
 </body>

@@ -118,7 +118,7 @@
                                                                             <a class="dropdown-item" href="<?= ROOT ?>/Enseignants/delete/<?= $enseignant->enseignant_id; ?>" style="font-size: 16px;">
                                                                                 <i class="bx bx-trash mr-2" style="color: #dc3545; font-size: 18px;"></i> Supprimer
                                                                             </a>
-                                                                            <a class="dropdown-item" href="<?= ROOT ?>/Utilisateurs/save_utilisateur/<?= $enseignant->enseignant_id; ?>" style="font-size: 16px;">
+                                                                            <a class="dropdown-item" href="<?= ROOT ?>/Utilisateurs/liste_utilisateur/<?= $enseignant->enseignant_id; ?>" style="font-size: 16px;">
                                                                             <i class="bx bx-plus "></i><i class="bx bx-user mr-1"></i>Attribuer un compte
                                                                             </a>
                                                                         </div>
@@ -166,6 +166,9 @@
                                                                             </a>
                                                                             <a class="dropdown-item" href="<?= ROOT ?>/Enseignants/delete/<?= $enseignant->enseignant_id; ?>" style="font-size: 16px;">
                                                                                 <i class="bx bx-trash mr-2" style="color: #dc3545; font-size: 18px;"></i> Supprimer
+                                                                            </a>
+                                                                            <a class="dropdown-item" href="<?= ROOT ?>/Utilisateurs/liste_utilisateur/<?= $enseignant->enseignant_id; ?>" style="font-size: 16px;">
+                                                                            <i class="bx bx-plus "></i><i class="bx bx-user mr-1"></i>Attribuer un compte
                                                                             </a>
                                                                         </div>
                                                                     </div>
