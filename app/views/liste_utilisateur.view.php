@@ -53,31 +53,31 @@
                                 <ul class="nav nav-align-left nav-pills flex-column">
                                     <li class="nav-item mb-1">
                                         <a class="nav-link   radius-10 " href="<?= ROOT ?>/Modules/listeModule">
-
+                                        <i class="fa-solid fa-book-open-reader me-2"></i>
                                             <span class="align-middle">Modules</span>
                                         </a>
                                     </li>
                                     <li class="nav-item mb-1">
                                         <a class="nav-link  " href="<?= ROOT ?>/Semestre/Liste">
-                                            <i class="fa-solid fa-user me-2"></i>
+                                        <i class="fa-solid fa-calendar-day me-2"></i>
                                             <span class="align-middle">Semestre</span>
                                         </a>
                                     </li>
                                     <li class="nav-item mb-1">
                                         <a class="nav-link " href="<?= ROOT ?>/Periodes/Liste">
-                                            <i class="fa-solid fa-calendar me-2"></i>
+                                        <i class="fa-solid fa-calendar-alt me-2"></i>
                                             <span class="align-middle">Période</span>
                                         </a>
                                     </li>
                                     <li class="nav-item mb-1">
                                         <a class="nav-link  active" href="<?= ROOT ?>/Utilisateurs/liste_utilisateur">
-                                            <i class="fa-solid fa-calendar me-2"></i>
+                                        <i class="fa-solid fa-users me-2"></i>
                                             <span class="align-middle">Utilisateur</span>
                                         </a>
                                     </li>
                                     <li class="nav-item mb-1">
                                         <a class="nav-link " href="<?= ROOT ?>/Salles/Liste">
-                                            <i class="fa-solid fa-calendar me-2"></i>
+                                        <i class="fa-solid fa-door-open me-2"></i>
                                             <span class="align-middle">Salles</span>
                                         </a>
                                     </li>
@@ -115,48 +115,109 @@
                                 <div class="col-12 ">
 
                                     <div class="card card-animated-border-top ">
-                                        <div class="card-body">
+                                        <div class="card-body card-dashboard">
+                                            <!-- Nav tabs -->
+                                            <ul class="nav nav-pills nav-justified" role="tablist">
+                                                <li class="nav-item waves-effect waves-light">
+                                                    <a class="nav-link active" data-toggle="tab" href="#enseignants" role="tab">
+                                                        <span class="d-none d-sm-block">Liste des enseignants utilisateur</span>
+                                                    </a>
+                                                </li>
+                                                <li class="nav-item waves-effect waves-light">
+                                                    <a class="nav-link" data-toggle="tab" href="#utilisateurs" role="tab">
+                                                        <span class="d-none d-sm-block">Liste des utilisateurs simples</span>
+                                                    </a>
+                                                </li>
+                                            </ul>
 
-                                            <!-- partie liste de l'école -->
-                                            <table class="table zero-configuration table-bordered" style="width:100%">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Nom && Prénom Utilisateur</th>
-                                                        <th>Contact</th>
-                                                        <th>E Mail</th>
-                                                        <th class="text-center dt-no-sorting">Action</th>
-                                                    </tr>
-                                                </thead>
+                                            <!-- Tab panes -->
+                                            <div class="tab-content mt-3">
+                                                <!-- Liste des enseignants -->
+                                                <div class="tab-pane active" id="enseignants" role="tabpanel">
+                                                    <div class="table-responsive">
+                                                        <table id="table_enseignants" class="table table-striped zero-configuration table-bordered" style="width:100%">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Nom & Prénom</th>
+                                                                    <th>Téléphone</th>
+                                                                    <th>Email</th>
+                                                                    <th width='1%'>Opération</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <?php foreach ($liste as $listes): ?>
+                                                                    <?php if ($listes->enseignant_id): ?>
+                                                                        <tr>
+                                                                            <td><?= $listes->enseignant_nom . ' ' . $listes->enseignant_prenom ?></td>
+                                                                            <td><?= $listes->enseignant_telephone ?></td>
+                                                                            <td><?= $listes->enseignant_email ?></td>
+                                                                            <td class="text-center">
+                                                                                <div class="dropdown">
+                                                                                    <span class="bx bx-dots-horizontal-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="menu"></span>
+                                                                                    <div class="dropdown-menu dropdown-menu-right">
+                                                                                        <!-- <a class="dropdown-item edit-btn" data-toggle="modal" data-target="#large1" href="#"
+                                                                                            data-id="<?= $listes->id_utilisateur ?>"
+                                                                                            data-nom_prenom="<?= $listes->enseignant_nom . ' ' . $listes->enseignant_prenom ?>"
+                                                                                            data-contact_utilisateur="<?= $listes->enseignant_telephone ?>"
+                                                                                            data-email_utilisateurs="<?= $listes->enseignant_email ?>"
+                                                                                            data-role_utilisateur="<?= $listes->role ?>">
+                                                                                            <i class="bx bx-edit-alt mr-1"></i> Modifier</a> -->
+                                                                                        <a class="dropdown-item" href="#"><i class="bx bx-trash mr-1"></i> Supprimer</a>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </td>
+                                                                        </tr>
+                                                                    <?php endif; ?>
+                                                                <?php endforeach; ?>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
 
-                                                <tbody>
-                                                    <?php foreach ($liste as $listes): ?>
-                                                        <tr>
-                                                            <td><?= $listes->nom_prenom ?></td>
-                                                            <td><?= $listes->contact_utilisateur ?></td>
-                                                            <td><?= $listes->email_utilisateurs ?></td>
-                                                            <td class="text-center ">
-                                                                <div class=" dropdown">
-                                                                    <span class="bx bx-dots-horizontal-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="menu">
-                                                                    </span>
-                                                                    <div class="dropdown-menu dropdown-menu-right">
-                                                                        <a class="dropdown-item edit-btn" data-toggle="modal" data-target="#large1"
-                                                                            href="#"
-                                                                            data-id="<?= $listes->id_utilisateur ?>"
-                                                                            data-nom_prenom="<?= $listes->nom_prenom ?>"
-                                                                            data-contact_utilisateur="<?= $listes->contact_utilisateur ?>"
-                                                                            data-email_utilisateurs="<?= $listes->email_utilisateurs ?>"
-                                                                            data-mot_passe="<?= $listes->mot_passe ?>"
-                                                                            data-role="<?= $listes->role ?>"><i class="bx bx-edit-alt mr-1"></i> edit</a>
-                                                                        <a class="dropdown-item" href=""><i class="bx bx-trash mr-1"></i> delete</a>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    <?php endforeach ?>
-                                                </tbody>
-                                            </table>
-                                            <!-- fin de la  partie liste de l'école -->
+                                                <!-- Liste des utilisateurs simples -->
+                                                <div class="tab-pane" id="utilisateurs" role="tabpanel">
+                                                    <div class="table-responsive">
+                                                        <table id="table_utilisateurs" class="table table-striped zero-configuration table-bordered" style="width:100%">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Nom & Prénom</th>
+                                                                    <th>Téléphone</th>
+                                                                    <th>Email</th>
+                                                                    <th width='1%'>Opération</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <?php foreach ($liste as $listes): ?>
+                                                                    <?php if (!$listes->enseignant_id): ?>
+                                                                        <tr>
+                                                                            <td><?= $listes->utilisateur_nom_prenom ?></td>
+                                                                            <td><?= $listes->utilisateur_contact ?></td>
+                                                                            <td><?= $listes->utilisateur_email ?></td>
+                                                                            <td class="text-center">
+                                                                                <div class="dropdown">
+                                                                                    <span class="bx bx-dots-horizontal-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="menu"></span>
+                                                                                    <div class="dropdown-menu dropdown-menu-right">
+                                                                                        <!-- <a class="dropdown-item edit-btn" data-toggle="modal" data-target="#large1" href="#"
+                                                                                            data-id="<?= $listes->id_utilisateur ?>"
+                                                                                            data-nom_prenom="<?= $listes->utilisateur_nom_prenom ?>"
+                                                                                            data-contact_utilisateur="<?= $listes->utilisateur_contact ?>"
+                                                                                            data-email_utilisateurs="<?= $listes->utilisateur_email ?>"
+                                                                                            data-role_utilisateur="<?= $listes->role ?>">
+                                                                                            <i class="bx bx-edit-alt mr-1"></i> Modifier</a> -->
+                                                                                        <a class="dropdown-item" href="#"><i class="bx bx-trash mr-1"></i> Supprimer</a>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </td>
+                                                                        </tr>
+                                                                    <?php endif; ?>
+                                                                <?php endforeach; ?>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -166,54 +227,89 @@
                                     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header bg-primary">
-                                                <h5 class="modal-title white" id="myModalLabel160"> Enregistre de l'Utilisateur</h5>
+                                                <h5 class="modal-title white" id="myModalLabel160"> Enregistrement de l'Utilisateur</h5>
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                     <i class="bx bx-x"></i>
                                                 </button>
                                             </div>
-                                            <form action="" m method="post" enctype="multipart/form-data" action="<?= ROOT ?>/Utilisateurs/edit_utilisateurs">
+                                            <form action="<?= ROOT ?>/Utilisateurs/liste_utilisateur" method="post" enctype="multipart/form-data">
                                                 <div class="modal-body">
+                                                    <div class="row">
+                                                        <h6 class="col-12 text-center">Type de Utilisateur</h6>
+                                                        <div class="col-12 border d-flex justify-content-center p-2 mb-2">
+                                                            <div class="radio radio-primary mr-4">
+                                                                <input type="radio" name="type_utilisateur" id="enseignant" class="type" value="0" checked onchange="toggleNomPrenom()">
+                                                                <label for="enseignant">Utilisateur Enseignant</label>
+                                                            </div>
+                                                            <div class="radio radio-primary mr-4">
+                                                                <input type="radio" name="type_utilisateur" id="utilisateur" class="type" value="1" onchange="toggleNomPrenom()">
+                                                                <label for="utilisateur">Utilisateur simple</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Section des statuts (apparaît seulement si l'utilisateur est un enseignant) -->
+                                                    <div id="statutContainer" class="col-12 d-flex justify-content-center d-none">
+                                                        <div class="radio radio-primary mr-4">
+                                                            <input type="radio" name="statut" id="PERMANANT" class="type" value="PERMANANT" onchange="filterEnseignants()">
+                                                            <label for="PERMANANT">Permanent</label>
+                                                        </div>
+                                                        <div class="radio radio-primary mr-4">
+                                                            <input type="radio" name="statut" id="NON_PERMANANT" class="type" value="NON_PERMANANT" onchange="filterEnseignants()">
+                                                            <label for="NON_PERMANANT">Non Permanent</label>
+                                                        </div>
+                                                    </div>
 
                                                     <div class="row">
                                                         <div class="col mb-4">
-                                                            <label for="nameBasic" class="form-label">Nom && prénom<span class="text-danger fs-6">*</span></label>
-                                                            <input type="text" id="" value="" class="form-control" name="nom_prenom" placeholder="Nom && prénom" required />
+                                                            <label for="nom_prenom" class="form-label">Nom && prénom<span class="text-danger fs-6">*</span></label>
+                                                            <div id="nomPrenomContainer">
+                                                                <!-- Par défaut, c'est un champ select pour enseignant -->
+                                                                <select id="nom_prenom" name="nom_prenom" class="select2 form-control" onchange="updateEmailAndContact()">
+                                                                    <option value="" disabled selected>Choisissez un enseignant</option>
+                                                                    <?php foreach ($enseignants as $enseignant): ?>
+                                                                        <option value="<?php echo $enseignant->enseignant_id ?>"
+                                                                            data-email="<?php echo $enseignant->enseignant_email ?>"
+                                                                            data-contact="<?php echo $enseignant->enseignant_telephone ?>"
+                                                                            data-statut="<?php echo $enseignant->enseignant_statut ?>">
+                                                                            <?php echo strtoupper($enseignant->enseignant_nom . " " . $enseignant->enseignant_prenom) ?>
+                                                                        </option>
+                                                                    <?php endforeach ?>
+                                                                </select>
+                                                            </div>
                                                         </div>
 
                                                         <div class="col mb-4">
-                                                            <label for="nameBasic" class="form-label">E_Mail<span class="text-danger fs-6">*</span></label>
-                                                            <input type="mail" id="" value="" class="form-control" name="email_utilisateurs" placeholder="E_Mail" required />
+                                                            <label for="email_utilisateurs" class="form-label">E_Mail<span class="text-danger fs-6">*</span></label>
+                                                            <input type="email" id="email_utilisateurs" class="form-control" name="email_utilisateurs" placeholder="E_Mail" required />
                                                         </div>
                                                         <div class="col mb-4">
-                                                            <label for="nameBasic" class="form-label">Contact<span class="text-danger fs-6">*</span></label>
-                                                            <input type="number" id="" value="" class="form-control" name="contact_utilisateur" placeholder="Contact" required />
+                                                            <label for="contact_utilisateur" class="form-label">Contact<span class="text-danger fs-6">*</span></label>
+                                                            <input type="text" id="contact_utilisateur" class="form-control" name="contact_utilisateur" placeholder="Contact" required />
                                                         </div>
                                                     </div>
                                                     <div class="row">
-
                                                         <div class="col mb-4">
-                                                            <label for="nameBasic" class="form-label">Mot de passe<span class="text-danger fs-6">*</span></label>
-                                                            <input type="text" id="" value="" class="form-control" name="mot_passe" placeholder="Mot de passe" required />
+                                                            <label for="mot_passe" class="form-label">Mot de passe<span class="text-danger fs-6">*</span></label>
+                                                            <input type="password" id="mot_passe" class="form-control" name="mot_passe" placeholder="Mot de passe" required />
                                                         </div>
-
                                                         <div class="col mb-4">
-                                                            <label for="nameBasic" class="form-label">Role<span class="text-danger fs-6">*</span></label>
-                                                            <fieldset class="form-group">
-                                                                <select name="role" id="" class="form-select form-control">
-                                                                    <option value="" disabled>Choisissez votre Role</option>
-                                                                    <option value="SupAdmin">SupAdmin</option>
-                                                                    <option value="Administrateur">Administrateur</option>
-                                                                    <option value="Sécretaire principale">Sécretaire principale</option>
-                                                                    <option value="DR">DR</option>
-                                                                </select>
-                                                            </fieldset>
+                                                            <label for="role" class=" form-label">Role<span class="text-danger fs-6">*</span></label>
+                                                            <select name="role" id="role" class="form-select form-control">
+                                                                <option value="" disabled>Choisissez votre Rôle</option>
+                                                                <option value="SupAdmin">SupAdmin</option>
+                                                                <option value="DG">DG</option>
+                                                                <option value="DGA">DGA</option>
+                                                                <option value="Sécretaire principale">SP</option>
+                                                                <option value="Chef DR"> Chef Dr</option>
+                                                                <option value="Enseignant">Enseignant</option>
+                                                            </select>
                                                         </div>
-                                                        <div class="col  mb-4">
-                                                            <label for="upload" class="form-label">Télécharger son signature :</label>
+                                                        <div class="col mb-4">
+                                                            <label for="signature" class="form-label">Télécharger son signature :</label>
                                                             <input type="file" name="signature" class="form-control" required />
                                                         </div>
                                                     </div>
-
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-light-secondary" data-dismiss="modal">
@@ -248,34 +344,37 @@
                                                     <div class="row">
                                                         <div class="col mb-4">
                                                             <label for="nameBasic" class="form-label">Nom && prénom<span class="text-danger fs-6">*</span></label>
-                                                            <input type="text" id="inputnom_Prenom" value="" class="form-control" name="nom_prenom" placeholder="Nom && prénom" required />
+                                                            <input type="text" id="inputnom_Prenom" value="" class="form-control" name="nom_prenom" placeholder="Nom && prénom" />
                                                         </div>
 
                                                         <div class="col mb-4">
                                                             <label for="nameBasic" class="form-label">E_Mail<span class="text-danger fs-6">*</span></label>
-                                                            <input type="mail" id="inputemail_Utilisateurs" value="" class="form-control" name="email_utilisateurs" placeholder="E_Mail" required />
+                                                            <input type="mail" id="inputemail_Utilisateurs" value="" class="form-control" name="email_utilisateurs" placeholder="E_Mail" />
                                                         </div>
 
                                                     </div>
                                                     <div class="row">
                                                         <div class="col mb-4">
                                                             <label for="nameBasic" class="form-label">Contact<span class="text-danger fs-6">*</span></label>
-                                                            <input type="number" id="inputcontact_Utilisateur" value="" class="form-control" name="contact_utilisateur" placeholder="Contact" required />
+                                                            <input type="number" id="inputcontact_Utilisateur" value="" class="form-control" name="contact_utilisateur" placeholder="Contact" />
                                                         </div>
                                                         <div class="col mb-4">
                                                             <label for="nameBasic" class="form-label">Mot de passe<span class="text-danger fs-6">*</span></label>
-                                                            <input type="text" id="inputmot_Passe" value="" class="form-control" name="mot_passe" placeholder="Mot de passe" required />
+                                                            <input type="text" id="inputmot_Passe" value="" class="form-control" name="mot_passe" placeholder="Mot de passe" />
                                                         </div>
 
                                                         <div class="col mb-4">
-                                                            <label for="nameBasic" class="form-label">Role<span class="text-danger fs-6">*</span></label>
+                                                            <label for="nameBasic" class="form-label">Rôle<span class="text-danger fs-6">*</span></label>
                                                             <fieldset class="form-group">
                                                                 <select name="role" id="inputRole" class="form-select form-control">
-                                                                    <option value="" disabled>Choisissez votre Role</option>
+                                                                    <option value="" disabled>Choisissez votre Rôle</option>
                                                                     <option value="SupAdmin">SupAdmin</option>
                                                                     <option value="Administrateur">Administrateur</option>
-                                                                    <option value="Sécretaire principale">Sécretaire principale</option>
-                                                                    <option value="DR">DR</option>
+                                                                    <option value="DG">DG</option>
+                                                                    <option value="DGA">DGA</option>
+                                                                    <option value="SP">SP</option>
+                                                                    <option value="DR">Chef DR</option>
+                                                                    <option value="Enseignant">Enseignant</option>
                                                                 </select>
                                                             </fieldset>
                                                         </div>
@@ -299,9 +398,6 @@
                                 </div>
                             </div>
                             <!-- partie fin modification des données -->
-
-
-
                         </div>
                     </div>
                 </div>
@@ -309,7 +405,6 @@
         </div>
     </div>
     <!-- fin: Content-->
-
     <div class="sidenav-overlay"></div>
     <div class="drag-target"></div>
     <!-- inclusion du partie foot-->
@@ -319,6 +414,89 @@
     <?php $this->view("Partials/footer") ?>
     <!-- inclusion du partie footer fin-->
     <script src="<?= ROOT ?>/assets/mon_js/modification_utilisateur.js"></script>
+    <script>
+        // Fonction pour afficher/masquer la section en fonction de l'option sélectionnée
+        function toggleNomPrenom() {
+            const enseignantChecked = document.getElementById('enseignant').checked;
+            const statutContainer = document.getElementById('statutContainer');
+            const nomPrenomContainer = document.getElementById('nomPrenomContainer');
+
+            if (enseignantChecked) {
+                // Afficher la section Permanent et Non Permanent
+                statutContainer.classList.remove('d-none');
+                statutContainer.classList.add('d-flex');
+
+                // Afficher les enseignants et leurs statuts
+                nomPrenomContainer.innerHTML = `
+                <select id="nom_prenom" name="nom_prenom" class="form-control" onchange="updateEmailAndContact()">
+                    <option value="" disabled selected>Choisissez un enseignant</option>
+                    <?php foreach ($enseignants as $enseignant): ?>
+                        <option value="<?php echo $enseignant->enseignant_id ?>"
+                            data-email="<?php echo $enseignant->enseignant_email ?>"
+                            data-contact="<?php echo $enseignant->enseignant_telephone ?>"
+                            data-statut="<?php echo $enseignant->enseignant_statut ?>">
+                            <?php echo strtoupper($enseignant->enseignant_nom . " " . $enseignant->enseignant_prenom) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            `;
+            } else {
+                // Masquer la section Permanent et Non Permanent
+                statutContainer.classList.remove('d-flex');
+                statutContainer.classList.add('d-none');
+
+                // Remplacer par un champ texte pour un utilisateur simple
+                nomPrenomContainer.innerHTML = `
+                <input type="text" id="nom_prenom" class="form-control" name="nom_prenom" placeholder="Nom && prénom" required />
+            `;
+                // Réinitialiser les champs email et contact
+                document.getElementById('email_utilisateurs').value = '';
+                document.getElementById('contact_utilisateur').value = '';
+                document.getElementById('email_utilisateurs').disabled = false;
+                document.getElementById('contact_utilisateur').disabled = false;
+            }
+        }
+
+        // Fonction pour filtrer les enseignants en fonction du statut sélectionné
+        function filterEnseignants() {
+            const statut = document.querySelector('input[name="statut"]:checked') ?
+                document.querySelector('input[name="statut"]:checked').value :
+                null;
+
+            const enseignants = document.querySelectorAll('#nom_prenom option');
+
+            enseignants.forEach(option => {
+                const statutEnseignant = option.getAttribute('data-statut');
+                if (statut && statutEnseignant !== statut) {
+                    option.style.display = 'none'; // Masquer l'enseignant
+                } else {
+                    option.style.display = ''; // Afficher l'enseignant
+                }
+            });
+        }
+
+        // Fonction pour mettre à jour les champs email et contact
+        function updateEmailAndContact() {
+            const selectElement = document.getElementById('nom_prenom');
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            const email = selectedOption.getAttribute('data-email');
+            const contact = selectedOption.getAttribute('data-contact');
+
+            // Mettre à jour les champs email et contact
+            document.getElementById('email_utilisateurs').value = email || '';
+            document.getElementById('contact_utilisateur').value = contact || '';
+
+            // Désactiver les champs si des données existent
+            document.getElementById('email_utilisateurs').disabled = !!email;
+            document.getElementById('contact_utilisateur').disabled = !!contact;
+        }
+
+        // Initialisation des éléments à la première ouverture
+        document.addEventListener('DOMContentLoaded', () => {
+            toggleNomPrenom(); // Affiche ou cache les éléments selon le type d'utilisateur
+            filterEnseignants(); // Applique le filtre sur les enseignants si un statut est déjà sélectionné
+        });
+    </script>
 
 </body>
 <!-- END: Body-->

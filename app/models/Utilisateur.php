@@ -85,20 +85,37 @@ class Utilisateur extends Model
           return;
       }
   
-      // Insertion des données dans la base
-      $insert = $this->insertion_update_simples(
-          "INSERT INTO utilisateur (nom_prenom, contact_utilisateur, email_utilisateurs, mot_passe, role, signature) 
-           VALUES (:nom_prenom, :contact_utilisateur, :email_utilisateurs, :mot_passe, :role, :signature)",
-          [
-              ":nom_prenom" => $nom_prenom,
-              ":contact_utilisateur" => $contact_utilisateur,
-              ":email_utilisateurs" => $email_utilisateurs,
-              ":mot_passe" => $hashPwd,
-              ":role" => $role,
-              ":signature" => $signature_path
-          ]
-      );
+      // Vérification du type d'utilisateur (enseignant ou simple)
+      if ($type_utilisateur == 0 && isset($nom_prenom) && !empty($nom_prenom)) {
+          // L'utilisateur est un enseignant, insérer avec enseignant_id
+          $insert = $this->insertion_update_simples(
+              "INSERT INTO utilisateur (nom_prenom, contact_utilisateur, email_utilisateurs, mot_passe, role, signature, enseignant_id) 
+               VALUES (NULL, :contact_utilisateur, NULL, :mot_passe, :role, :signature, :enseignant_id)",
+              [
+                  ":contact_utilisateur" => $contact_utilisateur,
+                  ":mot_passe" => $hashPwd,
+                  ":role" => $role,
+                  ":signature" => $signature_path,
+                  ":enseignant_id" => $nom_prenom // Assumer que `nom_prenom` contient l'ID de l'enseignant
+              ]
+          );
+      } else {
+          // L'utilisateur est simple, insérer nom_prenom, email, contact, et sans enseignant_id
+          $insert = $this->insertion_update_simples(
+              "INSERT INTO utilisateur (nom_prenom, contact_utilisateur, email_utilisateurs, mot_passe, role, signature, enseignant_id) 
+               VALUES (:nom_prenom, :contact_utilisateur, :email_utilisateurs, :mot_passe, :role, :signature, NULL)",
+              [
+                  ":nom_prenom" => $nom_prenom,
+                  ":contact_utilisateur" => $contact_utilisateur,
+                  ":email_utilisateurs" => $email_utilisateurs,
+                  ":mot_passe" => $hashPwd,
+                  ":role" => $role,
+                  ":signature" => $signature_path
+              ]
+          );
+      }
   
+      // Vérification du résultat de l'insertion
       if ($insert) {
           $this->set_flash("Utilisateur ajouté avec succès.", 'primary');
           $this->redirect("Utilisateurs/liste_utilisateur");
@@ -107,6 +124,8 @@ class Utilisateur extends Model
           $this->redirect("Utilisateurs/liste_utilisateur");
       }
   }
+  
+  
   
   public function edit_utilisateur($data)
   {

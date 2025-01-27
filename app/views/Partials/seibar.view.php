@@ -17,7 +17,6 @@ $current_page = basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
         font-weight: bold;
     }
 </style>
-
 <div class="main-menu menu-fixed menu-light menu-accordion menu-shadow" data-scroll-to-active="true">
     <div class="navbar-header">
         <ul class="nav navbar-nav flex-row">
@@ -50,7 +49,7 @@ $current_page = basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
             <!-- Filières -->
             <li class="nav-item <?= ($current_page == 'Filieres') ? 'active' : '' ?>">
                 <a class="nav-link" href="<?= ROOT ?>/Filieres">
-                    <i class="bx bx-save"></i>
+                    <i class="bx bx-bookmark-alt"></i> <!-- Changer en fonction du thème de l'icône -->
                     <span class="menu-title">Filières</span>
                 </a>
             </li>
@@ -58,7 +57,9 @@ $current_page = basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
             <!-- Enseignants -->
             <li class="nav-item <?= ($current_page == 'Enseignants') ? 'active' : '' ?>">
                 <a class="nav-link" href="<?= ROOT ?>/Enseignants">
-                    <i class="bx bx-user"></i> 
+                <i class="bx bx-chalkboard"></i>
+
+                <!-- Icône représentant un enseignant -->
                     <span class="menu-title">Enseignants</span>
                 </a>
             </li>
@@ -66,7 +67,7 @@ $current_page = basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
             <!-- Notes -->
             <li class="nav-item <?= ($current_page == 'Notes') ? 'active' : '' ?>">
                 <a class="nav-link" href="<?= ROOT ?>/Notes">
-                    <i class="bx bx-droplet"></i>
+                    <i class="bx bx-book"></i> <!-- Icône représentant des notes -->
                     <span class="menu-title">Notes</span>
                 </a>
             </li>
@@ -74,7 +75,7 @@ $current_page = basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
             <!-- Emploi du temps -->
             <li class="nav-item <?= ($current_page == 'Emploi_du_temps') ? 'active' : '' ?>">
                 <a class="nav-link" href="<?= ROOT ?>/Emploi_du_temps">
-                    <i class="bx bx-calendar"></i>
+                    <i class="bx bx-calendar"></i> <!-- Calendrier pour l'emploi du temps -->
                     <span class="menu-title">EDT</span>
                 </a>
             </li>
@@ -82,7 +83,7 @@ $current_page = basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
             <!-- Étudiants (Sous-menus) -->
             <li class="nav-item <?= (strpos($_SERVER['REQUEST_URI'], 'Etudiants') !== false) ?  : '' ?>">
                 <a class="nav-link" href="#">
-                    <i class="bx bx-check"></i>
+                    <i class="bx bx-group"></i> <!-- Icône représentant les étudiants -->
                     <span class="menu-title">Étudiants</span>
                 </a>
                 <ul class="menu-content">
@@ -117,6 +118,7 @@ $current_page = basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
         </ul>
     </div>
 </div>
+
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
