@@ -16,41 +16,49 @@ class Login extends Model
             if (empty($mot_passe)) {
                 $this->set_flash("Veuillez remplir le champ Mot de passe", 'danger');
             }
-            return; // Sortir si les champs sont vides
+            return;
         }
 
-        // Vérification dans la table enseignant d'abord
-        $enseignant = $this->FetchSelectWhere(
-            '*',
-            'enseignants',
-            'enseignant_email = :enseignant_email',
-            ['enseignant_email' => $email]
-        );
+        // Vérification dans la table enseignant (avec jointure sur grade)
+        $query = "
+            SELECT 
+                e.enseignant_id,
+                e.enseignant_prenom,
+                e.enseignant_nom,
+                e.enseignant_email,
+                e.enseignant_telephone,
+                g.nom_grade,
+                u.id_utilisateur,
+                u.role,
+                u.mot_passe
+            FROM 
+                enseignants e
+            LEFT JOIN 
+                grade g ON e.id_grade = g.id_grade
+            LEFT JOIN 
+                utilisateur u ON e.enseignant_id = u.enseignant_id
+            WHERE 
+                e.enseignant_email = :enseignant_email
+        ";
 
-        if ($enseignant) {
-            // Cas d'un enseignant : récupérer son mot de passe dans la table utilisateur
-            $utilisateur = $this->FetchSelectWhere(
-                '*',
-                'utilisateur',
-                'enseignant_id = :enseignant_id',
-                ['enseignant_id' => $enseignant->enseignant_id]
-            );
+        $enseignant = $this->select_data_table_join_where($query, ['enseignant_email' => $email]);
 
-            if (!$utilisateur) {
-                $this->set_flash("Aucun utilisateur trouvé pour cet enseignant", 'danger');
-                return;
-            }
-
-            // Vérifier le mot de passe
-            if (password_verify($mot_passe, $utilisateur->mot_passe)) {
+        if (!empty($enseignant)) {
+            $enseignant = $enseignant[0]; // Récupérer la première ligne des résultats
+            // Vérifier si le mot de passe correspond
+            if (password_verify($mot_passe, $enseignant->mot_passe)) {
                 // Stocker les informations de l'enseignant dans la session
-                $_SESSION['id_utilisateur'] = $utilisateur->id_utilisateur;
+                $_SESSION['id_utilisateur'] = $enseignant->id_utilisateur;
                 $_SESSION['enseignant_id'] = $enseignant->enseignant_id;
                 $_SESSION['nom_prenom'] = $enseignant->enseignant_prenom . " " . $enseignant->enseignant_nom;
                 $_SESSION['email_utilisateurs'] = $enseignant->enseignant_email;
                 $_SESSION['contact_utilisateur'] = $enseignant->enseignant_telephone;
-                
-                $_SESSION['role'] = $utilisateur->role;
+                $_SESSION['role'] = $enseignant->role;
+
+                // Ajouter le grade dans la session uniquement si non nul
+                if (!empty($enseignant->nom_grade)) {
+                    $_SESSION['nom_grade'] = $enseignant->nom_grade;
+                }
 
                 // Redirection après connexion
                 $this->redirect("Homes/home");
@@ -81,8 +89,10 @@ class Login extends Model
                 $_SESSION['nom_prenom'] = $utilisateur->nom_prenom;
                 $_SESSION['email_utilisateurs'] = $utilisateur->email_utilisateurs;
                 $_SESSION['contact_utilisateur'] = $utilisateur->contact_utilisateur;
-                $_SESSION['signature'] = $utilisateur->signature;
                 $_SESSION['role'] = $utilisateur->role;
+
+                // Pas de grade pour un utilisateur classique
+                unset($_SESSION['nom_grade']); // Supprime toute ancienne valeur de grade si existante
 
                 // Redirection après connexion
                 $this->redirect("Homes/home");
