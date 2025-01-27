@@ -49,7 +49,7 @@ class Login extends Model
                 $_SESSION['nom_prenom'] = $enseignant->enseignant_prenom . " " . $enseignant->enseignant_nom;
                 $_SESSION['email_utilisateurs'] = $enseignant->enseignant_email;
                 $_SESSION['contact_utilisateur'] = $enseignant->enseignant_telephone;
-                
+                $_SESSION['signature'] = $utilisateur->signature;
                 $_SESSION['role'] = $utilisateur->role;
 
                 // Redirection après connexion
