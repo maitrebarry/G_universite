@@ -6,25 +6,28 @@ class Enseignants extends Controller
         $this->lsite_enseignant();
     }
 
-    public function lsite_enseignant() {
-       
-        $commandeModel = new Enseignant(); 
+    public function lsite_enseignant()
+    {
+
+        $commandeModel = new Enseignant();
         $enseignat_enseignat_PERMANANT = $commandeModel->getEnseignantCDI();
-         $enseignat_NON_PERMANANT = $commandeModel->getEnseignantVCT();
+        $enseignat_NON_PERMANANT = $commandeModel->getEnseignantVCT();
         //  var_dump($enseignat_enseignat_PERMANANT);
         //  var_dump($enseignat_NON_PERMANANT);
         //  exit;
-            $this->view('liste_enseignant',
-            [ 
-                    'enseignat_CDI' => $enseignat_enseignat_PERMANANT,
-                    'enseignat_VCT' => $enseignat_NON_PERMANANT 
-                  ]);
-
+        $this->view(
+            'liste_enseignant',
+            [
+                'enseignat_CDI' => $enseignat_enseignat_PERMANANT,
+                'enseignat_VCT' => $enseignat_NON_PERMANANT
+            ]
+        );
     }
-   
-    public function ajouter_enseignant() {
+
+    public function ajouter_enseignant()
+    {
         $enseignant = new Enseignant();
-          $filiere = $enseignant->SelectAllData("*", "grade");
+        $filiere = $enseignant->SelectAllData("*", "grade");
         if (isset($_POST["envoyer"])) {
             // Nettoyage des données utilisateur
             $_POST = array_map('trim', $_POST);
@@ -37,14 +40,14 @@ class Enseignants extends Controller
             } else {
                 // Nettoyer les sessions en cas de succès
                 unset($_SESSION['input']);
-                unset($_SESSION['errors']);           
+                unset($_SESSION['errors']);
             }
         }
 
         // Récupération des données de session
         $input_values = $_SESSION['input'] ?? [];
         $errors = $_SESSION['errors'] ?? [];
-        unset($_SESSION['input'], $_SESSION['errors']); 
+        unset($_SESSION['input'], $_SESSION['errors']);
 
         // Chargement de la vue avec les données nécessaires
         $this->view("ajouter_enseignant", [
@@ -54,7 +57,8 @@ class Enseignants extends Controller
         ]);
     }
 
-    public function update($id) {
+    public function update($id)
+    {
         $enseignant = new Enseignant();
         $errors = [];
 
@@ -73,11 +77,11 @@ class Enseignants extends Controller
             $this->view('modifier_enseignant', ['errors' => $errors]);
             return;
         }
-        $enseignantData = $enseignantData[0]; 
+        $enseignantData = $enseignantData[0];
 
         // Récupérer la liste des grades pour le formulaire
-        $grades = $enseignant->SelectAllData("*","grade");
-    
+        $grades = $enseignant->SelectAllData("*", "grade");
+
         // Traitement lors de la soumission du formulaire
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $statut = $_POST['enseignant_statut'];
@@ -94,12 +98,12 @@ class Enseignants extends Controller
                 }
 
                 if (move_uploaded_file($_FILES['enseignant_cv']['tmp_name'], $cvFilePath)) {
-                    $cv = 'cv_enseignant/' . $cvFileName; 
+                    $cv = 'cv_enseignant/' . $cvFileName;
                 } else {
                     $errors[] = "Échec du téléversement du fichier CV.";
                 }
             } else {
-                $cv = $enseignantData->enseignant_cv; 
+                $cv = $enseignantData->enseignant_cv;
             }
 
             // Validation supplémentaire pour les permanents
@@ -138,14 +142,14 @@ class Enseignants extends Controller
                     $errors[] = "Échec de la mise à jour de l'enseignant.";
                 }
             }
-    }
+        }
 
-    // Charger la vue avec les données mises à jour
-    $this->view('modifier_enseignant', [
-        'enseignant' => $enseignantData,
-        'grades' => $grades,
-        'errors' => $errors
-    ]);
+        // Charger la vue avec les données mises à jour
+        $this->view('modifier_enseignant', [
+            'enseignant' => $enseignantData,
+            'grades' => $grades,
+            'errors' => $errors
+        ]);
     }
 
     // public function update($id) {
@@ -190,7 +194,7 @@ class Enseignants extends Controller
     //             'enseignant_cv' => $cv ?? null,
     //         ];
 
-        
+
     //         // Si aucune erreur, procéder à la mise à jour
     //         if (empty($errors)) {
     //             $result = $enseignant-> modification($data);      
@@ -201,20 +205,22 @@ class Enseignants extends Controller
     //     $this->view('modifier_enseignant', ['enseignant' => $enseignantData, 'errors' => $errors]);
     // }
 
-    public function delete($id) {
-        $perso = new Enseignant();     
+    public function delete($id)
+    {
+        $perso = new Enseignant();
         // Définir la requête de suppression et les paramètres
         $sql = 'DELETE FROM enseignants WHERE enseignant_id = :id';
         $params = [':id' => $id];
-        $result = $perso->insertion_update_simples($sql, $params); 
+        $result = $perso->insertion_update_simples($sql, $params);
         if ($result->rowCount() > 0) {
             $perso->set_flash("Suppression réussie", 'success');
-        }  
+        }
         $perso->redirect('Enseignants/liste_enseignant');
-    }   
+    }
 
     //gestion d'edt individuel
-    public function listeEDT_individuel($id, $date_debut = null, $date_fin = null) {
+    public function listeEDT_individuel($id, $date_debut = null, $date_fin = null)
+    {
         $model = new Enseignant();
         $errors = [];
         $periodes = $model->getPeriodes();
@@ -293,24 +299,7 @@ class Enseignants extends Controller
         ]);
     }
 
+    // public function listeEDT_individuel($idEnseignant, $idPeriode) {
 
-
-
-
-
-
-
-
-
-
-   
-     
-
-
-
-
-
-
-
-
+    // }
 }
