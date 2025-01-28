@@ -50,6 +50,7 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between flex-column mb-3 mb-md-0">
                                 <ul class="nav nav-align-left nav-pills flex-column">
+                               
                                     <li class="nav-item mb-1">
                                         <a class="nav-link  radius-10 " href="<?= ROOT ?>/Modules/listeModule">
                                         <i class="fa-solid fa-book-open-reader me-2"></i>
@@ -78,6 +79,12 @@
                                         <a class="nav-link " href="<?= ROOT ?>/Salles/Liste">
                                         <i class="fa-solid fa-door-open me-2"></i>
                                             <span class="align-middle">Salles</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item mb-1">
+                                        <a class="nav-link   " href="<?= ROOT ?>/Departements/listeDepartements">
+                                        <i class="fa-solid fa-building me-2"></i>
+                                            <span class="align-middle">departements</span>
                                         </a>
                                     </li>
                                 </ul>

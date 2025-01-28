@@ -1,77 +1,115 @@
+<?php 
+$titre = "EMPLOI DU TEMPS INDIVIDUEL : du " . date('d-m-Y', strtotime($date_debut)) . " au " . date('d-m-Y', strtotime($date_fin));
+?>
+
 <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        font-size: 12px; /* Réduction de la taille de police */
+    }
 
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+    .header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
 
-        .header h1 {
-            margin: 0;
-            font-size: 20px;
-            text-decoration: underline;
-        }
+    .header h1 {
+        margin: 0;
+        font-size: 20px;
+        text-decoration: underline;
+    }
 
-        .header h2 {
-            margin: 5px 0;
-            font-size: 16px;
-            text-decoration: underline;
-        }
+    .header h2 {
+        margin: 5px 0;
+        font-size: 16px;
+        text-decoration: underline;
+    }
 
-        .table-container {
-            margin-bottom: 20px;
-        }
+    .table-container {
+        margin-bottom: 20px;
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-        }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+    }
 
-        table, th, td {
-            border: 1px solid black;
-        }
+    table, th, td {
+        border: 1px solid black;
+    }
 
-        th, td {
-            text-align: center;
-            padding: 8px;
-        }
+    th, td {
+        text-align: center;
+        padding: 8px;
+        word-wrap: break-word; /* Ajout du word-wrap pour les cellules de tableau */
+    }
 
-        .footer {
-            font-size: 14px;
-            margin-top: 20px;
-        }
+    .footer {
+        font-size: 14px;
+        margin-top: 20px;
+    }
 
-        .footer div {
-            margin-bottom: 5px;
-        }
+    .footer div {
+        margin-bottom: 5px;
+    }
 
-        .signature {
-            text-align: right;
-            margin-top: 20px;
-        }
+    .signature {
+        text-align: right;
+        margin-top: 20px;
+    }
 
-        .signature div {
-            margin-bottom: 5px;
-        }
+    .signature div {
+        margin-bottom: 5px;
+    }
 
-        .notes {
-            margin-top: 30px;
-            font-size: 14px;
-        }
+    .notes {
+        margin-top: 30px;
+        font-size: 14px;
+    }
 
-        .notes h3 {
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
+    .notes h3 {
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
 
-        .notes p {
-            margin: 5px 0;
-        }
-    </style>
+    .notes p {
+        margin: 5px 0;
+    }
+
+    input {
+        padding: 8px;
+        font-size: 16px;
+        text-align: center;
+    }
+
+    td {
+        padding: 15px 5px !important;
+        word-wrap: break-word; /* Ajout du word-wrap pour les cellules de tableau */
+    }
+
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .col-md-4 {
+        flex: 0 0 33.3333%;
+        max-width: 33.3333%;
+        padding: 0 10px;
+        box-sizing: border-box;
+        word-wrap: break-word; /* Ajout du word-wrap pour les colonnes */
+        white-space: normal;
+    }
+
+    p {
+        word-wrap: break-word;
+        white-space: normal;
+        margin: 0; /* Ajouter une marge de zéro pour ajuster l'alignement */
+    }
+</style>
+
 <?php $this->view("Partials/header") ?>
 
 <body class="vertical-layout vertical-menu-modern boxicon-layout no-card-shadow 2-columns navbar-sticky footer-static" data-open="click" data-menu="vertical-menu-modern" data-col="2-columns">
@@ -86,7 +124,7 @@
             <div class="content-header row">
                 <div class="content-header-left col-12 mb-2 mt-1">
                     <div class="row breadcrumbs-top">
-                        <div class="col-12">
+                        <div class="col-10">
                             <h5 class="content-header-title float-left pr-1 mb-0">Gestion des EDT</h5>
                             <div class="breadcrumb-wrapper col-12">
                                 <ol class="breadcrumb p-0 mb-0">
@@ -95,12 +133,17 @@
                                 </ol>
                             </div>
                         </div>
+                        <div class="col-2">
+                            <button type="button" class="btn btn-primary" onclick="imprimerEdtIndi('<?= $titre ?>')">
+                                <i class="bx bx-printer"></i> Imprimer
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-12">
-                    <div class="card card-animated-border-top">
+                    <div class="card card-animated-border-top" id="edtIndi">
                         <div class="card-body">
                             <?php $this->view("set_flash"); ?>
                             <?php if (!empty($errors)): ?>
@@ -135,39 +178,37 @@
                                 </p>
                             </div>
                             <div class="container">
-                                <div class="row mb-4">
-                                    <div class="col-md-4">
-                                        <p><strong>Nom :</strong> <?= isset($enseignant->enseignant_nom) ? htmlspecialchars($enseignant->enseignant_nom) : 'Non spécifié'; ?></p>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <p><strong>Prénom :</strong> <?= isset($enseignant->enseignant_prenom) ? htmlspecialchars($enseignant->enseignant_prenom) : 'Non spécifié'; ?></p>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <p><strong>Grade :</strong> <?= isset($enseignant->nom_grade) ? htmlspecialchars($enseignant->nom_grade) : 'Non spécifié'; ?></p>
-                                    </div>
+                            <div class="row mb-4">
+                                <div class="col-md-4">
+                                    <p><strong>Nom :</strong> <?= isset($enseignant->enseignant_nom) ? htmlspecialchars($enseignant->enseignant_nom) : 'Non spécifié'; ?></p>
                                 </div>
-
-                                <div class="row mb-4">
-                                    <div class="col-md-4">
-                                        <p><strong>Statut :</strong> <?= isset($enseignant->enseignant_statut) ? htmlspecialchars($enseignant->enseignant_statut) : 'Non spécifié'; ?></p>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <p><strong>Date de naissance :</strong> <?= isset($enseignant->enseignant_date_naissance) ? date('d-m-Y', strtotime($enseignant->enseignant_date_naissance)) : 'Non spécifiée'; ?></p>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <p><strong>Année Universitaire :</strong> 
-                                            <?php if (!empty($emplois_du_temps)): ?>
-                                                <?= implode(', ', array_unique(array_map(function($edt) {
-                                                    return htmlspecialchars($edt->annee_universitaire);
-                                                }, $emplois_du_temps))); ?>
-                                            <?php else: ?>
-                                                Non spécifiée
-                                            <?php endif; ?>
-                                        </p>
-                                    </div>
+                                <div class="col-md-4">
+                                    <p><strong>Prénom :</strong> <?= isset($enseignant->enseignant_prenom) ? htmlspecialchars($enseignant->enseignant_prenom) : 'Non spécifié'; ?></p>
+                                </div>
+                                <div class="col-md-4">
+                                    <p><strong>Grade :</strong> <?= isset($enseignant->nom_grade) ? htmlspecialchars($enseignant->nom_grade) : 'Non spécifié'; ?></p>
                                 </div>
                             </div>
-                            <div class="form-group mb-3 text-center">
+                             <div class="row mb-4">
+                                <div class="col-md-4">
+                                    <p><strong>Statut :</strong> <?= isset($enseignant->enseignant_statut) ? htmlspecialchars($enseignant->enseignant_statut) : 'Non spécifié'; ?></p>
+                                </div>
+                                <div class="col-md-4">
+                                    <p><strong>Date de naissance :</strong> <?= isset($enseignant->enseignant_date_naissance) ? date('d-m-Y', strtotime($enseignant->enseignant_date_naissance)) : 'Non spécifiée'; ?></p>
+                                </div>
+                                <div class="col-md-4">
+                                    <p><strong>Année Universitaire :</strong> 
+                                        <?php if (!empty($emplois_du_temps)): ?>
+                                            <?= implode(', ', array_unique(array_map(function($edt) {
+                                                return htmlspecialchars($edt->annee_universitaire);
+                                            }, $emplois_du_temps))); ?>
+                                        <?php else: ?>
+                                            Non spécifiée
+                                        <?php endif; ?>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="form-group mb-3 text-center no-print">
                                 <label style="font-weight: bold;">Afficher l'emploi du temps :</label>
                                 <div style="display: flex; justify-content: center; gap: 20px; align-items: center; margin-top: 10px;">
                                     <div>
@@ -202,8 +243,8 @@
                                     </div>
                                 </form>
                             </div>
-                            <div class="table-container">
-                                <table class="table table-bordered">
+                            <!-- <div class="table-container"> -->
+                                <table class=" table-bordered-responsive" >
                                     <thead>
                                         <tr>
                                             <th>Semaine</th>
@@ -255,8 +296,8 @@
                                         <?php endif; ?>
                                     </tbody>
                                 </table>
-                            </div>
-                            <div class="footer">
+                            <!-- </div> -->
+                           <div class="footer">
                                 <div class="row mb-4">
                                     <div class="col-md-4">
                                         <p><strong>Heures totales :</strong> <?= isset($heures_totales) ? htmlspecialchars($heures_totales) : 0; ?></p>
@@ -269,10 +310,29 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="signature">
-                                <div>Bamako, le <?= date('d M Y'); ?></div>
-                                <div>Chef de DER</div>
-                                <div>Dr Amadou TRAORE</div>
+                            <div class=" mt-1 text-right mr-2" style="min-width:70vw">
+                                <div class="d-flex justify-content-end " style="
+                                    min-width:70vw">
+                                    <h6 class=" text-muted text-right" style="min-width:70vw">Segou, le
+                                        <?php echo date('d-m-Y') ?></h6>
+                                </div>
+                                <div class="" style="min-width:70vw">
+                                    <h6 class=" text-bold-600 text-center d-flex justify-content-end w-100"
+                                        style="min-width:70vw">
+                                        Le
+                                        Chef de DER ST</h6>
+                                    <h6 class=" d-flex text-center justify-content-end w-100"
+                                        style="min-width:70vw">
+                                        <img src="<?= ROOT ?><?= $_SESSION['signature'] ?>" alt="user image"
+                                            class="d-block rounded  "
+                                            style="width: 150px; max-height: 60px;" />
+                                    </h6>
+                                </div>
+                                <div class=" d-flex justify-content-end" style="min-width:70vw">
+                                    <h6 class=" text-right" style="min-width:70vw">Dr
+                                        <?php echo strtoupper($_SESSION['nom_prenom']) ?> <br>
+                                        <?php echo strtoupper($_SESSION['nom_grade']) ?> </h6>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -313,6 +373,14 @@
                 statusSelect.style.color = "black";
             }
         });
-    </script>
-
+   </script>
+   <script src="<?= ROOT ?>/assets/mon_js/pdfedIndividuel.js"></script>
 </body>
+
+
+
+
+
+
+
+
