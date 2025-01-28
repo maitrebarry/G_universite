@@ -35,7 +35,8 @@ class Utilisateurs extends Controller
         $liste = $utilisateur->select_data_table_join_where($select);
 
         $enseignants = $utilisateurenseignant->SelectAllData("*", "enseignants");
-        $this->view('liste_utilisateur', ['liste' => $liste, 'enseignants' => $enseignants,'id_enseignant'=>$id_enseignant]);
+        $departements = $utilisateur->SelectAllData("*", "departement");
+        $this->view('liste_utilisateur', ['liste' => $liste, 'enseignants' => $enseignants,'id_enseignant'=>$id_enseignant,'departements'=>$departements]);
     }
 
     /// methode pour la modification

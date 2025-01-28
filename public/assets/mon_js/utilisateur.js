@@ -21,3 +21,5 @@ $(document).ready(function () {
         $('#large1').modal('show');
     });
 });
+
+

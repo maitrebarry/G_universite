@@ -10,30 +10,30 @@
     <meta name="keywords" content="admin template, Frest admin template, dashboard template, flat admin template, responsive admin template, web app">
     <meta name="author" content="PIXINVENT">
     <title>Login Page - Frest - Bootstrap HTML admin template</title>
-    <link rel="apple-touch-icon" href="<?=ROOT?>/assets/images/ico/apple-icon-120.png">
-    <link rel="shortcut icon" type="image/x-icon" href="<?=ROOT?>/assets/images/ico/favicon.ico">
+    <link rel="apple-touch-icon" href="<?= ROOT ?>/assets/images/ico/apple-icon-120.png">
+    <link rel="shortcut icon" type="image/x-icon" href="<?= ROOT ?>/assets/images/ico/favicon.ico">
     <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,600%7CIBM+Plex+Sans:300,400,500,600,700" rel="stylesheet">
 
     <!-- BEGIN: Vendor CSS-->
-    <link rel="stylesheet" type="text/css" href="<?=ROOT?>/assets/vendors/css/vendors.min.css">
+    <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/vendors/css/vendors.min.css">
     <!-- END: Vendor CSS-->
 
     <!-- BEGIN: Theme CSS-->
-    <link rel="stylesheet" type="text/css" href="<?=ROOT?>/assets/css/bootstrap.css">
-    <link rel="stylesheet" type="text/css" href="<?=ROOT?>/assets/css/bootstrap-extended.css">
-    <link rel="stylesheet" type="text/css" href="<?=ROOT?>/assets/css/colors.css">
-    <link rel="stylesheet" type="text/css" href="<?=ROOT?>/assets/css/components.css">
-    <link rel="stylesheet" type="text/css" href="<?=ROOT?>/assets/css/themes/dark-layout.css">
-    <link rel="stylesheet" type="text/css" href="<?=ROOT?>/assets/css/themes/semi-dark-layout.css">
+    <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/bootstrap-extended.css">
+    <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/colors.css">
+    <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/components.css">
+    <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/themes/dark-layout.css">
+    <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/themes/semi-dark-layout.css">
     <!-- END: Theme CSS-->
 
     <!-- BEGIN: Page CSS-->
-    <link rel="stylesheet" type="text/css" href="<?=ROOT?>/assets/css/core/menu/menu-types/vertical-menu.css">
-    <link rel="stylesheet" type="text/css" href="<?=ROOT?>/assets/css/pages/authentication.css">
+    <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/core/menu/menu-types/vertical-menu.css">
+    <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/pages/authentication.css">
     <!-- END: Page CSS-->
 
     <!-- BEGIN: Custom CSS-->
-    <link rel="stylesheet" type="text/css" href="<?=ROOT?>/assets1//css/style.css">
+    <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets1//css/style.css">
     <!-- END: Custom CSS-->
 
 </head>
@@ -42,14 +42,18 @@
 <!-- END: Head-->
 <style>
     body {
-      margin: 0;
-      padding: 0;
-      background-image: url('http://localhost/G_universite/public/assets/images/login.jpeg' )!important; /* Chemin de l'image */
-      background-size: cover; /* L'image couvre tout l'écran */
-      background-repeat: no-repeat; /* Pas de répétition */
-      background-position: center; /* L'image est centrée */
+        margin: 0;
+        padding: 0;
+        background-image: url('http://localhost/G_universite/public/assets/images/login.jpeg') !important;
+        /* Chemin de l'image */
+        background-size: cover;
+        /* L'image couvre tout l'écran */
+        background-repeat: no-repeat;
+        /* Pas de répétition */
+        background-position: center;
+        /* L'image est centrée */
     }
-  </style>
+</style>
 <!-- BEGIN: Body-->
 
 <body class="vertical-layout vertical-menu-modern semi-dark-layout 1-column  navbar-sticky footer-static bg-full-screen-image  blank-page blank-page" data-open="click" data-menu="vertical-menu-modern" data-col="1-column" data-layout="semi-dark-layout">
@@ -75,7 +79,7 @@
                                         </div>
                                         <div class="card-content">
                                             <div class="card-body">
-                                              
+
                                                 <div class="divider">
                                                     <div class="divider-text text-uppercase text-muted"><small>or login with
                                                             email</small>
@@ -85,10 +89,11 @@
                                                 <form method="post">
                                                     <div class="form-group mb-50">
                                                         <label class="text-bold-600" for="exampleInputEmail1">Email address</label>
-                                                        <input type="email" class="form-control"  name="email_utilisateurs" placeholder="Email address"></div>
+                                                        <input type="email" class="form-control" name="email_utilisateurs" placeholder="Email address">
+                                                    </div>
                                                     <div class="form-group">
                                                         <label class="text-bold-600" for="exampleInputPassword1">Password</label>
-                                                        <input type="password" class="form-control " name="mot_passe"  placeholder="Password">
+                                                        <input type="password" class="form-control " name="mot_passe" placeholder="Password">
                                                     </div>
                                                     <div class="form-group d-flex flex-md-row flex-column justify-content-between align-items-center">
                                                         <div class="text-left">
