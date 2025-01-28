@@ -104,22 +104,28 @@
                                                         $module = $edt->module;
                                                         ?>
                                                     <tr style="font-size: 13px;">
-                                                        <td class="h6 d-flex" style="font-weight: bolder;">
-                                                            <?php if ($edtInfo->statut == 0): ?>
-                                                            <div class="badge badge-warning badge-icon">
-                                                                <span>x</span>
-                                                            </div>
-                                                            <?php endif ?>
-                                                            <?php if ($edtInfo->statut == 1): ?>
-                                                            <div class="badge badge-success badge-icon">
-                                                                <span>v</span>
-                                                            </div>
-                                                            <?php endif ?>
-                                                            <span
-                                                                class="px-1"><?php echo strtoupper($promotion->sigle_filiere) ?></span>
+                                                        <td>
+                                                            <a href="<?= ROOT ?>/Emploi_du_temps/apercu_edt/<?php echo $edtInfo->id_edt ?>"
+                                                                class="h6 d-flex" style="font-weight: bolder;">
+                                                                <?php if ($edtInfo->statut == 0): ?>
+                                                                <div class="badge badge-warning badge-icon">
+                                                                    <span>x</span>
+                                                                </div>
+                                                                <?php endif ?>
+                                                                <?php if ($edtInfo->statut == 1): ?>
+                                                                <div class="badge badge-success badge-icon">
+                                                                    <span>v</span>
+                                                                </div>
+                                                                <?php endif ?>
+                                                                <span
+                                                                    class="px-1"><?php echo strtoupper($promotion->sigle_filiere) ?></span>
+                                                            </a>
                                                         </td>
                                                         <td>
-                                                            <?php echo strtoupper($promotion->sigle_filiere . '-' . $promotion->sigle_semestre . '( ' . $promotion->annee_universitaire . ' )') ?>
+                                                            <a href="<?= ROOT ?>/Emploi_du_temps/apercu_edt/<?php echo $edtInfo->id_edt ?>"
+                                                                class=" d-block">
+                                                                <?php echo strtoupper($promotion->sigle_filiere . '-' . $promotion->sigle_semestre . '( ' . $promotion->annee_universitaire . ' )') ?>
+                                                            </a>
                                                         </td>
                                                         <td>
                                                             <?php echo strtoupper($module->nom_module) ?>
@@ -149,11 +155,12 @@
                                                                         href="<?= ROOT ?>/Emploi_du_temps/apercu_EDT/<?php echo $edtInfo->id_edt ?>">
                                                                         <i class="bx bx-edit-alt mr-1"></i> Aperçu
                                                                     </a>
+                                                                    <?php if (($edtInfo->statut == 0)): ?>
                                                                     <a class="dropdown-item"
                                                                         href="<?= ROOT ?>/Emploi_du_temps/editer_edt/<?php echo $edtInfo->id_edt ?>"><i
                                                                             class="bx bx-edit-alt mr-1"></i> Editer</a>
-                                                                    <a class="dropdown-item" href="#"><i
-                                                                            class="bx bx-trash mr-1"></i> Supprimer</a>
+                                                                    <?php endif ?>
+
                                                                 </div>
                                                             </div>
                                                         </td>

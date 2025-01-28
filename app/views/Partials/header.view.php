@@ -1,16 +1,16 @@
 <?php
-if (!isset($_SESSION['id_utilisateur'])) {
-    // Si l'utilisateur n'est pas connecté, redirigez-le vers la page de connexion
-$this->redirect("Logins");
-   
-}
+// if (!isset($_SESSION['id_utilisateur'])) {
+//     // Si l'utilisateur n'est pas connecté, redirigez-le vers la page de connexion
+// $this->redirect("Logins");
+
+// }
 ?>
 <!DOCTYPE html>
 <html class="loading" lang="en" data-textdirection="ltr">
 <!-- BEGIN: Head-->
 
 <head>
-<link href="https://cdn.jsdelivr.net/npm/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
 
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -60,24 +60,24 @@ $this->redirect("Logins");
 
 </head>
 <style>
-.card-animated-border-top {
-    border-top: 2px solid;
-    border-image-slice: 1;
-    border-image-source: linear-gradient(to right, #ff416c, #ff4b2b);
-    animation: border-shift 3s linear infinite;
-}
-
-@keyframes border-shift {
-    0% {
+    .card-animated-border-top {
+        border-top: 2px solid;
+        border-image-slice: 1;
         border-image-source: linear-gradient(to right, #ff416c, #ff4b2b);
+        animation: border-shift 3s linear infinite;
     }
 
-    50% {
-        border-image-source: linear-gradient(to right, #4facfe, #00f2fe);
-    }
+    @keyframes border-shift {
+        0% {
+            border-image-source: linear-gradient(to right, #ff416c, #ff4b2b);
+        }
 
-    100% {
-        border-image-source: linear-gradient(to right, #ff416c, #ff4b2b);
+        50% {
+            border-image-source: linear-gradient(to right, #4facfe, #00f2fe);
+        }
+
+        100% {
+            border-image-source: linear-gradient(to right, #ff416c, #ff4b2b);
+        }
     }
-}
 </style>

@@ -18,10 +18,11 @@ class Filiere  extends Model
             }
             // L'insertation des infos de base de la filière
             $this->e(extract($filiere));
-            $requtte = "INSERT INTO filiere(nom_filiere, sigle_filiere) VALUES (:nomFiliere, :sigleFiliere)";
+            $requtte = "INSERT INTO filiere(nom_filiere, sigle_filiere, id_departement) VALUES (:nomFiliere, :sigleFiliere, :idDepartement)";
             $param = [
                 'nomFiliere' => $nomFiliere,
-                "sigleFiliere" => $sigleFiliere
+                "sigleFiliere" => $sigleFiliere,
+                "idDepartement" => $idDepartement
             ];
             $reponse = $this->insertion_update_simples_insert_id($requtte, $param);
             $idFiliere = $reponse['lastInsertId'];

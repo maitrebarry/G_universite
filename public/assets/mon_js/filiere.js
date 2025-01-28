@@ -122,10 +122,12 @@ function ajouterFiliere(
   const nomFiliere = document.getElementById("nomFiliere").value;
   const sigleFiliere = document.getElementById("sigleFiliere").value;
   const idFiliere = $("#nomFiliere").data("id");
+  const idDepartement = $("#idDepartement").val();
   filiere = {
     nomFiliere: nomFiliere,
     sigleFiliere: sigleFiliere,
     idFiliere: idFiliere,
+    idDepartement: idDepartement,
   };
 
   // Semestres Ues Modules

@@ -138,6 +138,12 @@
                                                                                 Arrêt
                                                                             </a>
                                                                         <?php endif ?>
+                                                                        <?php if ($promotion->statut == 1): ?>
+                                                                            <a class="dropdown-item "
+                                                                                href="<?= ROOT ?>/Emploi_du_temps/ajouter_EDT/<?php echo $promotion->id_filiere . '/' . $promotion->id_promotion ?>">
+                                                                                <i class="bx bx-plus mr-1"></i>Edt
+                                                                            </a>
+                                                                        <?php endif ?>
 
                                                                     </div>
                                                                 </div>

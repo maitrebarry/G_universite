@@ -26,7 +26,8 @@ class Filieres extends Controller
 
         $semestreModel = new Semestre();
         $listeSemestres = $semestreModel->SelectAllData("*", "semestre");
-        $this->view('ajouter_filiere', ['semestres' => $listeSemestres]);
+        $departements = $semestreModel->SelectAllData("*", "departement");
+        $this->view('ajouter_filiere', ['semestres' => $listeSemestres, 'departements' => $departements]);
     }
 
     // la fonction pour jerer l'ajout des semestres des semestres, des ue et des modules dans une filière
