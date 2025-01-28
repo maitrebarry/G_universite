@@ -90,7 +90,6 @@
     <?php $this->view("Partials/navbar") ?>
     <?php $this->view("Partials/seibar") ?>
     <div class="app-content content">
-        <div class="content-overlay"></div>
         <div class="content-wrapper">
             <div class="content-header-left col-12 mb-2 mt-1">
                 <div class="row breadcrumbs-top">
