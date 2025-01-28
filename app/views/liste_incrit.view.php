@@ -1,5 +1,25 @@
 <!-- inclusion du partie header -->
 <?php $this->view("Partials/header") ?>
+<style>.table-paiement th {
+    cursor: default; /* Empêche le clic */
+    user-select: none; /* Désactive la sélection de texte */
+    background-color: #343a40;
+    color: white;
+    text-align: center;
+    vertical-align: middle;
+}
+th.text-center {
+    text-align: center; /* Centrer le texte */
+    vertical-align: middle; /* Aligner verticalement */
+    padding: 10px; /* Ajoutez un peu d'espace intérieur */
+}
+
+th.text-center input[type="checkbox"] {
+    margin-top: 5px; /* Espacer la case à cocher du texte */
+    cursor: pointer; /* Ajouter un curseur pour indiquer que c'est cliquable */
+}
+
+</style>
 
 <body
     class="vertical-layout vertical-menu-modern boxicon-layout no-card-shadow 2-columns  navbar-sticky footer-static  "
@@ -83,12 +103,18 @@
                                                  <table class="table zero-configuration">
                                                     <thead class="text-center">
                                                         <tr>
+                                                        <th class="text-center">
+                                                            Paiement
+                                                            <br> <!-- Saut de ligne pour séparer le texte de la case à cocher -->
+                                                            <input type="checkbox" id="select-all" title="Sélectionner tout" style="margin-top: 5px;">
+                                                        </th>
+                                                           
                                                             <th>Nom && Prénom</th>
                                                             <th>Matricule</th>
                                                             <th>Status</th>
                                                             <th>Filliere</th>
                                                             <th>Diplome</th>
-                                                            <th>Paiement</th>
+                                                            
                                                             <th> Action</th>
                                                         </tr>
                                                     </thead>
@@ -127,7 +153,16 @@
     <?php $this->view("Partials/footer") ?>
     <!-- inclusion du partie footer fin-->
     <script>
-    $(document).ready(function() {
+        //pour eviter de clicker sur les th
+  document.getElementById('select-all').addEventListener('click', function(event) {
+    event.stopPropagation();
+});
+          document.getElementById('select-all').addEventListener('change', function() {
+        const checkboxes = document.querySelectorAll('input[name="paie[]"]');
+        checkboxes.forEach(checkbox => checkbox.checked = this.checked);
+        });
+
+        $(document).ready(function() {
         $('#id_promotion').change(function() {
             const id_promotion = $('#id_promotion').val();
 
