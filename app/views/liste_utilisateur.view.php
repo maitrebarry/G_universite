@@ -50,37 +50,44 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between flex-column mb-3 mb-md-0">
                                 <ul class="nav nav-align-left nav-pills flex-column">
+
                                     <li class="nav-item mb-1">
                                         <a class="nav-link   radius-10 " href="<?= ROOT ?>/Modules/listeModule">
-                                        <i class="fa-solid fa-book-open-reader me-2"></i>
+                                            <i class="fa-solid fa-book-open-reader me-2"></i>
                                             <span class="align-middle">Modules</span>
                                         </a>
                                     </li>
                                     <li class="nav-item mb-1">
                                         <a class="nav-link  " href="<?= ROOT ?>/Semestre/Liste">
-                                        <i class="fa-solid fa-calendar-day me-2"></i>
+                                            <i class="fa-solid fa-calendar-day me-2"></i>
                                             <span class="align-middle">Semestre</span>
                                         </a>
                                     </li>
                                     <li class="nav-item mb-1">
                                         <a class="nav-link " href="<?= ROOT ?>/Periodes/Liste">
-                                        <i class="fa-solid fa-calendar-alt me-2"></i>
+                                            <i class="fa-solid fa-calendar-alt me-2"></i>
                                             <span class="align-middle">Période</span>
                                         </a>
                                     </li>
                                     <li class="nav-item mb-1">
                                         <a class="nav-link  active" href="<?= ROOT ?>/Utilisateurs/liste_utilisateur">
-                                        <i class="fa-solid fa-users me-2"></i>
+                                            <i class="fa-solid fa-users me-2"></i>
                                             <span class="align-middle">Utilisateur</span>
                                         </a>
                                     </li>
                                     <li class="nav-item mb-1">
                                         <a class="nav-link " href="<?= ROOT ?>/Salles/Liste">
-                                        <i class="fa-solid fa-door-open me-2"></i>
+                                            <i class="fa-solid fa-door-open me-2"></i>
                                             <span class="align-middle">Salles</span>
                                         </a>
                                     </li>
+                                    <li class="nav-item mb-1">
+                                        <a class="nav-link   " href="<?= ROOT ?>/Departements/listeDepartements">
+                                            <i class="fa-solid fa-building me-2"></i>
 
+                                            <span class="align-middle">departements</span>
+                                        </a>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
@@ -151,10 +158,10 @@
                                                                             <td><?= $listes->enseignant_nom . ' ' . $listes->enseignant_prenom ?></td>
                                                                             <td><?= $listes->enseignant_telephone ?></td>
                                                                             <td><?= $listes->enseignant_email ?></td>
-                                                                            <td> 
-                                                                                 <img src="<?= ROOT ?><?= $listes->signature ?>" alt="user image" 
-                                                                            class="d-block rounded img-thumbnail " style="width: 150px;" />
-                                                                        </td>
+                                                                            <td>
+                                                                                <img src="<?= ROOT ?><?= $listes->signature ?>" alt="user image"
+                                                                                    class="d-block rounded img-thumbnail " style="width: 150px;" />
+                                                                            </td>
                                                                             <td class="text-center">
                                                                                 <div class="dropdown">
                                                                                     <span class="bx bx-dots-horizontal-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="menu"></span>
@@ -198,10 +205,10 @@
                                                                             <td><?= $listes->utilisateur_nom_prenom ?></td>
                                                                             <td><?= $listes->utilisateur_contact ?></td>
                                                                             <td><?= $listes->utilisateur_email ?></td>
-                                                                            <td> 
-                                                                                 <img src="<?= ROOT ?><?= $listes->signature ?>" alt="user image" 
-                                                                            class="d-block rounded img-thumbnail " style="width: 150px;" />
-                                                                        </td>
+                                                                            <td>
+                                                                                <img src="<?= ROOT ?><?= $listes->signature ?>" alt="user image"
+                                                                                    class="d-block rounded img-thumbnail " style="width: 150px;" />
+                                                                            </td>
                                                                             <td class="text-center">
                                                                                 <div class="dropdown">
                                                                                     <span class="bx bx-dots-horizontal-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="menu"></span>
@@ -275,13 +282,12 @@
                                                             <div id="nomPrenomContainer">
                                                                 <!-- Par défaut, c'est un champ select pour enseignant -->
                                                                 <select id="nom_prenom" name="nom_prenom" class="select2 form-control" onchange="updateEmailAndContact()">
-                                                                    <option value="" disabled >Choisissez un enseignant</option>
+                                                                    <option value="" disabled>Choisissez un enseignant</option>
                                                                     <?php foreach ($enseignants as $enseignant): ?>
                                                                         <option value="<?php echo $enseignant->enseignant_id ?>"
                                                                             data-email="<?php echo $enseignant->enseignant_email ?>"
                                                                             data-contact="<?php echo $enseignant->enseignant_telephone ?>"
-                                                                            data-statut="<?php echo $enseignant->enseignant_statut ?>"
-                                                                           >
+                                                                            data-statut="<?php echo $enseignant->enseignant_statut ?>">
                                                                             <?php echo strtoupper($enseignant->enseignant_nom . " " . $enseignant->enseignant_prenom) ?>
 
                                                                         </option>
@@ -500,7 +506,9 @@
             // Désactiver les champs si des données existent
             document.getElementById('email_utilisateurs').disabled = !!email;
             document.getElementById('contact_utilisateur').disabled = !!contact;
+            alert(email);
         }
+
 
         // Initialisation des éléments à la première ouverture
         document.addEventListener('DOMContentLoaded', () => {
@@ -509,13 +517,13 @@
         });
     </script>
     <script>
-        $(document).ready(function(){
-              id_utilisateur=$('#ajouterutilisateur').data('id');
-              if(id_utilisateur!==null && id_utilisateur !== ''){
+        $(document).ready(function() {
+            id_utilisateur = $('#ajouterutilisateur').data('id');
+            if (id_utilisateur !== null && id_utilisateur !== '') {
                 $('#ajouterutilisateur').click();
                 $('#nom_prenom').val(id_utilisateur);
                 updateEmailAndContact();
-              }
+            }
 
         })
     </script>
