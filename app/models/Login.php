@@ -31,7 +31,10 @@ class Login extends Model
                 u.id_utilisateur,
                 u.role,
                 u.mot_passe,
-                 u.signature
+                u.signature,
+                d.id_departement ,
+                d.nom_departement,
+                d.sigle_departement
 
             FROM 
                 enseignants e
@@ -39,6 +42,8 @@ class Login extends Model
                 grade g ON e.id_grade = g.id_grade
             LEFT JOIN 
                 utilisateur u ON e.enseignant_id = u.enseignant_id
+                LEFT JOIN 
+                departement d ON d.	id_departement  = u.id_departement
             WHERE 
                 e.enseignant_email = :enseignant_email
         ";
@@ -61,6 +66,10 @@ class Login extends Model
                 // Ajouter le grade dans la session uniquement si non nul
                 if (!empty($enseignant->nom_grade)) {
                     $_SESSION['nom_grade'] = $enseignant->nom_grade;
+                }
+                if(strtoupper(str_replace(" ", "", $enseignant->role)) == strtoupper('ChefDR')){
+                    $_SESSION['nom_departement'] = $enseignant->nom_departement;
+                    $_SESSION['sigle_departement'] = $enseignant->	sigle_departement;
                 }
 
                 // Redirection après connexion

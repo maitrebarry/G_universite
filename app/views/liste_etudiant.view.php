@@ -1,13 +1,14 @@
 <?php foreach ($liste_etudiant as $etudiant): ?>
-    <tr>
+    <tr><td class="text-center">
+    <input type="checkbox" name="paie[]" value="<?= $etudiant->id_etudiant ?>">
+</td>
+
                 <td><?=$etudiant->nom_prenom_etudiant?></td>
                 <td><?=$etudiant->matricule_etudiant?></td>
                 <td><?=$etudiant->id_statut?></td>
                 <td><?=$etudiant->nom_filiere?></td>
                 <td><?=$etudiant->diplome?></td>
-                <td class="text-center">
-                    <input type="checkbox" name="paie[]"  value="<?= $etudiant->id_etudiant ?>">
-                </td>
+                
                   
                 <td>
                     <!-- Dropdown options for individual actions -->

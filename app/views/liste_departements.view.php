@@ -145,9 +145,9 @@
                             </div>
                             
                             <!-- partie insertion des données -->
-                            <div class="modal-primary mr-1 mb-1 d-inline-block">
+                            <div class="modal-primary mr-1 mb-1 d-inline-block modal-lg">
                                 <div class="modal fade text-left" id="primary" tabindex="-1" role="dialog" aria-labelledby="myModalLabel160" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+                                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header bg-primary">
                                                 <h5 class="modal-title white" id="myModalLabel160"> Enregistrements de departement</h5>

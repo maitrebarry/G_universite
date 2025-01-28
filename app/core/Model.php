@@ -107,7 +107,7 @@ public function VerifyFields($fields = []) {
             case 'warning':
                 return 'bg-rgba-warning';
             default:
-                return 'bg-rgba-primary';  // Par défaut
+                return 'bg-rgba-danger';  // Par défaut
         }
     }
     
