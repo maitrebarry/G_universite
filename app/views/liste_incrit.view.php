@@ -93,7 +93,7 @@ th.text-center input[type="checkbox"] {
                         <div class="row">
                             <div class="col-12">
                                 <div class="card card-animated-border-top ">
-                                    <div class="card-content">
+                                    <div class="card-content mt-1 mr-1">
                                         <a href="<?= ROOT ?>/Etudiants/incrit_etudiant"><button class="btn btn-primary"
                                                 style="float:right;"><i class="bx bx-plus"></i>&nbsp; Nouveau </button></a>
                                         <div class="card-body card-dashboard">
@@ -104,7 +104,7 @@ th.text-center input[type="checkbox"] {
                                                     <thead class="text-center">
                                                         <tr>
                                                         <th class="text-center">
-                                                            Paiement
+                                                          Tout
                                                             <br> <!-- Saut de ligne pour séparer le texte de la case à cocher -->
                                                             <input type="checkbox" id="select-all" title="Sélectionner tout" style="margin-top: 5px;">
                                                         </th>
