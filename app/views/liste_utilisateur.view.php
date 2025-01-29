@@ -338,13 +338,13 @@
 
 
                                                     </div>
-                                                    <div class=" row d-flex justify-content-between align-items-center">
+                                                    <div class=" row d-flex justify-content-between align-items-center" id="c_signature">
                                                         <div class="col-6">
                                                             <label for="signature" class="form-label">Télécharger son signature :</label>
                                                             <input type="file" id="image" name="signature" class="form-control" required />
                                                         </div>
                                                         <div class="col-6  d-flex justify-content-end">
-                                                            <img src="<?=ROOT?>/assets/images/upload.svg" alt="user image" id="imagePreview"
+                                                            <img src="<?= ROOT ?>/assets/images/upload.svg" alt="user image" id="imagePreview"
                                                                 class="d-block  " style="width: 150px;max-height:100px" />
                                                         </div>
                                                     </div>
@@ -433,7 +433,7 @@
 
             enseignants.forEach(option => {
                 const statutEnseignant = option.getAttribute('data-statut');
-                if (statut && statutEnseignant !== statut && option.value!="") {
+                if (statut && statutEnseignant !== statut && option.value != "") {
                     option.style.display = 'none'; // Masquer l'enseignant
                 } else {
                     option.style.display = ''; // Afficher l'enseignant
@@ -480,8 +480,8 @@
                 }
             })
         })
-        image=document.getElementById('image')
-        imagePreview=document.getElementById('imagePreview')
+        image = document.getElementById('image')
+        imagePreview = document.getElementById('imagePreview')
         // Affichage d'une image lors de la seclection
         image.addEventListener("change", function() {
             //recuperation du fichier choisi
@@ -495,6 +495,16 @@
                 reader.readAsDataURL(file);
             }
         });
+        $('#utilisateur').click(function() {
+            $("#c_signature").removeClass('d-flex');
+            $("#c_signature").addClass('d-none');
+
+        })
+        $('#enseignant').click(function() {
+            $("#c_signature").removeClass('d-none');
+            $("#c_signature").addClass('d-flex');
+
+        })
     </script>
 
 </body>
