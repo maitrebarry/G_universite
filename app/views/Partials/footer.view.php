@@ -28,6 +28,7 @@
 <script src="<?= ROOT ?>/assets/js/scripts/components.js"></script>
 <script src="<?= ROOT ?>/assets/js/scripts/footer.js"></script>
 <script src="<?= ROOT ?>/assets/js/scripts/print.min.js"></script>
+<script src="<?= ROOT ?>/assets/js/scripts/html2pdf.bundle.min.js"></script>
 <!-- END: Theme JS-->
 
 <!-- BEGIN: Page JS-->

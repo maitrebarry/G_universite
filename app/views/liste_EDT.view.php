@@ -21,7 +21,13 @@
                 <div class="content-header-left col-12 mb-2 mt-1">
                     <div class="row breadcrumbs-top">
                         <div class="col-12">
-                            <h5 class="content-header-title float-left pr-1 mb-0">programmation des cours</h5>
+                            <h5 class="content-header-title float-left pr-1 mb-0">
+                                <?php
+                                echo (isset($_SESSION['nom_departement']))
+                                    ? strtoupper($_SESSION['nom_departement'] . ' (' . $_SESSION['sigle_departement'] . ')')
+                                    : "IUFP"
+                                ?>
+                            </h5>
                             <div class="breadcrumb-wrapper col-12">
                                 <ol class="breadcrumb p-0 mb-0">
                                     <li class="breadcrumb-item"><a href="index.html"><i class="bx bx-home-alt"></i></a>
@@ -84,9 +90,10 @@
 
 
                                         <div class="table-responsive col-12">
-                                            <table class="table zero-configuration ">
+                                            <table class="table zero-configuration " id="edts">
                                                 <thead>
                                                     <tr>
+                                                        <th></th>
                                                         <th>Filière</th>
                                                         <th>Promotion</th>
                                                         <th>Module</th>
@@ -97,84 +104,21 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody id="listeEdts">
-                                                    <?php foreach ($edts as $edt): ?>
-                                                    <?php
-                                                        $edtInfo = $edt->edt;
-                                                        $promotion = $edt->promotion;
-                                                        $module = $edt->module;
-                                                        ?>
-                                                    <tr style="font-size: 13px;">
-                                                        <td>
-                                                            <a href="<?= ROOT ?>/Emploi_du_temps/apercu_edt/<?php echo $edtInfo->id_edt ?>"
-                                                                class="h6 d-flex" style="font-weight: bolder;">
-                                                                <?php if ($edtInfo->statut == 0): ?>
-                                                                <div class="badge badge-warning badge-icon">
-                                                                    <span>x</span>
-                                                                </div>
-                                                                <?php endif ?>
-                                                                <?php if ($edtInfo->statut == 1): ?>
-                                                                <div class="badge badge-success badge-icon">
-                                                                    <span>v</span>
-                                                                </div>
-                                                                <?php endif ?>
-                                                                <span
-                                                                    class="px-1"><?php echo strtoupper($promotion->sigle_filiere) ?></span>
-                                                            </a>
-                                                        </td>
-                                                        <td>
-                                                            <a href="<?= ROOT ?>/Emploi_du_temps/apercu_edt/<?php echo $edtInfo->id_edt ?>"
-                                                                class=" d-block">
-                                                                <?php echo strtoupper($promotion->sigle_filiere . '-' . $promotion->sigle_semestre . '( ' . $promotion->annee_universitaire . ' )') ?>
-                                                            </a>
-                                                        </td>
-                                                        <td>
-                                                            <?php echo strtoupper($module->nom_module) ?>
-                                                        </td>
-                                                        <td class="h6 text-bold-700 text-italic"
-                                                            style="font-size: 13px;">
-                                                            <?php echo strtoupper($edtInfo->enseignant_prenom . ' ' . $edtInfo->enseignant_nom) ?>
-                                                        </td>
 
-                                                        <td>
-                                                            <?php echo strtoupper($edtInfo->nom_salle) ?>
-                                                        </td>
-                                                        <td>
-                                                            <div class="badge badge-light-primary mr-1 mb-1">
-                                                                <?php echo strtoupper($edtInfo->date_debut) ?>
-                                                            </div>
-                                                        </td>
-                                                        <td class="text-center dt-no-sorting">
-                                                            <div class="dropdown">
-                                                                <span
-                                                                    class="bx bx-dots-horizontal-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer"
-                                                                    data-toggle="dropdown" aria-haspopup="true"
-                                                                    aria-expanded="false" role="menu">
-                                                                </span>
-                                                                <div class="dropdown-menu dropdown-menu-right">
-                                                                    <a class="dropdown-item"
-                                                                        href="<?= ROOT ?>/Emploi_du_temps/apercu_EDT/<?php echo $edtInfo->id_edt ?>">
-                                                                        <i class="bx bx-edit-alt mr-1"></i> Aperçu
-                                                                    </a>
-                                                                    <?php if (($edtInfo->statut == 0)): ?>
-                                                                    <a class="dropdown-item"
-                                                                        href="<?= ROOT ?>/Emploi_du_temps/editer_edt/<?php echo $edtInfo->id_edt ?>"><i
-                                                                            class="bx bx-edit-alt mr-1"></i> Editer</a>
-                                                                    <?php endif ?>
-
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                    <?php endforeach ?>
                                                 </tbody>
 
                                             </table>
+                                            <div class=" d-flex justify-content-end my-1">
+                                                <button type="button" class=" btn btn-primary" id="print"><i
+                                                        class=" bx bx-printer"></i>
+                                                    Imprimer</button>
+                                                </d>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
                 </section>
                 <!-- formulaire -->
 
@@ -197,8 +141,13 @@
 <script src="<?= ROOT ?>/assets/mon_js/edt.js"></script>
 <script>
 var infoFiliere = [];
-$("#filieres").change(async function() {
 
+// $(document).ready(async function() {
+//     trierListeEdt($("#filieres").val(), $("#promotions").val());
+//     infoFiliere = await infosFiliere($(this).val(), "all");
+//     promotionsFiliere(infoFiliere);
+// })
+$("#filieres").change(async function() {
     infoFiliere = await infosFiliere($(this).val(), "all");
     promotionsFiliere(infoFiliere);
     trierListeEdt($(this).val(), $("#promotions").val());
@@ -213,6 +162,14 @@ $("#promotions").change(async function() {
     url = "http://localhost/G_universite/public/Emploi_du_temps/ajouter_EDT"
     url += '/' + $("#filieres").val() + '/' + $(this).val();
     $('#nouveauEdt').attr('href', url);
+})
+
+$('#print').click(function() {
+    $('#edts tbody tr').each(function() {
+        if ($(this).find('.isSelected').prop("checked")) {
+            imprimerEdt($(this).find('.isSelected').data("id"), $(this).find('.isSelected').data("nom"))
+        }
+    })
 })
 </script>
 

@@ -542,43 +542,80 @@ function trierListeEdt(idFiliere, idPromotion) {
       idPromotion: idPromotion,
     },
     success: function (response) {
-      console.log(response);
       $("#listeEdts").html(response);
+      $(".imprimerEdt").click(function (event) {
+        event.preventDefault();
+        imprimerEdt($(this).data("id"), $(this).data("nom"));
+      });
     },
 
+    error: function (error) {},
+  });
+  // Fin de l'envoi des données avec Ajax
+}
+//la fonction pour imprimer un editer
+function imprimerEdt(idEdt, nomEdt = "edt") {
+  // Debut de l'envoi des données avec Ajax
+  $.ajax({
+    method: "POST",
+    url: ROOT + "/apercu_EDT/" + idEdt,
+    data: {
+      action: "print",
+    },
+    success: function (response) {
+      div = document.createElement("div");
+      div.innerHTML = response;
+      imprimer(nomEdt, div);
+    },
     error: function (error) {
+      alert("hahahah");
       console.log(error.status);
     },
   });
   // Fin de l'envoi des données avec Ajax
 }
-
-// Imprimer un edt
-function imprimerEdt(nomEdt) {
-  printJS({
-    printable: "edt",
-    type: "html",
-    documentTitle: nomEdt,
-    targetStyles: ["*"],
-    style: `@page{size:landscape}
-  
-    body * {
-        visibility: hidden;
-    }
-
-    #edt,
-    #edt * {
-        visibility: visible;
-    }
-
-    #edt {
-
-        position: absolute;
-        left: 0;
-        top: 0;
-    }
-          `,
-  });
+// Imprimer pour faire une impression
+function imprimer(nomEdt, html = null) {
+  if (html == null) {
+    html = document.getElementById("edt");
+  }
+  nomEdt = nomEdt
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join("-");
+  html2pdf()
+    .from(html)
+    .set({
+      filename: nomEdt,
+      html2canvas: {
+        scale: 2,
+      },
+      jsPDF: {
+        format: "a4",
+        orientation: "landscape",
+      },
+    })
+    .save();
+  // printJS({
+  //   printable: "edt",
+  //   type: "html",
+  //   documentTitle: nomEdt,
+  //   targetStyles: ["*"],
+  //   style: `@page{size:landscape}
+  //   body * {
+  //       visibility: hidden;
+  //   }
+  //   #edt,
+  //   #edt * {
+  //       visibility: visible;
+  //   }
+  //   #edt {
+  //       position: absolute;
+  //       left: 0;
+  //       top: 0;
+  //   }
+  //         `,
+  // });
 }
 
 // Fonction pour définir l'année scolaire par défaut

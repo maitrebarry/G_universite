@@ -3,6 +3,7 @@
 class Filiere  extends Model
 {
 
+    //! Debut de la gestion d'une filière
     // la methode pour ajouter une filière
     public function ajouter_filiere($filiere, $semestres, $ues, $modules)
     {
@@ -101,6 +102,17 @@ class Filiere  extends Model
             $this->set_flash($e->getMessage() . " : !Veuillez bien verifier vos données");
             return false;
         }
+    }
+
+    // la methode pour la liste des filières par departement
+    public function listeFilieresParDepartement($idDepartement = null)
+    {
+        if ($idDepartement != null) {
+            $filieres = $this->FetchAllSelectWhere("*", "filiere", "id_departement=?", [$idDepartement]);
+        } else {
+            $filieres = $this->SelectAllData("*", "filiere");
+        }
+        return $filieres;
     }
 
     // la methode pour recuperer toutes les informations d'une filière
@@ -368,8 +380,6 @@ class Filiere  extends Model
         }
     }
 
-
-
     public function supprimerElementFiliere($action, $id)
     {
         $column = 'id_' . $action;
@@ -392,9 +402,7 @@ class Filiere  extends Model
             return;
         }
     }
-
-
-    //! Fin de la gestion d'une promotion
+    //! Fin de la gestion d'une filière
 
     //! Debut de la gestion d'une promotion
     // Ajouter une promotion

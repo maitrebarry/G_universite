@@ -1,3 +1,4 @@
+<?php $index = 0 ?>
 <?php foreach ($edts as $edt): ?>
 <?php
     $edtInfo = $edt->edt;
@@ -6,8 +7,16 @@
     ?>
 <tr style="font-size: 13px;">
     <td>
-        <a href="<?= ROOT ?>/Emploi_du_temps/apercu_edt/<?php echo $edtInfo->id_edt ?>" class="h6 d-flex"
-            style="font-weight: bolder;">
+        <div class="checkbox">
+            <input type="checkbox" class="checkbox-input isSelected" id="checkbox<?= $index ?>"
+                data-id="<?php echo $edtInfo->id_edt ?>"
+                data-nom="<?php echo 'edt-' . $module->sigle_module . '-' . $promotion->sigle_filiere . '-' .  $promotion->sigle_semestre . '-' . $promotion->annee_universitaire . '_' . strtoupper($edtInfo->enseignant_nom); ?>">
+            <label for="checkbox<?= $index ?>"></label>
+        </div>
+    </td>
+    <td>
+        <a class="h6 d-flex text-bold-600 imprimerEdt" href="#" data-id="<?php echo $edtInfo->id_edt ?>"
+            data-nom="<?php echo 'edt-' . $module->sigle_module . '-' . $promotion->sigle_filiere . '-' .  $promotion->sigle_semestre . '-' . $promotion->annee_universitaire . '_' . strtoupper($edtInfo->enseignant_nom); ?>">
             <?php if ($edtInfo->statut == 0): ?>
             <div class="badge badge-warning badge-icon">
                 <span>x</span>
@@ -22,9 +31,7 @@
         </a>
     </td>
     <td>
-        <a href="<?= ROOT ?>/Emploi_du_temps/apercu_edt/<?php echo $edtInfo->id_edt ?>" class=" d-block">
-            <?php echo strtoupper($promotion->sigle_filiere . '-' . $promotion->sigle_semestre . '( ' . $promotion->annee_universitaire . ' )') ?>
-        </a>
+        <?php echo strtoupper($promotion->sigle_filiere . '-' . $promotion->sigle_semestre . '( ' . $promotion->annee_universitaire . ' )') ?>
     </td>
     <td>
         <?php echo strtoupper($module->nom_module) ?>
@@ -54,8 +61,13 @@
                 <a class="dropdown-item" href="<?= ROOT ?>/Emploi_du_temps/editer_edt/<?php echo $edtInfo->id_edt ?>"><i
                         class="bx bx-edit-alt mr-1"></i> Editer</a>
                 <?php endif ?>
+                <a class="dropdown-item imprimerEdt" href="#" data-id="<?php echo $edtInfo->id_edt ?>"
+                    data-nom="<?php echo 'edt-' . $module->sigle_module . '-' . $promotion->sigle_filiere . '-' .  $promotion->sigle_semestre . '-' . $promotion->annee_universitaire . '_' . strtoupper($edtInfo->enseignant_nom); ?>">
+                    <i class=" bx bx-printer mr-1"></i>Imprimer</a>
+
             </div>
         </div>
     </td>
 </tr>
+<?php $index++ ?>
 <?php endforeach ?>

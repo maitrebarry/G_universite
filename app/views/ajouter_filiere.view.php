@@ -1,68 +1,68 @@
 <!-- inclusion du partie header -->
 <?php $this->view("Partials/header") ?>
 <style>
-    body {
-        background-color: #f8f9fa;
-    }
+body {
+    background-color: #f8f9fa;
+}
 
-    .container {
-        margin-top: 30px;
-    }
+.container {
+    margin-top: 30px;
+}
 
-    .section {
-        background-color: #ffffff;
-        border-radius: 8px;
-        padding: 20px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        margin-top: 20px;
-    }
+.section {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
 
-    .btn-custom {
-        background-color: #007bff;
-        color: white;
-        border-radius: 6px;
-    }
+.btn-custom {
+    background-color: #007bff;
+    color: white;
+    border-radius: 6px;
+}
 
-    .module-list {
-        list-style-type: none;
-        padding-left: 0;
-    }
+.module-list {
+    list-style-type: none;
+    padding-left: 0;
+}
 
-    .module-list li {
-        padding: 10px;
-        border-radius: 4px;
-        margin: 5px 0;
-    }
+.module-list li {
+    padding: 10px;
+    border-radius: 4px;
+    margin: 5px 0;
+}
 
-    .module-list li label {
-        display: block;
-        text-align: center;
-    }
+.module-list li label {
+    display: block;
+    text-align: center;
+}
 
-    .delete-btn {
-        color: red;
-        cursor: pointer;
-        font-size: 14px;
-    }
+.delete-btn {
+    color: red;
+    cursor: pointer;
+    font-size: 14px;
+}
 
-    .delete-btn:hover {
-        color: darkred;
-    }
+.delete-btn:hover {
+    color: darkred;
+}
 
-    .alert {
-        margin-top: 10px;
-    }
+.alert {
+    margin-top: 10px;
+}
 
-    .char-count {
-        font-size: 12px;
-        color: gray;
-        text-align: right;
-    }
+.char-count {
+    font-size: 12px;
+    color: gray;
+    text-align: right;
+}
 
-    .error {
-        font-size: 12px;
-        color: red;
-    }
+.error {
+    font-size: 12px;
+    color: red;
+}
 </style>
 
 <body class="vertical-layout vertical-menu-modern boxicon-layout no-card-shadow 2-columns navbar-sticky footer-static"
@@ -142,10 +142,10 @@
                                                         onchange="addSemestre()">
                                                         <option value="">Choisir un Semestre</option>
                                                         <?php foreach ($semestres as $semestre): ?>
-                                                            <option value="<?php echo $semestre->id_semestre ?>">
-                                                                <?php echo strtoupper($semestre->nom_semestre) ?>(
-                                                                <?php echo strtoupper($semestre->sigle_semestre) ?> )
-                                                            </option>
+                                                        <option value="<?php echo $semestre->id_semestre ?>">
+                                                            <?php echo strtoupper($semestre->nom_semestre) ?>(
+                                                            <?php echo strtoupper($semestre->sigle_semestre) ?> )
+                                                        </option>
                                                         <?php endforeach ?>
                                                     </select>
                                                 </div>
@@ -155,7 +155,7 @@
                                             <div id="semestresTable"></div>
                                             <div class="mt-4" style="float: right;">
                                                 <button type="button" class="btn btn-primary" id="btnEnregistrer"
-                                                    disabled onclick="ajouterFiliere()">Enregistrer la Filière</button>
+                                                    onclick="ajouterFiliere()">Enregistrer la Filière</button>
                                             </div>
                                         </div>
                                     </div>
@@ -184,14 +184,14 @@
                                 <div class="col-10 d-flex justify-content-center align-items-center m-auto">
                                     <label for="nameBasic" class="form-label text-bold-600 mr-2">
                                         Departement </label>
-                                    <select name="idDepartement" id="idDepartement" class=" select2 form-control">
+                                    <select name="idDepartement" id="idDepartement" class="select2 form-control">
                                         <option value="">Choisir un Depatement</option>
                                         <?php foreach ($departements as $departement): ?>
-                                            <option value="<?php echo $departement->id_departement ?>"
-                                                data-sigle='<?php echo strtoupper($departement->sigle_departement) ?>'>
-                                                <?php echo strtoupper($departement->nom_departement) ?>(
-                                                <?php echo strtoupper($departement->sigle_departement) ?> )
-                                            </option>
+                                        <option value="<?php echo $departement->id_departement ?>"
+                                            data-sigle='<?php echo strtoupper($departement->sigle_departement) ?>'>
+                                            <?php echo strtoupper($departement->nom_departement) ?>(
+                                            <?php echo strtoupper($departement->sigle_departement) ?> )
+                                        </option>
                                         <?php endforeach ?>
                                     </select>
                                 </div>
@@ -226,47 +226,47 @@
     <?php $this->view("Partials/footer") ?>
     <script src="<?= ROOT ?>/assets/mon_js/filiere.js"></script>
     <script>
-        $(document).ready(function() {
-            // la selection du depatement
-            $('#departement').click()
-            $('#idDepartement').change(function() {
-                if ($(this).val() != null && $(this).val().trim() != "") {
-                    Swal.fire({
-                        title: "Êtes vous sûr?",
-                        text: "Cette departement aura une nouvelle filière",
-                        type: "warning",
-                        showCancelButton: true,
-                        confirmButtonColor: "#3085d6",
-                        cancelButtonColor: "#d33",
-                        confirmButtonClass: "btn btn-primary",
-                        cancelButtonClass: "btn btn-danger ml-1",
-                        buttonsStyling: false,
-                    }).then(function(result) {
-                        if (result.value) {
-                            $("#close").click();
-                            $('#containerFiliere').removeClass('d-none')
-                        } else {
-                            $('#idDepartement').val("");
-                        }
-                    });
-                }
+    $(document).ready(function() {
+        // la selection du depatement
+        $('#departement').click()
+        $('#idDepartement').change(function() {
+            if ($(this).val() != null && $(this).val().trim() != "") {
+                Swal.fire({
+                    title: "Êtes vous sûr?",
+                    text: "Cette departement aura une nouvelle filière",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonClass: "btn btn-primary",
+                    cancelButtonClass: "btn btn-danger ml-1",
+                    buttonsStyling: false,
+                }).then(function(result) {
+                    if (result.value) {
+                        $("#close").click();
+                        $('#containerFiliere').removeClass('d-none')
+                    } else {
+                        $('#idDepartement').val("");
+                    }
+                });
+            }
 
-            })
-            // Mise à jour des compteurs de caractères
-            $(".form-control").on("input", function() {
-                const maxLength = $(this).attr("maxlength");
-                const currentLength = $(this).val().length;
-                $(this).siblings(".char-count").text(`${currentLength}/${maxLength}`);
-                validateForm();
-            });
-
-            // Validation lors du changement de sélection
-            $("#idSemestre").on("change", function() {
-                validateForm();
-            });
-
-
+        })
+        // Mise à jour des compteurs de caractères
+        $(".form-control").on("input", function() {
+            const maxLength = $(this).attr("maxlength");
+            const currentLength = $(this).val().length;
+            $(this).siblings(".char-count").text(`${currentLength}/${maxLength}`);
+            // validateForm();
         });
+
+        // Validation lors du changement de sélection
+        // $("#idSemestre").on("change", function() {
+        //     validateForm();
+        // });
+
+
+    });
     </script>
 
 </body>

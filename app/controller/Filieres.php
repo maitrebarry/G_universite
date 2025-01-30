@@ -2,10 +2,15 @@
 
 class Filieres extends Controller
 {
+    //! Debut de la gestion d'une filière
     public function index()
     {
+        $idDepartement = null;
+        if (isset($_SESSION['id_departement'])) {
+            $idDepartement = $_SESSION['id_departement'];
+        }
         $filiereModel = new Filiere();
-        $listeFilieres = $filiereModel->SelectAllDataOrder("*", "filiere", "id_filiere");
+        $listeFilieres = $filiereModel->listeFilieresParDepartement($idDepartement);
         $this->view('liste_filiere', ['filieres' => $listeFilieres]);
     }
 
@@ -159,7 +164,7 @@ class Filieres extends Controller
             $filiereModel->supprimerElementFiliere($action, $id);
         }
     }
-
+    //! Fin de la gestion d'une filière
 
     //! Debut de la gestion d'une promotion
     // Ajouter une promotion
