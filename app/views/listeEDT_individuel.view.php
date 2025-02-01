@@ -167,7 +167,10 @@ $titre = "EMPLOI DU TEMPS INDIVIDUEL : du " . date('d-m-Y', strtotime($date_debu
                             </div>
                             <div class="header">
                                 <h1>INSTITUT UNIVERSITAIRE DE LA FORMATION PROFESSIONNELLE (IUFP)</h1>
-                                <h2>EMPLOI DU TEMPS INDIVIDUEL : du <?= date('d-m-Y', strtotime($date_debut)); ?> au <?= date('d-m-Y', strtotime($date_fin)); ?></h2>
+                                <h2>EMPLOI DU TEMPS INDIVIDUEL DE M. 
+                                    <?= isset($enseignant->enseignant_prenom) ? htmlspecialchars($enseignant->enseignant_prenom) : 'Non spécifié'; ?>
+                                    <?= isset($enseignant->enseignant_nom)? htmlspecialchars($enseignant->enseignant_nom) : 'Non spécifié'; ?> 
+                                 : allant du <?= date('d-m-Y', strtotime($date_debut)); ?> au <?= date('d-m-Y', strtotime($date_fin)); ?></h2>
                                 <p>
                                     <strong>Semestres et Promotions :</strong>
                                     <?php if (!empty($semestres_promotions)): ?>
