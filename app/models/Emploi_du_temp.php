@@ -89,7 +89,13 @@ class Emploi_du_temp  extends Model
 
             // la fin de la transaction
             $connection->commit();
-            $this->set_flash("EDT ajouté avec succès", "primary");
+            $this->set_flash(
+                "EDT ajouté avec succès  
+                <button type='button' class='btn btn-link' id='print' data-id='$idEdt'>
+                 <span class='text-italic text-bold-600 text-dark' >Imprimer <i class=' bx bx-printer'></i></span>
+                 </button>",
+                "primary"
+            );
         } catch (Exception $e) {
             $connection->rollBack();
             $this->set_flash($e->getMessage() . " : !Veuillez bien verifier vos données");
@@ -221,6 +227,9 @@ class Emploi_du_temp  extends Model
         $edts = [];
 
         $listeEdts = $this->FetchAllSelectWhere("id_edt", "edt", $whereCondition, $whereValues);
+        usort($listeEdts, function ($a, $b) {
+            return $b->id_edt - $a->id_edt;
+        });
         foreach ($listeEdts as $edt) {
             $infoEdt = $this->getInfoEdt($edt->id_edt);
             $edts[] =  $infoEdt;

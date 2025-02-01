@@ -15,6 +15,14 @@
 
     <!--  Content-->
     <div class="app-content content">
+        <!-- Loader -->
+        <div id="loader" class="w-100 position-absolute d-none justify-content-center align-items-center"
+            style="height:100vh;z-index:100">
+            <div class="spinner-border  " role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+
         <div class="content-overlay"></div>
         <div class="content-wrapper">
             <div class="content-header row">
@@ -52,7 +60,6 @@
 
                                 <div class="card-content row">
                                     <div class="col-12 row mt-1 px-2 ">
-
                                         <div
                                             class="card-body card-dashboard col-12 row d-flex justify-content-around align-items-center">
                                             <div
@@ -64,9 +71,9 @@
                                                     <select class="select2 form-control text-center" id="filieres">
                                                         <option value="0" disabled selected>Filieres</option>
                                                         <?php foreach ($filieres as $filiere): ?>
-                                                        <option value="<?php echo $filiere->id_filiere ?>">
-                                                            <?php echo strtoupper($filiere->sigle_filiere) ?>
-                                                        </option>
+                                                            <option value="<?php echo $filiere->id_filiere ?>">
+                                                                <?php echo strtoupper($filiere->sigle_filiere) ?>
+                                                            </option>
                                                         <?php endforeach ?>
                                                     </select>
                                                 </div>
@@ -89,33 +96,20 @@
                                         </div>
 
 
-                                        <div class="table-responsive col-12">
-                                            <table class="table zero-configuration " id="edts">
-                                                <thead>
-                                                    <tr>
-                                                        <th></th>
-                                                        <th>Filière</th>
-                                                        <th>Promotion</th>
-                                                        <th>Module</th>
-                                                        <th>Professeur</th>
-                                                        <th>Salle</th>
-                                                        <th>Date Debut</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="listeEdts">
-
-                                                </tbody>
-
-                                            </table>
-                                            <div class=" d-flex justify-content-end my-1">
-                                                <button type="button" class=" btn btn-primary" id="print"><i
-                                                        class=" bx bx-printer"></i>
-                                                    Imprimer</button>
-                                                </d>
-                                            </div>
+                                        <div class="table-responsive col-12" id="listeEdts">
+                                            <h6 class=" text-center text-bold-500 text-success">
+                                                Selectionner la filière et les edts vont apparaître &#x1F603
+                                            </h6>
                                         </div>
                                     </div>
+
+                                    <div class="col-12 d-flex justify-content-end my-1 pr-2">
+                                        <button type="button" class=" btn btn-primary" id="print"><i
+                                                class=" bx bx-printer"></i>
+                                            Imprimer</button>
+                                        </d>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -140,37 +134,44 @@
 <!-- END: Body-->
 <script src="<?= ROOT ?>/assets/mon_js/edt.js"></script>
 <script>
-var infoFiliere = [];
+    var infoFiliere = [];
 
-// $(document).ready(async function() {
-//     trierListeEdt($("#filieres").val(), $("#promotions").val());
-//     infoFiliere = await infosFiliere($(this).val(), "all");
-//     promotionsFiliere(infoFiliere);
-// })
-$("#filieres").change(async function() {
-    infoFiliere = await infosFiliere($(this).val(), "all");
-    promotionsFiliere(infoFiliere);
-    trierListeEdt($(this).val(), $("#promotions").val());
-    url = "http://localhost/G_universite/public/Emploi_du_temps/ajouter_EDT"
-    url += '/' + $(this).val() + '/';
-    $('#nouveauEdt').attr('href', url);
-
-
-})
-$("#promotions").change(async function() {
-    await trierListeEdt($("#filieres").val(), $(this).val());
-    url = "http://localhost/G_universite/public/Emploi_du_temps/ajouter_EDT"
-    url += '/' + $("#filieres").val() + '/' + $(this).val();
-    $('#nouveauEdt').attr('href', url);
-})
-
-$('#print').click(function() {
-    $('#edts tbody tr').each(function() {
-        if ($(this).find('.isSelected').prop("checked")) {
-            imprimerEdt($(this).find('.isSelected').data("id"), $(this).find('.isSelected').data("nom"))
-        }
+    // $(document).ready(async function() {
+    //     trierListeEdt($("#filieres").val(), $("#promotions").val());
+    //     infoFiliere = await infosFiliere($(this).val(), "all");
+    //     promotionsFiliere(infoFiliere);
+    // })
+    $("#filieres").change(async function() {
+        infoFiliere = await infosFiliere($(this).val(), "all");
+        promotionsFiliere(infoFiliere);
+        trierListeEdt($(this).val(), $("#promotions").val());
+        url = "http://localhost/G_universite/public/Emploi_du_temps/ajouter_EDT"
+        url += '/' + $(this).val() + '/';
+        $('#nouveauEdt').attr('href', url);
     })
-})
+    $("#promotions").change(async function() {
+        await trierListeEdt($("#filieres").val(), $(this).val());
+        url = "http://localhost/G_universite/public/Emploi_du_temps/ajouter_EDT"
+        url += '/' + $("#filieres").val() + '/' + $(this).val();
+        $('#nouveauEdt').attr('href', url);
+    })
+
+    $('#print').click(function() {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+        });
+        setTimeout(function() {
+            $('#edts tbody tr').each(function() {
+                if ($(this).find('.isSelected').prop("checked")) {
+                    imprimerEdt($(this).find('.isSelected').data("id"), $(this).find(
+                            '.isSelected')
+                        .data(
+                            "nom"))
+                }
+            })
+        }, 600)
+    })
 </script>
 
 </html>

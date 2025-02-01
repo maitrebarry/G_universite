@@ -1,3 +1,4 @@
+<?php $this->view("Partials/header") ?>
 <style>
 input {
 
@@ -6,14 +7,21 @@ input {
     text-align: center;
 }
 
+div {
+    margin: 0;
+    overflow: visible !important;
+    padding: 0;
+}
+
 td {
     padding: 15px 5px !important;
 }
 </style>
-<div class="card card-animated-border-top m-auto" id="edt" style="height: 100%; overflow:visible">
-    <div class="card-header border-bottom-3 border-bottom-black  w-100 m-auto edt-header" style="min-width:100%">
-        <h4 class="card-title text-bold-700  text-success d-flex justify-content-between align-items-center"
-            style="min-width:100%">
+<div class="card card-animated-border-top m-auto mt-0" id="edt" style="height:100%; overflow:visible"
+    style="min-width:100%">
+    <div class="card-header border-bottom-3 border-bottom-black  w-100 m-auto edt-header"
+        style="min-width:100%; margin:0 !important">
+        <h4 class="card-title text-bold-700  text-success d-flex justify-content-between align-items-center">
             <div class=" d-flex align-items-lg-center">
                 <img src="<?= ROOT ?>/assets/images/logo.jpg" alt="" class=" img-thumbnail mr-1 d-block"
                     style="width: 100px;">
@@ -24,7 +32,7 @@ td {
                 Formation Initiale
             </span>
         </h4>
-        <h5 class="text-center" style="min-width:100%">
+        <h5 class="text-center">
             Edt du
             <span class=" h6 au "><?php echo $infosEdt->edt->date_debut ?> au
                 <?php echo $infosEdt->edt->date_fin ?></span>
@@ -133,24 +141,24 @@ td {
                     </span>
                 </h6>
             </div>
-            <div class=" text-right mr-2" style="min-width:100%">
-                <div class="d-flex justify-content-end " style="min-width:100%">
-                    <h6 class=" text-muted text-right" style="min-width:100%">Segou, le
+            <div class=" text-right mr-2">
+                <div class="d-flex justify-content-end ">
+                    <h6 class=" text-muted text-right">Segou, le
                         <?php echo date('d-m-Y') ?></h6>
                 </div>
-                <div class="" style="min-width:100%">
-                    <h6 class=" text-bold-600 text-center d-flex justify-content-end w-100" style="min-width:100%">
+                <div class="">
+                    <h6 class=" text-bold-600 text-center d-flex justify-content-end w-100">
                         Le
                         Chef de DER
                         <?php echo (isset($_SESSION['sigle_departement'])) ? strtoupper($_SESSION['sigle_departement']) : "" ?>
                     </h6>
-                    <h6 class=" d-flex text-center justify-content-end w-100" style="min-width:100%">
+                    <h6 class=" d-flex text-center justify-content-end w-100">
                         <img src="<?= ROOT ?><?= $_SESSION['signature'] ?>" alt="user image" class="d-block rounded  "
                             style="width: 150px; max-height: 60px;" />
                     </h6>
                 </div>
                 <div class=" d-flex justify-content-end" style="min-width:100%; overflow:visible">
-                    <h6 class=" text-right" style="min-width:100%">Dr
+                    <h6 class=" text-right">Dr
                         <?php echo (isset($_SESSION['nom_prenom'])) ? strtoupper($_SESSION['nom_prenom']) : "" ?>
                         <br>
                         <?php echo (isset($_SESSION['nom_grade'])) ? strtoupper($_SESSION['nom_grade']) : "" ?>
@@ -160,3 +168,5 @@ td {
         </div>
     </div>
 </div>
+
+<?php $this->view("Partials/footer") ?>

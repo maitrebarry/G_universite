@@ -34,6 +34,12 @@ td {
 
     <!-- Content-->
     <div class="app-content content ">
+        <div id="loader" class="w-100 position-absolute d-none justify-content-center align-items-center"
+            style="height:100vh;z-index:100">
+            <div class="spinner-border  " role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
         <div class="content-wrapper">
             <div class="content-header row">
                 <div class="content-header-left col-12 mb-2 mt-1">
@@ -65,8 +71,8 @@ td {
                                 Editer</a>
                         </div>
                         <div class="col-2">
-                            <button type="button" class=" btn btn-primary" id="print"
-                                onclick="imprimer('<?php echo $titre ?>')"><i class=" bx bx-printer"></i>
+                            <button type="button" class=" btn btn-primary" id="print" data-nom="<?php echo $titre ?>"><i
+                                    class=" bx bx-printer"></i>
                                 Imprimer</button>
                         </div>
                     </div>
@@ -264,5 +270,14 @@ td {
 <script src="<?= ROOT ?>/assets/mon_js/edt.js"></script>
 
 <script>
-
+$('#print').click(function() {
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+    });
+    const nomEdt = $(this).data('nom');
+    setTimeout(function() {
+        imprimer(nomEdt);
+    }, 500)
+})
 </script>

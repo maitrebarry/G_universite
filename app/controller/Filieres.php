@@ -58,6 +58,10 @@ class Filieres extends Controller
             $filiereModel = new Filiere();
             $infosFiliere = $filiereModel->apercu_filiere($idFiliere);
             if (!empty($infosFiliere)) {
+                if (isset($_POST['action']) && $_POST['action'] == 'print') {
+                    $this->view("post_apercu_filiere", ["infoFiliere" => $infosFiliere]);
+                    return;
+                }
                 $this->view("apercu_filiere", ["infoFiliere" => $infosFiliere]);
             }
         }
