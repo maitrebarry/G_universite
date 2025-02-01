@@ -1,8 +1,7 @@
 <?php
 if (!isset($_SESSION['id_utilisateur'])) {
     // Si l'utilisateur n'est pas connecté, redirigez-le vers la page de connexion
-$this->redirect("Logins");
-   
+    $this->redirect("Logins");
 }
 ?>
 <!DOCTYPE html>
@@ -10,7 +9,7 @@ $this->redirect("Logins");
 <!-- BEGIN: Head-->
 
 <head>
-<link href="https://cdn.jsdelivr.net/npm/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
 
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -61,6 +60,7 @@ $this->redirect("Logins");
 </head>
 <style>
     .card-animated-border-top1 {
+
         border-left-width: 3px; /* Utilisez border-left pour simuler une bordure de départ */
     border-left-style: solid;
     border-image-slice: 1;
@@ -75,18 +75,54 @@ $this->redirect("Logins");
     animation: border-shift 3s linear infinite;
 }
 
-@keyframes border-shift {
-    0% {
-        border-image-source: linear-gradient(to right, #ff416c, #ff4b2b);
     }
 
-    50% {
-        border-image-source: linear-gradient(to right, #4facfe, #00f2fe);
+    .card-animated-border-top {
+        border-top: 2px solid;
+        border-image-slice: 1;
+        border-image-source: linear-gradient(to right, #ff416c, #ff4b2b);
+        animation: border-shift 3s linear infinite;
     }
 
-    100% {
-        border-image-source: linear-gradient(to right, #ff416c, #ff4b2b);
+    @keyframes border-shift {
+        0% {
+            border-image-source: linear-gradient(to right, #ff416c, #ff4b2b);
+        }
+
+        50% {
+            border-image-source: linear-gradient(to right, #4facfe, #00f2fe);
+        }
+
+        100% {
+            border-image-source: linear-gradient(to right, #ff416c, #ff4b2b);
+        }
+
+        0% {
+            border-image-source: linear-gradient(to bottom, #ff416c, #ff4b2b);
+            /* Rouge-Orange */
+        }
+
+        25% {
+            border-image-source: linear-gradient(to bottom, #4facfe, #00f2fe);
+            /* Bleu-Cyan */
+        }
+
+        50% {
+            border-image-source: linear-gradient(to bottom, #f9d423, #ff4e50);
+            /* Jaune-Rouge */
+        }
+
+        75% {
+            border-image-source: linear-gradient(to bottom, #30cfd0, #330867);
+            /* Vert-Voilet */
+        }
+
+        100% {
+            border-image-source: linear-gradient(to bottom, #ff416c, #ff4b2b);
+            /* Retour au Rouge-Orange */
+        }
     }
+
     0% {
         border-image-source: linear-gradient(to bottom, #ff416c, #ff4b2b); /* Rouge-Orange */
     }
@@ -103,4 +139,5 @@ $this->redirect("Logins");
         border-image-source: linear-gradient(to bottom, #ff416c, #ff4b2b); /* Retour au Rouge-Orange */
     }
 }
+
 </style>

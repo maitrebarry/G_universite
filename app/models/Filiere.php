@@ -3,6 +3,7 @@
 class Filiere  extends Model
 {
 
+    //! Debut de la gestion d'une filière
     // la methode pour ajouter une filière
     public function ajouter_filiere($filiere, $semestres, $ues, $modules)
     {
@@ -18,10 +19,11 @@ class Filiere  extends Model
             }
             // L'insertation des infos de base de la filière
             $this->e(extract($filiere));
-            $requtte = "INSERT INTO filiere(nom_filiere, sigle_filiere) VALUES (:nomFiliere, :sigleFiliere)";
+            $requtte = "INSERT INTO filiere(nom_filiere, sigle_filiere, id_departement) VALUES (:nomFiliere, :sigleFiliere, :idDepartement)";
             $param = [
                 'nomFiliere' => $nomFiliere,
-                "sigleFiliere" => $sigleFiliere
+                "sigleFiliere" => $sigleFiliere,
+                "idDepartement" => $idDepartement
             ];
             $reponse = $this->insertion_update_simples_insert_id($requtte, $param);
             $idFiliere = $reponse['lastInsertId'];
@@ -100,6 +102,17 @@ class Filiere  extends Model
             $this->set_flash($e->getMessage() . " : !Veuillez bien verifier vos données");
             return false;
         }
+    }
+
+    // la methode pour la liste des filières par departement
+    public function listeFilieresParDepartement($idDepartement = null)
+    {
+        if ($idDepartement != null) {
+            $filieres = $this->FetchAllSelectWhere("*", "filiere", "id_departement=?", [$idDepartement]);
+        } else {
+            $filieres = $this->SelectAllData("*", "filiere");
+        }
+        return $filieres;
     }
 
     // la methode pour recuperer toutes les informations d'une filière
@@ -367,8 +380,6 @@ class Filiere  extends Model
         }
     }
 
-
-
     public function supprimerElementFiliere($action, $id)
     {
         $column = 'id_' . $action;
@@ -391,9 +402,7 @@ class Filiere  extends Model
             return;
         }
     }
-
-
-    //! Fin de la gestion d'une promotion
+    //! Fin de la gestion d'une filière
 
     //! Debut de la gestion d'une promotion
     // Ajouter une promotion

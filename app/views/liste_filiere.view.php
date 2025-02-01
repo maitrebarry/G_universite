@@ -15,13 +15,25 @@
 
     <!--  Content-->
     <div class="app-content content">
+        <div id="loader" class="w-100 position-absolute d-none justify-content-center align-items-center"
+            style="height:100vh;z-index:100">
+            <div class="spinner-border  " role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
         <div class="content-overlay"></div>
         <div class="content-wrapper">
             <div class="content-header row">
                 <div class="content-header-left col-12 mb-2 mt-1">
                     <div class="row breadcrumbs-top">
                         <div class="col-12">
-                            <h5 class="content-header-title float-left pr-1 mb-0"> FILIÈRE </h5>
+                            <h5 class="content-header-title float-left pr-1 mb-0">
+                                <?php
+                                echo (isset($_SESSION['nom_departement']))
+                                    ? strtoupper($_SESSION['nom_departement'] . ' (' . $_SESSION['sigle_departement'] . ')')
+                                    : "IUFP"
+                                ?>
+                            </h5>
                             <div class="breadcrumb-wrapper col-12">
                                 <ol class="breadcrumb p-0 mb-0">
                                     <li class="breadcrumb-item"><a href="index.html"><i class="bx bx-home-alt"></i></a>
@@ -68,11 +80,18 @@
                                                     <?php foreach ($filieres as $filiere): ?>
                                                     <tr>
                                                         <td>
-                                                            <?php echo strtoupper($filiere->nom_filiere) ?>
+                                                            <a href="<?= ROOT ?>/Filieres/liste_promotion/<?php echo $filiere->id_filiere ?>"
+                                                                class=" d-block">
+                                                                <?php echo strtoupper($filiere->nom_filiere) ?>
+                                                            </a>
                                                         </td>
 
                                                         <td>
-                                                            <?php echo strtoupper($filiere->sigle_filiere) ?>
+                                                            <a href="#" class="imprimerFiliere text-dark"
+                                                                data-id="<?php echo $filiere->id_filiere ?>"
+                                                                data-nom="<?php echo 'Maquette-' . $filiere->sigle_filiere ?>">
+                                                                <?php echo strtoupper($filiere->sigle_filiere) ?>
+                                                            </a>
                                                         </td>
                                                         <td> <span class=" badge badge-light-warning">Actif</span>
                                                         </td>
@@ -95,6 +114,12 @@
                                                                         href="#"
                                                                         data-id="<?php echo $filiere->id_filiere ?>"><i
                                                                             class="bx bx-edit-alt mr-1"></i> Editer</a>
+
+                                                                    <a class="dropdown-item imprimerFiliere" href="#"
+                                                                        data-nom="<?php echo 'Maquette-' . strtoupper($filiere->sigle_filiere); ?>"
+                                                                        data-id="<?php echo $filiere->id_filiere ?>">
+                                                                        <i class=" bx bx-printer mr-1"></i>Imprimer
+                                                                    </a>
                                                                     <a class="dropdown-item" href="#"><i
                                                                             class="bx bx-trash mr-1"></i> Supprimer</a>
                                                                     <div class=" dropdown-divider"></div>
@@ -102,7 +127,7 @@
                                                                         data-toggle="modal" data-target="#menuPromotion"
                                                                         href="#"
                                                                         data-id="<?php echo $filiere->id_filiere ?>"
-                                                                        data-nom="<?php echo $filiere->sigle_filiere ?>">
+                                                                        data-nom="<?php echo 'Maquette-' . $filiere->sigle_filiere ?>">
                                                                         <i class="bx bx-plus mr-1"></i>Promotion
                                                                     </a>
 
@@ -115,6 +140,7 @@
                                                                         href="<?= ROOT ?>/Emploi_du_temps/ajouter_EDT/<?php echo $filiere->id_filiere ?>">
                                                                         <i class="bx bx-plus mr-1"></i>Edt
                                                                     </a>
+
                                                                 </div>
                                                             </div>
                                                         </td>
@@ -258,7 +284,9 @@
     <!-- inclusion du partie footer-->
     <?php $this->view("Partials/footer") ?>
     <!-- inclusion du partie footer fin-->
+    <script src="<?= ROOT ?>/assets/mon_js/filiere.js"></script>
     <script src="<?= ROOT ?>/assets/mon_js/edt.js"></script>
+
     <script>
     var infoFiliere = [];
     $('.editerFiliere').click(function() {
@@ -287,6 +315,19 @@
         infoFiliere = await infosFiliere(idFiliere);
         semestresFiliere(infoFiliere);
     })
+
+    $(".imprimerFiliere").click(function(event) {
+        event.preventDefault();
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+        });
+        var element = $(this);
+
+        setTimeout(function() {
+            imprimerFiliere(element.data("id"), element.data("nom"));
+        }, 500);
+    });
 
     $(document).ready(function() {
         setDefaultAcademicYear();

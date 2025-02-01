@@ -329,7 +329,7 @@ function promotionsFiliere(infoFiliere, idPromotion = "") {
   const promotionContainer = $("#promotions");
   promotionContainer.empty();
   promotionContainer.append(
-    `<option value="" disabled selected>Selectionner une Promotion</option>`
+    `<option value="" disabled>Selectionner une Promotion</option>`
   );
   const promotions = infoFiliere["promotions"];
   promotions.forEach((promotion) => {
@@ -511,7 +511,31 @@ function ajouterEdt(url = ROOT + "/ajouter_EDT", action = "ajouter_EDT") {
       document.getElementById("message").innerHTML = response;
       if (response.includes("primary") && action == "ajouter_EDT") {
         document.querySelector("#table-extended-chechbox tbody").innerHTML = "";
-        $(".champ").val("");
+        let promotionNom = $("#promotions option:selected")
+          .text()
+          .trim()
+          .replaceAll("(", "-");
+        promotionNom = promotionNom.replaceAll(")", "");
+
+        const enseignantNom = $("#enseignants option:selected")
+          .text()
+          .trim()
+          .split(" ", 1);
+        const nomEdt = "Edt-" + promotionNom + "-" + enseignantNom;
+
+        $("#print").click(function (event) {
+          event.preventDefault();
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+          });
+          var element = $(this);
+          setTimeout(function () {
+            imprimerEdt(element.data("id"), nomEdt);
+          }, 500);
+          $(".champ").val("");
+          $("#modules").val("");
+        });
       }
       if (response.includes("primary") && action == "editer_edt") {
         window.location.href = ROOT + "/";
@@ -542,43 +566,133 @@ function trierListeEdt(idFiliere, idPromotion) {
       idPromotion: idPromotion,
     },
     success: function (response) {
-      console.log(response);
       $("#listeEdts").html(response);
+      $(".imprimerEdt").click(function (event) {
+        event.preventDefault();
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        });
+        var element = $(this);
+        setTimeout(function () {
+          imprimerEdt(element.data("id"), element.data("nom"));
+        }, 500);
+      });
+
+      // tous coucher ou decocher
+      $("#edts tbody tr").each(function () {
+        if ($(this).find(".isSelected").data("statut") == 0) {
+          $(this)
+            .find(".isSelected")
+            .click(function () {
+              $("#allSelect").prop("checked", true);
+              isAll = true;
+
+              $("#edts tbody tr").each(function () {
+                if (
+                  $(this).find(".isSelected").data("statut") == 0 &&
+                  !$(this).find(".isSelected").prop("checked")
+                ) {
+                  isAll = false;
+                }
+              });
+
+              if (!isAll) {
+                $("#allSelect").prop("checked", false);
+              }
+            });
+        }
+      });
+
+      $("#allSelect").change(function (event) {
+        if ($(this).prop("checked")) {
+          $("#edts tbody tr").each(function () {
+            if ($(this).find(".isSelected").data("statut") == 0) {
+              $(this).find(".isSelected").prop("checked", true);
+            }
+          });
+        } else {
+          $("#edts tbody tr").each(function () {
+            $(this).find(".isSelected").prop("checked", false);
+          });
+        }
+      });
     },
 
+    error: function (error) {},
+  });
+  // Fin de l'envoi des données avec Ajax
+}
+//la fonction pour imprimer un editer
+function imprimerEdt(idEdt, nomEdt = "edt") {
+  // Debut de l'envoi des données avec Ajax
+  $.ajax({
+    method: "POST",
+    url: ROOT + "/apercu_EDT/" + idEdt,
+    data: {
+      action: "print",
+    },
+    success: function (response) {
+      imprimer(nomEdt, response);
+    },
     error: function (error) {
       console.log(error.status);
     },
   });
   // Fin de l'envoi des données avec Ajax
 }
+// Imprimer pour faire une impression
+function imprimer(nomEdt, html = null) {
+  $("#loader").removeClass("d-none");
+  $("#loader").addClass("d-flex");
+  if (html == null) {
+    html = document.getElementById("edt");
+  } else {
+    nomEdt = nomEdt
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join("-");
+  }
 
-// Imprimer un edt
-function imprimerEdt(nomEdt) {
-  printJS({
-    printable: "edt",
-    type: "html",
-    documentTitle: nomEdt,
-    targetStyles: ["*"],
-    style: `@page{size:landscape}
-  
-    body * {
-        visibility: hidden;
-    }
-
-    #edt,
-    #edt * {
-        visibility: visible;
-    }
-
-    #edt {
-
-        position: absolute;
-        left: 0;
-        top: 0;
-    }
-          `,
-  });
+  html2pdf()
+    .from(html)
+    .set({
+      margin: 0,
+      filename: nomEdt,
+      html2canvas: {
+        scale: 2,
+      },
+      jsPDF: {
+        unit: "mm",
+        format: "a4",
+        orientation: "landscape",
+      },
+    })
+    .save()
+    .then(() => {
+      $("#loader").removeClass("d-flex");
+      $("#loader").addClass("d-none");
+    });
+  // printJS({
+  //   printable: "edt",
+  //   type: "html",
+  //   documentTitle: nomEdt,
+  //   targetStyles: ["*"],
+  //   style: `@page{size:landscape}
+  //   body * {
+  //       visibility: hidden;
+  //   }
+  //   #edt,
+  //   #edt * {
+  //       visibility: visible;
+  //   }
+  //   #edt {
+  //       position: absolute;
+  //       left: 0;
+  //       top: 0;
+  //   }
+  //         `,
+  // });
 }
 
 // Fonction pour définir l'année scolaire par défaut
