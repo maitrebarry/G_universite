@@ -3,6 +3,7 @@
 class Filiere  extends Model
 {
 
+    //! Debut de la gestion d'une filière
     // la methode pour ajouter une filière
     public function ajouter_filiere($filiere, $semestres, $ues, $modules)
     {
@@ -18,10 +19,11 @@ class Filiere  extends Model
             }
             // L'insertation des infos de base de la filière
             $this->e(extract($filiere));
-            $requtte = "INSERT INTO filiere(nom_filiere, sigle_filiere) VALUES (:nomFiliere, :sigleFiliere)";
+            $requtte = "INSERT INTO filiere(nom_filiere, sigle_filiere, id_departement) VALUES (:nomFiliere, :sigleFiliere, :idDepartement)";
             $param = [
                 'nomFiliere' => $nomFiliere,
-                "sigleFiliere" => $sigleFiliere
+                "sigleFiliere" => $sigleFiliere,
+                "idDepartement" => $idDepartement
             ];
             $reponse = $this->insertion_update_simples_insert_id($requtte, $param);
             $idFiliere = $reponse['lastInsertId'];
@@ -82,7 +84,7 @@ class Filiere  extends Model
                                     'coeficient' => $moduleCoeficient,
                                     'cm' => $moduleCm,
                                     'td' => $moduleTd,
-                                    'tp' => $moduleTd,
+                                    'tp' => $moduleTp,
                                     'tpe' => $moduleTpe,
                                 ];
                                 $this->insertion_update_simples($requetteModule, $param);
@@ -100,6 +102,17 @@ class Filiere  extends Model
             $this->set_flash($e->getMessage() . " : !Veuillez bien verifier vos données");
             return false;
         }
+    }
+
+    // la methode pour la liste des filières par departement
+    public function listeFilieresParDepartement($idDepartement = null)
+    {
+        if ($idDepartement != null) {
+            $filieres = $this->FetchAllSelectWhere("*", "filiere", "id_departement=?", [$idDepartement]);
+        } else {
+            $filieres = $this->SelectAllData("*", "filiere");
+        }
+        return $filieres;
     }
 
     // la methode pour recuperer toutes les informations d'une filière
@@ -237,7 +250,7 @@ class Filiere  extends Model
                                     'coeficient' => $moduleCoeficient,
                                     'cm' => $moduleCm,
                                     'td' => $moduleTd,
-                                    'tp' => $moduleTd,
+                                    'tp' => $moduleTp,
                                     'tpe' => $moduleTpe,
                                     'idUeModule' => $idUeModule
                                 ];
@@ -367,8 +380,6 @@ class Filiere  extends Model
         }
     }
 
-
-
     public function supprimerElementFiliere($action, $id)
     {
         $column = 'id_' . $action;
@@ -391,6 +402,7 @@ class Filiere  extends Model
             return;
         }
     }
+    //! Fin de la gestion d'une filière
 
     //! Debut de la gestion d'une promotion
     // Ajouter une promotion
@@ -408,7 +420,12 @@ class Filiere  extends Model
                 throw new Exception("Filiere Introuvable : !Veuillez bien verifier vos données");
             }
 
-            $isPromotionExiste = $this->FetchSelectWhere("*", "promotion", "annee_universitaire=? AND id_filiere=?", [$anneeUniversitaire, $idFiliere]);
+            $isPromotionExiste = $this->FetchSelectWhere(
+                "*",
+                "promotion",
+                "annee_universitaire=? AND id_filiere=? AND id_parcours=?",
+                [$anneeUniversitaire, $idFiliere, $idParcours]
+            );
             if ($isPromotionExiste != null || !empty($isPromotionExiste)) {
                 throw new Exception("Repetition de Promotion : !Cette filière a dejà la promotion $anneeUniversitaire");
             }
@@ -437,7 +454,7 @@ class Filiere  extends Model
     }
 
     // Liste des promotions d'une filière
-    public function listePromotions($idFiliere)
+    public function listePromotions($idFiliere, $statut = null)
     {
         try {
             $this->e(extract($_POST));
@@ -446,11 +463,14 @@ class Filiere  extends Model
             if ($isFiliereExiste < 0) {
                 throw new Exception("Filiere Introuvable : !Veuillez bien verifier vos données");
             }
-
-            $requette = "SELECT id_promotion, annee_universitaire, statut, promotion.id_parcours, nom_filiere, sigle_filiere, nom_semestre, sigle_semestre 
-            FROM promotion INNER JOIN filiere ON promotion.id_filiere=filiere.id_filiere
+            $statutCondtion = '';
+            if ($statut != null) {
+                $statutCondtion = "AND promotion.statut=$statut";
+            }
+            $requette = "SELECT id_promotion, annee_universitaire, promotion.statut, promotion.id_parcours, promotion.id_filiere, nom_filiere, 
+            sigle_filiere, nom_semestre, sigle_semestre FROM promotion INNER JOIN filiere ON promotion.id_filiere=filiere.id_filiere
             INNER JOIN parcours ON promotion.id_parcours=parcours.id_parcours INNER JOIN semestre ON parcours.id_semestre=semestre.id_semestre
-            WHERE promotion.id_filiere=?";
+            WHERE promotion.id_filiere=? $statutCondtion";
 
             $promotions = $this->select_data_table_join_where($requette, [$idFiliere]);
             return $promotions;
@@ -458,6 +478,38 @@ class Filiere  extends Model
             $this->set_flash($e->getMessage(), "warning");
             $this->redirect("Filieres/");
             return;
+        }
+    }
+
+    // la methode pour changer le status d'une promotion (en attente, en marche, en arret)
+    public function setStatusPromotion($idPromotion, $statut = 1)
+    {
+        try {
+            $isUpdate = $this->insertion_update_simples(
+                "UPDATE promotion SET statut=:statut WHERE id_promotion=:idPromotion LIMIT 1",
+                ['statut' => $statut, 'idPromotion' => $idPromotion]
+            );
+            if ($isUpdate) {
+                switch ($statut) {
+                    case 0:
+                        $message = "Cette promotion est desormais en attente";
+                        break;
+                    case 1:
+                        $message = "Cette promotion est desormais en cours";
+                        break;
+                    case 2:
+                        $message = "Cette promotion est desormais en arrêt";
+                        break;
+
+                    default:
+                        $message = "Cette promotion a été modifier";
+                        break;
+                }
+                $this->set_flash($message, 'primary');
+            }
+            return $isUpdate;
+        } catch (Exception $e) {
+            $this->set_flash($e->getMessage() . ' : Imposible de modifier cette promotion');
         }
     }
 

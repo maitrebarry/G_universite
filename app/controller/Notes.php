@@ -3,10 +3,12 @@ class Notes extends Controller
 {
     public function index()
     {
-        //$etudianttModel = new Note();  
-        // $etudiants = $etudianttModel->listeEtudiant();
+        $idDepartement = null;
+        if (isset($_SESSION['id_departement'])) {
+            $idDepartement = $_SESSION['id_departement'];
+        }
         $filiereModel = new Filiere();
-        $filieres = $filiereModel->SelectAllData("*", "filiere");
+        $filieres = $filiereModel->listeFilieresParDepartement($idDepartement);
         $this->view('ajouter_notes', ['filieres' => $filieres]);
     }
     //Function pour obtenir toutes les notes
@@ -48,7 +50,6 @@ class Notes extends Controller
             @$evaluation = htmlspecialchars($_POST['evaluation']);
             @$session = htmlspecialchars($_POST['session']);
             //echo"Les données sont bien reçues";
-
 
             //Appel de la fonction de modification de la note
             $noteModel = new Note();

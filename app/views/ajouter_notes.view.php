@@ -278,7 +278,7 @@
 var infoFiliere = [];
 $("#filiere").change(async function() {
 
-    infoFiliere = await infosFiliere($(this).val());
+    infoFiliere = await infosFiliere($(this).val(), "all");
     promotionsFiliere(infoFiliere);
     idSemestre = $("#promotions option:selected").data("id");
     modulesSemestre(idSemestre, infoFiliere);

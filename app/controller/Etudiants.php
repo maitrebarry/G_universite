@@ -33,7 +33,10 @@ class Etudiants extends Controller
         $listeFilieres = $filiereModel->SelectAllData("*", "filiere");
      
         // Récupérer les données des promotions
-                 $listePromotion = $filiereModel->SelectAllData("*", "promotion");
+                 $listePromotion = $filiereModel->SelectAllData("*", "promotion 
+                 INNER JOIN filiere ON promotion.id_filiere=filiere.id_filiere 
+                 INNER JOIN parcours ON promotion.id_parcours=parcours.id_parcours 
+                 INNER JOIN semestre ON parcours.id_semestre=semestre.id_semestre");
                 // var_dump($listePromotion);exit;
         
                 // Transmettre les données à la vue
@@ -92,10 +95,69 @@ class Etudiants extends Controller
      }
      
  }
-        
+ public function traiter_paiement_groupes() {
+    $etudiant = new Etudiant();
 
- public function liste_inscription_groupe(){
-    $this->view('liste_inscription_groupe');
+    // Vérifier que des montants ont été soumis
+    if (isset($_POST['paiement']) && is_array($_POST['paiement'])) {
+        $paiements = $_POST['paiement'];
+        $erreur = false;
+
+        foreach ($paiements as $idEtudt => $montant) {
+            // Vérifier que le montant est valide (supérieur à zéro)
+            if ($montant > 0) {
+                $data = [
+                    'idEtudt' => $idEtudt,
+                    'montant_paye' => $montant,
+                    'date' => date('Y-m-d H:i:s'),
+                ];
+                $etudiant->addPayment($data); // Ajouter le paiement
+            } else {
+                $_SESSION['error'] = "Montant invalide pour l'étudiant ID: $idEtudt.";
+                $erreur = true; // Si une erreur se produit, ne pas continuer
+                break; // On arrête la boucle si un paiement est invalide
+            }
+        }
+
+        if (!$erreur) {
+            $_SESSION['message'] = "Paiements effectués avec succès.";
+        }
+
+    } else {
+        $_SESSION['message'] = "Aucun montant soumis.";
+    }
+
+    // Redirection après traitement
+    header("Location: " . ROOT . "/Etudiants");
+    exit;
 }
+
+public function paiement_groupe() {
+    $etudiant = new Etudiant();
+
+    // Récupérer les IDs des étudiants sélectionnés depuis la requête POST
+    $etudiant_ids = isset($_POST['paie']) ? $_POST['paie'] : [];
+
+    if (empty($etudiant_ids)) {
+        $_SESSION['message'] = "Aucun étudiant sélectionné.";
+        header("Location: " . ROOT . "/Etudiants");
+        exit;
+    }
+
+    // Charger les informations des étudiants sélectionnés
+    $etudiantModel = $etudiant->getEtudiantsByIds($etudiant_ids);
+
+    // Récupérer les paiements des étudiants sélectionnés
+    $paiements = $etudiant->getTotauxPayesParEtudiants($etudiant_ids);
+
+    // Charger la vue paiement_groupe.php avec les étudiants et leurs paiements
+    $this->view('paiement_groupe', [
+        'etudiants' => $etudiantModel,
+        'paiements' => $paiements
+    ]);
+}
+
+
+
     
 }

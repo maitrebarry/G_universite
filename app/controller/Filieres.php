@@ -2,10 +2,15 @@
 
 class Filieres extends Controller
 {
+    //! Debut de la gestion d'une filière
     public function index()
     {
+        $idDepartement = null;
+        if (isset($_SESSION['id_departement'])) {
+            $idDepartement = $_SESSION['id_departement'];
+        }
         $filiereModel = new Filiere();
-        $listeFilieres = $filiereModel->SelectAllDataOrder("*", "filiere", "id_filiere");
+        $listeFilieres = $filiereModel->listeFilieresParDepartement($idDepartement);
         $this->view('liste_filiere', ['filieres' => $listeFilieres]);
     }
 
@@ -26,7 +31,8 @@ class Filieres extends Controller
 
         $semestreModel = new Semestre();
         $listeSemestres = $semestreModel->SelectAllData("*", "semestre");
-        $this->view('ajouter_filiere', ['semestres' => $listeSemestres]);
+        $departements = $semestreModel->SelectAllData("*", "departement");
+        $this->view('ajouter_filiere', ['semestres' => $listeSemestres, 'departements' => $departements]);
     }
 
     // la fonction pour jerer l'ajout des semestres des semestres, des ue et des modules dans une filière
@@ -52,6 +58,10 @@ class Filieres extends Controller
             $filiereModel = new Filiere();
             $infosFiliere = $filiereModel->apercu_filiere($idFiliere);
             if (!empty($infosFiliere)) {
+                if (isset($_POST['action']) && $_POST['action'] == 'print') {
+                    $this->view("post_apercu_filiere", ["infoFiliere" => $infosFiliere]);
+                    return;
+                }
                 $this->view("apercu_filiere", ["infoFiliere" => $infosFiliere]);
             }
         }
@@ -158,7 +168,7 @@ class Filieres extends Controller
             $filiereModel->supprimerElementFiliere($action, $id);
         }
     }
-
+    //! Fin de la gestion d'une filière
 
     //! Debut de la gestion d'une promotion
     // Ajouter une promotion
@@ -181,6 +191,14 @@ class Filieres extends Controller
         $filiereModel = new Filiere();
         $promotions = $filiereModel->listePromotions($idFiliere);
         $this->view("liste_promotion", ["promotions" => $promotions, "idFiliere" => $idFiliere]);
+    }
+
+    public function set_status_promotion($idFiliere, $idPromotion, $statut)
+    {
+        $filiereModel = new Filiere();
+        $isUpdate = $filiereModel->setStatusPromotion($idPromotion, $statut);
+        $this->redirect('/Filieres/liste_promotion/' . $idFiliere);
+        return;
     }
     //! Fin de la gestion d'une promotion
 

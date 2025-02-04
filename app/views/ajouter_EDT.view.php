@@ -1,14 +1,14 @@
 <style>
-    input {
+input {
 
-        padding: 8px;
-        font-size: 16px;
-        text-align: center;
-    }
+    padding: 8px;
+    font-size: 16px;
+    text-align: center;
+}
 
-    td {
-        padding: 15px 5px !important;
-    }
+td {
+    padding: 8px 5px !important;
+}
 </style>
 <!-- inclusion du partie header -->
 <?php $this->view("Partials/header") ?>
@@ -26,12 +26,24 @@
 
     <!-- Content-->
     <div class="app-content content">
+        <div id="loader" class="w-100 position-absolute d-none justify-content-center align-items-center"
+            style="height:100vh;z-index:100">
+            <div class="spinner-border  " role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
         <div class="content-wrapper">
             <div class="content-header row">
                 <div class="content-header-left col-12 mb-2 mt-1">
                     <div class="row breadcrumbs-top">
                         <div class="col-12">
-                            <h5 class="content-header-title float-left pr-1 mb-0">programmation des cours</h5>
+                            <h5 class="content-header-title float-left pr-1 mb-0">
+                                <?php
+                                echo (isset($_SESSION['nom_departement']))
+                                    ? strtoupper($_SESSION['nom_departement'] . ' (' . $_SESSION['sigle_departement'] . ')')
+                                    : "IUFP"
+                                ?>
+                            </h5>
                             <div class="breadcrumb-wrapper col-12">
                                 <ol class="breadcrumb p-0 mb-0">
                                     <li class="breadcrumb-item"><a href="index.html"><i class="bx bx-home-alt"></i></a>
@@ -51,7 +63,7 @@
                 <!-- formulaire -->
                 <section class="simple-validation">
                     <div class="row">
-                        <div id="message" class="col-12"></div>
+                        <div id="message" class="col-12 d-flex justify-content-start"></div>
                         <div class="col-md-12">
                             <div class="card card-animated-border-top">
                                 <div class="card-header">
@@ -60,7 +72,7 @@
                                 <div class="card-content">
                                     <div class="card-body">
                                         <form method="POST" class="form-horizontal" novalidate id="edtForm">
-                                            <div class="row">
+                                            <div class="row d-flex justify-content-around align-items-center">
                                                 <div class="col-sm-3">
                                                     <label class="form-label" for="single-select">Filiere</label>
                                                     <div class="form-group">
@@ -68,10 +80,10 @@
                                                             <option value="0" disabled selected>Selectionner une Filiere
                                                             </option>
                                                             <?php foreach ($filieres as $filiere): ?>
-                                                                <option value="<?php echo $filiere->id_filiere ?>"
-                                                                    <?= ($idFiliere != null && $idFiliere == $filiere->id_filiere) ? 'selected' : '' ?>>
-                                                                    <?php echo strtoupper($filiere->sigle_filiere) ?>
-                                                                </option>
+                                                            <option value="<?php echo $filiere->id_filiere ?>"
+                                                                <?= ($idFiliere != null && $idFiliere == $filiere->id_filiere) ? 'selected' : '' ?>>
+                                                                <?php echo strtoupper($filiere->sigle_filiere) ?>
+                                                            </option>
                                                             <?php endforeach ?>
                                                         </select>
                                                     </div>
@@ -79,8 +91,9 @@
                                                 <div class="col-sm-3">
                                                     <label class="form-label" for="single-select">Promotion</label>
                                                     <div class="form-group">
-                                                        <select class="select2 form-control" id="promotions">
-                                                            <option value="" disabled selected>Selectioner une Promotion
+                                                        <select class="select2 form-control" id="promotions"
+                                                            data-id="<?php echo $idPromotion ?>">
+                                                            <option value="" disabled>Selectioner une Promotion
                                                             </option>
 
                                                         </select>
@@ -89,7 +102,7 @@
                                                 <div class="col-sm-3">
                                                     <label class="form-label" for="single-select">Modules</label>
                                                     <div class="form-group">
-                                                        <select class="select2 form-control" id="modules"
+                                                        <select class="select2 form-control champ" id="modules"
                                                             name="modules">
                                                             <option value="" disabled selected>Selectioner un Module
                                                             </option>
@@ -97,25 +110,25 @@
                                                         </select>
                                                     </div>
                                                 </div>
+                                                <div class="col-sm-3">
+                                                    <button type="button" class="btn btn-primary" data-toggle="modal"
+                                                        data-target="#menuConfig"><i class="bx bxs-cog"></i>
+                                                        Paramètrage</button>
+                                                </div>
                                             </div>
 
-                                            <div class="row d-flex justify-content-between align-items-center p-1 ">
+                                            <div class="row d-flex justify-content-between align-items-center mb-1 ">
                                                 <div
-                                                    class="col-12 row d-flex justify-content-between align-items-center">
-                                                    <div class=" col-4 m-0">
+                                                    class="col-4 row d-flex justify-content-between align-items-center">
+                                                    <div class=" col-12 m-0">
                                                         <!-- Bouton pour ajouter une nouvelle ligne -->
                                                         <i class="bx bx-plus btn btn-secondary" id="add-row"></i>
                                                         <!-- Bouton pour supprimer la dernière ligne -->
                                                         <i class="bx bx-minus btn btn-danger" id="remove-row"></i>
                                                     </div>
-                                                    <div class="col-2">
-                                                        <button type="button" class="btn btn-primary"
-                                                            data-toggle="modal" data-target="#menuConfig"><i
-                                                                class="bx bxs-cog"></i>
-                                                            Paramètrage</button>
-                                                    </div>
+
                                                 </div>
-                                                <div class=" offset-6 col-6 row d-none float-right" id="infoModule">
+                                                <div class=" col-6 row d-none float-right" id="infoModule">
                                                     <input type="hidden" id="vht" class="vht">
                                                     <!-- CM -->
                                                     <div class='col-6 col-lg-3'>
@@ -151,13 +164,13 @@
                                                         <tr>
                                                             <th class="text-center">Horaire</th>
                                                             <?php foreach ($jours as $jour): ?>
-                                                                <th class="jour" data-id="<?php echo $jour->id_jour ?>">
-                                                                    <?php echo strtoupper($jour->nom_jour) ?></th>
+                                                            <th class="jour" data-id="<?php echo $jour->id_jour ?>">
+                                                                <?php echo strtoupper($jour->nom_jour) ?></th>
                                                             <?php endforeach ?>
 
                                                         </tr>
                                                     </thead>
-                                                    <tbody>
+                                                    <tbody class="corpsEdt">
 
                                                     </tbody>
                                                 </table>
@@ -166,19 +179,19 @@
                                                 <div class="col-sm-3">
                                                     <label class="form-label" for="enseignants">ENSEIGNANT :</label>
                                                     <div class="form-group">
-                                                        <select class="select2 form-control" id="enseignants"
+                                                        <select class=" form-control champ" id="enseignants"
                                                             name="enseignants">
-                                                            <option value="" disabled selected>Sélectionner un
+                                                            <option value="" disabled>Sélectionner un
                                                                 enseignant</option>
                                                             <?php foreach ($enseignants as $enseignant): ?>
-                                                                <option value="<?php echo $enseignant->enseignant_id ?>">
-                                                                    <?php echo  strtoupper(
-                                                                        $enseignant->enseignant_nom . "  "
-                                                                            . $enseignant->enseignant_prenom . "("
-                                                                            . $enseignant->enseignant_telephone . ")"
-                                                                    )
+                                                            <option value="<?php echo $enseignant->enseignant_id ?>"
+                                                                class=" text-capitalize">
+                                                                <?php echo
+                                                                    $enseignant->enseignant_nom . " "
+                                                                        . $enseignant->enseignant_prenom
+
                                                                     ?>
-                                                                </option>
+                                                            </option>
                                                             <?php endforeach ?>
                                                             <!-- Ajoutez ici les options des enseignants -->
                                                         </select>
@@ -187,19 +200,20 @@
                                                 <div class="col-sm-3">
                                                     <label class="form-label" for="single-select">SALE DE COURS</label>
                                                     <div class="form-group">
-                                                        <select class="select2 form-control" name="salles" id="salles">
+                                                        <select class="form-control champ" name="salles" id="salles">
                                                             <option value="" disabled selected>Selectionner une Salle
                                                             </option>
                                                             <?php foreach ($salles as $salle): ?>
-                                                                <option value="<?php echo $salle->id_salle ?>">
-                                                                    <?php echo strtoupper($salle->nom_salle) . "(" . $salle->capacite_salle . ")" ?>
-                                                                </option>
+                                                            <option value="<?php echo $salle->id_salle ?>">
+                                                                <?php echo strtoupper($salle->nom_salle) . "(" . $salle->capacite_salle . ")" ?>
+                                                            </option>
                                                             <?php endforeach ?>
                                                         </select>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-3 ">
-                                                    <label class="form-label" for="dateDebut">Date de Debut :</label>
+                                                    <label class="form-label" for="dateDebut champ">Date de Debut
+                                                        :</label>
                                                     <div class="form-group w-100 d-flex justify-content-end ">
                                                         <input type="date" class="form-control" name="dateDebut"
                                                             id="dateDebut" value="<?php echo date("d/m/Y") ?>">
@@ -207,8 +221,8 @@
                                                 </div>
 
                                             </div>
-                                            <button type="submit" style="float: right;"
-                                                class="btn btn-primary">Enregistrer</button><br>
+                                            <button type="submit" style="float: right;" class="btn btn-primary"
+                                                id="valider">Enregistrer</button><br>
                                         </form>
                                     </div>
                                 </div>
@@ -253,7 +267,7 @@
                                     <div class="col-12 border d-flex justify-content-center p-2">
 
                                         <div class=" radio radio-primary mr-4"> <input type="radio" name="type" id="cm"
-                                                class="type" checked value="0">
+                                                class="type" value="0">
                                             <label for="cm">CM</label>
                                         </div>
 
@@ -268,8 +282,8 @@
                                         </div>
 
                                         <div class="radio radio-primary form-group mr-4"> <input type="radio"
-                                                name="type" id="all" class="type" value="3">
-                                            <label for="all">All</label>
+                                                name="type" id="all" class="type" value="3" checked>
+                                            <label for="all">Mixe</label>
                                         </div>
 
                                     </div>
@@ -309,84 +323,103 @@
 <script src="<?= ROOT ?>/assets/mon_js/edt.js"></script>
 <script src="<?= ROOT ?>/assets/mon_js/contrainte_date_edt.js"></script>
 <script>
-    //KONE
-    var infoFiliere = [];
-    $("#filiere").change(async function() {
+// la recuperation des liste de promotion d'une filière lors d'une selection de fiilière
+var infoFiliere = [];
+$("#filiere").change(async function() {
+    infoFiliere = await infosFiliere($(this).val());
+    promotionsFiliere(infoFiliere);
+    idSemestre = $("#promotions option:selected").data("id");
+    modulesSemestre(idSemestre, infoFiliere);
+    infoModule($("#infoModule").val(), infoFiliere);
 
-        infoFiliere = await infosFiliere($(this).val());
-        promotionsFiliere(infoFiliere);
-        idSemestre = $("#promotions option:selected").data("id");
-        modulesSemestre(idSemestre, infoFiliere);
-        infoModule($("#infoModule").val(), infoFiliere);
 
+})
+
+// la recuperation des modules d'une promotion lors d'une selection de promotion
+$("#promotions").change(function() {
+    idSemestre = $("#promotions option:selected").data("id");
+    modulesSemestre(idSemestre, infoFiliere);
+    infoModule($("#infoModule").val(), infoFiliere);
+})
+
+
+// la recuperation des heures d'un module lors d'une selection de module
+$("#modules").change(function() {
+    infoModule($(this).val(), infoFiliere);
+    getDefaultEnseignantAndSalleModule($("#filiere").val(), $(this).val());
+
+
+})
+
+// les actions lors du rechargement de la page
+$(document).ready(async function() {
+
+    $('#edtForm').submit(function(event) {
+        event.preventDefault();
+        ajouterEdt();
 
     })
 
-    $("#promotions").change(function() {
-        idSemestre = $("#promotions option:selected").data("id");
-        modulesSemestre(idSemestre, infoFiliere);
-        infoModule($("#infoModule").val(), infoFiliere);
+    // la recupeation des promotions de la filière selectionner après le rechargement
+    infoFiliere = await infosFiliere($("#filiere").val());
+    idPromotion = $("#promotions").data('id');
+    promotionsFiliere(infoFiliere, idPromotion);
+    idSemestre = $("#promotions option:selected").data("id");
+    modulesSemestre(idSemestre, infoFiliere);
+    infoModule($("#modules").val(), infoFiliere);
+})
+
+
+// Mettre un edt en model horizontal
+$('#model-row').click(function() {
+    $('#model-column').removeClass('border-primary');
+    $(this).addClass("border-primary");
+    $(this).css('transition', 'all 0.5s');
+    const heuresModule = calculerHeuresModuleEdt();
+    const model = $(this).data('model');
+    const type = parseInt($('input[name="type"]:checked').val(), 10);
+    genererEdt(heuresModule, model, type);
+
+
+})
+
+// Mettre un edt en model vertical
+$('#model-column').click(function() {
+    $('#model-row').removeClass('border-primary');
+    $(this).addClass("border-primary");
+    $(this).css('transition', 'all 0.5s');
+    const heuresModule = calculerHeuresModuleEdt();
+    const model = $(this).data('model');
+    const type = parseInt($('input[name="type"]:checked').val(), 10);
+    genererEdt(heuresModule, model, type);
+})
+
+// le changement du type de cours d'un edt
+$('.type').click(function() {
+    const heuresModule = calculerHeuresModuleEdt();
+    const model = ($('#model-row').hasClass("border-primary")) ? $('#model-row').data('model') : $(
+        '#model-column').data('model')
+    const type = parseInt($('input[name="type"]:checked').val(), 10);
+    genererEdt(heuresModule, model, type);
+})
+
+// Ajouter une ligne à un edt
+document.getElementById('add-row').addEventListener('click', function() {
+    $('#table-extended-chechbox tbody tr').each(function(index) {
+        if (index == $('#table-extended-chechbox tbody tr').length - 1) {
+            horaireDebut = $(this).find('.horaireFin').val()
+        }
     })
+    heure = horaireDebut.split(':');
+    horaireFin = (parseInt(heure[0], 10) + 2) + ':' + heure[1];
+    const type = parseInt($('input[name="type"]:checked').val(), 10);
+    genererCoursEdt(typeEdt[type]);
+    addHeure(horaireDebut, horaireFin, coursJour);
 
+});
 
-    $("#modules").change(function() {
-        infoModule($(this).val(), infoFiliere);
-
-    })
-
-    // // JavaScript pour ajouter une ligne à la table
-    // document.getElementById('add-row').addEventListener('click', function() {
-    //     addHeure();
-    // });
-
-    // // JavaScript pour supprimer la dernière ligne de la table
-    // document.getElementById('remove-row').addEventListener('click', function() {
-    //     removeHeure();
-    // });
-
-    // $(document).ready(async function() {
-
-    //     $('#edtForm').submit(function(event) {
-    //         event.preventDefault();
-    //         ajouterEdt();
-
-    //     })
-
-    //     infoFiliere = await infosFiliere($("#filiere").val());
-    //     promotionsFiliere(infoFiliere);
-    //     idSemestre = $("#promotions option:selected").data("id");
-    //     modulesSemestre(idSemestre, infoFiliere);
-    //     infoModule($("#infoModule").val(), infoFiliere);
-    // })
-
-
-    // $('#model-row').click(function() {
-    //     $('#model-column').removeClass('border-primary');
-    //     $(this).addClass("border-primary");
-    //     $(this).css('transition', 'all 0.5s');
-    //     const heuresModule = calculerHeuresModuleEdt();
-    //     const model = $(this).data('model');
-    //     const type = parseInt($('input[name="type"]:checked').val(), 10);
-    //     genererEdt(heuresModule, model, type);
-
-
-    // })
-    // $('#model-column').click(function() {
-    //     $('#model-row').removeClass('border-primary');
-    //     $(this).addClass("border-primary");
-    //     $(this).css('transition', 'all 0.5s');
-    //     const heuresModule = calculerHeuresModuleEdt();
-    //     const model = $(this).data('model');
-    //     const type = parseInt($('input[name="type"]:checked').val(), 10);
-    //     genererEdt(heuresModule, model, type);
-    // })
-
-    // $('.type').click(function() {
-    //     const heuresModule = calculerHeuresModuleEdt();
-    //     const model = ($('#model-row').hasClass("border-primary")) ? $('#model-row').data('model') : $(
-    //         '#model-column').data('model')
-    //     const type = parseInt($('input[name="type"]:checked').val(), 10);
-
-    //    // genererEdt(heuresModule, model, type);
-    // })
+// Supprimer une ligne d'un edt
+document.getElementById('remove-row').addEventListener('click', function() {
+    removeHeure();
+});
 </script>

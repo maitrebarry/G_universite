@@ -50,34 +50,41 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between flex-column mb-3 mb-md-0">
                                 <ul class="nav nav-align-left nav-pills flex-column">
+                              
                                     <li class="nav-item mb-1">
                                         <a class="nav-link radius-10 " href="<?= ROOT ?>/Modules/listeModule">
-
+                                        <i class="fa-solid fa-book-open-reader me-2"></i>
                                             <span class="align-middle">Modules</span>
                                         </a>
                                     </li>
                                     <li class="nav-item mb-1">
-                                        <a class="nav-link  " href="<?= ROOT ?>/Salles/Liste">
-                                            <i class="fa-solid fa-user me-2"></i>
-                                            <span class="align-middle">Salle</span>
+                                        <a class="nav-link" href="<?= ROOT ?>/Semestre/Liste">
+                                            <i class="fa-solid fa-calendar-day me-2"></i>
+                                            <span class="align-middle">Semestre</span>
                                         </a>
                                     </li>
                                     <li class="nav-item mb-1">
                                         <a class="nav-link " href="<?= ROOT ?>/Periodes/Liste">
-                                            <i class="fa-solid fa-calendar me-2"></i>
+                                        <i class="fa-solid fa-calendar-alt me-2"></i>
                                             <span class="align-middle">Période</span>
                                         </a>
                                     </li>
                                     <li class="nav-item mb-1">
-                                        <a class="nav-link " href="<?= ROOT ?>/Utilisateurs/Liste">
-                                            <i class="fa-solid fa-calendar me-2"></i>
+                                        <a class="nav-link " href="<?= ROOT ?>/Utilisateurs/liste_utilisateur">
+                                            <i class="fa-solid fa-users me-2"></i>
                                             <span class="align-middle">Utilisateur</span>
                                         </a>
                                     </li>
                                     <li class="nav-item mb-1">
                                         <a class="nav-link  active" href="<?= ROOT ?>/Salles/Liste">
-                                            <i class="fa-solid fa-calendar me-2"></i>
+                                        <i class="fa-solid fa-door-open me-2"></i>
                                             <span class="align-middle">Salles</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item mb-1">
+                                        <a class="nav-link   " href="<?= ROOT ?>/Departements/listeDepartements">
+                                        <i class="fa-solid fa-building me-2"></i>
+                                            <span class="align-middle">departements</span>
                                         </a>
                                     </li>
                                 </ul>
@@ -141,9 +148,9 @@
                             </div>
                             <!-- partie insertion des données -->
                             <form action="" method="post">
-                                <div class="modal-primary mr-1 mb-1 d-inline-block">
+                                <div class="modal-primary mr-1 mb-1 d-inline-block modal-lg">
                                     <div class="modal fade text-left" id="primary" tabindex="-1" role="dialog" aria-labelledby="myModalLabel160" aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+                                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document" >
                                             <div class="modal-content">
                                                 <div class="modal-header bg-primary">
                                                     <h5 class="modal-title white" id="myModalLabel160"> Enregistrements de Salle</h5>
