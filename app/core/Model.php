@@ -225,7 +225,7 @@ public function select_data_table_join_where_limite_emarg_uni($select, $execute_
     }
 
     // Compte le nombre total de résultats
-    public function selectCount($fields,$select=[],){
+    public function selectCount($fields,$select=[]){
         $bdd = $this->bdd();
         $que = $bdd->prepare("SELECT $select FROM $fields");
         $que->execute();
@@ -261,6 +261,7 @@ public function select_data_table_join_where_limite_emarg_uni($select, $execute_
         $que->closeCursor();
         return $count;
     }
+
     public function FetchSelectWhere2($select, $fields, $whereValue, $value = []) {
         $bdd = $this->bdd();
         $que = $bdd->prepare("SELECT $select FROM $fields WHERE $whereValue");
@@ -436,6 +437,51 @@ public function select_data_table_join_where_limite_emarg_uni($select, $execute_
     
         // Le numéro de téléphone semble valide
         return "Numéro de téléphone valide.";
+    }
+    //Methode en attente
+    public function FetchAllSelectWhere3($select, $table, $whereField1, $value1, $whereField2, $value2) {
+        try {
+            $bdd = $this->bdd();
+            
+            // Sécurisation des noms de tables et des colonnes via une liste blanche
+            $allowedTables = ['nom_table_1', 'nom_table_2']; // Ajouter les tables autorisées
+            $allowedColumns = ['colonne1', 'colonne2', 'colonne3']; // Ajouter les colonnes autorisées
+    
+           // Vérification de la table
+            if (!in_array($table, $allowedTables)) {
+                throw new Exception("Table invalide !");
+            }
+    
+            // Vérification des colonnes WHERE
+            if (!in_array($whereField1, $allowedColumns) || !in_array($whereField2, $allowedColumns)) {
+                throw new Exception("Colonne WHERE invalide !");
+            }
+    
+            // Vérification et sécurisation des colonnes sélectionnées
+            $selectedColumns = explode(',', $select);
+            foreach ($selectedColumns as $column) {
+                if (!in_array(trim($column), $allowedColumns)) {
+                    throw new Exception("Colonne sélectionnée invalide !");
+                }
+            }
+            $select = implode(', ', $selectedColumns); // Reconstruction des colonnes sécurisées
+    
+            // Construction de la requête SQL sécurisée
+            $query = "SELECT $select FROM $table WHERE $whereField1 = ? AND $whereField2 = ?";
+            
+            $stmt = $bdd->prepare($query);
+            $stmt->execute([$value1, $value2]);
+    
+            // Récupération des résultats sous forme d'objets
+            $results = $stmt->fetchAll(PDO::FETCH_OBJ);
+            $stmt->closeCursor();
+            
+            return $results;
+        } catch (Exception $e) {
+            // Gérer l'erreur proprement (on peut loguer au lieu d'afficher en production)
+            error_log("Erreur dans FetchAllSelectWhere3 : " . $e->getMessage());
+            return []; // Retourner un tableau vide en cas d'erreur
+        }
     }
     
     

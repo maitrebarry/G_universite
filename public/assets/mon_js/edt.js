@@ -283,7 +283,7 @@ function formatAcademicYear(event) {
     input.value = `${currentYear}-${nextYear}`; // Appliquer le format "YYYY-YYYY"
   }
 }
-
+///////////////////////////////////////////////////////////////////////pppppppppppppppp
 async function infosFiliere(idFiliere) {
   try {
     response = await $.ajax({
@@ -320,6 +320,7 @@ function promotionsFiliere(infoFiliere) {
     promotionContainer.append(option);
   });
 }
+////////////////////////////////////////////////////////ppppppppppp
 
 function semestresFiliere(infoFiliere) {
   const semestreContainer = $("#semestres");

@@ -349,7 +349,16 @@ private function updatePaiement($id_etudiant, $montant_paye) {
     $stmt->execute([$id_etudiant, $montant_paye]);
 }
 
-    
+public function getStudentsByFiliereAndPromotion($promotionId) {
+    $pdo = $this->bdd();
+    $stmt = $pdo->prepare("SELECT * FROM etudiant WHERE id_promotion = $promotionId ");
+    try {
+        $stmt->execute([$promotionId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        echo 'Erreur : ' . $e->getMessage();
+    }
+}
 
 }
     
