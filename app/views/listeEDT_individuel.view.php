@@ -108,6 +108,14 @@ $titre = "EMPLOI DU TEMPS INDIVIDUEL : du " . date('d-m-Y', strtotime($date_debu
         white-space: normal;
         margin: 0; /* Ajouter une marge de zéro pour ajuster l'alignement */
     }
+    @media print {
+    .no-print {
+        display: none !important;
+        visibility: hidden !important;
+    }
+    }
+
+
 </style>
 
 <?php $this->view("Partials/header") ?>
@@ -211,132 +219,134 @@ $titre = "EMPLOI DU TEMPS INDIVIDUEL : du " . date('d-m-Y', strtotime($date_debu
                                     </p>
                                 </div>
                             </div>
-                            <div class="form-group mb-3 text-center no-print">
-                                <label style="font-weight: bold;">Afficher l'emploi du temps :</label>
-                                <div style="display: flex; justify-content: center; gap: 20px; align-items: center; margin-top: 10px;">
-                                    <div>
-                                        <input type="radio" name="affichage" id="edt_actuel" value="actuel" <?= ($status != 'achevé') ? 'checked' : '' ?> style="transform: scale(1.3); margin-right: 5px;">
-                                        <label for="edt_actuel" style="font-size: 0.7rem; font-style: italic;">Actuel</label>
-                                    </div>
-                                    <div>
-                                        <input type="radio" name="affichage" id="edt_passe" value="passe" <?= ($status == 'achevé') ? 'checked' : '' ?> style="transform: scale(1.3); margin-right: 5px;">
-                                        <label for="edt_passe" style="font-size: 0.7rem; font-style: italic;">Passé</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div id="formulaire_recherche" class="row" style="display: <?= ($status == 'achevé') ? 'block' : 'none'; ?>;">
-                                <form method="post" action="" class="row">
-                                    <div class="form-group col-3">
-                                        <label for="status">Statut de la période :</label>
-                                        <select name="status" id="status" class="form-control" style="color: <?= ($status == 'achevé') ? 'red' : 'black'; ?>;">
-                                            <option value="inachevé" <?= ($status == 'inachevé') ? 'selected' : '' ?>>Inachevé</option>
-                                            <option value="achevé" <?= ($status == 'achevé') ? 'selected' : '' ?>>Achevé</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group col-3">
-                                        <label for="date_debut">Date de début :</label>
-                                        <input type="date" name="date_debut" id="date_debut" value="<?= htmlspecialchars($date_debut, ENT_QUOTES, 'UTF-8') ?>" class="form-control">
-                                    </div>
-                                    <div class="form-group col-3">
-                                        <label for="date_fin">Date de fin :</label>
-                                        <input type="date" name="date_fin" id="date_fin" value="<?= htmlspecialchars($date_fin, ENT_QUOTES, 'UTF-8') ?>" class="form-control">
-                                    </div>
-                                    <div class="form-group col-3 d-flex align-items-end">
-                                        <button type="submit" class="btn btn-primary w-100">Rechercher</button>
-                                    </div>
-                                </form>
-                            </div>
-                            <!-- <div class="table-container"> -->
-                                <table class=" table-bordered-responsive" >
-                                    <thead>
-                                        <tr>
-                                            <th>Semaine</th>
-                                            <th>Module1(VH)/Classe</th>
-                                            <th>Module2(VH)/Classe</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php if (!empty($emplois_du_temps)): ?>
-                                            <?php 
-                                            $traited_dates = [];
-                                            foreach ($emplois_du_temps as $edt) {
-                                                $date_debut_str = $edt->date_debut;
-                                                $date_fin_str = $edt->date_fin;
-                                                $formatted_date_debut = date('d-m-Y', strtotime($date_debut_str));
-                                                $formatted_date_fin = date('d-m-Y', strtotime($date_fin_str));
+                           <div class="form-group mb-3 text-center no-print">
+    <label style="font-weight: bold;">Afficher l'emploi du temps :</label>
+    <div style="display: flex; justify-content: center; gap: 20px; align-items: center; margin-top: 10px;">
+        <div>
+            <input type="radio" name="affichage" id="edt_actuel" value="actuel" <?= ($status != 'achevé') ? 'checked' : '' ?> style="transform: scale(1.3); margin-right: 5px;">
+            <label for="edt_actuel" style="font-size: 0.7rem; font-style: italic;">Actuel</label>
+        </div>
+        <div>
+            <input type="radio" name="affichage" id="edt_passe" value="passe" <?= ($status == 'achevé') ? 'checked' : '' ?> style="transform: scale(1.3); margin-right: 5px;">
+            <label for="edt_passe" style="font-size: 0.7rem; font-style: italic;">Passé</label>
+        </div>
+    </div>
+</div>
+<div id="formulaire_recherche" class="row" style="display: <?= ($status == 'achevé') ? 'block' : 'none'; ?>;">
+    <form method="post" action="" class="row">
+        <div class="form-group col-3">
+            <label for="status">Statut de la période :</label>
+            <select name="status" id="status" class="form-control" style="color: <?= ($status == 'achevé') ? 'red' : 'black'; ?>;">
+                <option value="inachevé" <?= ($status == 'inachevé') ? 'selected' : '' ?>>Inachevé</option>
+                <option value="achevé" <?= ($status == 'achevé') ? 'selected' : '' ?>>Achevé</option>
+            </select>
+        </div>
+        <div class="form-group col-3">
+            <label for="date_debut">Date de début :</label>
+            <input type="date" name="date_debut" id="date_debut" value="<?= htmlspecialchars($date_debut, ENT_QUOTES, 'UTF-8') ?>" class="form-control">
+        </div>
+        <div class="form-group col-3">
+            <label for="date_fin">Date de fin :</label>
+            <input type="date" name="date_fin" id="date_fin" value="<?= htmlspecialchars($date_fin, ENT_QUOTES, 'UTF-8') ?>" class="form-control">
+        </div>
+        <div class="form-group col-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">Rechercher</button>
+        </div>
+    </form>
+</div>
+<table class="table-bordered-responsive">
+    <thead>
+        <tr>
+            <th>Semaine</th>
+            <th>Module1(VH)/Classe</th>
+            <th>Module2(VH)/Classe</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php if (!empty($emplois_du_temps)): ?>
+            <?php 
+            $traited_dates = [];
+            foreach ($emplois_du_temps as $edt) {
+                $date_debut_str = $edt->date_debut;
+                $date_fin_str = $edt->date_fin;
+                $formatted_date_debut = date('d-m-Y', strtotime($date_debut_str));
+                $formatted_date_fin = date('d-m-Y', strtotime($date_fin_str));
 
-                                                if (isset($traited_dates[$date_debut_str][$date_fin_str])) {
-                                                    $traited_dates[$date_debut_str][$date_fin_str][] = [
-                                                        'module' => htmlspecialchars($edt->nom_module) . " (" . htmlspecialchars($edt->heure_total) . "h)",
-                                                        'class' => htmlspecialchars($edt->nom_salle)
-                                                    ];
-                                                } else {
-                                                    $traited_dates[$date_debut_str][$date_fin_str] = [
-                                                        [
-                                                            'module' => htmlspecialchars($edt->nom_module) . " (" . htmlspecialchars($edt->heure_total) . "h)",
-                                                            'class' => htmlspecialchars($edt->nom_salle)
-                                                        ]
-                                                    ];
-                                                }
-                                            }
+                if (isset($traited_dates[$date_debut_str][$date_fin_str])) {
+                    $traited_dates[$date_debut_str][$date_fin_str][] = [
+                        'module' => htmlspecialchars($edt->nom_module) . " (" . htmlspecialchars($edt->heure_total) . "h)",
+                        'class' => htmlspecialchars($edt->nom_salle)
+                    ];
+                } else {
+                    $traited_dates[$date_debut_str][$date_fin_str] = [
+                        [
+                            'module' => htmlspecialchars($edt->nom_module) . " (" . htmlspecialchars($edt->heure_total) . "h)",
+                            'class' => htmlspecialchars($edt->nom_salle)
+                        ]
+                    ];
+                }
+            }
 
-                                            foreach ($traited_dates as $date_debut_str => $fin_dates) {
-                                                foreach ($fin_dates as $date_fin_str => $modules_classes) {
-                                                    ?>
-                                                    <tr>
-                                                        <td>Du <?= date('d-m-Y', strtotime($date_debut_str)); ?> au <?= date('d-m-Y', strtotime($date_fin_str)); ?></td>
-                                                        <td><?= $modules_classes[0]['module']; ?> <?= isset($modules_classes[0]['class']) ? " / " . $modules_classes[0]['class'] : ''; ?></td>
-                                                        <td><?= isset($modules_classes[1]['module']) ? $modules_classes[1]['module'] : ''; ?> <?= isset($modules_classes[1]['class']) ? " / " . $modules_classes[1]['class'] : ''; ?></td>
-                                                    </tr>
-                                                    <?php
-                                                }
-                                            }
-                                            ?>
-                                        <?php else: ?>
-                                            <tr>
-                                                <td colspan="3" class="text-center">Aucun emploi du temps disponible.</td>
-                                            </tr>
-                                        <?php endif; ?>
-                                    </tbody>
-                                </table>
-                            <!-- </div> -->
-                           <div class="footer">
-                                <div class="row mb-4">
-                                    <div class="col-md-4">
-                                        <p><strong>Heures totales :</strong> <?= isset($heures_totales) ? htmlspecialchars($heures_totales) : 0; ?></p>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <p><strong>Heures dues :</strong> <?= isset($heures_dues) ? htmlspecialchars($heures_dues) : 0; ?></p>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <p><strong>Supplémentaires :</strong> <?= isset($heures_supp) ? htmlspecialchars($heures_supp) : 0; ?></p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class=" mt-1 text-right mr-2" style="min-width:70vw">
-                                <div class="d-flex justify-content-end " style="
-                                    min-width:70vw">
-                                    <h6 class=" text-muted text-right" style="min-width:70vw">Segou, le
-                                        <?php echo date('d-m-Y') ?></h6>
-                                </div>
-                                <div class="" style="min-width:70vw">
-                                    <h6 class=" text-bold-600 text-center d-flex justify-content-end w-100"
-                                        style="min-width:70vw">
-                                        Le
-                                        Chef de DER ST</h6>
-                                    <h6 class=" d-flex text-center justify-content-end w-100"
-                                        style="min-width:70vw">
-                                        <img src="<?= ROOT ?><?= $_SESSION['signature'] ?>" alt="user image"
-                                            class="d-block rounded  "
-                                            style="width: 150px; max-height: 60px;" />
-                                    </h6>
-                                </div>
-                                <div class=" d-flex justify-content-end" style="min-width:70vw">
-                                    <h6 class=" text-right" style="min-width:70vw">Dr
-                                        <?php echo strtoupper($_SESSION['nom_prenom']) ?> <br>
-                                        <?php echo strtoupper($_SESSION['nom_grade']) ?> </h6>
-                                </div>
-                            </div>
+            foreach ($traited_dates as $date_debut_str => $fin_dates) {
+                foreach ($fin_dates as $date_fin_str => $modules_classes) {
+                    ?>
+                    <tr>
+                        <td>Du <?= date('d-m-Y', strtotime($date_debut_str)); ?> au <?= date('d-m-Y', strtotime($date_fin_str)); ?></td>
+                        <td><?= $modules_classes[0]['module']; ?> <?= isset($modules_classes[0]['class']) ? " / " . $modules_classes[0]['class'] : ''; ?></td>
+                        <td><?= isset($modules_classes[1]['module']) ? $modules_classes[1]['module'] : ''; ?> <?= isset($modules_classes[1]['class']) ? " / " . $modules_classes[1]['class'] : ''; ?></td>
+                    </tr>
+                    <?php
+                }
+            }
+            ?>
+        <?php else: ?>
+            <tr>
+                <td colspan="3" class="text-center">Aucun emploi du temps disponible.</td>
+            </tr>
+        <?php endif; ?>
+    </tbody>
+</table>
+<div class="footer">
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <p><strong>Heures totales :</strong> <?= isset($heures_totales) ? htmlspecialchars($heures_totales) : 0; ?></p>
+        </div>
+        <div class="col-md-4">
+            <p><strong>Heures dues :</strong> <?= isset($heures_dues) ? htmlspecialchars($heures_dues) : 0; ?></p>
+        </div>
+        <div class="col-md-4">
+            <p><strong>Supplémentaires :</strong> <?= isset($heures_supp) ? htmlspecialchars($heures_supp) : 0; ?></p>
+        </div>
+    </div>
+</div>
+<div class="text-right mr-2" style="min-width:100%">
+    <div class="d-flex justify-content-end" style="min-width:100%">
+        <h6 class="text-muted text-right" style="min-width:100%">Segou, le
+            <?= date('d-m-Y') ?></h6>
+    </div>
+    <div class="" style="min-width:100%">
+        <h6 class="text-bold-600 text-center d-flex justify-content-end w-100"
+            style="min-width:100%">
+            Le
+            Chef de DER
+            <?= isset($_SESSION['sigle_departement']) ? strtoupper($_SESSION['sigle_departement']) : "" ?>
+        </h6>
+        <h6 class="d-flex text-center justify-content-end w-100"
+            style="min-width:100%">
+            <img src="<?= ROOT . $_SESSION['signature'] ?>" alt="user image"
+                class="d-block rounded"
+                style="width: 150px; max-height: 60px;" />
+        </h6>
+    </div>
+    <div class="d-flex justify-content-end" style="min-width:100%">
+        <h6 class="text-right" style="min-width:100%">Dr
+            <?= isset($_SESSION['nom_prenom']) ? strtoupper($_SESSION['nom_prenom']) : "" ?>
+            <br>
+            <?= isset($_SESSION['nom_grade']) ? strtoupper($_SESSION['nom_grade']) : "" ?>
+        </h6>
+    </div>
+</div>
+
                         </div>
                     </div>
                 </div>
@@ -376,7 +386,9 @@ $titre = "EMPLOI DU TEMPS INDIVIDUEL : du " . date('d-m-Y', strtotime($date_debu
                 statusSelect.style.color = "black";
             }
         });
+
    </script>
+   
    <script src="<?= ROOT ?>/assets/mon_js/pdfedIndividuel.js"></script>
 </body>
 
