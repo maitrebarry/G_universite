@@ -344,6 +344,7 @@ function promotionsFiliere(infoFiliere, idPromotion = "") {
     promotionContainer.append(option);
   });
 }
+////////////////////////////////////////////////////////ppppppppppp
 
 // recuperer les semestres d'une filière à travers son id
 function semestresFiliere(infoFiliere) {
