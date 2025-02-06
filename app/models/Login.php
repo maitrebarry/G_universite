@@ -1,5 +1,4 @@
-<?php
-
+<?php 
 class Login extends Model
 {
     public function connecter()
@@ -32,18 +31,18 @@ class Login extends Model
                 u.role,
                 u.mot_passe,
                 u.signature,
-                d.id_departement ,
+                u.statut,  -- Ajout de la colonne statut
+                d.id_departement,
                 d.nom_departement,
                 d.sigle_departement
-
             FROM 
                 enseignants e
             LEFT JOIN 
                 grade g ON e.id_grade = g.id_grade
             LEFT JOIN 
                 utilisateur u ON e.enseignant_id = u.enseignant_id
-                LEFT JOIN 
-                departement d ON d.	id_departement  = u.id_departement
+            LEFT JOIN 
+                departement d ON d.id_departement = u.id_departement
             WHERE 
                 e.enseignant_email = :enseignant_email
         ";
@@ -52,6 +51,12 @@ class Login extends Model
 
         if (!empty($enseignant)) {
             $enseignant = $enseignant[0]; // Récupérer la première ligne des résultats
+            // Vérification du statut
+            if ($enseignant->statut != 1) {
+                $this->set_flash("Votre compte est inactif, veuillez contacter l'administrateur.", 'danger');
+                return;
+            }
+
             // Vérifier si le mot de passe correspond
             if (password_verify($mot_passe, $enseignant->mot_passe)) {
                 // Stocker les informations de l'enseignant dans la session
@@ -67,9 +72,9 @@ class Login extends Model
                 if (!empty($enseignant->nom_grade)) {
                     $_SESSION['nom_grade'] = $enseignant->nom_grade;
                 }
-                if(strtoupper(str_replace(" ", "", $enseignant->role)) == strtoupper('ChefDR')){
+                if (strtoupper(str_replace(" ", "", $enseignant->role)) == strtoupper('ChefDR')) {
                     $_SESSION['nom_departement'] = $enseignant->nom_departement;
-                    $_SESSION['sigle_departement'] = $enseignant->	sigle_departement;
+                    $_SESSION['sigle_departement'] = $enseignant->sigle_departement;
                 }
 
                 // Redirection après connexion
@@ -90,6 +95,12 @@ class Login extends Model
 
             if (!$utilisateur) {
                 $this->set_flash("Aucun utilisateur trouvé avec cet email", 'danger');
+                return;
+            }
+
+            // Vérification du statut
+            if ($utilisateur->statut != 1) {
+                $this->set_flash("Votre compte est inactif, veuillez contacter l'administrateur.", 'danger');
                 return;
             }
 
@@ -116,3 +127,4 @@ class Login extends Model
         }
     }
 }
+?>

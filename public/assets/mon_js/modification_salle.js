@@ -4,14 +4,14 @@ $(document).ready(function() {
         // e.preventDefault(); // Empêcher le lien de suivre le href="#" par défaut
 
         // Récupérer les attributs de données du lien cliqué
-        var idmodule = $(this).data('id');
-        var nomModule = $(this).data('nom_module');
-        var sigleModule = $(this).data('sigle_module');
+        var idsalle = $(this).data('id_salle');
+        var nomSAlle = $(this).data('nom_salle');
+        var sigleSalle = $(this).data('capacite_salle');
 
         // Remplir les champs du modal avec les données
-        $('#inputIdmodule').val(idmodule);
-        $('#inputnomModule').val(nomModule);
-        $('#inputsigleModule').val(sigleModule);
+        $('#inputIdSalle').val(idsalle);
+        $('#inputnomSalle').val(nomSAlle);
+        $('#inputcapaciteSalle').val(sigleSalle);
      
 
         // Afficher le modal

@@ -1,3 +1,23 @@
+<?php
+$update = new utilisateur();
+if (isset($_POST['valider'])) {
+    $id_utilisateur = $_POST['id_utilisateur'];
+    $statut = $_POST['statut'];
+    $update->insertion_update_simples(
+        'UPDATE utilisateur SET statut=:statut where id_utilisateur=:id_utilisateur',
+        [
+            ':id_utilisateur' => $id_utilisateur,
+            ':statut' => $statut
+        ]
+    );
+    if ($update == true) {
+        $update->set_flash("status modifier avec succèes.", 'primary');
+        $update->redirect("Utilisateurs/liste_utilisateur");
+    }
+}
+
+
+?>
 <!-- inclusion du partie header -->
 <?php $this->view("Partials/header") ?>
 
@@ -163,19 +183,58 @@
                                                                                     class="d-block rounded img-thumbnail " style="width: 150px;" />
                                                                             </td>
                                                                             <td class="text-center">
-                                                                                <div class="dropdown">
-                                                                                    <span class="bx bx-dots-horizontal-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="menu"></span>
-                                                                                    <div class="dropdown-menu dropdown-menu-right">
-                                                                                        <!-- <a class="dropdown-item edit-btn" data-toggle="modal" data-target="#large1" href="#"
-                                                                                            data-id="<?= $listes->id_utilisateur ?>"
-                                                                                            data-nom_prenom="<?= $listes->enseignant_nom . ' ' . $listes->enseignant_prenom ?>"
-                                                                                            data-contact_utilisateur="<?= $listes->enseignant_telephone ?>"
-                                                                                            data-email_utilisateurs="<?= $listes->enseignant_email ?>"
-                                                                                            data-role_utilisateur="<?= $listes->role ?>">
-                                                                                            <i class="bx bx-edit-alt mr-1"></i> Modifier</a> -->
-                                                                                        <a class="dropdown-item" href="#"><i class="bx bx-trash mr-1"></i> Supprimer</a>
+                                                                                <div class="mb-3">
+
+                                                                                    <?php if ($listes->statut == 1) { ?>
+                                                                                        <span class="fa-solid fa-user-check text-success" data-bs-toggle="modal" data-bs-target="#activer<?= $listes->id_utilisateur  ?>"></span>
+                                                                                    <?php } else { ?>
+
+                                                                                        <span class="fa-solid fa-user-lock text-danger" data-bs-toggle="modal" data-bs-target="#activer<?= $listes->id_utilisateur  ?>"></span>
+                                                                                    <?php }  ?>
+
+                                                                                    <a href="modifieutilisateur.php?id=<?= $listes->id_utilisateur  ?>"><i class="mdi mdi-square-edit-outline text-info"></i></a>
+
+                                                                                </div>
+                                                                                <div class="modal-primary mr-1 mb-1 d-inline-block ">
+                                                                                    <div class="modal fade text-left" id="activer<?= $listes->id_utilisateur  ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel160" aria-hidden="true">
+                                                                                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable " role="document">
+                                                                                            <div class="modal-content">
+
+                                                                                                <form action="" method="post">
+                                                                                                    <div class="modal-header">
+
+                                                                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                                            <i class="bx bx-x"></i>
+                                                                                                        </button>
+                                                                                                    </div>
+                                                                                                    <div class="modal-body">
+                                                                                                        <div class="row d-flex  justify-content-center align-content-center">
+                                                                                                            <i class="nav-icon fa fa-exclamation-triangle text-danger  " style=" font-size: 100px;"></i>
+
+                                                                                                        </div>
+                                                                                                        <p class="text-danger " style="text-align: center;">Voulez-vous vraiment <?php if ($listes->statut == 1) { ?>désactiver<?php } else { ?> activer <?php } ?>
+
+                                                                                                        <?= $listes->enseignant_nom ?>
+                                                                                                        <?= $listes->enseignant_prenom ?>?</p>
+                                                                                                        <!-- <i class="nav-icon fas fa-tachometer-alt"></i> -->
+                                                                                                        <input type="hidden" value=" <?= $listes->id_utilisateur ?>" name="id_utilisateur">
+                                                                                                        <?php if ($listes->statut == 1) { ?>
+                                                                                                            <input type="hidden" value="0" name="statut">
+                                                                                                        <?php } else { ?>
+                                                                                                            <input type="hidden" value="1" name="statut">
+                                                                                                        <?php } ?>
+                                                                                                    </div>
+                                                                                                    <div class="modal-footer">
+                                                                                                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                                                                        <button type="submit" name="valider" class="btn btn-primary"><?php if ($listes->statut == 1) { ?> Oui Desactiver<?php } else { ?>Oui Activer <?php } ?></button>
+                                                                                                    </div>
+
+                                                                                                </form>
+                                                                                            </div>
+                                                                                        </div>
                                                                                     </div>
                                                                                 </div>
+
                                                                             </td>
                                                                         </tr>
                                                                     <?php endif; ?>
@@ -210,19 +269,60 @@
                                                                                     class="d-block rounded img-thumbnail " style="width: 150px;" />
                                                                             </td>
                                                                             <td class="text-center">
-                                                                                <div class="dropdown">
-                                                                                    <span class="bx bx-dots-horizontal-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="menu"></span>
-                                                                                    <div class="dropdown-menu dropdown-menu-right">
-                                                                                        <!-- <a class="dropdown-item edit-btn" data-toggle="modal" data-target="#large1" href="#"
-                                                                                            data-id="<?= $listes->id_utilisateur ?>"
-                                                                                            data-nom_prenom="<?= $listes->utilisateur_nom_prenom ?>"
-                                                                                            data-contact_utilisateur="<?= $listes->utilisateur_contact ?>"
-                                                                                            data-email_utilisateurs="<?= $listes->utilisateur_email ?>"
-                                                                                            data-role_utilisateur="<?= $listes->role ?>">
-                                                                                            <i class="bx bx-edit-alt mr-1"></i> Modifier</a> -->
-                                                                                        <a class="dropdown-item" href="#"><i class="bx bx-trash mr-1"></i> Supprimer</a>
+                                                                                <div class="mb-3">
+
+                                                                                    <?php if ($listes->statut == 1) { ?>
+
+                                                                                        <span class="fa-solid fa-user-check text-success" data-bs-toggle="modal" data-bs-target="#activer<?= $listes->id_utilisateur  ?>"></span>
+                                                                                    <?php } else { ?>
+                                                                                        <span class="fa-solid fa-user-lock text-danger" data-bs-toggle="modal" data-bs-target="#activer<?= $listes->id_utilisateur  ?>"></span>
+                                                                                    <?php }  ?>
+
+                                                                                    <a href="modifieutilisateur.php?id=<?= $listes->id_utilisateur  ?>"><i class="mdi mdi-square-edit-outline text-info"></i></a>
+
+                                                                                </div>
+                                                                                <div class="modal-primary mr-1 mb-1 d-inline-block ">
+                                                                                    <div class="modal fade text-left" id="activer<?= $listes->id_utilisateur  ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel160" aria-hidden="true">
+                                                                                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable " role="document">
+                                                                                            <div class="modal-content">
+
+                                                                                                <form action="" method="post">
+                                                                                                    <div class="modal-header">
+                                                                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                                            <i class="bx bx-x"></i>
+                                                                                                        </button>
+                                                                                                    </div>
+                                                                                                    <div class="modal-body">
+
+
+                                                                                                        <div class="row d-flex  justify-content-center align-content-center">
+                                                                                                            <i class="nav-icon fa fa-exclamation-triangle text-danger  " style=" font-size: 100px;"></i>
+
+                                                                                                        </div>
+                                                                                                        <p class="text-danger " style="text-align: center;">Voulez-vous vraiment <?php if ($listes->statut == 1) { ?>désactiver<?php } else { ?> activer <?php } ?>
+
+
+                                                                                                        <?= $listes->utilisateur_nom_prenom ?> ?</p>
+
+                                                                                                        <!-- <i class="nav-icon fas fa-tachometer-alt"></i> -->
+                                                                                                        <input type="hidden" value=" <?= $listes->id_utilisateur ?>" name="id_utilisateur">
+                                                                                                        <?php if ($listes->statut == 1) { ?>
+                                                                                                            <input type="hidden" value="0" name="statut">
+                                                                                                        <?php } else { ?>
+                                                                                                            <input type="hidden" value="1" name="statut">
+                                                                                                        <?php } ?>
+                                                                                                    </div>
+                                                                                                    <div class="modal-footer">
+                                                                                                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                                                                        <button type="submit" name="valider" class="btn btn-primary"><?php if ($listes->statut == 1) { ?> Oui Desactiver<?php } else { ?>Oui Activer <?php } ?></button>
+                                                                                                    </div>
+
+                                                                                                </form>
+                                                                                            </div>
+                                                                                        </div>
                                                                                     </div>
                                                                                 </div>
+
                                                                             </td>
                                                                         </tr>
                                                                     <?php endif; ?>
@@ -477,6 +577,15 @@
 
                 } else {
                     $("#departement").addClass('d-none');
+                }
+                if ($(this).val() == 'Enseignant') {
+
+                    $("#c_signature").removeClass('d-flex');
+                    $("#c_signature").addClass('d-none');
+
+                } else {
+                    $("#c_signature").removeClass('d-none');
+                    $("#c_signature").addClass('d-flex');
                 }
             })
         })

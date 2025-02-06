@@ -119,8 +119,8 @@ class Utilisateur extends Model
         if ($type_utilisateur == 0 && isset($nom_prenom) && !empty($nom_prenom)) {
             if (strtoupper(str_replace(" ", "", $role)) == strtoupper('ChefDR')) {
                 $insert = $this->insertion_update_simples(
-                    "INSERT INTO utilisateur (nom_prenom, contact_utilisateur, email_utilisateurs, mot_passe, role, signature, enseignant_id,id_departement) 
-                        VALUES (NULL, :contact_utilisateur, NULL, :mot_passe, :role, :signature, :enseignant_id,:id_departement)",
+                    "INSERT INTO utilisateur (nom_prenom, contact_utilisateur, email_utilisateurs, mot_passe, role, signature, enseignant_id,id_departement,statut) 
+                        VALUES (NULL, :contact_utilisateur, NULL, :mot_passe, :role, :signature, :enseignant_id,:id_departement,1)",
                     [
                         ":contact_utilisateur" => $contact_utilisateur,
                         ":mot_passe" => $hashPwd,
@@ -133,8 +133,8 @@ class Utilisateur extends Model
             } else {
                 // L'utilisateur est un enseignant, insérer avec enseignant_id
                 $insert = $this->insertion_update_simples(
-                    "INSERT INTO utilisateur (nom_prenom, contact_utilisateur, email_utilisateurs, mot_passe, role, signature, enseignant_id) 
-                        VALUES (NULL, :contact_utilisateur, NULL, :mot_passe, :role, :signature, :enseignant_id)",
+                    "INSERT INTO utilisateur (nom_prenom, contact_utilisateur, email_utilisateurs, mot_passe, role, signature, enseignant_id,statut) 
+                        VALUES (NULL, :contact_utilisateur, NULL, :mot_passe, :role, :signature, :enseignant_id,1)",
                     [
                         ":contact_utilisateur" => $contact_utilisateur,
                         ":mot_passe" => $hashPwd,
@@ -147,8 +147,8 @@ class Utilisateur extends Model
         } else {
             // L'utilisateur est simple, insérer nom_prenom, email, contact, et sans enseignant_id
             $insert = $this->insertion_update_simples(
-                "INSERT INTO utilisateur (nom_prenom, contact_utilisateur, email_utilisateurs, mot_passe, role, signature, enseignant_id) 
-            VALUES (:nom_prenom, :contact_utilisateur, :email_utilisateurs, :mot_passe, :role, :signature, NULL)",
+                "INSERT INTO utilisateur (nom_prenom, contact_utilisateur, email_utilisateurs, mot_passe, role, signature, enseignant_id,statut) 
+            VALUES (:nom_prenom, :contact_utilisateur, :email_utilisateurs, :mot_passe, :role, :signature, NULL,1)",
                 [
                     ":nom_prenom" => $nom_prenom,
                     ":contact_utilisateur" => $contact_utilisateur,
