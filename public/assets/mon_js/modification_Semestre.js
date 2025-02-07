@@ -14,6 +14,6 @@ $(document).ready(function() {
         $('#inputsigleModule').val(sigleSemestre);
      
         // Afficher le modal
-        $('#default').modal('show');
+        
     });
 });

@@ -17,6 +17,6 @@ $('#inputDate_fin').val(date_fin);
 
 
 // Afficher le modal
-$('#default').modal('show');
+
 });
 });

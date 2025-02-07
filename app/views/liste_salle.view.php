@@ -118,7 +118,6 @@
                                                 </thead>
                                                 <?php foreach ($datas  as $data): ?>
                                                 <tbody>
-                                                   
                                                         <tr>
                                                             <td><?= $data->nom_salle ?></td>
                                                             <td><?= $data->capacite_salle ?></td>

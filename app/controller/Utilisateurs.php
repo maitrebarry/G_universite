@@ -18,6 +18,7 @@ class Utilisateurs extends Controller
             utilisateur.nom_prenom AS utilisateur_nom_prenom,
             utilisateur.contact_utilisateur AS utilisateur_contact,
             utilisateur.email_utilisateurs AS utilisateur_email,
+              utilisateur.statut AS statut,
              utilisateur.signature AS signature,
             utilisateur.enseignant_id,
             enseignants.enseignant_nom,
@@ -68,4 +69,5 @@ class Utilisateurs extends Controller
         }
         $S->redirect("Utilisateurs/liste_utilisateur");
     }
+    
 }

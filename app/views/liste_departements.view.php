@@ -111,7 +111,7 @@
                                                     <tr>
                                                         <th>Nom departements </th>
                                                         <th>code departement</th>
-                                                        <th class="text-center dt-no-sorting">Action</th>
+                                                        
                                                     </tr>
                                                 </thead>
 
@@ -120,20 +120,7 @@
                                                         <tr>
                                                             <td><?= $listes->nom_departement ?></td>
                                                             <td><?= $listes->sigle_departement ?></td>
-                                                            <td class="text-center ">
-                                                                <div class=" dropdown">
-                                                                    <span class="bx bx-dots-horizontal-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="menu">
-                                                                    </span>
-                                                                    <div class="dropdown-menu dropdown-menu-right">
-                                                                        <a class="dropdown-item edit-btn" data-toggle="modal" data-target="#default"
-                                                                            href="#"
-                                                                            data-id="<?= $listes->id_departement ?>"
-                                                                            data-nom_departement="<?= $listes->nom_departement ?>"
-                                                                            data-sigle_departement="<?= $listes->sigle_departement  ?>"><i class="bx bx-edit-alt mr-1"></i> edit</a>
-                                                                        <a class="dropdown-item" href="<?= ROOT ?>/Departements/delete/<?= $listes->id_departement ?>"><i class="bx bx-trash mr-1"></i> delete</a>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
+                                                            
                                                         </tr>
                                                     <?php endforeach ?>
                                                 </tbody>
