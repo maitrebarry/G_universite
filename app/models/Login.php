@@ -75,6 +75,7 @@ class Login extends Model
                 if (strtoupper(str_replace(" ", "", $enseignant->role)) == strtoupper('ChefDR')) {
                     $_SESSION['nom_departement'] = $enseignant->nom_departement;
                     $_SESSION['sigle_departement'] = $enseignant->sigle_departement;
+
                 }
 
                 // Redirection après connexion
@@ -126,5 +127,4 @@ class Login extends Model
             }
         }
     }
-}
-?>
+

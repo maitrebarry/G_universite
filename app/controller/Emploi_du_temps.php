@@ -3,10 +3,14 @@ class Emploi_du_temps extends Controller
 {
     public function index()
     {
+        $idDepartement = null;
+        if (isset($_SESSION['id_departement'])) {
+            $idDepartement = $_SESSION['id_departement'];
+        }
         $edtModel = new Emploi_du_temp();
         $edts = $edtModel->listeEdts();
         $filiereModel = new Filiere();
-        $filieres = $filiereModel->SelectAllData("*", "filiere");
+        $filieres = $filiereModel->listeFilieresParDepartement($idDepartement);
         $this->view('liste_EDT', ['edts' => $edts, 'filieres' => $filieres]);
     }
 
@@ -32,8 +36,12 @@ class Emploi_du_temps extends Controller
             $this->view("set_flash");
             return;
         }
+        $idDepartement = null;
+        if (isset($_SESSION['id_departement'])) {
+            $idDepartement = $_SESSION['id_departement'];
+        }
         $filiereModel = new Filiere();
-        $filieres = $filiereModel->SelectAllData("*", "filiere");
+        $filieres = $filiereModel->listeFilieresParDepartement($idDepartement);
         $enseignants = $filiereModel->SelectAllData("*", "enseignants");
         $salles = $filiereModel->SelectAllData("*", "salle");
         $jours = $filiereModel->SelectAllData("*", "jour");
@@ -51,11 +59,16 @@ class Emploi_du_temps extends Controller
     public function apercu_edt($idEdt = null)
     {
         if ($idEdt != null && is_numeric($idEdt)) {
+
             $edtModel = new Emploi_du_temp();
             $infosEdt = $edtModel->getInfoEdt($idEdt);
             $horairesEdt = $edtModel->getHorairesEdt($idEdt);
             $jours = $edtModel->SelectAllData("*", "jour");
             if (!empty($infosEdt)) {
+                if (isset($_POST['action']) && $_POST['action'] == "print") {
+                    $this->view("post_apercu_edt", ["infosEdt" => $infosEdt, "horairesEdt" => $horairesEdt, "jours" => $jours]);
+                    return;
+                }
                 $this->view("apercu_edt", ["infosEdt" => $infosEdt, "horairesEdt" => $horairesEdt, "jours" => $jours]);
             }
         }

@@ -26,12 +26,24 @@ td {
 
     <!-- Content-->
     <div class="app-content content">
+        <div id="loader" class="w-100 position-absolute d-none justify-content-center align-items-center"
+            style="height:100vh;z-index:100">
+            <div class="spinner-border  " role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
         <div class="content-wrapper">
             <div class="content-header row">
                 <div class="content-header-left col-12 mb-2 mt-1">
                     <div class="row breadcrumbs-top">
                         <div class="col-12">
-                            <h5 class="content-header-title float-left pr-1 mb-0">programmation des cours</h5>
+                            <h5 class="content-header-title float-left pr-1 mb-0">
+                                <?php
+                                echo (isset($_SESSION['nom_departement']))
+                                    ? strtoupper($_SESSION['nom_departement'] . ' (' . $_SESSION['sigle_departement'] . ')')
+                                    : "IUFP"
+                                ?>
+                            </h5>
                             <div class="breadcrumb-wrapper col-12">
                                 <ol class="breadcrumb p-0 mb-0">
                                     <li class="breadcrumb-item"><a href="index.html"><i class="bx bx-home-alt"></i></a>
@@ -51,7 +63,7 @@ td {
                 <!-- formulaire -->
                 <section class="simple-validation">
                     <div class="row">
-                        <div id="message" class="col-12"></div>
+                        <div id="message" class="col-12 d-flex justify-content-start"></div>
                         <div class="col-md-12">
                             <div class="card card-animated-border-top">
                                 <div class="card-header">
@@ -81,7 +93,7 @@ td {
                                                     <div class="form-group">
                                                         <select class="select2 form-control" id="promotions"
                                                             data-id="<?php echo $idPromotion ?>">
-                                                            <option value="" disabled selected>Selectioner une Promotion
+                                                            <option value="" disabled>Selectioner une Promotion
                                                             </option>
 
                                                         </select>
@@ -169,15 +181,15 @@ td {
                                                     <div class="form-group">
                                                         <select class=" form-control champ" id="enseignants"
                                                             name="enseignants">
-                                                            <option value="" disabled selected>Sélectionner un
+                                                            <option value="" disabled>Sélectionner un
                                                                 enseignant</option>
                                                             <?php foreach ($enseignants as $enseignant): ?>
-                                                            <option value="<?php echo $enseignant->enseignant_id ?>">
-                                                                <?php echo  strtoupper(
-                                                                        $enseignant->enseignant_nom . "  "
-                                                                            . $enseignant->enseignant_prenom . "("
-                                                                            . $enseignant->enseignant_telephone . ")"
-                                                                    )
+                                                            <option value="<?php echo $enseignant->enseignant_id ?>"
+                                                                class=" text-capitalize">
+                                                                <?php echo
+                                                                    $enseignant->enseignant_nom . " "
+                                                                        . $enseignant->enseignant_prenom
+
                                                                     ?>
                                                             </option>
                                                             <?php endforeach ?>

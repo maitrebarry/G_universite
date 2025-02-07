@@ -122,10 +122,12 @@ function ajouterFiliere(
   const nomFiliere = document.getElementById("nomFiliere").value;
   const sigleFiliere = document.getElementById("sigleFiliere").value;
   const idFiliere = $("#nomFiliere").data("id");
+  const idDepartement = $("#idDepartement").val();
   filiere = {
     nomFiliere: nomFiliere,
     sigleFiliere: sigleFiliere,
     idFiliere: idFiliere,
+    idDepartement: idDepartement,
   };
 
   // Semestres Ues Modules
@@ -357,4 +359,51 @@ function validateForm() {
 
   // Activation ou désactivation du bouton
   $("#btnEnregistrer").prop("disabled", !isValid);
+}
+
+// imprimer2 pour faire une impression
+function imprimer2(nomFiliere, html = null) {
+  $("#loader").removeClass("d-none");
+  $("#loader").addClass("d-flex");
+  if (html == null) {
+    html = document.getElementById("semestresTable");
+  }
+
+  html2pdf()
+    .from(html)
+    .set({
+      margin: [5, 5, 15, 5],
+      filename: nomFiliere,
+      html2canvas: {
+        scale: 2,
+      },
+      jsPDF: {
+        unit: "mm",
+        format: "a4",
+        orientation: "landscape",
+      },
+    })
+    .save()
+    .then(() => {
+      $("#loader").removeClass("d-flex");
+      $("#loader").addClass("d-none");
+    });
+}
+
+function imprimerFiliere(idFiliere, nomFiliere = "filiere") {
+  // Debut de l'envoi des données avec Ajax
+  $.ajax({
+    method: "POST",
+    url: ROOT + "/apercu_filiere/" + idFiliere,
+    data: {
+      action: "print",
+    },
+    success: function (response) {
+      imprimer2(nomFiliere, response);
+    },
+    error: function (error) {
+      console.log(error.status);
+    },
+  });
+  // Fin de l'envoi des données avec Ajax
 }
