@@ -1,7 +1,6 @@
-function imprimerEdtIndi(nomEdt = "edtIndividuel") {
+function imprimerEdtIndi(nomEdt = "edtIndividuel", html = null) {
   $("#loader").removeClass("d-none").addClass("d-flex");
-
-  let html = document.getElementById("edtIndi");
+  if (html == null) html = document.getElementById("edtIndi");
 
   // Masquer les éléments avec la classe "no-print"
   $(".no-print").hide();
@@ -34,47 +33,38 @@ function imprimerEdtIndi(nomEdt = "edtIndividuel") {
     });
 }
 
-function imprimerEdt(id, dateDebut, dateFin, nomEdt = "edtIndividuel") {
-    $("#loader").removeClass("d-none").addClass("d-flex");
+function imprimerEdt(id, nomEdt = "edtIndividuel") {
+  $("#loader").removeClass("d-none").addClass("d-flex");
 
-    // Debugging: afficher les paramètres envoyés
-    console.log("Envoi de la requête AJAX avec les paramètres suivants:");
-    console.log("ID:", id);
-    console.log("Date début:", dateDebut);
-    console.log("Date fin:", dateFin);
-    console.log("Nom EDT:", nomEdt);
+  // Debugging: afficher les paramètres envoyés
+  // console.log("Envoi de la requête AJAX avec les paramètres suivants:");
+  // console.log("ID:", id);
+  // console.log("Date début:", dateDebut);
+  // console.log("Date fin:", dateFin);
+  // console.log("Nom EDT:", nomEdt);
 
-    // Envoi de la requête AJAX
-    $.ajax({
-        method: "POST",
-        url: `${ROOT}/Enseignants/imprimerplusieursEDT_individuel`,
-        data: {
-            action: "print",
-            ids: JSON.stringify([id]), // Convertir le tableau en chaîne JSON
-            date_debut: dateDebut,
-            date_fin: dateFin,
-            search: "inachevé"
-        },
-        dataType: "json",
-        success: function (response) {
-            console.log("Réponse AJAX:", response); // Debugging: afficher la réponse
+  // Envoi de la requête AJAX
+  $.ajax({
+    method: "POST",
+    url:
+      "http://localhost/G_universite/public/Enseignants/listeEDT_individuel/" +
+      id,
+    data: {
+      action: "print",
+      id: id, // Convertir le tableau en chaîne JSON
+    },
 
-            if (response.html) {
-                let tempDiv = document.createElement("div");
-                tempDiv.innerHTML = response.html;
-                document.body.appendChild(tempDiv);
-                imprimerEdtIndi(nomEdt);
-                document.body.removeChild(tempDiv);
-            } else {
-                console.error("Erreur: Aucun emploi du temps trouvé.");
-            }
-            $("#loader").removeClass("d-flex").addClass("d-none");
-        },
-        error: function (error) {
-            console.error("Erreur AJAX:", error); // Debugging: afficher l'erreur AJAX
-            $("#loader").removeClass("d-flex").addClass("d-none");
-        }
-    });
+    success: function (response) {
+      console.log(response); // Debugging: afficher la réponse
+
+      imprimerEdtIndi(nomEdt, response);
+      document.body.removeChild(tempDiv);
+    },
+    error: function (error) {
+      console.log("Erreur AJAX:"); // Debugging: afficher l'erreur AJAX
+      $("#loader").removeClass("d-flex").addClass("d-none");
+    },
+  });
 }
 
 // function imprimerEdtIndi(nomEdt = "edtIndividuel") {
@@ -115,4 +105,3 @@ function imprimerEdt(id, dateDebut, dateFin, nomEdt = "edtIndividuel") {
 //             $("#loader").removeClass("d-flex").addClass("d-none");
 //         });
 // }
-

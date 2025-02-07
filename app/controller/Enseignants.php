@@ -168,7 +168,7 @@ class Enseignants extends Controller
         $perso->redirect('Enseignants/liste_enseignant');
     }
 
-    //gestion d'edt individuel
+    // gestion d'edt individuel
     public function listeEDT_individuel($id, $date_debut = null, $date_fin = null)
     {
         $model = new Enseignant();
@@ -233,7 +233,22 @@ class Enseignants extends Controller
                 $heures_supp = $heures_totales;
             }
         }
-
+        if(isset($_POST['action'])){
+            // Affichage de la vue
+                $this->view("plusierlisteEDT_individuel", [
+                    "enseignant" => $enseignant,
+                    "emplois_du_temps" => $emplois_du_temps,
+                    "heures_totales" => $heures_totales,
+                    "heures_dues" => $heures_dues,
+                    "heures_supp" => $heures_supp,
+                    "semestres_promotions" => $semestres_promotions,
+                    "date_debut" => $date_debut,
+                    "date_fin" => $date_fin,
+                    "errors" => $errors,
+                    "status" => $status
+                ]);
+                return;
+        }
         // Affichage de la vue
         $this->view("listeEDT_individuel", [
             "enseignant" => $enseignant,
@@ -351,49 +366,49 @@ class Enseignants extends Controller
 //     ]);
 // }
 
- public function imprimerplusieursEDT_individuel()
-{
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (!isset($_POST['ids']) || !isset($_POST['search'])) {
-            header('Content-Type: application/json');
-            echo json_encode(["error" => "Paramètres manquants"]);
-            exit;
-        }
+//  public function imprimerplusieursEDT_individuel()
+// {
+//     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+//         if (!isset($_POST['ids']) || !isset($_POST['search'])) {
+//             header('Content-Type: application/json');
+//             echo json_encode(["error" => "Paramètres manquants"]);
+//             exit;
+//         }
 
-        // Décoder le tableau JSON d'enseignants
-        $ids = json_decode($_POST['ids'], true);
-        $search = $_POST['search'];
+//         // Décoder le tableau JSON d'enseignants
+//         $ids = json_decode($_POST['ids'], true);
+//         $search = $_POST['search'];
 
-        // Vérifier si la liste n'est pas vide
-        if (empty($ids)) {
-            header('Content-Type: application/json');
-            echo json_encode(["error" => "Aucun enseignant sélectionné."]);
-            exit;
-        }
+//         // Vérifier si la liste n'est pas vide
+//         if (empty($ids)) {
+//             header('Content-Type: application/json');
+//             echo json_encode(["error" => "Aucun enseignant sélectionné."]);
+//             exit;
+//         }
 
-        $resultats = [];
+//         $resultats = [];
 
-        foreach ($ids as $id) {
-            ob_start();
-            $this->listeEDT_individuel($id, null, null, $search);
-            $resultat = ob_get_clean();
+//         foreach ($ids as $id) {
+//             ob_start();
+//             $this->listeEDT_individuel($id, null, null, $search);
+//             $resultat = ob_get_clean();
 
-            if (!empty($resultat)) {
-                $resultats[$id] = $resultat;
-            }
-        }
+//             if (!empty($resultat)) {
+//                 $resultats[$id] = $resultat;
+//             }
+//         }
 
-        if (!empty($resultats)) {
-            header('Content-Type: application/json');
-            echo json_encode(["html" => implode('', $resultats)]);
-            exit;
-        }
-    }
+//         if (!empty($resultats)) {
+//             header('Content-Type: application/json');
+//             echo json_encode(["html" => implode('', $resultats)]);
+//             exit;
+//         }
+//     }
 
-    header('Content-Type: application/json');
-    echo json_encode(["error" => "Aucun emploi du temps trouvé pour ces enseignants."]);
-    exit;
-}
+//     header('Content-Type: application/json');
+//     echo json_encode(["error" => "Aucun emploi du temps trouvé pour ces enseignants."]);
+//     exit;
+// }
 
 
 

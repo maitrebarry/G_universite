@@ -239,142 +239,142 @@ class Enseignant extends Model
     }
 
 
-    // public function getEmploiDuTempsByEnseignant($id, $date_debut, $date_fin, $search = 'inachevé')
-    // {
-    //     $query = "
-    //     SELECT 
-    //         edt.id_edt, edt.date_creation, edt.date_debut, edt.date_fin, edt.heure_total, edt.statut,
-    //         ue_module.id_ue_module, ue_module.id_ue, ue_module.id_module, ue_module.code_module, ue_module.coeficient, ue_module.cm, ue_module.td, ue_module.tp, ue_module.tpe,
-    //         module.nom_module, module.sigle_module,
-    //         salle.nom_salle, salle.capacite_salle,
-    //         filiere.nom_filiere, filiere.sigle_filiere,
-    //         promotion.id_promotion, promotion.annee_universitaire, promotion.statut AS promotion_statut, promotion.id_filiere, promotion.id_parcours,
-    //         semestre.nom_semestre, semestre.sigle_semestre,
-    //         enseignants.enseignant_nom, enseignants.enseignant_prenom, enseignants.enseignant_date_naissance, enseignants.enseignant_telephone, 
-    //         enseignants.enseignant_diplome, enseignants.enseignant_email, enseignants.enseignant_statut,
-    //         CASE 
-    //             WHEN enseignants.id_grade IS NULL AND enseignants.enseignant_statut = 'NON_PERMANANT' AND enseignants.enseignant_diplome LIKE '%master%' THEN 'Assistant'
-    //             WHEN enseignants.id_grade IS NULL AND enseignants.enseignant_statut = 'NON_PERMANANT' AND enseignants.enseignant_diplome LIKE '%doctorat%' THEN 'Maître Assistant'
-    //             ELSE grade.nom_grade 
-    //         END AS nom_grade,
-    //         CASE 
-    //             WHEN enseignants.id_grade IS NULL AND enseignants.enseignant_statut = 'NON_PERMANANT' AND enseignants.enseignant_diplome LIKE '%master%' THEN 0
-    //             WHEN enseignants.id_grade IS NULL AND enseignants.enseignant_statut = 'NON_PERMANANT' AND enseignants.enseignant_diplome LIKE '%doctorat%' THEN 0
-    //             ELSE grade.heures_dues 
-    //         END AS heures_dues
-    //     FROM 
-    //         edt
-    //     LEFT JOIN 
-    //         ue_module ON edt.id_module = ue_module.id_ue_module
-    //     LEFT JOIN 
-    //         module ON ue_module.id_module = module.id_module
-    //     LEFT JOIN 
-    //         salle ON edt.id_salle = salle.id_salle
-    //     LEFT JOIN 
-    //         filiere ON edt.id_filiere = filiere.id_filiere
-    //     LEFT JOIN 
-    //         promotion ON edt.id_promotion = promotion.id_promotion
-    //     LEFT JOIN 
-    //         parcours ON promotion.id_parcours = parcours.id_parcours
-    //     LEFT JOIN 
-    //         semestre ON parcours.id_semestre = semestre.id_semestre
-    //     LEFT JOIN 
-    //         enseignants ON edt.id_enseignant = enseignants.enseignant_id
-    //     LEFT JOIN 
-    //         grade ON enseignants.id_grade = grade.id_grade
-    //     LEFT JOIN 
-    //         periode ON edt.id_periode = periode.id_periode
-    //     WHERE 
-    //         edt.id_enseignant = :id AND 
-    //         edt.date_debut >= :date_debut AND 
-    //         edt.date_fin <= :date_fin
-    // ";
-    //     if ($search == 'achevé') {
-    //         $query .= " AND periode.status = 'achevé'";
-    //     } else {
-    //         $query .= " AND (edt.statut = 1 OR periode.status = 'inachevé')";
-    //     }
-    //     $query .= " ORDER BY edt.date_debut ASC";
-    //     $params = [
-    //         "id" => $id,
-    //         "date_debut" => $date_debut,
-    //         "date_fin" => $date_fin
-    //     ];
-    //     return $this->select_data_table_join_where($query, $params);
-    // }
-
-
-
-
     public function getEmploiDuTempsByEnseignant($id, $date_debut, $date_fin, $search = 'inachevé')
-{
-    echo "ID Enseignant: $id<br>";
-    echo "Date début: $date_debut, Date fin: $date_fin<br>";
-    echo "Statut de recherche: $search<br>";
-
-    $query = "
-    SELECT 
-        edt.id_edt, edt.date_creation, edt.date_debut, edt.date_fin, edt.heure_total, edt.statut,
-        ue_module.id_ue_module, ue_module.id_ue, ue_module.id_module, ue_module.code_module, ue_module.coeficient, ue_module.cm, ue_module.td, ue_module.tp, ue_module.tpe,
-        module.nom_module, module.sigle_module,
-        salle.nom_salle, salle.capacite_salle,
-        filiere.nom_filiere, filiere.sigle_filiere,
-        promotion.id_promotion, promotion.annee_universitaire, promotion.statut AS promotion_statut, promotion.id_filiere, promotion.id_parcours,
-        semestre.nom_semestre, semestre.sigle_semestre,
-        enseignants.enseignant_nom, enseignants.enseignant_prenom, enseignants.enseignant_date_naissance, enseignants.enseignant_telephone, 
-        enseignants.enseignant_diplome, enseignants.enseignant_email, enseignants.enseignant_statut,
-        CASE 
-            WHEN enseignants.id_grade IS NULL AND enseignants.enseignant_statut = 'NON_PERMANANT' AND enseignants.enseignant_diplome LIKE '%master%' THEN 'Assistant'
-            WHEN enseignants.id_grade IS NULL AND enseignants.enseignant_statut = 'NON_PERMANANT' AND enseignants.enseignant_diplome LIKE '%doctorat%' THEN 'Maître Assistant'
-            ELSE grade.nom_grade 
-        END AS nom_grade,
-        CASE 
-            WHEN enseignants.id_grade IS NULL AND enseignants.enseignant_statut = 'NON_PERMANANT' AND enseignants.enseignant_diplome LIKE '%master%' THEN 0
-            WHEN enseignants.id_grade IS NULL AND enseignants.enseignant_statut = 'NON_PERMANANT' AND enseignants.enseignant_diplome LIKE '%doctorat%' THEN 0
-            ELSE grade.heures_dues 
-        END AS heures_dues
-    FROM 
-        edt
-    LEFT JOIN 
-        ue_module ON edt.id_module = ue_module.id_ue_module
-    LEFT JOIN 
-        module ON ue_module.id_module = module.id_module
-    LEFT JOIN 
-        salle ON edt.id_salle = salle.id_salle
-    LEFT JOIN 
-        filiere ON edt.id_filiere = filiere.id_filiere
-    LEFT JOIN 
-        promotion ON edt.id_promotion = promotion.id_promotion
-    LEFT JOIN 
-        parcours ON promotion.id_parcours = parcours.id_parcours
-    LEFT JOIN 
-        semestre ON parcours.id_semestre = semestre.id_semestre
-    LEFT JOIN 
-        enseignants ON edt.id_enseignant = enseignants.enseignant_id
-    LEFT JOIN 
-        grade ON enseignants.id_grade = grade.id_grade
-    LEFT JOIN 
-        periode ON edt.id_periode = periode.id_periode
-    WHERE 
-        edt.id_enseignant = :id AND 
-        edt.date_debut >= :date_debut AND 
-        edt.date_fin <= :date_fin
+    {
+        $query = "
+        SELECT 
+            edt.id_edt, edt.date_creation, edt.date_debut, edt.date_fin, edt.heure_total, edt.statut,
+            ue_module.id_ue_module, ue_module.id_ue, ue_module.id_module, ue_module.code_module, ue_module.coeficient, ue_module.cm, ue_module.td, ue_module.tp, ue_module.tpe,
+            module.nom_module, module.sigle_module,
+            salle.nom_salle, salle.capacite_salle,
+            filiere.nom_filiere, filiere.sigle_filiere,
+            promotion.id_promotion, promotion.annee_universitaire, promotion.statut AS promotion_statut, promotion.id_filiere, promotion.id_parcours,
+            semestre.nom_semestre, semestre.sigle_semestre,
+            enseignants.enseignant_nom, enseignants.enseignant_prenom, enseignants.enseignant_date_naissance, enseignants.enseignant_telephone, 
+            enseignants.enseignant_diplome, enseignants.enseignant_email, enseignants.enseignant_statut,
+            CASE 
+                WHEN enseignants.id_grade IS NULL AND enseignants.enseignant_statut = 'NON_PERMANANT' AND enseignants.enseignant_diplome LIKE '%master%' THEN 'Assistant'
+                WHEN enseignants.id_grade IS NULL AND enseignants.enseignant_statut = 'NON_PERMANANT' AND enseignants.enseignant_diplome LIKE '%doctorat%' THEN 'Maître Assistant'
+                ELSE grade.nom_grade 
+            END AS nom_grade,
+            CASE 
+                WHEN enseignants.id_grade IS NULL AND enseignants.enseignant_statut = 'NON_PERMANANT' AND enseignants.enseignant_diplome LIKE '%master%' THEN 0
+                WHEN enseignants.id_grade IS NULL AND enseignants.enseignant_statut = 'NON_PERMANANT' AND enseignants.enseignant_diplome LIKE '%doctorat%' THEN 0
+                ELSE grade.heures_dues 
+            END AS heures_dues
+        FROM 
+            edt
+        LEFT JOIN 
+            ue_module ON edt.id_module = ue_module.id_ue_module
+        LEFT JOIN 
+            module ON ue_module.id_module = module.id_module
+        LEFT JOIN 
+            salle ON edt.id_salle = salle.id_salle
+        LEFT JOIN 
+            filiere ON edt.id_filiere = filiere.id_filiere
+        LEFT JOIN 
+            promotion ON edt.id_promotion = promotion.id_promotion
+        LEFT JOIN 
+            parcours ON promotion.id_parcours = parcours.id_parcours
+        LEFT JOIN 
+            semestre ON parcours.id_semestre = semestre.id_semestre
+        LEFT JOIN 
+            enseignants ON edt.id_enseignant = enseignants.enseignant_id
+        LEFT JOIN 
+            grade ON enseignants.id_grade = grade.id_grade
+        LEFT JOIN 
+            periode ON edt.id_periode = periode.id_periode
+        WHERE 
+            edt.id_enseignant = :id AND 
+            edt.date_debut >= :date_debut AND 
+            edt.date_fin <= :date_fin
     ";
-    if ($search == 'achevé') {
-        $query .= " AND periode.status = 'achevé'";
-    } else {
-        $query .= " AND (edt.statut = 1 OR periode.status = 'inachevé')";
+        if ($search == 'achevé') {
+            $query .= " AND periode.status = 'achevé'";
+        } else {
+            $query .= " AND (edt.statut = 1 OR periode.status = 'inachevé')";
+        }
+        $query .= " ORDER BY edt.date_debut ASC";
+        $params = [
+            "id" => $id,
+            "date_debut" => $date_debut,
+            "date_fin" => $date_fin
+        ];
+        return $this->select_data_table_join_where($query, $params);
     }
-    $query .= " ORDER BY edt.date_debut ASC";
-    $params = [
-        "id" => $id,
-        "date_debut" => $date_debut,
-        "date_fin" => $date_fin
-    ];
 
-    var_dump($params); // Afficher les paramètres de la requête
 
-    return $this->select_data_table_join_where($query, $params);
-}
+
+
+//     public function getEmploiDuTempsByEnseignant($id, $date_debut, $date_fin, $search = 'inachevé')
+// {
+//     echo "ID Enseignant: $id<br>";
+//     echo "Date début: $date_debut, Date fin: $date_fin<br>";
+//     echo "Statut de recherche: $search<br>";
+
+//     $query = "
+//     SELECT 
+//         edt.id_edt, edt.date_creation, edt.date_debut, edt.date_fin, edt.heure_total, edt.statut,
+//         ue_module.id_ue_module, ue_module.id_ue, ue_module.id_module, ue_module.code_module, ue_module.coeficient, ue_module.cm, ue_module.td, ue_module.tp, ue_module.tpe,
+//         module.nom_module, module.sigle_module,
+//         salle.nom_salle, salle.capacite_salle,
+//         filiere.nom_filiere, filiere.sigle_filiere,
+//         promotion.id_promotion, promotion.annee_universitaire, promotion.statut AS promotion_statut, promotion.id_filiere, promotion.id_parcours,
+//         semestre.nom_semestre, semestre.sigle_semestre,
+//         enseignants.enseignant_nom, enseignants.enseignant_prenom, enseignants.enseignant_date_naissance, enseignants.enseignant_telephone, 
+//         enseignants.enseignant_diplome, enseignants.enseignant_email, enseignants.enseignant_statut,
+//         CASE 
+//             WHEN enseignants.id_grade IS NULL AND enseignants.enseignant_statut = 'NON_PERMANANT' AND enseignants.enseignant_diplome LIKE '%master%' THEN 'Assistant'
+//             WHEN enseignants.id_grade IS NULL AND enseignants.enseignant_statut = 'NON_PERMANANT' AND enseignants.enseignant_diplome LIKE '%doctorat%' THEN 'Maître Assistant'
+//             ELSE grade.nom_grade 
+//         END AS nom_grade,
+//         CASE 
+//             WHEN enseignants.id_grade IS NULL AND enseignants.enseignant_statut = 'NON_PERMANANT' AND enseignants.enseignant_diplome LIKE '%master%' THEN 0
+//             WHEN enseignants.id_grade IS NULL AND enseignants.enseignant_statut = 'NON_PERMANANT' AND enseignants.enseignant_diplome LIKE '%doctorat%' THEN 0
+//             ELSE grade.heures_dues 
+//         END AS heures_dues
+//     FROM 
+//         edt
+//     LEFT JOIN 
+//         ue_module ON edt.id_module = ue_module.id_ue_module
+//     LEFT JOIN 
+//         module ON ue_module.id_module = module.id_module
+//     LEFT JOIN 
+//         salle ON edt.id_salle = salle.id_salle
+//     LEFT JOIN 
+//         filiere ON edt.id_filiere = filiere.id_filiere
+//     LEFT JOIN 
+//         promotion ON edt.id_promotion = promotion.id_promotion
+//     LEFT JOIN 
+//         parcours ON promotion.id_parcours = parcours.id_parcours
+//     LEFT JOIN 
+//         semestre ON parcours.id_semestre = semestre.id_semestre
+//     LEFT JOIN 
+//         enseignants ON edt.id_enseignant = enseignants.enseignant_id
+//     LEFT JOIN 
+//         grade ON enseignants.id_grade = grade.id_grade
+//     LEFT JOIN 
+//         periode ON edt.id_periode = periode.id_periode
+//     WHERE 
+//         edt.id_enseignant = :id AND 
+//         edt.date_debut >= :date_debut AND 
+//         edt.date_fin <= :date_fin
+//     ";
+//     if ($search == 'achevé') {
+//         $query .= " AND periode.status = 'achevé'";
+//     } else {
+//         $query .= " AND (edt.statut = 1 OR periode.status = 'inachevé')";
+//     }
+//     $query .= " ORDER BY edt.date_debut ASC";
+//     $params = [
+//         "id" => $id,
+//         "date_debut" => $date_debut,
+//         "date_fin" => $date_fin
+//     ];
+
+//     var_dump($params); // Afficher les paramètres de la requête
+
+//     return $this->select_data_table_join_where($query, $params);
+// }
 
 }
