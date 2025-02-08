@@ -1,5 +1,5 @@
 let semestreCount = 0;
-const ROOT = "HTTP://localhost/G_universite/public/Filieres";
+const ROOT_FILIERE = "HTTP://localhost/G_universite/public/Filieres";
 // Fonction pour ajouter un semestre dès qu'il est sélectionné
 function addSemestre() {
   const semestre = document.getElementById("idSemestre");
@@ -18,7 +18,7 @@ function addSemestre() {
   // Créer le semestre sélectionné dans le tableau
   $.ajax({
     method: "POST",
-    url: ROOT + "/post_ajouter_Filiere",
+    url: ROOT_FILIERE + "/post_ajouter_Filiere",
     data: {
       action: "semestre",
       semestreId: semestreId,
@@ -39,7 +39,7 @@ function addUE(semestreId) {
 
   $.ajax({
     method: "POST",
-    url: ROOT + "/post_ajouter_Filiere",
+    url: ROOT_FILIERE + "/post_ajouter_Filiere",
     data: {
       action: "ue",
       semestreId: semestreId,
@@ -61,7 +61,7 @@ function addModule(semestreId, button) {
 
   $.ajax({
     method: "POST",
-    url: ROOT + "/post_ajouter_filiere",
+    url: ROOT_FILIERE + "/post_ajouter_filiere",
     data: {
       action: "module",
       semestreId: semestreId,
@@ -107,7 +107,7 @@ function calculerHeureModule(li, credit) {
 
 // Sauvegarder la filière et afficher l'information
 function ajouterFiliere(
-  url = ROOT + "/ajouter_Filiere",
+  url = ROOT_FILIERE + "/ajouter_Filiere",
   action = "ajouter_filiere"
 ) {
   //les différents données à recuperer
@@ -242,7 +242,7 @@ function delElementFiliere(button, id = null, action = "ue_module") {
     if (result.value) {
       $.ajax({
         method: "POST",
-        url: ROOT + "/supprimer_element_filiere",
+        url: ROOT_FILIERE + "/supprimer_element_filiere",
         data: {
           action: action,
           id: id,
@@ -394,7 +394,7 @@ function imprimerFiliere(idFiliere, nomFiliere = "filiere") {
   // Debut de l'envoi des données avec Ajax
   $.ajax({
     method: "POST",
-    url: ROOT + "/apercu_filiere/" + idFiliere,
+    url: ROOT_FILIERE + "/apercu_filiere/" + idFiliere,
     data: {
       action: "print",
     },

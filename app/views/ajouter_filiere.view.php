@@ -109,14 +109,14 @@ body {
                                                     data-toggle="modal" data-target="#menuDepartement"
                                                     id="departement">Departement</button>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-sm-6 col-lg-4">
                                                 <label for="nomFiliere" class="form-label">Nom de la Filière</label>
                                                 <input type="text" id="nomFiliere" class="form-control"
                                                     placeholder="ex : Génie Informatique" maxlength="101">
                                                 <div class="char-count" id="nomFiliereCount">0/100</div>
                                                 <div class="error" id="nomFiliereError"></div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-sm-6 col-lg-4">
                                                 <label for="sigleFiliere" class="form-label">Code de la Filière</label>
                                                 <input type="text" id="sigleFiliere" class="form-control"
                                                     placeholder="ex : GI" maxlength="50">

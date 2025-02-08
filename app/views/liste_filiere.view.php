@@ -78,73 +78,73 @@
                                                 </thead>
                                                 <tbody>
                                                     <?php foreach ($filieres as $filiere): ?>
-                                                    <tr>
-                                                        <td>
-                                                            <a href="<?= ROOT ?>/Filieres/liste_promotion/<?php echo $filiere->id_filiere ?>"
-                                                                class=" d-block">
-                                                                <?php echo strtoupper($filiere->nom_filiere) ?>
-                                                            </a>
-                                                        </td>
+                                                        <tr>
+                                                            <td>
+                                                                <a href="<?= ROOT ?>/Filieres/liste_promotion/<?php echo $filiere->id_filiere ?>"
+                                                                    class=" d-block">
+                                                                    <?php echo strtoupper($filiere->nom_filiere) ?>
+                                                                </a>
+                                                            </td>
 
-                                                        <td>
-                                                            <a href="#" class="imprimerFiliere text-dark"
-                                                                data-id="<?php echo $filiere->id_filiere ?>"
-                                                                data-nom="<?php echo 'Maquette-' . $filiere->sigle_filiere ?>">
-                                                                <?php echo strtoupper($filiere->sigle_filiere) ?>
-                                                            </a>
-                                                        </td>
-                                                        <td> <span class=" badge badge-light-warning">Actif</span>
-                                                        </td>
+                                                            <td>
+                                                                <a href="#" class="imprimerFiliere text-dark"
+                                                                    data-id="<?php echo $filiere->id_filiere ?>"
+                                                                    data-nom="<?php echo 'Maquette-' . $filiere->sigle_filiere ?>">
+                                                                    <?php echo strtoupper($filiere->sigle_filiere) ?>
+                                                                </a>
+                                                            </td>
+                                                            <td> <span class=" badge badge-light-warning">Actif</span>
+                                                            </td>
 
 
-                                                        <td class="text-center dt-no-sorting">
-                                                            <div class="dropdown">
-                                                                <span
-                                                                    class="bx bx-dots-horizontal-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer"
-                                                                    data-toggle="dropdown" aria-haspopup="true"
-                                                                    aria-expanded="false" role="menu">
-                                                                </span>
-                                                                <div class="dropdown-menu dropdown-menu-right">
-                                                                    <a class="dropdown-item"
-                                                                        href="<?= ROOT ?>/Filieres/apercu_Filiere/<?php echo $filiere->id_filiere ?>">
-                                                                        <i class="bx bx-show mr-1"></i>Aperçu
-                                                                    </a>
-                                                                    <a class="dropdown-item editerFiliere"
-                                                                        data-toggle="modal" data-target="#menuEditer"
-                                                                        href="#"
-                                                                        data-id="<?php echo $filiere->id_filiere ?>"><i
-                                                                            class="bx bx-edit-alt mr-1"></i> Editer</a>
+                                                            <td class="text-center dt-no-sorting">
+                                                                <div class="dropdown">
+                                                                    <span
+                                                                        class="bx bx-dots-horizontal-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer"
+                                                                        data-toggle="dropdown" aria-haspopup="true"
+                                                                        aria-expanded="false" role="menu">
+                                                                    </span>
+                                                                    <div class="dropdown-menu dropdown-menu-right">
+                                                                        <a class="dropdown-item"
+                                                                            href="<?= ROOT ?>/Filieres/apercu_Filiere/<?php echo $filiere->id_filiere ?>">
+                                                                            <i class="bx bx-show mr-1"></i>Aperçu
+                                                                        </a>
+                                                                        <a class="dropdown-item editerFiliere"
+                                                                            data-toggle="modal" data-target="#menuEditer"
+                                                                            href="#"
+                                                                            data-id="<?php echo $filiere->id_filiere ?>"><i
+                                                                                class="bx bx-edit-alt mr-1"></i> Editer</a>
 
-                                                                    <a class="dropdown-item imprimerFiliere" href="#"
-                                                                        data-nom="<?php echo 'Maquette-' . strtoupper($filiere->sigle_filiere); ?>"
-                                                                        data-id="<?php echo $filiere->id_filiere ?>">
-                                                                        <i class=" bx bx-printer mr-1"></i>Imprimer
-                                                                    </a>
-                                                                    <a class="dropdown-item" href="#"><i
-                                                                            class="bx bx-trash mr-1"></i> Supprimer</a>
-                                                                    <div class=" dropdown-divider"></div>
-                                                                    <a class="dropdown-item ajouterPromotion"
-                                                                        data-toggle="modal" data-target="#menuPromotion"
-                                                                        href="#"
-                                                                        data-id="<?php echo $filiere->id_filiere ?>"
-                                                                        data-nom="<?php echo 'Maquette-' . $filiere->sigle_filiere ?>">
-                                                                        <i class="bx bx-plus mr-1"></i>Promotion
-                                                                    </a>
+                                                                        <a class="dropdown-item imprimerFiliere" href="#"
+                                                                            data-nom="<?php echo 'Maquette-' . strtoupper($filiere->sigle_filiere); ?>"
+                                                                            data-id="<?php echo $filiere->id_filiere ?>">
+                                                                            <i class=" bx bx-printer mr-1"></i>Imprimer
+                                                                        </a>
+                                                                        <a class="dropdown-item" href="#"><i
+                                                                                class="bx bx-trash mr-1"></i> Supprimer</a>
+                                                                        <div class=" dropdown-divider"></div>
+                                                                        <a class="dropdown-item ajouterPromotion"
+                                                                            data-toggle="modal" data-target="#menuPromotion"
+                                                                            href="#"
+                                                                            data-id="<?php echo $filiere->id_filiere ?>"
+                                                                            data-nom="<?php echo 'Maquette-' . $filiere->sigle_filiere ?>">
+                                                                            <i class="bx bx-plus mr-1"></i>Promotion
+                                                                        </a>
 
-                                                                    <a class="dropdown-item"
-                                                                        href="<?= ROOT ?>/Filieres/liste_promotion/<?php echo $filiere->id_filiere ?>">
-                                                                        <i class="bx bx-show mr-1"></i>Promotions
-                                                                    </a>
-                                                                    <div class=" dropdown-divider"></div>
-                                                                    <a class="dropdown-item "
-                                                                        href="<?= ROOT ?>/Emploi_du_temps/ajouter_EDT/<?php echo $filiere->id_filiere ?>">
-                                                                        <i class="bx bx-plus mr-1"></i>Edt
-                                                                    </a>
+                                                                        <a class="dropdown-item"
+                                                                            href="<?= ROOT ?>/Filieres/liste_promotion/<?php echo $filiere->id_filiere ?>">
+                                                                            <i class="bx bx-show mr-1"></i>Promotions
+                                                                        </a>
+                                                                        <div class=" dropdown-divider"></div>
+                                                                        <a class="dropdown-item "
+                                                                            href="<?= ROOT ?>/Emploi_du_temps/ajouter_EDT/<?php echo $filiere->id_filiere ?>">
+                                                                            <i class="bx bx-plus mr-1"></i>Edt
+                                                                        </a>
 
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
+                                                            </td>
+                                                        </tr>
                                                     <?php endforeach ?>
 
                                                 </tbody>
@@ -288,53 +288,53 @@
     <script src="<?= ROOT ?>/assets/mon_js/edt.js"></script>
 
     <script>
-    var infoFiliere = [];
-    $('.editerFiliere').click(function() {
-        $('#idFiliere').val($(this).data('id'))
-    })
-
-    $('#editButton').click(function() {
-        let idFiliere = $('#idFiliere').val();
-        $(this).attr("href", "<?= ROOT ?>/Filieres/editer_Filiere/" + idFiliere)
-    })
-
-    $('#addButton').click(function() {
-        let idFiliere = $('#idFiliere').val();
-        $(this).attr("href", "<?= ROOT ?>/Filieres/ajouter_element_filiere/" + idFiliere)
-    })
-
-    $('#delButton').click(function() {
-        let idFiliere = $('#idFiliere').val();
-        $(this).attr("href", "<?= ROOT ?>/Filieres/supprimer_element_filiere/" + idFiliere)
-    })
-
-    $('.ajouterPromotion').click(async function() {
-        let idFiliere = $(this).data("id");
-        $("#filiere").val(idFiliere);
-        $(".nomFiliere").html($(this).data("nom"));
-        infoFiliere = await infosFiliere(idFiliere);
-        semestresFiliere(infoFiliere);
-    })
-
-    $(".imprimerFiliere").click(function(event) {
-        event.preventDefault();
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth",
-        });
-        var element = $(this);
-
-        setTimeout(function() {
-            imprimerFiliere(element.data("id"), element.data("nom"));
-        }, 500);
-    });
-
-    $(document).ready(function() {
-        setDefaultAcademicYear();
-        $('#anneeUniversitaire').keyup(function(event) {
-            formatAcademicYear(event);
+        var infoFiliere = [];
+        $('.editerFiliere').click(function() {
+            $('#idFiliere').val($(this).data('id'))
         })
-    })
+
+        $('#editButton').click(function() {
+            let idFiliere = $('#idFiliere').val();
+            $(this).attr("href", "<?= ROOT ?>/Filieres/editer_Filiere/" + idFiliere)
+        })
+
+        $('#addButton').click(function() {
+            let idFiliere = $('#idFiliere').val();
+            $(this).attr("href", "<?= ROOT ?>/Filieres/ajouter_element_filiere/" + idFiliere)
+        })
+
+        $('#delButton').click(function() {
+            let idFiliere = $('#idFiliere').val();
+            $(this).attr("href", "<?= ROOT ?>/Filieres/supprimer_element_filiere/" + idFiliere)
+        })
+
+        $('.ajouterPromotion').click(async function() {
+            let idFiliere = $(this).data("id");
+            $("#filiere").val(idFiliere);
+            $(".nomFiliere").html($(this).data("nom"));
+            infoFiliere = await infosFiliere(idFiliere);
+            semestresFiliere(infoFiliere);
+        })
+
+        $(".imprimerFiliere").click(function(event) {
+            event.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth",
+            });
+            var element = $(this);
+
+            setTimeout(function() {
+                imprimerFiliere(element.data("id"), element.data("nom"));
+            }, 500);
+        });
+
+        $(document).ready(function() {
+            setDefaultAcademicYear();
+            $('#anneeUniversitaire').keyup(function(event) {
+                formatAcademicYear(event);
+            })
+        })
     </script>
 </body>
 <!-- END: Body-->

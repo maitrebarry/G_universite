@@ -1,4 +1,4 @@
-const ROOT = "HTTP://localhost/G_universite/public/Emploi_du_temps";
+const ROOT_EDT = "HTTP://localhost/G_universite/public/Emploi_du_temps";
 // Contantes pour les heures de l'edt
 const horaireEdt = {
   simple: {
@@ -95,12 +95,12 @@ function addHeure(horaireDebut, horaireFin, coursJour) {
       : "";
 
   newRow.innerHTML = `                         
-        <td>
+        <td style='min-width: 236px !important;'>
             <div class='row'>
-                <div class='col-sm-6'>
+                <div class='col-6'>
                     <input type='time' class='form-control horaireDebut'>
                 </div>
-                <div class='col-sm-6'>
+                <div class='col-6'>
                     <input type='time' class='form-control horaireFin'>
                 </div>
             </div>
@@ -309,7 +309,7 @@ async function infosFiliere(idFiliere, source = null) {
   try {
     response = await $.ajax({
       method: "POST",
-      url: ROOT + "/filiere_info",
+      url: ROOT_EDT + "/filiere_info",
       dataType: "json",
 
       data: {
@@ -344,7 +344,6 @@ function promotionsFiliere(infoFiliere, idPromotion = "") {
     promotionContainer.append(option);
   });
 }
-////////////////////////////////////////////////////////ppppppppppp
 
 // recuperer les semestres d'une filière à travers son id
 function semestresFiliere(infoFiliere) {
@@ -440,7 +439,7 @@ function infoModule(idModule, infoFiliere, makeEdt = true) {
 }
 
 // Sauvegarder les informations d'un emploi de temps
-function ajouterEdt(url = ROOT + "/ajouter_EDT", action = "ajouter_EDT") {
+function ajouterEdt(url = ROOT_EDT + "/ajouter_EDT", action = "ajouter_EDT") {
   //les différents données à recuperer
   let edt = {};
   let horaires = [];
@@ -539,7 +538,7 @@ function ajouterEdt(url = ROOT + "/ajouter_EDT", action = "ajouter_EDT") {
         });
       }
       if (response.includes("primary") && action == "editer_edt") {
-        window.location.href = ROOT + "/";
+        window.location.href = ROOT_EDT + "/";
       }
       // Réinitialiser après sauvegarde
 
@@ -560,7 +559,7 @@ function trierListeEdt(idFiliere, idPromotion) {
   // Debut de l'envoi des données avec Ajax
   $.ajax({
     method: "POST",
-    url: ROOT + "/trier_liste_edt",
+    url: ROOT_EDT + "/trier_liste_edt",
     data: {
       action: "trier_edt",
       idFiliere: idFiliere,
@@ -629,7 +628,7 @@ function imprimerEdt(idEdt, nomEdt = "edt") {
   // Debut de l'envoi des données avec Ajax
   $.ajax({
     method: "POST",
-    url: ROOT + "/apercu_EDT/" + idEdt,
+    url: ROOT_EDT + "/apercu_EDT/" + idEdt,
     data: {
       action: "print",
     },
@@ -721,7 +720,7 @@ function formatAcademicYear(event) {
 function getDefaultEnseignantAndSalleModule(idFiliere, idModule) {
   $.ajax({
     method: "POST",
-    url: ROOT + "/get_ancien_edt",
+    url: ROOT_EDT + "/get_ancien_edt",
     dataType: "json",
 
     data: {

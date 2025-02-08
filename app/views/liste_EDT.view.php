@@ -1,5 +1,11 @@
 <!-- inclusion du partie header -->
 <?php $this->view("Partials/header") ?>
+<style>
+    td {
+        padding: 0 !;
+        margin: 0 !important;
+    }
+</style>
 
 <body
     class="vertical-layout vertical-menu-modern boxicon-layout no-card-shadow 2-columns  navbar-sticky footer-static  "
@@ -87,12 +93,13 @@
 
 
                                             </div>
-                                            <a href="<?= ROOT ?>/Emploi_du_temps/ajouter_EDT" class="col-4 col-md-2"
-                                                id="nouveauEdt">
-                                                <button class="btn btn-primary" style="float:right;">
-                                                    <i class="bx bx-plus"></i>&nbsp; Nouveau
-                                                </button>
-                                            </a>
+                                            <div class="col-12 d-flex justify-content-end">
+                                                <a href="<?= ROOT ?>/Emploi_du_temps/ajouter_EDT" id="nouveauEdt">
+                                                    <button class="btn btn-primary" style="float:right;">
+                                                        <i class="bx bx-plus"></i>&nbsp; Nouveau
+                                                    </button>
+                                                </a>
+                                            </div>
                                         </div>
 
 

@@ -73,7 +73,7 @@ td {
                                     <div class="card-body">
                                         <form method="POST" class="form-horizontal" novalidate id="edtForm">
                                             <div class="row d-flex justify-content-around align-items-center">
-                                                <div class="col-sm-3">
+                                                <div class="col-6 col-lg-3">
                                                     <label class="form-label" for="single-select">Filiere</label>
                                                     <div class="form-group">
                                                         <select class="select2 form-control" id="filiere">
@@ -88,7 +88,7 @@ td {
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-3">
+                                                <div class="col-6 col-lg-3">
                                                     <label class="form-label" for="single-select">Promotion</label>
                                                     <div class="form-group">
                                                         <select class="select2 form-control" id="promotions"
@@ -99,7 +99,7 @@ td {
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-3">
+                                                <div class="col-6 col-lg-3">
                                                     <label class="form-label" for="single-select">Modules</label>
                                                     <div class="form-group">
                                                         <select class="select2 form-control champ" id="modules"
@@ -110,16 +110,16 @@ td {
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-3">
+                                                <div class="col-6 col-lg-3">
                                                     <button type="button" class="btn btn-primary" data-toggle="modal"
                                                         data-target="#menuConfig"><i class="bx bxs-cog"></i>
-                                                        Paramètrage</button>
+                                                        Modèle Edt</button>
                                                 </div>
                                             </div>
 
                                             <div class="row d-flex justify-content-between align-items-center mb-1 ">
                                                 <div
-                                                    class="col-4 row d-flex justify-content-between align-items-center">
+                                                    class="col-12 col-md-4 row d-flex justify-content-between align-items-center">
                                                     <div class=" col-12 m-0">
                                                         <!-- Bouton pour ajouter une nouvelle ligne -->
                                                         <i class="bx bx-plus btn btn-secondary" id="add-row"></i>
@@ -128,28 +128,28 @@ td {
                                                     </div>
 
                                                 </div>
-                                                <div class=" col-6 row d-none float-right" id="infoModule">
+                                                <div class=" col-12 col-md-8 row d-none float-right" id="infoModule">
                                                     <input type="hidden" id="vht" class="vht">
                                                     <!-- CM -->
-                                                    <div class='col-6 col-lg-3'>
+                                                    <div class='col-6 col-sm-3'>
                                                         <label class="d-block text-center">CM</label>
                                                         <input type='number' class='form-control text-center cm'
                                                             disabled>
                                                     </div>
                                                     <!-- TD -->
-                                                    <div class='col-6 col-lg-3'>
+                                                    <div class='col-6 col-sm-3'>
                                                         <label class="d-block text-center">TD</label>
                                                         <input type='number' class='form-control text-center td'
                                                             disabled>
                                                     </div>
                                                     <!-- TP -->
-                                                    <div class='col-6 col-lg-3'>
+                                                    <div class='col-6 col-sm-3'>
                                                         <label class="d-block text-center">TP</label>
                                                         <input type='number' class='form-control text-center tp'
                                                             disabled>
                                                     </div>
                                                     <!-- TPE -->
-                                                    <div class='col-6 col-lg-3'>
+                                                    <div class='col-6 col-sm-3'>
                                                         <label class="d-block text-center">TPE</label>
                                                         <input type='number' class='form-control text-center tpe'
                                                             disabled>
@@ -176,7 +176,7 @@ td {
                                                 </table>
                                             </div>
                                             <div class="row d-flex justify-content-between">
-                                                <div class="col-sm-3">
+                                                <div class="col-12 col-sm-4">
                                                     <label class="form-label" for="enseignants">ENSEIGNANT :</label>
                                                     <div class="form-group">
                                                         <select class=" form-control champ" id="enseignants"
@@ -197,7 +197,7 @@ td {
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-3">
+                                                <div class="col-12 col-sm-4">
                                                     <label class="form-label" for="single-select">SALE DE COURS</label>
                                                     <div class="form-group">
                                                         <select class="form-control champ" name="salles" id="salles">
@@ -211,7 +211,7 @@ td {
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-3 ">
+                                                <div class="col-12 col-sm-4 ">
                                                     <label class="form-label" for="dateDebut champ">Date de Debut
                                                         :</label>
                                                     <div class="form-group w-100 d-flex justify-content-end ">
