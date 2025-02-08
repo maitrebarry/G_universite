@@ -7,16 +7,16 @@
 
 ?>
 <style>
-input {
+    input {
 
-    padding: 8px;
-    font-size: 16px;
-    text-align: center;
-}
+        padding: 8px;
+        font-size: 16px;
+        text-align: center;
+    }
 
-td {
-    padding: 15px 5px !important;
-}
+    td {
+        padding: 15px 5px !important;
+    }
 </style>
 <!-- inclusion du partie header -->
 <?php $this->view("Partials/header") ?>
@@ -43,8 +43,8 @@ td {
         <div class="content-wrapper">
             <div class="content-header row">
                 <div class="content-header-left col-12 mb-2 mt-1">
-                    <div class="row breadcrumbs-top d-flex justify-content-between align-items-center">
-                        <div class="col-8">
+                    <div class="row breadcrumbs-top">
+                        <div class="col-12">
                             <h5 class="content-header-title float-left pr-1 mb-0">
                                 <?php
                                 echo (isset($_SESSION['nom_departement']))
@@ -56,26 +56,25 @@ td {
                                 <ol class="breadcrumb p-0 mb-0">
                                     <li class="breadcrumb-item"><a href="index.html"><i class="bx bx-home-alt"></i></a>
                                     </li>
-                                    <li class="breadcrumb-item"><a
-                                            href="<?php echo ROOT . '/Emploi_du_temps/' ?>">Gestion EDT</a>
+                                    <li class="breadcrumb-item"><a href="#">Gestion EDT</a>
                                     </li>
-                                    <li class="breadcrumb-item active">Aperçu
+                                    <li class="breadcrumb-item active">Liste
                                     </li>
                                 </ol>
                             </div>
                         </div>
-                        <div class="col-2 d-flex justify-content-end">
-                            <a type="button" class=" btn btn-primary"
-                                href="<?= ROOT ?>/Emploi_du_temps/editer_edt/<?php echo $infosEdt->edt->id_edt ?>"><i
-                                    class="bx bx-edit-alt mr-1"></i>
-                                Editer</a>
-                        </div>
-                        <div class="col-2">
-                            <button type="button" class=" btn btn-primary" id="print" data-nom="<?php echo $titre ?>"><i
-                                    class=" bx bx-printer"></i>
-                                Imprimer</button>
-                        </div>
                     </div>
+                </div>
+                <div class="mb-1 col-6  d-flex justify-content-end">
+                    <a type="button" class=" btn btn-primary"
+                        href="<?= ROOT ?>/Emploi_du_temps/editer_edt/<?php echo $infosEdt->edt->id_edt ?>"><i
+                            class="bx bx-edit-alt mr-1"></i>
+                        Editer</a>
+                </div>
+                <div class="mb-1 col-6 ">
+                    <button type="button" class=" btn btn-primary" id="print" data-nom="<?php echo $titre ?>"><i
+                            class=" bx bx-printer"></i>
+                        Imprimer</button>
                 </div>
             </div>
             <div class="content-body m-auto">
@@ -150,60 +149,60 @@ td {
 
                                         <div class=" w-100">
                                             <table id="table-extended-chechbox"
-                                                class="table table-striped table-bordered table-responsive-md">
+                                                class="table table-striped table-bordered table-responsive">
                                                 <thead>
                                                     <tr>
                                                         <th class="text-center">Horaire</th>
                                                         <?php foreach ($jours as $jour): ?>
-                                                        <th class="jour" data-id="<?php echo $jour->id_jour ?>">
-                                                            <?php echo strtoupper($jour->nom_jour) ?></th>
+                                                            <th class="jour" data-id="<?php echo $jour->id_jour ?>">
+                                                                <?php echo strtoupper($jour->nom_jour) ?></th>
                                                         <?php endforeach ?>
 
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <?php foreach ($horairesEdt as $horaire): ?>
-                                                    <tr>
-                                                        <td>
-                                                            <div class='row m-auto'>
-                                                                <div class='col-sm-6'>
-                                                                    <h6><?php echo substr($horaire->heure_debut, 0, 5) ?>
-                                                                    </h6>
+                                                        <tr>
+                                                            <td style='min-width: 150px !important;'>
+                                                                <div class='row m-auto'>
+                                                                    <div class='col-sm-6'>
+                                                                        <h6><?php echo substr($horaire->heure_debut, 0, 5) ?>
+                                                                        </h6>
+                                                                    </div>
+                                                                    <div class='col-sm-6'>
+                                                                        <h6><?php echo substr($horaire->heure_fin, 0, 5) ?>
+                                                                        </h6>
+                                                                    </div>
                                                                 </div>
-                                                                <div class='col-sm-6'>
-                                                                    <h6><?php echo substr($horaire->heure_fin, 0, 5) ?>
-                                                                    </h6>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <?php foreach ($horaire->taches as $tache): ?>
-                                                        <td>
-                                                            <?php if (strtoupper($tache->type_tache) != "X"): ?>
-                                                            <span class=" text-center d-block text-bold-6 00">
-                                                                <?php echo (strlen($infosEdt->module->nom_module) < 20) ? strtoupper($infosEdt->module->nom_module) : strtoupper($infosEdt->module->sigle_module) ?>
-                                                            </span>
-                                                            <span style="font-size: 11px;"
-                                                                class=" text-muted text-body text-center text-italic d-block">
-                                                                <?php echo strtoupper($tache->type_tache) ?>
-                                                            </span>
-                                                            <?php endif ?>
-                                                        </td>
-                                                        <?php endforeach ?>
-                                                    </tr>
+                                                            </td>
+                                                            <?php foreach ($horaire->taches as $tache): ?>
+                                                                <td>
+                                                                    <?php if (strtoupper($tache->type_tache) != "X"): ?>
+                                                                        <span class=" text-center d-block text-bold-6 00">
+                                                                            <?php echo (strlen($infosEdt->module->nom_module) < 20) ? strtoupper($infosEdt->module->nom_module) : strtoupper($infosEdt->module->sigle_module) ?>
+                                                                        </span>
+                                                                        <span style="font-size: 11px;"
+                                                                            class=" text-muted text-body text-center text-italic d-block">
+                                                                            <?php echo strtoupper($tache->type_tache) ?>
+                                                                        </span>
+                                                                    <?php endif ?>
+                                                                </td>
+                                                            <?php endforeach ?>
+                                                        </tr>
                                                     <?php endforeach ?>
                                                 </tbody>
 
                                             </table>
                                         </div>
                                         <?php if (strlen($infosEdt->module->nom_module) >= 20): ?>
-                                        <div class=" mt-1">
-                                            <h6>
-                                                <span
-                                                    class=" text-bold-700"><?php echo  strtoupper($infosEdt->module->sigle_module) ?></span>
-                                                <span> =
-                                                    <?php echo strtoupper($infosEdt->module->nom_module) ?></span>
-                                            </h6>
-                                        </div>
+                                            <div class=" mt-1">
+                                                <h6>
+                                                    <span
+                                                        class=" text-bold-700"><?php echo  strtoupper($infosEdt->module->sigle_module) ?></span>
+                                                    <span> =
+                                                        <?php echo strtoupper($infosEdt->module->nom_module) ?></span>
+                                                </h6>
+                                            </div>
                                         <?php endif ?>
                                         <div>
                                             <h6 class="text-bold-600">
@@ -270,14 +269,14 @@ td {
 <script src="<?= ROOT ?>/assets/mon_js/edt.js"></script>
 
 <script>
-$('#print').click(function() {
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-    });
-    const nomEdt = $(this).data('nom');
-    setTimeout(function() {
-        imprimer(nomEdt);
-    }, 500)
-})
+    $('#print').click(function() {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+        });
+        const nomEdt = $(this).data('nom');
+        setTimeout(function() {
+            imprimer(nomEdt);
+        }, 500)
+    })
 </script>

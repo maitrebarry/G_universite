@@ -126,7 +126,7 @@ $modules = $infoFiliere['modules'];
                                 <div class="card-content">
                                     <div class="card-body">
                                         <div class="row w-100 d-flex justify-content-center align-items-center">
-                                            <div class="col-md-2 d-flex justify-content-center">
+                                            <div class="col-6 col-md-4 d-flex justify-content-center">
                                                 <a href="<?= ROOT ?>/Filieres/editer_Filiere/<?php echo $filiere->id_filiere ?>"
                                                     class="btn btn-primary ">
                                                     <i class="bx bx-edit-alt mr-1"></i> Editer
@@ -134,7 +134,7 @@ $modules = $infoFiliere['modules'];
                                             </div>
 
 
-                                            <div class="col-md-2">
+                                            <div class="col-6 col-md-4">
                                                 <button type="button" class=" btn btn-primary" id="print"
                                                     data-nom="<?php echo 'Maquette-' . strtoupper($filiere->sigle_filiere); ?>"><i
                                                         class=" bx bx-printer"></i>
@@ -175,12 +175,14 @@ $modules = $infoFiliere['modules'];
                                                             class=" img-thumbnail mr-1 d-block" style="width: 100px;">
                                                     </div>
 
-                                                    <div class="col-md-6 d-flex justify-content-start">
+                                                    <div
+                                                        class="col-12 col-md-6 d-flex justify-content-center justify-content-md-start">
                                                         <h6 class="text-bold-600 text-success">
                                                             <?php echo strtoupper($filiere->nom_filiere) ?></h6>
                                                     </div>
 
-                                                    <div class="col-md-6 d-flex justify-content-end">
+                                                    <div
+                                                        class="col-12 col-md-6 d-flex justify-content-center justify-content-md-end">
                                                         <h6 class="text-bold-600 text-success">
                                                             <?php echo strtoupper($filiere->sigle_filiere) ?></h6>
                                                     </div>
@@ -196,7 +198,7 @@ $modules = $infoFiliere['modules'];
                                                         <h4 class='text-center'>
                                                             <?php echo $semestre->nom_semestre ?>
                                                         </h4>
-                                                        <table class='table table-bordered'>
+                                                        <table class='table table-bordered table-responsive'>
                                                             <thead>
                                                                 <tr class="">
                                                                     <th class="text-center ue-section col-4">UE</th>
@@ -212,7 +214,8 @@ $modules = $infoFiliere['modules'];
                                                                         <!-- UE -->
                                                                         <tr class='ue-item '>
                                                                             <!-- INFO UE -->
-                                                                            <td class="p-1 ue-section col-4">
+                                                                            <td class="p-1 ue-section col-4"
+                                                                                style="min-width: 230px;">
                                                                                 <div class="">
                                                                                     <h5 class="ue-name mt-2 text-center">
                                                                                         <?php echo $ue->nom_ue ?></h5>
@@ -262,7 +265,7 @@ $modules = $infoFiliere['modules'];
 
 
                                                                             <!-- MODULES -->
-                                                                            <td class="col-8">
+                                                                            <td class="col-8" style="min-width:445px">
                                                                                 <ul class='module-list' id="module-list">
                                                                                     <?php foreach ($modules as $module): ?>
                                                                                         <?php if ($module->id_ue == $ue->id_ue): ?>
