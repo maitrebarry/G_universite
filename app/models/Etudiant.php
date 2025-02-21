@@ -1,4 +1,3 @@
-
 <?php
 class Etudiant  extends Model{
     public function __construct() {
@@ -432,4 +431,3 @@ public function getTotalPaye($id_etudiant) {
 
 }
     
-

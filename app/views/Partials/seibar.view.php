@@ -31,7 +31,8 @@ $current_page = basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
             <li class="nav-item nav-toggle">
                 <a class="nav-link modern-nav-toggle pr-0" data-toggle="collapse">
                     <i class="bx bx-x d-block d-xl-none font-medium-4 primary toggle-icon"></i>
-                    <i class="toggle-icon bx bx-disc font-medium-4 d-none d-xl-block collapse-toggle-icon primary" data-ticon="bx-disc"></i>
+                    <i class="toggle-icon bx bx-disc font-medium-4 d-none d-xl-block collapse-toggle-icon primary"
+                        data-ticon="bx-disc"></i>
                 </a>
             </li>
         </ul>
@@ -57,9 +58,8 @@ $current_page = basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
             <!-- Enseignants -->
             <li class="nav-item <?= ($current_page == 'Enseignants') ? 'active' : '' ?>">
                 <a class="nav-link" href="<?= ROOT ?>/Enseignants">
-                <i class="bx bx-chalkboard"></i>
 
-                <!-- Icône représentant un enseignant -->
+                    <i class="bx bx-user"></i>
                     <span class="menu-title">Enseignants</span>
                 </a>
             </li>
@@ -81,7 +81,7 @@ $current_page = basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
             </li>
 
             <!-- Étudiants (Sous-menus) -->
-            <li class="nav-item <?= (strpos($_SERVER['REQUEST_URI'], 'Etudiants') !== false) ?  : '' ?>">
+            <li class="nav-item <?= (strpos($_SERVER['REQUEST_URI'], 'Etudiants') !== false) ?: '' ?>">
                 <a class="nav-link" href="#">
                     <i class="bx bx-group"></i> <!-- Icône représentant les étudiants -->
                     <span class="menu-title">Étudiants</span>

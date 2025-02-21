@@ -1,7 +1,10 @@
 <!-- inclusion du partie header -->
 <?php $this->view("Partials/header") ?>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<body class="vertical-layout vertical-menu-modern boxicon-layout no-card-shadow 2-columns  navbar-sticky footer-static  " data-open="click" data-menu="vertical-menu-modern" data-col="2-columns">
+<body
+    class="vertical-layout vertical-menu-modern boxicon-layout no-card-shadow 2-columns  navbar-sticky footer-static  "
+    data-open="click" data-menu="vertical-menu-modern" data-col="2-columns">
 
     <!-- inclusion du partie header -->
     <?php $this->view("Partials/navbar") ?>
@@ -37,22 +40,54 @@
                 <!-- formulaire -->
                 <section id="table-chechbox">
                     <div class="row">
+                        <?php $this->view("set_flash") ?>
                         <div class="col-12">
                             <div class="card card-animated-border-top ">
 
-                                <div class="card-content">
-                                    <div class="card-body">
+                                <form method="POST" enctype="multipart/form-data">
+                                    <div class="card-content">
+                                        <div class="card-body">
 
-                                        <div class="row ">
-                                            <div class="col-md-6 m-auto">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="single-select ">exporter a partir de excell</label>
-                                                    <input type="file" name="" class="form-control" required />
+                                            <div class="row ">
+                                                <div class="col-md-6 ">
+
+                                                    <div class="form-group">
+                                                        <label class="form-label" for="single-select">Exporter à
+                                                            partir de Excel</label>
+                                                        <input type="file" name="excelFile" id="excelFile"
+                                                            accept=".xlsx, .xls" class="form-control" required />
+
+                                                    </div>
+
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="row">
+                                                        <div class="col-md-10">
+                                                            <label class="form-label"> Filtre la liste par
+                                                                promotion<span class="text-danger">*</span></label>
+                                                            <select class="form-select form-control" id="id_promotion"
+                                                                name="id_promotion" required>
+                                                                <option value="">Promotion</option>
+                                                                <?php foreach ($listeFilieres as $listeFiliere): ?>
+                                                                <option value="
+                                                            <?= htmlspecialchars($listeFiliere->id_promotion); ?>">
+                                                                    <?= htmlspecialchars($listeFiliere->sigle_filiere."-".$listeFiliere->sigle_semestre ."(".$listeFiliere->annee_universitaire.")"); ?>
+                                                                </option>
+                                                                <?php endforeach; ?>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-2 mt-2">
+                                                            <button type="submit" name="envoie" class="btn btn-primary"
+                                                                id="validateBtn">Valider</button>
+                                                        </div>
+                                                    </div>
+
+
+
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -62,41 +97,70 @@
                                 <div class="card-content">
                                     <div class="card-body card-dashboard">
                                         <div class="table-responsive">
-                                            <table class="table-extended-chechbox table zero-configuration table-bordered" style="width:100%">
+                                            <table class="table zero-configuration">
                                                 <thead>
                                                     <tr>
-                                                        <th></th>
-                                                        <th>Nom && Prénom</th>
+                                                        <th>Nom & Prénom</th>
                                                         <th>Date de naissance</th>
                                                         <th>Lieu de naissance</th>
-                                                        <th>Genre</th>
                                                         <th>Filière</th>
-                                                        <th>Status</th>
+                                                        <th>Matricule</th>
+                                                        <th>Bac</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
+                                                <tbody id="dataTableBody">
                                                 </tbody>
                                             </table>
-                                            <div class="col-md-4">
-                                                <label class="form-label">Promotion<span class="text-danger">*</span></label>
-                                                <select name="" class="form-select form-control">
-                                                    <option value="" disabled selected>Choisissez la Promotion</option>
-                                                    <option value=""></option>
-                                                </select>
+                                            <input type="hidden" id="hiddenData" value="">
+
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </form>
+                    <div class="modal-primary mr-1 mb-1 d-inline-block ">
+                        <div class="modal fade text-left" id="menuConfig" tabindex="-1" role="dialog"
+                            aria-labelledby="myModalLabel160" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg"
+                                role="document">
+                                <div class="modal-content">
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-12 row mb-1">
+                                                <h6 class="col-12 text-center">Modèle du fichier Excel</h6>
+                                                <div class="col-12 border p-2 d-flex justify-content-center">
+                                                    <div style="width: 600px" class="cursor-pointer">
+                                                        <span class="text-center">Le fichier doit respecter ce modèle
+                                                            :</span>
+                                                        <img class="img img-thumbnail d-block border border-primary"
+                                                            src="<?= ROOT ?>/assets/images/exemple.png"
+                                                            alt="modèle de fichier" id="model-row"
+                                                            style="border-width: 2px !important;" data-model="edt-row">
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col-12 d-flex justify-content-end mt-4">
-                                            <button name="envoyer" type="submit" class="btn btn-primary">Valider</button>
-                                        </div>
                                     </div>
-                                    </form>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-link" data-dismiss="modal">
+                                            <i class="bx bx-x d-block d-sm-none"></i>
+                                            <span class="d-none d-sm-block">
+                                                <a href="<?=ROOT?>/assets/fichier_excel/Classeur1GI.xlsx"
+                                                    download="Classeur1GI.xlsx" id="downloadModel">
+                                                    Télécharger le modèle
+                                                </a>
+
+                                            </span>
+                                        </button>
+                                        <button type="button" id="continueBtn" class="btn btn-primary">
+                                            Si le fichier correspond au modèle, continuer
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -116,6 +180,40 @@
     <!-- inclusion du partie footer-->
     <?php $this->view("Partials/footer") ?>
     <!-- inclusion du partie footer fin-->
+    <script>
+    $(document).ready(function() {
+        $('#id_promotion').change(function() {
+            const id_promotion = $('#id_promotion').val();
+
+
+            if (id_promotion != null) {
+                $.ajax({
+                    url: '<?=ROOT?>/EtudiantPargroupes/trier_liste_etudiants',
+                    type: 'POST',
+                    data: {
+                        id_promotion: id_promotion
+                    },
+                    success: function(response) {
+                        // console.log(response);
+                        $('#table_etudiant').html(response);
+
+                    },
+                    error: function(xhr) {
+                        alert("Erreur AJAX : " + xhr.responseText);
+                    }
+                });
+            }
+        });
+
+        // Suppression des lignes du tableau
+        $(document).on('click', '.remove', function(e) {
+            e.preventDefault();
+            $(this).closest("tr").remove();
+        });
+    });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <script src="<?=ROOT?>/assets/mon_js/script_extration.js"></script>
 
 </body>
 <!-- END: Body-->
