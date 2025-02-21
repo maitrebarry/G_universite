@@ -114,16 +114,16 @@
                                                                 <div class="col-sm-4">
                                                                     <div class="form-group">
                                                                         <label>Nom && Prénom<span class="text-danger">*</span></label>
-                                                                        <input type="text" class="form-control required" placeholder="Nom && Prénom" name="nom_prenom_etudiant" >
+                                                                        <input type="text" class="form-control required"  id="nomPrenom" placeholder="Nom && Prénom" name="nom_prenom_etudiant" >
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-sm-4">
                                                                     <div class="form-group">
                                                                         <label>Genre<span class="text-danger">*</span></label>
-                                                                        <select class="form-select form-control " name="genre_etudiant">
+                                                                        <select class="form-select form-control" id="genre" name="genre_etudiant">
                                                                             <option value="" disabled>Choisissez le sexe</option>
-                                                                            <option value="Féminin">Féminin</option>
-                                                                            <option value="Masculin">Masculin</option>
+                                                                            <option value="F">Féminin</option>
+                                                                            <option value="M">Masculin</option>
                                                                         </select>
                                                                     </div>
                                                                 </div>
@@ -235,7 +235,7 @@
                                                             <div class="col-md-4">
                                                                 <div class="form-group">
                                                                     <label>Année du Diplôme <span class="text-danger">*</span></label>
-                                                                    <input type="number" class="form-control" placeholder="Année du Diplôme" name="anneediplome">
+                                                                    <input type="number" class="form-control"id="anneeDiplome" placeholder="Année du Diplôme" name="anneediplome">
                                                                 </div>
                                                             </div>
                                                             <div class="col-md-4">
@@ -267,14 +267,15 @@
                                                             </div> -->
                                                         
                                                             <div class="row">
+                                                            
                                                                 <div class="col-md-3 mb-2">
                                                                     <label >Matricule<span class="text-danger">*</span></label>
-                                                                    <input type="text" class="form-control required" name="matricule_etudiant" placeholder="Matricule" >
+                                                                    <input type="text" class="form-control required" name="matricule_etudiant" id="matricule"  placeholder="Matricule" readonly>
 
                                                                 </div>
                                                                 <div class="col-md-3  mb-2">
                                                                     <label >Matricule CENOU<span class="text-danger">*</span></label>
-                                                                    <input type="text" class="form-control" name="numetudiant" placeholder="Matricule CENOU">
+                                                                    <input type="text" class="form-control" name="numetudiant"  placeholder="Matricule CENOU">
                                                                 </div>
                                                                 <div class="col-md-3  mb-2">
                                                                     <label >Années univertisaire<span class="text-danger">*</span></label>
@@ -502,6 +503,35 @@ document.getElementById('montant_paye').addEventListener('input', function () {
         restantInput.style.backgroundColor = '#d1f7c4'; // Vert pâle
         restantInput.style.color = '#2e7d32'; // Texte vert foncé
     }
+});
+//Geberation du matrixule
+document.addEventListener("DOMContentLoaded", function () {
+    function genererMatricule() {
+        let anneeDiplome = document.getElementById("anneeDiplome").value;
+        let nomPrenom = document.getElementById("nomPrenom").value.trim().split(" ");
+        let genre = document.getElementById("genre").value;
+
+        if (anneeDiplome && nomPrenom.length > 0 && genre) {
+            let premiereLettreNom = nomPrenom[0] ? nomPrenom[0][0].toUpperCase() : "";
+            let premiereLettrePrenom = nomPrenom[1] ? nomPrenom[1][0].toUpperCase() : "";
+
+            // Numéro d'enregistrement simulé (4 chiffres aléatoires)
+            let numEnregistrement = Math.floor(1000 + Math.random() * 9000);
+
+            // Générer le matricule
+            let matricule = `${anneeDiplome}${premiereLettreNom}${premiereLettrePrenom}${genre}${numEnregistrement}`;
+
+            // Afficher le matricule généré
+            document.getElementById("matricule").value = matricule;
+        } else {
+            document.getElementById("matricule").value = "";
+        }
+    }
+
+    // Ajouter les événements pour détecter les changements
+    document.getElementById("anneeDiplome").addEventListener("input", genererMatricule);
+    document.getElementById("nomPrenom").addEventListener("input", genererMatricule);
+    document.getElementById("genre").addEventListener("change", genererMatricule);
 });
 
 </script>

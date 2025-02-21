@@ -307,7 +307,18 @@ class Etudiant  extends Model{
             $stmt->execute([':id' => $id]);
             return $stmt->fetch();
         }
-    
+    public function id() {
+        $sql = "SELECT id_etudiant FROM etudiant ORDER BY id_etudiant DESC LIMIT 1";
+$stmt = $this->pdo->query($sql);
+$id_etudiant = $stmt->fetchColumn();
+
+if (!$id_etudiant) {
+    $id_etudiant = 1000; // Valeur par défaut si aucun étudiant trouvé
+}
+
+echo "Dernier ID étudiant : " . $id_etudiant;
+
+    }
         // Récupérer l'historique des paiements pour un étudiant donné
         public function getPaymentsByStudentId($id)
         {

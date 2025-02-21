@@ -93,8 +93,8 @@ $current_page = basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
                             <span class="menu-item">Inscription individuels</span>
                         </a>
                     </li>
-                    <li class="<?= ($current_page == 'liste_inscription_groupe') ? 'active' : '' ?>">
-                        <a href="<?= ROOT ?>/Etudiants/liste_inscription_groupe">
+                    <li class="<?= ($current_page == 'EtudiantPargroupes') ? 'active' : '' ?>">
+                        <a href="<?= ROOT ?>/EtudiantPargroupes">
                             <i class="bx bx-right-arrow-alt"></i>
                             <span class="menu-item">Inscription par groupe</span>
                         </a>
