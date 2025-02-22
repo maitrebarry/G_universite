@@ -1,87 +1,6 @@
 <?php $this->view("Partials/header") ?>
 <style>
-    /* Styles généraux */
-    .content-body {
-        padding: 2rem;
-        background-color: #f8f9fa;
-    }
 
-    .card {
-        margin-bottom: 2rem;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0 10px;
-        border-radius: 10px;
-        overflow: hidden;
-    }
-
-    table th,
-    table td {
-        padding: 1rem;
-        text-align: center;
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-    }
-
-    /* En-têtes */
-    table th {
-        background-color: rgb(53, 96, 237);
-        color: white;
-        font-weight: bold;
-        font-size: 1.1rem;
-        text-transform: uppercase;
-    }
-
-    /* Lignes paires */
-    table tr:nth-child(even) {
-        background-color: #f9f9f9;
-    }
-
-    /* Lignes impaires */
-    table tr:nth-child(odd) {
-        background-color: #ffffff;
-    }
-
-    /* Lignes au survol */
-    table tr:hover {
-        background-color: #e9f7e9;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
-
-    /* Champs d'entrée */
-    input.form-control {
-        width: 100%;
-        padding: 0.5rem;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-        font-size: 1rem;
-        transition: border-color 0.3s ease;
-    }
-
-    input.form-control:focus {
-        border-color:rgb(157, 175, 76);
-    }
-
-    /* Bouton de paiement */
-    .text-right button {
-        background-color: #28a745;
-        color: white;
-        padding: 12px 24px;
-        border-radius: 5px;
-        border: none;
-        font-size: 1rem;
-        transition: background-color 0.3s ease;
-    }
-
-    .text-right button:hover {
-        background-color:rgb(71, 136, 33);
-    }
 </style>
 
 <body class="vertical-layout vertical-menu-modern boxicon-layout no-card-shadow 2-columns navbar-sticky footer-static"
@@ -104,63 +23,73 @@
                         </div>
                     </div>
                 </div>
-                <div class="container mt-4">
-                    <div class="card shadow rounded">
-                        <div class="card-body">
-                            <form action="<?= ROOT ?>/Etudiants/traiter_paiement_groupes" method="POST">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Nom de l'étudiant</th>
-                                            <th>Matricule</th>
-                                            <th>Paiement total</th>
-                                            <th>Total frais</th>
-                                            <th>Montant à payer</th>
-                                            <th>Reste à payer</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php foreach ($etudiants as $etudiant): ?>
-                                            <tr>
-                                                <td><?= htmlspecialchars($etudiant->nom_prenom_etudiant) ?></td>
-                                                <td><?= htmlspecialchars($etudiant->numetudiant) ?></td>
-                                                <td>
-                                                    <?php
-                                                    $total_paye = 0;
-                                                    foreach ($paiements as $paiement) {
-                                                        if ($paiement['idEtudt'] == $etudiant->id_etudiant) {
-                                                            $total_paye += $paiement['total_paye'];
-                                                        }
-                                                    }
-                                                    echo htmlspecialchars($total_paye);
-                                                    ?>
-                                                </td>
-                                                <td><?= htmlspecialchars($etudiant->total_frais) ?></td>
-                                                <td>
-                                                    <input type="number" name="paiement[<?= $etudiant->id_etudiant ?>]"
-                                                        class="form-control montant-paye"
-                                                        placeholder="Montant" step="0.01" min="0" required
-                                                        data-frais="<?= htmlspecialchars($etudiant->total_frais) ?>"
-                                                        data-total-paye="<?= $total_paye ?>"
-                                                        oninput="calculerReste(this)">
-                                                </td>
-                                                <td>
-                                                    <input type="text" class="form-control reste-a-payer" readonly>
-                                                </td>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                    </tbody>
-                                </table>
-                                <div class="text-right mt-3">
-                                    <button type="submit" class="btn btn-primary">Effectuer le Paiement</button>
+            </div>
+                <div class="content-body">
+                    <section id="table-chechbox">
+                        <div class="row">
+                            <div class="col-12">
+                            
+                            <div class="card shadow rounded">
+                                <div class="card-body  card-dashboard">
+                                    <form action="<?= ROOT ?>/Etudiants/traiter_paiement_groupes" method="POST">
+                                        <table class="table zero-configuration table-bordered" style="width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>Nom de l'étudiant</th>
+                                                    <th>Matricule</th>
+                                                    <th>Paiement total</th>
+                                                    <th>Total frais</th>
+                                                    <th>Montant à payer</th>
+                                                    <th>Reste à payer</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php foreach ($etudiants as $etudiant): ?>
+                                                    <tr>
+                                                        <td><?= htmlspecialchars($etudiant->nom_prenom_etudiant) ?></td>
+                                                        <td><?= htmlspecialchars($etudiant->numetudiant) ?></td>
+                                                        <td>
+                                                            <?php
+                                                            $total_paye = 0;
+                                                            foreach ($paiements as $paiement) {
+                                                                if ($paiement['idEtudt'] == $etudiant->id_etudiant) {
+                                                                    $total_paye += $paiement['total_paye'];
+                                                                }
+                                                            }
+                                                            echo htmlspecialchars($total_paye);
+                                                            ?>
+                                                        </td>
+                                                        <td><?= htmlspecialchars($etudiant->total_frais) ?></td>
+                                                        <td>
+                                                            <input type="number" name="paiement[<?= $etudiant->id_etudiant ?>]"
+                                                                class="form-control montant-paye"
+                                                                placeholder="Montant" step="0.01" min="0" required
+                                                                data-frais="<?= htmlspecialchars($etudiant->total_frais) ?>"
+                                                                data-total-paye="<?= $total_paye ?>"
+                                                                oninput="calculerReste(this)">
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="form-control reste-a-payer" readonly>
+                                                        </td>
+                                                    </tr>
+                                                <?php endforeach; ?>
+                                            </tbody>
+                                        </table>
+                                        <div class="text-right mt-3">
+                                            <button type="submit" class="btn btn-primary">Effectuer le Paiement</button>
+                                        </div>
+                                    </form>
                                 </div>
-                            </form>
+                            </div>
+                       
+                            </div>
                         </div>
-                    </div>
+                       
+                    </section>
                 </div>
             </div>
         </div>
-    </div>
+    
 
     <?php $this->view("Partials/foot") ?>
     <?php $this->view("Partials/footer") ?>

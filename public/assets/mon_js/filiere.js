@@ -1,5 +1,5 @@
 let semestreCount = 0;
-const ROOT = "HTTP://localhost/G_universite/public/Filieres";
+const ROOT_FILIERE = "HTTP://localhost/G_universite/public/Filieres";
 // Fonction pour ajouter un semestre dès qu'il est sélectionné
 function addSemestre() {
   const semestre = document.getElementById("idSemestre");
@@ -18,7 +18,7 @@ function addSemestre() {
   // Créer le semestre sélectionné dans le tableau
   $.ajax({
     method: "POST",
-    url: ROOT + "/post_ajouter_Filiere",
+    url: ROOT_FILIERE + "/post_ajouter_Filiere",
     data: {
       action: "semestre",
       semestreId: semestreId,
@@ -39,7 +39,7 @@ function addUE(semestreId) {
 
   $.ajax({
     method: "POST",
-    url: ROOT + "/post_ajouter_Filiere",
+    url: ROOT_FILIERE + "/post_ajouter_Filiere",
     data: {
       action: "ue",
       semestreId: semestreId,
@@ -61,7 +61,7 @@ function addModule(semestreId, button) {
 
   $.ajax({
     method: "POST",
-    url: ROOT + "/post_ajouter_filiere",
+    url: ROOT_FILIERE + "/post_ajouter_filiere",
     data: {
       action: "module",
       semestreId: semestreId,
@@ -107,7 +107,7 @@ function calculerHeureModule(li, credit) {
 
 // Sauvegarder la filière et afficher l'information
 function ajouterFiliere(
-  url = ROOT + "/ajouter_Filiere",
+  url = ROOT_FILIERE + "/ajouter_Filiere",
   action = "ajouter_filiere"
 ) {
   //les différents données à recuperer
@@ -122,10 +122,12 @@ function ajouterFiliere(
   const nomFiliere = document.getElementById("nomFiliere").value;
   const sigleFiliere = document.getElementById("sigleFiliere").value;
   const idFiliere = $("#nomFiliere").data("id");
+  const idDepartement = $("#idDepartement").val();
   filiere = {
     nomFiliere: nomFiliere,
     sigleFiliere: sigleFiliere,
     idFiliere: idFiliere,
+    idDepartement: idDepartement,
   };
 
   // Semestres Ues Modules
@@ -240,7 +242,7 @@ function delElementFiliere(button, id = null, action = "ue_module") {
     if (result.value) {
       $.ajax({
         method: "POST",
-        url: ROOT + "/supprimer_element_filiere",
+        url: ROOT_FILIERE + "/supprimer_element_filiere",
         data: {
           action: action,
           id: id,
@@ -357,4 +359,51 @@ function validateForm() {
 
   // Activation ou désactivation du bouton
   $("#btnEnregistrer").prop("disabled", !isValid);
+}
+
+// imprimer2 pour faire une impression
+function imprimer2(nomFiliere, html = null) {
+  $("#loader").removeClass("d-none");
+  $("#loader").addClass("d-flex");
+  if (html == null) {
+    html = document.getElementById("semestresTable");
+  }
+
+  html2pdf()
+    .from(html)
+    .set({
+      margin: [5, 5, 15, 5],
+      filename: nomFiliere,
+      html2canvas: {
+        scale: 2,
+      },
+      jsPDF: {
+        unit: "mm",
+        format: "a4",
+        orientation: "landscape",
+      },
+    })
+    .save()
+    .then(() => {
+      $("#loader").removeClass("d-flex");
+      $("#loader").addClass("d-none");
+    });
+}
+
+function imprimerFiliere(idFiliere, nomFiliere = "filiere") {
+  // Debut de l'envoi des données avec Ajax
+  $.ajax({
+    method: "POST",
+    url: ROOT_FILIERE + "/apercu_filiere/" + idFiliere,
+    data: {
+      action: "print",
+    },
+    success: function (response) {
+      imprimer2(nomFiliere, response);
+    },
+    error: function (error) {
+      console.log(error.status);
+    },
+  });
+  // Fin de l'envoi des données avec Ajax
 }

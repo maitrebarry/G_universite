@@ -108,36 +108,36 @@ body {
                         <div class="col-12">
                             <div class="card card-animated-border-top">
                                 <div class="card-content">
-                                    <div class="card-header row">
+                                    <div class="card-header row d-flex justify-content-around w-100">
                                         <?php if ($action != 'edit'): ?>
-                                        <div class="col-md-4 mx-1 mb-1">
+                                        <div class=" col-6 col-sm-4 mb-1 d-flex justify-content-around">
                                             <a href="<?php echo ROOT . '/Filieres/editer_filiere/' . $filiere->id_filiere ?>"
-                                                class="btn btn-light-warning d-block actionEdit" id="editButton">
-                                                <i class="bx bx-edit-alt mr-1"></i>Modifier
+                                                class="btn btn-light-warning  actionEdit" id="editButton">
+                                                <i class="bx bx-edit-alt mr-1"></i>
                                                 Info </a>
                                         </div>
                                         <?php endif ?>
 
                                         <?php if ($action != 'add'): ?>
-                                        <div class="col-md-4 mx-1 mb-1">
+                                        <div class=" col-6 col-sm-4 mb-1 d-flex justify-content-around">
                                             <a href="<?php echo ROOT . '/Filieres/ajouter_element_filiere/' . $filiere->id_filiere ?>"
-                                                class="btn btn-light-info d-block actionEdit" id="addButton">
-                                                <i class="bx bx-plus mr-1"></i>Ajouter
+                                                class="btn btn-light-info  actionEdit" id="addButton">
+                                                <i class="bx bx-plus mr-1"></i>
                                                 Element</a>
                                         </div>
                                         <?php endif ?>
 
                                         <?php if ($action != 'del'): ?>
-                                        <div class="col-md-4 mb-1">
+                                        <div class=" col-6 col-sm-4 mb-1 d-flex justify-content-around">
                                             <a href="<?php echo ROOT . '/Filieres/supprimer_element_filiere/' . $filiere->id_filiere ?>"
-                                                class="btn btn-light-danger d-block actionEdit" id="delButton">
-                                                <i class="bx bx-trash mr-1"></i> Supprimer
+                                                class="btn btn-light-danger  actionEdit" id="delButton">
+                                                <i class="bx bx-trash mr-1"></i>
                                                 ELement</a>
                                         </div>
                                         <?php endif ?>
-                                        <div class="col-md-3 mb-1">
+                                        <div class="col-6 col-sm-4 mb-1 d-flex justify-content-around">
                                             <a href="<?= ROOT ?>/Filieres/apercu_Filiere/<?php echo $filiere->id_filiere ?>"
-                                                class="btn btn-light-secondary d-block actionEdit" id="delButton">
+                                                class="btn btn-light-secondary  actionEdit" id="delButton">
                                                 <i class="bx bx-show mr-1"></i>Aperçu
                                             </a>
                                         </div>
@@ -202,7 +202,7 @@ body {
                                                     <h4 class='text-center'>
                                                         <?php echo strtoupper($ancienSemestre->nom_semestre) ?>
                                                     </h4>
-                                                    <table class='table table-bordered'
+                                                    <table class='table table-bordered table-responsive'
                                                         id="tableSemestre_<?php echo $ancienSemestre->id_semestre ?>">
                                                         <thead>
                                                             <tr>
@@ -220,7 +220,7 @@ body {
                                                             <?php foreach ($ues as $ue): ?>
                                                             <?php if ($ue->id_parcours == $ancienSemestre->id_parcours): ?>
                                                             <tr class='ue-item'>
-                                                                <td class=" p-1">
+                                                                <td class=" p-1" style="min-width: 140px;">
                                                                     <div
                                                                         class="w-100 h-100 d-flex justify-content-around align-items-center">
                                                                         <input type='text' class='form-control nomUe'
@@ -229,7 +229,7 @@ body {
                                                                             data-id="<?php echo $ue->id_ue ?>">
                                                                     </div>
                                                                 </td>
-                                                                <td>
+                                                                <td style="min-width: 400px;">
                                                                     <?php if ($action == 'add'): ?>
                                                                     <div
                                                                         class="w-100 h-100 d-flex justify-content-around ">

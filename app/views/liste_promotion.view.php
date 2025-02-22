@@ -21,7 +21,13 @@
                 <div class="content-header-left col-12 mb-2 mt-1">
                     <div class="row breadcrumbs-top">
                         <div class="col-12">
-
+                            <h5 class="content-header-title float-left pr-1 mb-0">
+                                <?php
+                                echo (isset($_SESSION['nom_departement']))
+                                    ? strtoupper($_SESSION['nom_departement'] . ' (' . $_SESSION['sigle_departement'] . ')')
+                                    : "IUFP"
+                                ?>
+                            </h5>
                             <div class="breadcrumb-wrapper col-12">
                                 <ol class="breadcrumb p-0 mb-0">
                                     <li class="breadcrumb-item"><a href="index.html"><i class="bx bx-home-alt"></i></a>
@@ -138,6 +144,12 @@
                                                                                 Arrêt
                                                                             </a>
                                                                         <?php endif ?>
+                                                                        <?php if ($promotion->statut == 1): ?>
+                                                                            <a class="dropdown-item "
+                                                                                href="<?= ROOT ?>/Emploi_du_temps/ajouter_EDT/<?php echo $promotion->id_filiere . '/' . $promotion->id_promotion ?>">
+                                                                                <i class="bx bx-plus mr-1"></i>Edt
+                                                                            </a>
+                                                                        <?php endif ?>
 
                                                                     </div>
                                                                 </div>
@@ -229,7 +241,6 @@
             let idFiliere = $(this).data("id");
             $("#filiere").val(idFiliere);
             $(".nomFiliere").html($(this).data("nom"));
-            console.log(idFiliere);
             infoFiliere = await
             infosFiliere(idFiliere);
             semestresFiliere(infoFiliere);

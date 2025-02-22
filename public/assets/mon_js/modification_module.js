@@ -1,7 +1,7 @@
 $(document).ready(function() {
     // Lorsque le bouton "Editer" est cliqué
     $('.edit-btn').click(function(e) {
-        e.preventDefault(); // Empêcher le lien de suivre le href="#" par défaut
+        // e.preventDefault(); // Empêcher le lien de suivre le href="#" par défaut
 
         // Récupérer les attributs de données du lien cliqué
         var idmodule = $(this).data('id');
@@ -15,6 +15,6 @@ $(document).ready(function() {
      
 
         // Afficher le modal
-        $('#default').modal('show');
+        // $('#default').modal('show');
     });
 });

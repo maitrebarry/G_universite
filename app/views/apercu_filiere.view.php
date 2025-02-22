@@ -83,22 +83,34 @@ $modules = $infoFiliere['modules'];
 
     <!--  Content-->
     <div class="app-content content">
+        <div id="loader" class="w-100 position-absolute d-none justify-content-center align-items-center"
+            style="height:100vh;z-index:100">
+            <div class="spinner-border  " role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
         <div class="content-overlay"></div>
         <div class="content-wrapper">
             <div class="content-header row">
                 <div class="content-header-left col-12 mb-2 mt-1">
                     <div class="row breadcrumbs-top">
                         <div class="col-12">
-                            <h5 class="content-header-title float-left pr-1 mb-0">Aperçu</h5>
+                            <h5 class="content-header-title float-left pr-1 mb-0">
+                                <?php
+                                echo (isset($_SESSION['nom_departement']))
+                                    ? strtoupper($_SESSION['nom_departement'] . ' (' . $_SESSION['sigle_departement'] . ')')
+                                    : "IUFP"
+                                ?>
+                            </h5>
                             <div class="breadcrumb-wrapper col-12">
                                 <ol class="breadcrumb p-0 mb-0">
-                                    <li class="breadcrumb-item"><a href="<?php echo ROOT ?>"><i
-                                                class="bx bx-home-alt"></i></a>
+                                    <li class="breadcrumb-item"><a href="index.html"><i class="bx bx-home-alt"></i></a>
                                     </li>
                                     <li class="breadcrumb-item"><a
-                                            href="<?php echo ROOT ?>/Filieres/liste_filiere">Liste Filière</a>
+                                            href="<?php echo ROOT . '/Emploi_du_temps/' ?>">Gestion Filière</a>
                                     </li>
-
+                                    <li class="breadcrumb-item active">Aperçu
+                                    </li>
                                 </ol>
                             </div>
                         </div>
@@ -106,7 +118,6 @@ $modules = $infoFiliere['modules'];
                 </div>
             </div>
             <div class="content-body">
-
                 <!-- MAQUETTE -->
                 <section id="basic-datatable">
                     <div class="row">
@@ -114,21 +125,20 @@ $modules = $infoFiliere['modules'];
                             <div class="card card-animated-border-top">
                                 <div class="card-content">
                                     <div class="card-body">
-                                        <div class="row w-100 d-flex justify-content-around  align-items-center">
-                                            <div class="col-md-5 d-flex justify-content-start">
-                                                <h5><?php echo strtoupper($filiere->nom_filiere) ?></h5>
-                                            </div>
-
-
-                                            <div class="col-md-2 d-flex justify-content-center">
+                                        <div class="row w-100 d-flex justify-content-center align-items-center">
+                                            <div class="col-6 col-md-4 d-flex justify-content-center">
                                                 <a href="<?= ROOT ?>/Filieres/editer_Filiere/<?php echo $filiere->id_filiere ?>"
                                                     class="btn btn-primary ">
                                                     <i class="bx bx-edit-alt mr-1"></i> Editer
                                                 </a>
                                             </div>
 
-                                            <div class="col-md-5 d-flex justify-content-end">
-                                                <h5><?php echo strtoupper($filiere->sigle_filiere) ?></h5>
+
+                                            <div class="col-6 col-md-4">
+                                                <button type="button" class=" btn btn-primary" id="print"
+                                                    data-nom="<?php echo 'Maquette-' . strtoupper($filiere->sigle_filiere); ?>"><i
+                                                        class=" bx bx-printer"></i>
+                                                    Imprimer</button>
                                             </div>
                                         </div>
                                     </div>
@@ -157,6 +167,26 @@ $modules = $infoFiliere['modules'];
                                         <div class="container">
 
                                             <div id="semestresTable">
+                                                <div id="infoFiliere"
+                                                    class="row w-100 d-flex justify-content-around align-items-center mb-2 ">
+
+                                                    <div class="col-12 d-flex justify-content-center mb-2 w-100">
+                                                        <img src="<?= ROOT ?>/assets/images/logo.jpg" alt=""
+                                                            class=" img-thumbnail mr-1 d-block" style="width: 100px;">
+                                                    </div>
+
+                                                    <div
+                                                        class="col-12 col-md-6 d-flex justify-content-center justify-content-md-start">
+                                                        <h6 class="text-bold-600 text-success">
+                                                            <?php echo strtoupper($filiere->nom_filiere) ?></h6>
+                                                    </div>
+
+                                                    <div
+                                                        class="col-12 col-md-6 d-flex justify-content-center justify-content-md-end">
+                                                        <h6 class="text-bold-600 text-success">
+                                                            <?php echo strtoupper($filiere->sigle_filiere) ?></h6>
+                                                    </div>
+                                                </div>
 
                                                 <?php foreach ($semestres as $semestre): ?>
                                                     <?php $nbrUe = 0;
@@ -168,7 +198,7 @@ $modules = $infoFiliere['modules'];
                                                         <h4 class='text-center'>
                                                             <?php echo $semestre->nom_semestre ?>
                                                         </h4>
-                                                        <table class='table table-bordered'>
+                                                        <table class='table table-bordered table-responsive'>
                                                             <thead>
                                                                 <tr class="">
                                                                     <th class="text-center ue-section col-4">UE</th>
@@ -184,7 +214,8 @@ $modules = $infoFiliere['modules'];
                                                                         <!-- UE -->
                                                                         <tr class='ue-item '>
                                                                             <!-- INFO UE -->
-                                                                            <td class="p-1 ue-section col-4">
+                                                                            <td class="p-1 ue-section col-4"
+                                                                                style="min-width: 230px;">
                                                                                 <div class="">
                                                                                     <h5 class="ue-name mt-2 text-center">
                                                                                         <?php echo $ue->nom_ue ?></h5>
@@ -234,7 +265,7 @@ $modules = $infoFiliere['modules'];
 
 
                                                                             <!-- MODULES -->
-                                                                            <td class="col-8">
+                                                                            <td class="col-8" style="min-width:445px">
                                                                                 <ul class='module-list' id="module-list">
                                                                                     <?php foreach ($modules as $module): ?>
                                                                                         <?php if ($module->id_ue == $ue->id_ue): ?>
@@ -309,7 +340,8 @@ $modules = $infoFiliere['modules'];
                                                                 <div class=" W-100 row m-auto">
                                                                     <!-- NOMBRE UE -->
                                                                     <div class='col-3'>
-                                                                        <label class="d-block text-center">NBR UE</label>
+                                                                        <label class="d-block text-center">NBR
+                                                                            UE</label>
                                                                         <input type='number'
                                                                             class='form-control nbrUe text-center' disabled
                                                                             value="<?php echo $nbrUe ?>">
@@ -390,6 +422,18 @@ $modules = $infoFiliere['modules'];
             });
 
             statistique();
+        })
+        $('#print').click(function() {
+            nomFiliere = $(this).data('nom');
+            event.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth",
+            });
+            var element = $(this);
+            setTimeout(function() {
+                imprimer2(nomFiliere);
+            }, 500);
         })
     </script>
 </body>
