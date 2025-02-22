@@ -312,6 +312,34 @@ class Etudiant  extends Model
         $stmt->execute([':id' => $id]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+        // Récupérer les informations d'un étudiant par ID
+        public function getById($id)
+        {
+            $stmt = $this->pdo->prepare("SELECT * FROM etudiant WHERE id_etudiant = :id");
+            $stmt->execute([':id' => $id]);
+            return $stmt->fetch();
+        }
+    public function id() {
+        $sql = "SELECT id_etudiant FROM etudiant ORDER BY id_etudiant DESC LIMIT 1";
+$stmt = $this->pdo->query($sql);
+$id_etudiant = $stmt->fetchColumn();
+
+if (!$id_etudiant) {
+    $id_etudiant = 1000; // Valeur par défaut si aucun étudiant trouvé
+}
+
+echo "Dernier ID étudiant : " . $id_etudiant;
+
+    }
+        // Récupérer l'historique des paiements pour un étudiant donné
+        public function getPaymentsByStudentId($id)
+        {
+            $stmt = $this->pdo->prepare("SELECT * FROM payement WHERE idEtudt = :id ORDER BY date DESC");
+            $stmt->execute([':id' => $id]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+
     // Méthode pour ajouter un paiement
     // Méthode pour ajouter un paiement
     public function ajouterPaiement()
@@ -408,6 +436,25 @@ class Etudiant  extends Model
             FROM payement 
             WHERE idEtudt IN ($placeholders) 
             GROUP BY idEtudt";
+
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute($etudiant_ids);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC); // Retourne un tableau associatif
+}
+//Recuperation du montant total
+public function getTotalPaye($id_etudiant) {
+    $stmt = $this->pdo->prepare("SELECT SUM(montant_paye) AS total_payé FROM payement WHERE idEtudt = ?");
+    $stmt->execute([$id_etudiant]);
+    $result = $stmt->fetch();
+    return $result['total_payé'] ? $result['total_payé'] : 0; // Renvoie 0 si aucun paiement effectué
+}
+
+
+    
+
+}
+    
+
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($etudiant_ids);
         return $stmt->fetchAll(PDO::FETCH_ASSOC); // Retourne un tableau associatif
@@ -421,3 +468,4 @@ class Etudiant  extends Model
         return $result['total_payé'] ? $result['total_payé'] : 0; // Renvoie 0 si aucun paiement effectué
     }
 }
+

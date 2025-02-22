@@ -467,4 +467,4 @@ class Model extends Database
         // Le numéro de téléphone semble valide
         return "Numéro de téléphone valide.";
     }
-}
+
