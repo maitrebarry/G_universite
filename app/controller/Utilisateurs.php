@@ -18,6 +18,7 @@ class Utilisateurs extends Controller
             utilisateur.nom_prenom AS utilisateur_nom_prenom,
             utilisateur.contact_utilisateur AS utilisateur_contact,
             utilisateur.email_utilisateurs AS utilisateur_email,
+              utilisateur.statut AS statut,
              utilisateur.signature AS signature,
             utilisateur.enseignant_id,
             enseignants.enseignant_nom,
@@ -35,7 +36,8 @@ class Utilisateurs extends Controller
         $liste = $utilisateur->select_data_table_join_where($select);
 
         $enseignants = $utilisateurenseignant->SelectAllData("*", "enseignants");
-        $this->view('liste_utilisateur', ['liste' => $liste, 'enseignants' => $enseignants,'id_enseignant'=>$id_enseignant]);
+        $departements = $utilisateur->SelectAllData("*", "departement");
+        $this->view('liste_utilisateur', ['liste' => $liste, 'enseignants' => $enseignants,'id_enseignant'=>$id_enseignant,'departements'=>$departements]);
     }
 
     /// methode pour la modification
@@ -67,4 +69,5 @@ class Utilisateurs extends Controller
         }
         $S->redirect("Utilisateurs/liste_utilisateur");
     }
+    
 }

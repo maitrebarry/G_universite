@@ -31,7 +31,13 @@
                 <div class="content-header-left col-12 mb-2 mt-1">
                     <div class="row breadcrumbs-top">
                         <div class="col-12">
-                            <h5 class="content-header-title float-left pr-1 mb-0">programmation des cours</h5>
+                            <h5 class="content-header-title float-left pr-1 mb-0">
+                                <?php
+                                echo (isset($_SESSION['nom_departement']))
+                                    ? strtoupper($_SESSION['nom_departement'] . ' (' . $_SESSION['sigle_departement'] . ')')
+                                    : "IUFP"
+                                ?>
+                            </h5>
                             <div class="breadcrumb-wrapper col-12">
                                 <ol class="breadcrumb p-0 mb-0">
                                     <li class="breadcrumb-item"><a href="index.html"><i class="bx bx-home-alt"></i></a>
@@ -61,7 +67,7 @@
                                     <div class="card-body">
                                         <form method="POST" class="form-horizontal" novalidate id="edtForm">
                                             <div class="row d-flex justify-content-around align-items-center">
-                                                <div class="col-sm-3">
+                                                <div class="col-md-6 col-lg-3">
                                                     <label class="form-label" for="single-select">Filiere</label>
                                                     <div class="form-group">
                                                         <select class="select2 form-control" id="filiere">
@@ -76,7 +82,7 @@
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-3">
+                                                <div class="col-md-6 col-lg-3">
                                                     <label class="form-label" for="single-select">Promotion</label>
                                                     <div class="form-group">
                                                         <select class="select2 form-control" id="promotions"
@@ -87,7 +93,7 @@
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-3">
+                                                <div class="col-6 col-md-6 col-lg-3">
                                                     <label class="form-label" for="single-select">Modules</label>
                                                     <div class="form-group">
                                                         <select class="select2 form-control champ" id="modules"
@@ -99,16 +105,16 @@
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-3">
+                                                <div class="col-6 col-md-6 col-lg-3">
                                                     <button type="button" class="btn btn-primary" data-toggle="modal"
                                                         data-target="#menuConfig"><i class="bx bxs-cog"></i>
-                                                        Paramètrage</button>
+                                                        Modèles Edt</button>
                                                 </div>
                                             </div>
 
                                             <div class="row d-flex justify-content-between align-items-center mb-1 ">
                                                 <div
-                                                    class="col-4 row d-flex justify-content-between align-items-center">
+                                                    class="col-12 col-md-4 row d-flex justify-content-between align-items-center">
                                                     <div class=" col-12 m-0">
                                                         <!-- Bouton pour ajouter une nouvelle ligne -->
                                                         <i class="bx bx-plus btn btn-secondary" id="add-row"></i>
@@ -117,28 +123,28 @@
                                                     </div>
 
                                                 </div>
-                                                <div class=" col-6 row d-none float-right" id="infoModule">
+                                                <div class="col-12 col-md-8 row d-none float-right" id="infoModule">
                                                     <input type="hidden" id="vht" class="vht">
                                                     <!-- CM -->
-                                                    <div class='col-6 col-lg-3'>
+                                                    <div class='col-6 col-sm-3'>
                                                         <label class="d-block text-center">CM</label>
                                                         <input type='number' class='form-control text-center cm'
                                                             disabled>
                                                     </div>
                                                     <!-- TD -->
-                                                    <div class='col-6 col-lg-3'>
+                                                    <div class='col-6 col-sm-3'>
                                                         <label class="d-block text-center">TD</label>
                                                         <input type='number' class='form-control text-center td'
                                                             disabled>
                                                     </div>
                                                     <!-- TP -->
-                                                    <div class='col-6 col-lg-3'>
+                                                    <div class='col-6 col-sm-3'>
                                                         <label class="d-block text-center">TP</label>
                                                         <input type='number' class='form-control text-center tp'
                                                             disabled>
                                                     </div>
                                                     <!-- TPE -->
-                                                    <div class='col-6 col-lg-3'>
+                                                    <div class='col-6 col-sm-3'>
                                                         <label class="d-block text-center">TPE</label>
                                                         <input type='number' class='form-control text-center tpe'
                                                             disabled>
@@ -148,7 +154,8 @@
 
                                             <div class="table-responsive">
                                                 <table id="table-extended-chechbox"
-                                                    class="table table-striped table-bordered" style="width:100%">
+                                                    class="table table-striped table-bordered table-responsive"
+                                                    style="width:100%">
                                                     <thead>
                                                         <tr>
                                                             <th class="text-center">Horaire</th>
@@ -162,14 +169,14 @@
                                                     <tbody id="corpsEdt">
                                                         <?php foreach ($horairesEdt as $horaire): ?>
                                                             <tr>
-                                                                <td>
+                                                                <td style='min-width: 236px !important;'>
                                                                     <div class='row'>
-                                                                        <div class='col-sm-6'>
+                                                                        <div class='col-6'>
                                                                             <input type='time'
                                                                                 class='form-control horaireDebut'
                                                                                 value="<?php echo substr($horaire->heure_debut, 0, 5) ?>">
                                                                         </div>
-                                                                        <div class='col-sm-6'>
+                                                                        <div class='col-6'>
                                                                             <input type='time'
                                                                                 class='form-control horaireFin'
                                                                                 value="<?php echo substr($horaire->heure_fin, 0, 5) ?>">
@@ -432,6 +439,7 @@
         const heuresModule = calculerHeuresModuleEdt();
         const model = $(this).data('model');
         const type = parseInt($('input[name="type"]:checked').val(), 10);
+
         genererEdt(heuresModule, model, type);
     })
 

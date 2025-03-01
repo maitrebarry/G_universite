@@ -49,40 +49,40 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between flex-column mb-3 mb-md-0">
                                 <ul class="nav nav-align-left nav-pills flex-column">
-                                
+
                                     <li class="nav-item mb-1">
                                         <a class="nav-link  active " href="<?= ROOT ?>/Modules/listeModule">
-                                        <i class="fa-solid fa-book-open-reader me-2"></i>
+                                            <i class="fa-solid fa-book-open-reader me-2"></i>
                                             <span class="align-middle">Modules</span>
                                         </a>
                                     </li>
                                     <li class="nav-item mb-1">
                                         <a class="nav-link " href="<?= ROOT ?>/Semestres/Liste">
-                                        <i class="fa-solid fa-calendar-day me-2"></i>
+                                            <i class="fa-solid fa-calendar-day me-2"></i>
                                             <span class="align-middle">Semestre</span>
                                         </a>
                                     </li>
                                     <li class="nav-item mb-1">
                                         <a class="nav-link " href="<?= ROOT ?>/Periodes/Liste">
-                                        <i class="fa-solid fa-calendar-alt me-2"></i>
+                                            <i class="fa-solid fa-calendar-alt me-2"></i>
                                             <span class="align-middle">Période</span>
                                         </a>
                                     </li>
                                     <li class="nav-item mb-1">
                                         <a class="nav-link " href="<?= ROOT ?>/Utilisateurs/liste_utilisateur">
-                                        <i class="fa-solid fa-users me-2"></i>
+                                            <i class="fa-solid fa-users me-2"></i>
                                             <span class="align-middle">Utilisateur</span>
                                         </a>
                                     </li>
                                     <li class="nav-item mb-1">
                                         <a class="nav-link " href="<?= ROOT ?>/Salles/Liste">
-                                        <i class="fa-solid fa-door-open me-2"></i>
+                                            <i class="fa-solid fa-door-open me-2"></i>
                                             <span class="align-middle">Salles</span>
                                         </a>
                                     </li>
                                     <li class="nav-item mb-1">
                                         <a class="nav-link   " href="<?= ROOT ?>/Departements/listeDepartements">
-                                        <i class="fa-solid fa-building me-2"></i>
+                                            <i class="fa-solid fa-building me-2"></i>
                                             <span class="align-middle">departements</span>
                                         </a>
                                     </li>
@@ -142,52 +142,10 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- partie modification des données -->
-                            <div class="modal-primary mr-1 mb-1 d-inline-block">
-                                <div class="modal fade text-left" id="default" tabindex="-1" aria-labelledby="myModalLabel160" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                                        <div class="modal-content">
-                                            <div class="modal-header bg-primary">
-                                                <h5 class="modal-title white" id="myModalLabel160">Modifier le Module</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <form method="post" action="<?= ROOT ?>/Modules/editFiliere">
-                                                <div class="modal-body">
-                                                    <input type="hidden" id="inputIdmodule" name="id_module">
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="inputnomModule">Nom du Module</label>
-                                                                <input type="text" class="form-control" id="inputnomModule" name="nom_module" required>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="form-group">
-                                                                <label for="inputsigleModule">Code du Module</label>
-                                                                <input type="text" class="form-control" id="inputsigleModule" name="sigle_module" required>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-light-secondary" data-dismiss="modal">
-                                                            <i class="bx bx-x d-block d-sm-none"></i>
-                                                            <span class="d-none d-sm-block">Annuler</span>
-                                                        </button>
-                                                        <button type="submit" class="btn btn-primary" name="editmodule">Modifier</button>
-                                                    </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- partie fin modification des données -->
-
                             <!-- partie insertion des données -->
-                            <div class="modal-primary mr-1 mb-1 d-inline-block">
+                            <div class="modal-primary mr-1 mb-1 d-inline-block modal-lg">
                                 <div class="modal fade text-left" id="primary" tabindex="-1" role="dialog" aria-labelledby="myModalLabel160" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+                                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header bg-primary">
                                                 <h5 class="modal-title white" id="myModalLabel160"> Enregistrements de modules</h5>
@@ -225,6 +183,48 @@
                                 </div>
                             </div>
                             <!-- fin insertion des données -->
+                            <!-- partie modification des données -->
+                            <div class="modal-primary mr-1 mb-1 d-inline-block">
+                                <div class="modal fade text-left" id="default" role="dialog" tabindex="-1" aria-labelledby="myModalLabel160" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-primary">
+                                                <h5 class="modal-title white" id="myModalLabel160">Modifier le Module</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <i class="bx bx-x"></i>
+                                                </button>
+                                            </div>
+                                            <form method="post" action="<?= ROOT ?>/Modules/editFiliere">
+                                                <div class="modal-body">
+                                                    <input type="hidden" id="inputIdmodule" name="id_module">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="inputnomModule">Nom du Module</label>
+                                                                <input type="text" class="form-control" id="inputnomModule" name="nom_module" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="inputsigleModule">Code du Module</label>
+                                                                <input type="text" class="form-control" id="inputsigleModule" name="sigle_module" required>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-light-secondary" data-dismiss="modal">
+                                                            <i class="bx bx-x d-block d-sm-none"></i>
+                                                            <span class="d-none d-sm-block">Close</span>
+                                                        </button>
+                                                        <button type="submit" class="btn btn-primary" name="editmodule">Modifier</button>
+                                                    </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- partie fin modification des données -->
+
                         </div>
                     </div>
                 </div>
