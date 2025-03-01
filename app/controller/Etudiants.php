@@ -174,7 +174,7 @@ public function importExcel() {
         $sheet = $spreadsheet->getActiveSheet();
         $rowIterator = $sheet->getRowIterator(2); // Commence à la ligne 2 (ignorer les en-têtes)
 
-        // Instancier le modèle Etudiant
+        // Instancier le modèle Etudian
         $etudiantModel = new EtudiantModel();
 
         // Parcourir les lignes du fichier Excel
