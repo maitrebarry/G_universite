@@ -106,3 +106,10 @@
 <script src="<?= ROOT ?>/assets/vendors/js/tables/datatable/dataTables.buttons.min.js"></script>
 <script src="<?= ROOT ?>/assets/vendors/js/tables/datatable/datatables.checkboxes.min.js"></script>
 <script src="<?= ROOT ?>/assets/js/scripts/datatables/datatable.js"></script>
+
+
+
+
+
+
+

@@ -187,88 +187,61 @@ p {
                             </p>
                         </div>
                     </div>
-                    <div class="form-group mb-3 text-center no-print">
-                        <label style="font-weight: bold;">Afficher l'emploi du temps :</label>
-                        <div
-                            style='display: flex; justify-content: center; gap: 20px; align-items: center; margin-top: 10px;'>
-                            <div>
-                                <input type='radio' name='affichage' id='edt_actuel' value='actuel' <?=( $status
-                                    !='achevé' ) ? 'checked' : '' ?> style='transform: scale(1.3); margin-right: 5px;'>
-                                <label for='edt_actuel' style='font-size: 0.7rem; font-style: italic;'>Actuel</label>
-                            </div>
-                            <div>
-                                <input type='radio' name='affichage' id='edt_passe' value='passe' <?=(
-                                    $status=='achevé' ) ? 'checked' : '' ?>
-                                    style='transform: scale(1.3); margin-right: 5px;'>
-                                <label for='edt_passe' style='font-size: 0.7rem; font-style: italic;'>Passé</label>
-                            </div>
-                        </div>
-                    </div>
+                     <table class="table-bordered-responsive">
+                                <thead>
+                                    <tr>
+                                        <th>Semaine</th>
+                                        <th>Module1(VH)/Classe</th>
+                                        <th>Module2(VH)/Classe</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if (!empty($emplois_du_temps)): ?>
+                                        <?php 
+                                        $traited_dates = [];
+                                        foreach ($emplois_du_temps as $edt) {
+                                            $date_debut_str = $edt->date_debut;
+                                            $date_fin_str = $edt->date_fin;
+                                            $formatted_date_debut = date('d-m-Y', strtotime($date_debut_str));
+                                            $formatted_date_fin = date('d-m-Y', strtotime($date_fin_str));
 
-                    <table class='table-bordered-responsive'>
-                        <thead>
-                            <tr>
-                                <th>Semaine</th>
-                                <th>Module1( VH )/Classe</th>
-                                <th>Module2( VH )/Classe</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php if ( !empty( $emplois_du_temps ) ): ?>
-                            <?php
-        $traited_dates = [];
-        foreach ( $emplois_du_temps as $edt ) {
-            $date_debut_str = $edt->date_debut;
-            $date_fin_str = $edt->date_fin;
-            $formatted_date_debut = date( 'd-m-Y', strtotime( $date_debut_str ) );
-            $formatted_date_fin = date( 'd-m-Y', strtotime( $date_fin_str ) );
+                                            // Construction du niveau (ex: L1S1)
+                                            $niveau = htmlspecialchars($edt->nom_parcours . $edt->sigle_semestre);
 
-            if ( isset( $traited_dates[ $date_debut_str ][ $date_fin_str ] ) ) {
-                $traited_dates[ $date_debut_str ][ $date_fin_str ][] = [
-                    'module' => htmlspecialchars( $edt->nom_module ) . ' (' . htmlspecialchars( $edt->heure_total ) . 'h)',
-                    'class' => htmlspecialchars( $edt->nom_salle )
-                ];
-            } else {
-                $traited_dates[ $date_debut_str ][ $date_fin_str ] = [
-                    [
-                        'module' => htmlspecialchars( $edt->nom_module ) . ' (' . htmlspecialchars( $edt->heure_total ) . 'h)',
-                        'class' => htmlspecialchars( $edt->nom_salle )
-                    ]
-                ];
-            }
-        }
+                                            if (isset($traited_dates[$date_debut_str][$date_fin_str])) {
+                                                $traited_dates[$date_debut_str][$date_fin_str][] = [
+                                                    'module' => htmlspecialchars($edt->nom_module) . " (" . htmlspecialchars($edt->heure_total) . "h)",
+                                                    'niveau' => $niveau
+                                                ];
+                                            } else {
+                                                $traited_dates[$date_debut_str][$date_fin_str] = [
+                                                    [
+                                                        'module' => htmlspecialchars($edt->nom_module) . " (" . htmlspecialchars($edt->heure_total) . "h)",
+                                                        'niveau' => $niveau
+                                                    ]
+                                                ];
+                                            }
+                                        }
 
-        foreach ( $traited_dates as $date_debut_str => $fin_dates ) {
-            foreach ( $fin_dates as $date_fin_str => $modules_classes ) {
-                ?>
-                            <tr>
-                                <td>Du <?=date( 'd-m-Y' , strtotime( $date_debut_str ) ); ?> au
-                                    <?=date( 'd-m-Y' , strtotime( $date_fin_str ) ); ?>
-                                </td>
-                                <td>
-                                    <?=$modules_classes[ 0 ][ 'module' ]; ?>
-                                    <?=isset( $modules_classes[ 0 ][ 'class' ] ) ? ' / ' . $modules_classes[ 0
-                                            ][ 'class' ] : '' ; ?>
-                                </td>
-                                <td>
-                                    <?=isset( $modules_classes[ 1 ][ 'module' ] ) ? $modules_classes[ 1 ][ 'module' ]
-                                        : '' ; ?>
-                                    <?=isset( $modules_classes[ 1 ][ 'class' ] ) ? ' / ' . $modules_classes[ 1
-                                            ][ 'class' ] : '' ; ?>
-                                </td>
-                            </tr>
-                            <?php
-    }
-}
-?>
-                            <?php else: ?>
-                            <tr>
-                                <td colspan='3' class='text-center'>Aucun emploi du temps disponible.</td>
-                            </tr>
-                            <?php endif;
-?>
-                        </tbody>
-                    </table>
+                                        foreach ($traited_dates as $date_debut_str => $fin_dates) {
+                                            foreach ($fin_dates as $date_fin_str => $modules_niveaux) {
+                                                ?>
+                                                <tr>
+                                                    <td>Du <?= date('d-m-Y', strtotime($date_debut_str)); ?> au <?= date('d-m-Y', strtotime($date_fin_str)); ?></td>
+                                                    <td><?= $modules_niveaux[0]['module']; ?> <?= isset($modules_niveaux[0]['niveau']) ? " / " . $modules_niveaux[0]['niveau'] : ''; ?></td>
+                                                    <td><?= isset($modules_niveaux[1]['module']) ? $modules_niveaux[1]['module'] : ''; ?> <?= isset($modules_niveaux[1]['niveau']) ? " / " . $modules_niveaux[1]['niveau'] : ''; ?></td>
+                                                </tr>
+                                                <?php
+                                            }
+                                        }
+                                        ?>
+                                    <?php else: ?>
+                                        <tr>
+                                            <td colspan="3" class="text-center">Aucun emploi du temps disponible.</td>
+                                        </tr>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
                     <div class='footer'>
                         <div class='row mb-4'>
                             <div class='col-md-4'>
