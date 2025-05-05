@@ -65,11 +65,26 @@ $current_page = basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
             </li>
 
             <!-- Notes -->
-            <li class="nav-item <?= ($current_page == 'Notes') ? 'active' : '' ?>">
+            <li class="nav-item <?= (strpos($_SERVER['REQUEST_URI'], 'Notes') !== false) ?  : '' ?>">
                 <a class="nav-link" href="<?= ROOT ?>/Notes">
                     <i class="bx bx-book"></i> <!-- Icône représentant des notes -->
                     <span class="menu-title">Notes</span>
                 </a>
+                <ul class="menu-content">
+                    <li class="<?= ($current_page == 'Notes') ? 'active' : '' ?>">
+                        <a href="<?= ROOT ?>/Notes">
+                            <i class="bx bx-right-arrow-alt"></i>
+                            <span class="menu-item"> Saisie des Notes</span>
+                        </a>
+                    </li>
+                    <li class="<?= ($current_page == 'liste_note') ? 'active' : '' ?>">
+                        <a href="<?= ROOT ?>/Notes/liste_note">
+                            <i class="bx bx-right-arrow-alt"></i>
+                            <span class="menu-item">Liste notes</span>
+                        </a>
+                    </li>
+                
+                </ul>
             </li>
 
             <!-- Emploi du temps -->
@@ -118,7 +133,6 @@ $current_page = basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
         </ul>
     </div>
 </div>
-
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {

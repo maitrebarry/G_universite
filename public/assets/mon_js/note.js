@@ -18,6 +18,7 @@ function loadEtudiants() {
   let filiere_id = $("#filiere").val();
   let promotion_id = $("#promotions").val();
   let module_id = $("#modules").val();
+  let semestre_id = $("#semestres").val();
 
   // Affichage du spinner pendant le chargement
   $("#loadingSpinner").show();
@@ -29,9 +30,12 @@ function loadEtudiants() {
       idPromotion: promotion_id,
       idModule: module_id,
       idFiliere: filiere_id,
+      idSemestre: semestre_id,
     },
     success: function (response) {
       $("#loadingSpinner").hide();
+      console.log(response);
+
       if (response.trim() !== "notfound") {
         // Injecter le HTML retourné dans la section de la table
         $("#table_section").html(response);
@@ -84,6 +88,7 @@ function loadEtudiants() {
               row.find(".noteDevoir").val(),
               row.find(".noteEvaluation").val(),
               row.find(".noteSession").val(),
+              row.find(".moyenneModule").val(),
               idNote
             );
           }
@@ -108,9 +113,15 @@ function loadEtudiants() {
         } else {
           toggleSessionFields(true, true);
         }
+      } else if (response.trim().include("empty")) {
+        $("#table_section").html(
+          "<h6 class='text-center text-bold-600 text-warning'>" +
+            "Aucun étudiant trouvé pour cette classe !</h6>"
+        );
       } else {
-        $("#alerte").html(
-          "<h6 class='text-center text-bold-600 text-warning'>Aucune note disponible pour cette promotion dans ce module !</h6>"
+        $("#table_section").html(
+          "<h6 class='text-center text-bold-600 text-warning'>" +
+            "Veuilez Bien verifier vos données !</h6>"
         );
       }
     },
@@ -126,7 +137,13 @@ function loadEtudiants() {
 
 /**************************************************** */
 // Fonction d'envoi des modifications des notes au serveur via AJAX
-function saveNoteEtudiant(noteDevoir, noteEvaluation, noteSession, idNote) {
+function saveNoteEtudiant(
+  noteDevoir,
+  noteEvaluation,
+  noteSession,
+  moyenneModule,
+  idNote
+) {
   const ROOT = "http://localhost/G_universite/public/Notes";
   $.ajax({
     url: ROOT + "/save_note_etudiant",
@@ -136,6 +153,7 @@ function saveNoteEtudiant(noteDevoir, noteEvaluation, noteSession, idNote) {
       devoir: noteDevoir,
       evaluation: noteEvaluation,
       session: noteSession,
+      moyenne: moyenneModule,
       action: "noterecuee",
     },
     success: function (response) {
@@ -157,16 +175,123 @@ function calculeMoyenModuleSessionNormale(
   coef
 ) {
   let moyenneModule = 0;
-  let moyenne = 0;
   // Selon la règle : si noteEvaluation est supérieure à noteSession, on utilise (devoir + evaluation)/2
   // Sinon, on utilise (devoir + session)/2
-  if (noteEvaluation > noteSession) {
-    moyenne = (noteDevoir + noteEvaluation) / 2;
-  } else {
-    moyenne = (noteDevoir + noteSession) / 2;
+  moyenneModule = (noteDevoir + 2 * noteEvaluation) / 3;
+  if (noteSession > moyenneModule) {
+    moyenneModule = noteSession;
   }
   // On applique le coefficient pour obtenir la moyenne du module
-  moyenneModule = moyenne;
-
   return moyenneModule;
+}
+
+async function infosFiliere(idFiliere, source = null) {
+  try {
+    response = await $.ajax({
+      method: "POST",
+      url: "http://localhost/G_universite/public/Emploi_du_temps/filiere_info",
+      dataType: "json",
+
+      data: {
+        source: source,
+        idFiliere: idFiliere,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error(error);
+  }
+  var infoFiliere;
+}
+
+function getNiveau(sigleSemestre) {
+  const sigle = sigleSemestre.toLowerCase();
+
+  if (sigle === "s1" || sigle === "s2") {
+    return "L1";
+  } else if (sigle === "s3" || sigle === "s4") {
+    return "L2";
+  } else {
+    return "L3";
+  }
+}
+
+// recuperer les promotions d'une filière à travers son id
+function promotionsFiliere(infoFiliere, idPromotion = "") {
+  const promotionContainer = $("#promotions");
+  promotionContainer.empty();
+  promotionContainer.append(
+    `<option value="" disabled>Selectionner une Promotion</option>`
+  );
+  const promotions = infoFiliere["promotions"];
+  promotions.forEach((promotion) => {
+    const option = `<option value='${
+      promotion.id_promotion
+    }' class='text-center' data-id='${
+      promotion.id_parcours
+    }'data-semestre='${promotion.sigle_semestre.toUpperCase()}' ${
+      promotion.id_promotion == idPromotion ? "selected" : ""
+    }>
+    ${promotion.sigle_filiere.toUpperCase()}-${getNiveau(
+      promotion.sigle_semestre
+    )}( ${promotion.annee_universitaire} )</option>`;
+    promotionContainer.append(option);
+  });
+}
+////////////////////////////////////////////////////////ppppppppppp
+
+// recuperer les semestres d'une filière à travers son id
+function semestresPromotion(infoFiliere, semestreCourant) {
+  const semestreContainer = $("#semestres");
+  semestreContainer.empty();
+  semestreContainer.append(
+    `<option value="" disabled selected>Selectionner un Semestre</option>`
+  );
+  const semestres = infoFiliere["semestres"];
+  semestreCourant = parseInt(semestreCourant.slice(-1), 10);
+
+  semestres.forEach((semestre) => {
+    if (
+      parseInt(semestre.sigle_semestre.slice(-1), 10) === semestreCourant ||
+      parseInt(semestre.sigle_semestre.slice(-1), 10) === semestreCourant + 1
+    ) {
+      const option = `<option value='${
+        semestre.id_parcours
+      }' class='text-center' data-id='${
+        semestre.id_parcours
+      }'>${semestre.sigle_semestre.toUpperCase()}</option>`;
+      semestreContainer.append(option);
+    }
+  });
+}
+
+// recuperer les modules d'une promotion à travers l'id du semestre
+function modulesSemestre(idSemestre, infoFiliere, idModule = "") {
+  const mouduleContainer = $("#modules");
+  mouduleContainer.empty();
+
+  mouduleContainer.append(
+    `<option value="" disabled selected>Selectionner un Module</option>`
+  );
+  const ues = infoFiliere["ues"];
+  const modules = infoFiliere["modules"];
+
+  ues.forEach((ue) => {
+    if (ue.id_parcours == idSemestre) {
+      const ueOption = `<option disabled class="mt-1">${ue.nom_ue}</option>`;
+      mouduleContainer.append(ueOption);
+      modules.forEach((module) => {
+        if (module.id_ue == ue.id_ue) {
+          const option = `<option value='${
+            module.id_ue_module
+          }' class='text-center' ${
+            module.id_ue_module == idModule ? "selected" : ""
+          }>
+            ${module.nom_module}(${module.code_module})
+            </option>`;
+          mouduleContainer.append(option);
+        }
+      });
+    }
+  });
 }

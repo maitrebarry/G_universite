@@ -34,7 +34,7 @@
                                     </li>
                                     <li class="breadcrumb-item"><a href="<?= ROOT ?>/Filieres/">Gestion Filière</a>
                                     </li>
-                                    <li class="breadcrumb-item active">Liste Promotions
+                                    <li class="breadcrumb-item active">Liste Classes
                                     </li>
                                 </ol>
                             </div>
@@ -57,7 +57,7 @@
                                         <div>
                                             <h6>
                                                 <?php if (!empty($promotions)): ?>
-                                                    <?php echo strtoupper($promotions[0]->nom_filiere) ?>
+                                                <?php echo strtoupper($promotions[0]->nom_filiere) ?>
                                                 <?php endif ?>
                                             </h6>
                                         </div>
@@ -65,7 +65,7 @@
                                             data-target="#menuPromotion" style="float:right;"
                                             data-id="<?php echo $idFiliere ?>"
                                             data-nom="<?php echo $promotions[0]->sigle_filiere ?>"><i
-                                                class="bx bx-plus"></i>&nbsp; Promotion
+                                                class="bx bx-plus"></i>&nbsp; Classe
                                         </button>
                                     </div>
 
@@ -77,84 +77,94 @@
                                                 <thead>
                                                     <tr>
 
-                                                        <th>Promotion</th>
-                                                        <th>Semestre</th>
+                                                        <th>Classe</th>
                                                         <th>Statut</th>
                                                         <th class="text-center dt-no-sorting">Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <?php foreach ($promotions as $promotion): ?>
-                                                        <tr>
-                                                            <td>
-                                                                <?php echo strtoupper($promotion->sigle_filiere . '-' . $promotion->sigle_semestre . '( ' . $promotion->annee_universitaire . ' )') ?>
-                                                            </td>
-                                                            <td>
-                                                                <?php echo strtoupper($promotion->nom_semestre) ?>
-                                                            </td>
-                                                            <td>
-                                                                <?php if ($promotion->statut == 0): ?>
-                                                                    <span class="badge badge-warning">En Attente</span>
-                                                                <?php endif ?>
-                                                                <?php if ($promotion->statut == 1): ?>
-                                                                    <span class=" badge badge-primary">En Cours</span>
-                                                                <?php endif ?>
-                                                                <?php if ($promotion->statut == 2): ?>
-                                                                    <span class=" badge badge-success">Achévée</span>
-                                                                <?php endif ?>
-                                                            </td>
+
+                                                    <?php
+                                                        if (strtolower($promotion->sigle_semestre) == 's1' || strtolower($promotion->sigle_semestre) == 's2') {
+                                                            $niveau = 'L1';
+                                                        } elseif (strtolower($promotion->sigle_semestre) == 's3' || strtolower($promotion->sigle_semestre) == 's4') {
+                                                            $niveau = 'L2';
+                                                        } else {
+                                                            $niveau = 'L3';
+                                                        }
+
+                                                        ?>
 
 
-                                                            <td class="text-center dt-no-sorting">
-                                                                <div class="dropdown">
-                                                                    <span
-                                                                        class="bx bx-dots-horizontal-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer"
-                                                                        data-toggle="dropdown" aria-haspopup="true"
-                                                                        aria-expanded="false" role="menu">
-                                                                    </span>
-                                                                    <div class="dropdown-menu dropdown-menu-right">
-                                                                        <a class="dropdown-item"
-                                                                            href="<?= ROOT ?>/Filieres/apercu_Filiere/">
-                                                                            <i class="bx bx-show mr-1"></i>Aperçu
-                                                                        </a>
-                                                                        <?php if ($promotion->statut == 1 || $promotion->statut == 2): ?>
-                                                                            <a class="dropdown-item text-warning statutButton"
-                                                                                href="<?= ROOT . '/Filieres/set_status_promotion/' . $promotion->id_filiere . '/' . $promotion->id_promotion . '/0' ?>"
-                                                                                data-promotion="<?php echo strtoupper($promotion->sigle_filiere . '-' . $promotion->sigle_semestre . '( ' . $promotion->annee_universitaire . ' )') ?>"
-                                                                                data-etat="en attente">
-                                                                                <i class="bx bx-stopwatch mr-1 "></i>Mettre
-                                                                                en Attente
-                                                                            </a>
-                                                                        <?php endif ?>
-                                                                        <?php if ($promotion->statut == 0 || $promotion->statut == 2): ?>
-                                                                            <a class="dropdown-item text-primary statutButton"
-                                                                                href="<?= ROOT . '/Filieres/set_status_promotion/' . $promotion->id_filiere . '/' . $promotion->id_promotion . '/1' ?>"
-                                                                                data-promotion="<?php echo strtoupper($promotion->sigle_filiere . '-' . $promotion->sigle_semestre . '( ' . $promotion->annee_universitaire . ' )') ?>"
-                                                                                data-etat="en marche">
-                                                                                <i class="bx bx-log-in-circle mr-1 "></i>Mettre
-                                                                                en Marche
-                                                                            </a>
-                                                                        <?php endif ?>
-                                                                        <?php if ($promotion->statut == 0 || $promotion->statut == 1): ?>
-                                                                            <a class="dropdown-item text-danger statutButton"
-                                                                                href="<?= ROOT . '/Filieres/set_status_promotion/' . $promotion->id_filiere . '/' . $promotion->id_promotion . '/2' ?>"
-                                                                                data-promotion="<?php echo strtoupper($promotion->sigle_filiere . '-' . $promotion->sigle_semestre . '( ' . $promotion->annee_universitaire . ' )') ?>"
-                                                                                data-etat="en arrêt">
-                                                                                <i class="bx bx-log-out mr-1"></i>Mettre en
-                                                                                Arrêt
-                                                                            </a>
-                                                                        <?php endif ?>
-                                                                        <?php if ($promotion->statut == 1): ?>
-                                                                            <a class="dropdown-item "
-                                                                                href="<?= ROOT ?>/Emploi_du_temps/ajouter_EDT/<?php echo $promotion->id_filiere . '/' . $promotion->id_promotion ?>">
-                                                                                <i class="bx bx-plus mr-1"></i>Edt
-                                                                            </a>
-                                                                        <?php endif ?>
+                                                    <tr>
+                                                        <td>
+                                                            <?php echo strtoupper($promotion->sigle_filiere . '-' . $niveau . '( ' . $promotion->annee_universitaire . ' )') ?>
+                                                        </td>
 
-                                                                    </div>
+                                                        <td>
+                                                            <?php if ($promotion->statut == 0): ?>
+                                                            <span class="badge badge-warning">En Attente</span>
+                                                            <?php endif ?>
+                                                            <?php if ($promotion->statut == 1): ?>
+                                                            <span class=" badge badge-primary">En Cours</span>
+                                                            <?php endif ?>
+                                                            <?php if ($promotion->statut == 2): ?>
+                                                            <span class=" badge badge-success">Achévée</span>
+                                                            <?php endif ?>
+                                                        </td>
+
+
+                                                        <td class="text-center dt-no-sorting">
+                                                            <div class="dropdown">
+                                                                <span
+                                                                    class="bx bx-dots-horizontal-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer"
+                                                                    data-toggle="dropdown" aria-haspopup="true"
+                                                                    aria-expanded="false" role="menu">
+                                                                </span>
+                                                                <div class="dropdown-menu dropdown-menu-right">
+                                                                    <a class="dropdown-item"
+                                                                        href="<?= ROOT ?>/Filieres/apercu_Filiere/">
+                                                                        <i class="bx bx-show mr-1"></i>Aperçu
+                                                                    </a>
+                                                                    <?php if ($promotion->statut == 1 || $promotion->statut == 2): ?>
+                                                                    <a class="dropdown-item text-warning statutButton"
+                                                                        href="<?= ROOT . '/Filieres/set_status_promotion/' . $promotion->id_filiere . '/' . $promotion->id_promotion . '/0' ?>"
+                                                                        data-promotion="<?php echo strtoupper($promotion->sigle_filiere . '-' . $promotion->sigle_semestre . '( ' . $promotion->annee_universitaire . ' )') ?>"
+                                                                        data-etat="en attente">
+                                                                        <i class="bx bx-stopwatch mr-1 "></i>Mettre
+                                                                        en Attente
+                                                                    </a>
+                                                                    <?php endif ?>
+                                                                    <?php if ($promotion->statut == 0 || $promotion->statut == 2): ?>
+                                                                    <a class="dropdown-item text-primary statutButton"
+                                                                        href="<?= ROOT . '/Filieres/set_status_promotion/' . $promotion->id_filiere . '/' . $promotion->id_promotion . '/1' ?>"
+                                                                        data-promotion="<?php echo strtoupper($promotion->sigle_filiere . '-' . $promotion->sigle_semestre . '( ' . $promotion->annee_universitaire . ' )') ?>"
+                                                                        data-etat="en marche">
+                                                                        <i class="bx bx-log-in-circle mr-1 "></i>Mettre
+                                                                        en Marche
+                                                                    </a>
+                                                                    <?php endif ?>
+                                                                    <?php if ($promotion->statut == 0 || $promotion->statut == 1): ?>
+                                                                    <a class="dropdown-item text-danger statutButton"
+                                                                        href="<?= ROOT . '/Filieres/set_status_promotion/' . $promotion->id_filiere . '/' . $promotion->id_promotion . '/2' ?>"
+                                                                        data-promotion="<?php echo strtoupper($promotion->sigle_filiere . '-' . $promotion->sigle_semestre . '( ' . $promotion->annee_universitaire . ' )') ?>"
+                                                                        data-etat="en arrêt">
+                                                                        <i class="bx bx-log-out mr-1"></i>Mettre en
+                                                                        Arrêt
+                                                                    </a>
+                                                                    <?php endif ?>
+                                                                    <?php if ($promotion->statut == 1): ?>
+                                                                    <a class="dropdown-item "
+                                                                        href="<?= ROOT ?>/Emploi_du_temps/ajouter_EDT/<?php echo $promotion->id_filiere . '/' . $promotion->id_promotion ?>">
+                                                                        <i class="bx bx-plus mr-1"></i>Edt
+                                                                    </a>
+                                                                    <?php endif ?>
+
                                                                 </div>
-                                                            </td>
-                                                        </tr>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
                                                     <?php endforeach ?>
 
                                                 </tbody>
@@ -177,7 +187,7 @@
                             <div class="modal-content">
                                 <div class="modal-header bg-primary">
                                     <h5 class="modal-title white" id="myModalLabel160">
-                                        Crétion de Promotion de <span class="nomFiliere text-bold-700">
+                                        Crétion de Classe de <span class="nomFiliere text-bold-700">
                                     </h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <i class="bx bx-x"></i>
@@ -196,7 +206,7 @@
                                             </div>
                                             <div class="col-6 mb-2">
                                                 <label for="nameBasic" class="form-label">
-                                                    Semestre <span class="text-danger fs-6">*</span></label>
+                                                    Semestre de Debut <span class="text-danger fs-6">*</span></label>
                                                 <select name="idParcours" id="semestres" class="select2 form-control">
 
                                                 </select>
@@ -236,42 +246,42 @@
     <!-- inclusion du partie footer fin-->
     <script src="<?= ROOT ?>/assets/mon_js/edt.js"></script>
     <script>
-        var infoFiliere = [];
-        $(' .ajouterPromotion').click(async function() {
-            let idFiliere = $(this).data("id");
-            $("#filiere").val(idFiliere);
-            $(".nomFiliere").html($(this).data("nom"));
-            infoFiliere = await
-            infosFiliere(idFiliere);
-            semestresFiliere(infoFiliere);
-        })
-        $('.statutButton').click(function(event) {
-            event.preventDefault();
-            url = $(this).attr('href');
-            Swal.fire({
-                title: "Êtes vous sûr?",
-                text: "La promotion " + $(this).data('promotion') + " sera mit " + $(this).data('etat'),
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonClass: "btn btn-primary",
-                cancelButtonClass: "btn btn-danger ml-1",
-                buttonsStyling: false,
-            }).then(function(result) {
-                if (result.value) {
-                    window.location.href = url;
-                }
-            });
+    var infoFiliere = [];
+    $(' .ajouterPromotion').click(async function() {
+        let idFiliere = $(this).data("id");
+        $("#filiere").val(idFiliere);
+        $(".nomFiliere").html($(this).data("nom"));
+        infoFiliere = await
+        infosFiliere(idFiliere);
+        semestresFiliere(infoFiliere);
+    })
+    $('.statutButton').click(function(event) {
+        event.preventDefault();
+        url = $(this).attr('href');
+        Swal.fire({
+            title: "Êtes vous sûr?",
+            text: "La promotion " + $(this).data('promotion') + " sera mit " + $(this).data('etat'),
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonClass: "btn btn-primary",
+            cancelButtonClass: "btn btn-danger ml-1",
+            buttonsStyling: false,
+        }).then(function(result) {
+            if (result.value) {
+                window.location.href = url;
+            }
+        });
 
-        })
+    })
 
-        $(document).ready(function() {
-            setDefaultAcademicYear();
-            $('#anneeUniversitaire').keyup(function(event) {
-                formatAcademicYear(event);
-            })
+    $(document).ready(function() {
+        setDefaultAcademicYear();
+        $('#anneeUniversitaire').keyup(function(event) {
+            formatAcademicYear(event);
         })
+    })
     </script>
 
 </body>

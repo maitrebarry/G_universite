@@ -329,7 +329,7 @@ function promotionsFiliere(infoFiliere, idPromotion = "") {
   const promotionContainer = $("#promotions");
   promotionContainer.empty();
   promotionContainer.append(
-    `<option value="" disabled>Selectionner une Promotion</option>`
+    `<option value="" disabled>Selectionner une Classe</option>`
   );
   const promotions = infoFiliere["promotions"];
   promotions.forEach((promotion) => {
@@ -344,6 +344,7 @@ function promotionsFiliere(infoFiliere, idPromotion = "") {
     promotionContainer.append(option);
   });
 }
+////////////////////////////////////////////////////////ppppppppppp
 
 // recuperer les semestres d'une filière à travers son id
 function semestresFiliere(infoFiliere) {
