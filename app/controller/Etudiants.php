@@ -9,12 +9,25 @@ class Etudiants extends Controller
         INNER JOIN filiere ON promotion.id_filiere=filiere.id_filiere 
         INNER JOIN parcours ON promotion.id_parcours=parcours.id_parcours 
         INNER JOIN semestre ON parcours.id_semestre=semestre.id_semestre");
-        // Transmettre les données à la vue
-        $this->view('liste_incrit', [
-            'listeFilieres' => $listeFilieres  // Nom du tableau de données envoyé à la vue
-        ]);
         
+    // Groupement par année universitaire
+    $listeParAnnee = [];
+    foreach ($listeFilieres as $filiere) {
+        $annee = $filiere->annee_universitaire;
+        if (!isset($listeParAnnee[$annee])) {
+            $listeParAnnee[$annee] = [];
+        }
+        $listeParAnnee[$annee][] = $filiere;
     }
+        // Transmettre les données à la vue
+
+        $this->view('liste_incrit', [
+ 'listeFilieres' => $listeFilieres,        // pas supprimé si tu en as besoin ailleurs
+        'listeParAnnee' => $listeParAnnee,
+     // pour la double sélection année > promotion
+    ]);
+}
+
     
     public function incrit_etudiant() {
         $Etudiants = new Etudiant();
@@ -50,15 +63,22 @@ class Etudiants extends Controller
 
     }
 
-    public function trier_liste_etudiant(){  
-      if(isset($_POST["id_promotion"])){
+public function trier_liste_etudiant() {
+    if (isset($_POST["annee_universitaire"], $_POST["id_filiere"], $_POST["id_semestre"])) {
         $etudiants = new Etudiant();
-       $liste_etudiant=$etudiants->trie_liste_etudiant($_POST["id_promotion"]);
-       $this->view('liste_etudiant', [
-        'liste_etudiant' => $liste_etudiant 
-         ]);
-      }
+        $liste_etudiant = $etudiants->trie_liste_etudiant(
+            $_POST["annee_universitaire"],
+            $_POST["id_filiere"],
+            $_POST["id_semestre"]
+        );
+        
+        $this->view('liste_etudiant', [
+            'liste_etudiant' => $liste_etudiant
+        ]);
     }
+}
+
+
   
         // Afficher la page de paiement pour un étudiant spécifique
         public function paiement_etudiant($id)
@@ -175,7 +195,7 @@ public function importExcel() {
         $rowIterator = $sheet->getRowIterator(2); // Commence à la ligne 2 (ignorer les en-têtes)
 
         // Instancier le modèle Etudian
-        $etudiantModel = new EtudiantModel();
+        $etudiantModel = new Etudiant();
 
         // Parcourir les lignes du fichier Excel
         foreach ($rowIterator as $row) {
@@ -233,6 +253,10 @@ public function importExcel() {
     }
 }
  public function liste_inscription_groupe(){
+   
+    $this->view('liste_inscription_groupe');
+}
+ public function filtrer_etudiants(){
    
     $this->view('liste_inscription_groupe');
 }

@@ -281,24 +281,27 @@ class Etudiant  extends Model{
         
         
     }
-    public function trie_liste_etudiant($id_promotion){
+  public function trie_liste_etudiant($annee_universitaire, $id_filiere, $id_semestre) {
+    $query = "SELECT * 
+              FROM etudiant
+              INNER JOIN promotion ON etudiant.id_promotion = promotion.id_promotion
+              INNER JOIN filiere ON promotion.id_filiere = filiere.id_filiere
+              INNER JOIN parcours ON promotion.id_parcours = parcours.id_parcours
+              INNER JOIN semestre ON parcours.id_semestre = semestre.id_semestre
+              WHERE promotion.annee_universitaire = :annee_universitaire
+                AND filiere.id_filiere = :id_filiere
+                AND semestre.id_semestre = :id_semestre";
 
-        $query = "SELECT * 
-                    FROM etudiant
-                    INNER JOIN promotion ON etudiant.id_promotion = promotion.id_promotion
-                    INNER JOIN filiere ON promotion.id_filiere = filiere.id_filiere
-                    INNER JOIN parcours ON promotion.id_parcours = parcours.id_parcours
-                    INNER JOIN semestre ON parcours.id_semestre = semestre.id_semestre
-                    WHERE etudiant.id_promotion = :id_promotion";
-        $bdd=$this->bdd();
-        $stmt = $bdd->prepare($query);
-        $stmt->bindParam(':id_promotion', $id_promotion, PDO::PARAM_INT);
-        $stmt->execute();
+    $stmt = $this->bdd()->prepare($query);
+    $stmt->bindParam(':annee_universitaire', $annee_universitaire);
+    $stmt->bindParam(':id_filiere', $id_filiere, PDO::PARAM_INT);
+    $stmt->bindParam(':id_semestre', $id_semestre, PDO::PARAM_INT);
+    $stmt->execute();
 
-        $info_etudiant = $stmt->fetchAll(PDO::FETCH_OBJ);
-        return $info_etudiant;
+    return $stmt->fetchAll(PDO::FETCH_OBJ);
+}
 
-    }
+
         // Récupérer les informations d'un étudiant par ID
         public function getById($id)
         {
@@ -427,7 +430,7 @@ public function getTotalPaye($id_etudiant) {
 }
 
 
-    
+
 
 }
     
