@@ -124,12 +124,11 @@
 
                                                                 <!-- Promotion -->
                                                                 <div class="col-md-6 mb-3">
-                                                                    <label for="id_promotion"
-                                                                        class="form-label">Semestre <span
-                                                                            class="text-danger">*</span></label>
+                                                                    <label for="id_promotion" class="form-label">Classe
+                                                                        <span class="text-danger">*</span></label>
                                                                     <select class="form-select" id="id_promotion"
                                                                         name="id_promotion" required>
-                                                                        <option value="">-- Sélectionner le Semestre --
+                                                                        <option value="">-- Sélectionner la classe --
                                                                         </option>
                                                                     </select>
                                                                 </div>
@@ -181,9 +180,17 @@
         const anneeSelectionnee = this.value;
 
         // Réinitialiser les promotions
-        selectPromotion.innerHTML = '<option value="">-- Sélectionner la promotion --</option>';
+        selectPromotion.innerHTML = '<option value="">-- Sélectionner la classe --</option>';
 
-
+        if (anneeSelectionnee && promotionsParAnnee[anneeSelectionnee]) {
+            promotionsParAnnee[anneeSelectionnee].forEach(promo => {
+                const option = document.createElement('option');
+                option.value = promo.id_promotion;
+                option.textContent = `${promo.sigle_filiere}-${promo.sigle_semestre} `;
+                selectPromotion.appendChild(option);
+            });
+        }
+    });
     </script>
     <script>
     document.getElementById('form_assoc').addEventListener('submit', function(e) {
