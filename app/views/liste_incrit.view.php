@@ -1,28 +1,6 @@
 <!-- inclusion du partie header -->
 <?php $this->view("Partials/header") ?>
-<<<<<<< HEAD
-<style>.table-paiement th {
-    cursor: default; /* Empêche le clic */
-    user-select: none; /* Désactive la sélection de texte */
-    background-color: #343a40;
-    color: white;
-    text-align: center;
-    vertical-align: middle;
-}
-th.text-center {
-    text-align: center; /* Centrer le texte */
-    vertical-align: middle; /* Aligner verticalement */
-    padding: 10px; /* Ajoutez un peu d'espace intérieur */
-}
-
-th.text-center input[type="checkbox"] {
-    margin-top: 5px; /* Espacer la case à cocher du texte */
-    cursor: pointer; /* Ajouter un curseur pour indiquer que c'est cliquable */
-}
-
-=======
 <style>
-    
     .table-paiement th {
         cursor: default;
         /* Empêche le clic */
@@ -49,7 +27,6 @@ th.text-center input[type="checkbox"] {
         cursor: pointer;
         /* Ajouter un curseur pour indiquer que c'est cliquable */
     }
->>>>>>> 7d93232ab9b020409746aee02548156ca6dffcc1
 </style>
 
 <body
@@ -92,31 +69,6 @@ th.text-center input[type="checkbox"] {
                 <section id="basic-datatable">
                     <div class="row">
                         <div class="col-12">
-<<<<<<< HEAD
-                            <div class="card card-animated-border-top ">
-
-                                <div class="card-content">
-                                    <div class="card-body">
-                                        <p class="mb-1">Filtré par</p>
-                                        <div class="row ">
-                                            <div class="col-md-6 m-auto">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="single-select ">Promotion</label>
-                                                    <select class="select2 form-control" id="id_promotion"
-                                                        name="id_promotion">
-                                                        <option value="">Promotion</option>
-                                                        <?php foreach ($listeFilieres as $listeFiliere): ?>
-                                                        <option
-                                                            value="<?= htmlspecialchars($listeFiliere->id_promotion); ?>">
-                                                            <?= htmlspecialchars($listeFiliere->sigle_filiere."-".$listeFiliere->sigle_semestre ."(".$listeFiliere->annee_universitaire.")"); ?>
-                                                        </option>
-                                                        <?php endforeach; ?>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                        </div>
-=======
                             <div class="card card-animated-border-top">
                                 <div class="card-content">
                                     <div class="card-body">
@@ -157,55 +109,11 @@ th.text-center input[type="checkbox"] {
 
                                             </div>
                                         </form>
->>>>>>> 7d93232ab9b020409746aee02548156ca6dffcc1
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-<<<<<<< HEAD
-                 
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="card card-animated-border-top ">
-                                    <div class="card-content mt-1 mr-1">
-                                        <a href="<?= ROOT ?>/Etudiants/incrit_etudiant"><button class="btn btn-primary"
-                                                style="float:right;"><i class="bx bx-plus"></i>&nbsp; Nouveau </button></a>
-                                        <div class="card-body card-dashboard">
-                                        <form action="<?= ROOT ?>/Etudiants/paiement_groupe" method="POST">
-                                            <div class="table-responsive">
-                                            
-                                                 <table class="table zero-configuration">
-                                                    <thead class="text-center">
-                                                        <tr>
-                                                        <th class="text-center">
-                                                          Tout
-                                                            <br> <!-- Saut de ligne pour séparer le texte de la case à cocher -->
-                                                            <input type="checkbox" id="select-all" title="Sélectionner tout" style="margin-top: 5px;">
-                                                        </th>
-                                                           
-                                                            <th>Nom && Prénom</th>
-                                                            <th>Matricule</th>
-                                                            <th>Status</th>
-                                                            <th>Filliere</th>
-                                                            <th>Diplome</th>
-                                                            
-                                                            <th> Action</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody id="table_etudiant" class="text-center">
-
-                                                    </tbody>
-                                                </table>
-                                               
-
-                                                <!-- Bouton pour effectuer le paiement -->
-                                                <button type="submit" class="btn btn-primary">Paiement en Groupe</button>
-                                            
-                                            </div>
-                                         </form>
-                                        </div>
-=======
 
                     <!-- Code pour afficher les étudiants et effectuer l'action -->
                     <div class="row">
@@ -222,48 +130,44 @@ th.text-center input[type="checkbox"] {
                                         <form action="<?= ROOT ?>/Etudiants/paiement_groupe" method="POST">
                                             <div class="table-responsive">
                                                 <!-- Affichage des étudiants -->
-                                               <div id="liste_etudiants" class="mt-4">
-    <table class="table zero-configuration">
-        <thead class="text-center">
-            <tr>
-                <th class="text-center">
-                    Tout<br>
-                    <input type="checkbox" id="select-all" title="Sélectionner tout" style="margin-top: 5px;">
-                </th>
-                <th>Nom & Prénom</th>
-                <th>Matricule</th>
-                <th>Status</th>
-                <th>Filière</th>
-                <th>Diplôme</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody id="table_etudiant" class="text-center">
-            <!-- Les données AJAX seront insérées ici -->
-        </tbody>
-    </table>
-</div>
+                                                <div id="liste_etudiants" class="mt-4">
+                                                    <table class="table zero-configuration">
+                                                        <thead class="text-center">
+                                                            <tr>
+                                                                <th class="text-center">
+                                                                    Tout<br>
+                                                                    <input type="checkbox" id="select-all"
+                                                                        title="Sélectionner tout"
+                                                                        style="margin-top: 5px;">
+                                                                </th>
+                                                                <th>Nom & Prénom</th>
+                                                                <th>Matricule</th>
+                                                                <th>Status</th>
+                                                                <th>Filière</th>
+                                                                <th>Diplôme</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="table_etudiant" class="text-center">
+                                                            <!-- Les données AJAX seront insérées ici -->
+                                                        </tbody>
+                                                    </table>
+                                                </div>
 
                                                 <button type="submit" class="btn btn-primary">Paiement en
                                                     Groupe</button>
                                             </div>
                                         </form>
->>>>>>> 7d93232ab9b020409746aee02548156ca6dffcc1
                                     </div>
                                 </div>
                             </div>
                         </div>
-<<<<<<< HEAD
-                  
-                </section>
-=======
                     </div>
 
 
                 </section>
 
 
->>>>>>> 7d93232ab9b020409746aee02548156ca6dffcc1
                 <!-- formulaire -->
 
             </div>
@@ -280,65 +184,29 @@ th.text-center input[type="checkbox"] {
     <!-- inclusion du partie footer-->
     <?php $this->view("Partials/footer") ?>
     <!-- inclusion du partie footer fin-->
-<<<<<<< HEAD
-    <script>
-        //pour eviter de clicker sur les th
-=======
 
     <script>
         $('.zero-configuration').DataTable({
             ordering: false
         });
-            //pour eviter de clicker sur les th
->>>>>>> 7d93232ab9b020409746aee02548156ca6dffcc1
-  document.getElementById('select-all').addEventListener('click', function(event) {
-    event.stopPropagation();
-});
-          document.getElementById('select-all').addEventListener('change', function() {
-        const checkboxes = document.querySelectorAll('input[name="paie[]"]');
-        checkboxes.forEach(checkbox => checkbox.checked = this.checked);
+        //pour eviter de clicker sur les th
+        document.getElementById('select-all').addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+        document.getElementById('select-all').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('input[name="paie[]"]');
+            checkboxes.forEach(checkbox => checkbox.checked = this.checked);
         });
 
-<<<<<<< HEAD
         $(document).ready(function() {
-        $('#id_promotion').change(function() {
-            const id_promotion = $('#id_promotion').val();
-
-
-            if (id_promotion != null) {
-                $.ajax({
-                    url: '<?=ROOT?>/Etudiants/trier_liste_etudiant',
-                    type: 'POST',
-                    data: {
-                        id_promotion: id_promotion
-                    },
-                    success: function(response) {
-                        // console.log(response);
-                        $('#table_etudiant').html(response);
-
-                    },
-                    error: function(xhr) {
-                        alert("Erreur AJAX : " + xhr.responseText);
-                    }
-                });
-            }
-        });
-
-        // Suppression des lignes du tableau
-        $(document).on('click', '.remove', function(e) {
-            e.preventDefault();
-            $(this).closest("tr").remove();
-        });
-    });
-    </script>
-=======
-        $(document).ready(function () {
-            $('.select2').select2({ width: '100%' });
+            $('.select2').select2({
+                width: '100%'
+            });
 
             const dataParAnnee = <?= json_encode($listeParAnnee) ?>;
 
             // Quand une année est sélectionnée
-            $('#annee_universitaire').on('change', function () {
+            $('#annee_universitaire').on('change', function() {
                 const annee = $(this).val();
                 const $filiere = $('#id_filiere');
                 const $semestre = $('#id_semestre');
@@ -364,7 +232,7 @@ th.text-center input[type="checkbox"] {
             });
 
             // Quand une filière est sélectionnée
-            $('#id_filiere').on('change', function () {
+            $('#id_filiere').on('change', function() {
                 const annee = $('#annee_universitaire').val();
                 const id_filiere = $(this).val();
                 const $semestre = $('#id_semestre');
@@ -399,7 +267,7 @@ th.text-center input[type="checkbox"] {
             });
 
             // Quand un semestre est sélectionné => charger la liste des étudiants
-            $('#id_semestre').on('change', function () {
+            $('#id_semestre').on('change', function() {
                 const annee = $('#annee_universitaire').val();
                 const id_filiere = $('#id_filiere').val();
                 const id_semestre = $(this).val();
@@ -413,10 +281,10 @@ th.text-center input[type="checkbox"] {
                             id_filiere: id_filiere,
                             id_semestre: id_semestre
                         },
-                        success: function (response) {
+                        success: function(response) {
                             $('#table_etudiant').html(response);
                         },
-                        error: function (xhr) {
+                        error: function(xhr) {
                             alert("Erreur AJAX : " + xhr.responseText);
                         }
                     });
@@ -431,7 +299,6 @@ th.text-center input[type="checkbox"] {
     <!-- Select2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
->>>>>>> 7d93232ab9b020409746aee02548156ca6dffcc1
 </body>
 <!-- END: Body-->
 
