@@ -19,8 +19,9 @@ class Emploi_du_temps extends Controller
         if (isset($_POST['action']) && $_POST['action'] == "trier_edt") {
             @$idFiliere = $_POST['idFiliere'];
             @$idPromotion = $_POST['idPromotion'];
+            @$idSemestre = $_POST['idSemestre'];
             $edtModel = new Emploi_du_temp();
-            $edts = $edtModel->trierListeEdt($idFiliere, $idPromotion);
+            $edts = $edtModel->trierListeEdt($idFiliere, $idPromotion, $idSemestre);
             $this->view("post_liste_edt", ["edts" => $edts]);
         }
     }

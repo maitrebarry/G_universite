@@ -41,7 +41,7 @@
                 <section id="table-chechbox">
                     <div class="row">
                         <?php $this->view("set_flash") ?>
-                    <!-- HTML avec classes Bootstrap -->
+                        <!-- HTML avec classes Bootstrap -->
                         <!-- HTML pour la barre de progression -->
                         <div id="progressContainer" style="display: none;">
                             <div id="progressBar"></div>
@@ -116,8 +116,8 @@
                                                                         <option value="">-- Sélectionner l'année --
                                                                         </option>
                                                                         <?php foreach ($listeParAnnee as $annee => $promos): ?>
-                                                                            <option value="<?= htmlspecialchars($annee) ?>">
-                                                                                <?= htmlspecialchars($annee) ?></option>
+                                                                        <option value="<?= htmlspecialchars($annee) ?>">
+                                                                            <?= htmlspecialchars($annee) ?></option>
                                                                         <?php endforeach; ?>
                                                                     </select>
                                                                 </div>
@@ -136,7 +136,8 @@
                                                             </div>
                                                             <!-- Bouton Valider -->
                                                             <div class="text-end">
-                                                                <button type="submit" class="btn bg-success text-white ">
+                                                                <button type="submit"
+                                                                    class="btn bg-success text-white ">
                                                                     <i class="fas fa-check-circle me-1"></i> Valider
                                                                 </button>
                                                             </div>
@@ -171,43 +172,35 @@
     <?php $this->view("Partials/footer") ?>
     <!-- inclusion du partie footer fin-->
     <script>
-        const promotionsParAnnee = <?= json_encode($listeParAnnee) ?>;
+    const promotionsParAnnee = <?= json_encode($listeParAnnee) ?>;
 
-        const selectAnnee = document.getElementById('annee_universitaire');
-        const selectPromotion = document.getElementById('id_promotion');
+    const selectAnnee = document.getElementById('annee_universitaire');
+    const selectPromotion = document.getElementById('id_promotion');
 
-        selectAnnee.addEventListener('change', function () {
-            const anneeSelectionnee = this.value;
+    selectAnnee.addEventListener('change', function() {
+        const anneeSelectionnee = this.value;
 
-            // Réinitialiser les promotions
-            selectPromotion.innerHTML = '<option value="">-- Sélectionner la promotion --</option>';
+        // Réinitialiser les promotions
+        selectPromotion.innerHTML = '<option value="">-- Sélectionner la promotion --</option>';
 
-            if (anneeSelectionnee && promotionsParAnnee[anneeSelectionnee]) {
-                promotionsParAnnee[anneeSelectionnee].forEach(promo => {
-                    const option = document.createElement('option');
-                    option.value = promo.id_promotion;
-                    option.textContent = `${promo.sigle_filiere}-${promo.sigle_semestre} `;
-                    selectPromotion.appendChild(option);
-                });
-            }
-        });
+
     </script>
-<script>
+    <script>
     document.getElementById('form_assoc').addEventListener('submit', function(e) {
         // Empêcher la soumission immédiate pour voir l'animation
         e.preventDefault();
-        
+
         // Récupérer les éléments
         let progressContainer = document.getElementById('progressContainer');
         let progressBar = document.getElementById('progressBar');
-        
+
         // Styliser le conteneur pour le rendre bien visible
         progressContainer.style.display = 'block';
         progressContainer.style.margin = '20px 0';
         progressContainer.style.width = '100%';
         progressContainer.style.backgroundColor = '#f1f1f1';
         progressContainer.style.borderRadius = '5px';
-        
+
         // Styliser la barre de progression
         progressBar.style.height = '30px';
         progressBar.style.borderRadius = '5px';
@@ -217,12 +210,12 @@
         progressBar.style.color = 'white';
         progressBar.style.fontWeight = 'bold';
         progressBar.style.transition = 'width 0.3s ease';
-        
+
         // Initialiser la progression
         let width = 0;
         progressBar.style.width = width + '%';
         progressBar.innerText = width + '%';
-        
+
         // Animation de progression
         let interval = setInterval(() => {
             if (width >= 95) {
@@ -238,131 +231,135 @@
             }
         }, 300);
     });
-</script>
+    </script>
 
-</script>
+    </script>
     <script>
-        $(document).ready(function () {
-            $('#id_promotion').change(function () {
-                const id_promotion = $('#id_promotion').val();
+    $(document).ready(function() {
+        $('#id_promotion').change(function() {
+            const id_promotion = $('#id_promotion').val();
 
 
-                if (id_promotion != null) {
-                    $.ajax({
-                        url: '<?= ROOT ?>/EtudiantPargroupes/trier_liste_etudiants',
-                        type: 'POST',
-                        data: {
-                            id_promotion: id_promotion
-                        },
-                        success: function (response) {
-                            // console.log(response);
-                            $('#table_etudiant').html(response);
+            if (id_promotion != null) {
+                $.ajax({
+                    url: '<?= ROOT ?>/EtudiantPargroupes/trier_liste_etudiants',
+                    type: 'POST',
+                    data: {
+                        id_promotion: id_promotion
+                    },
+                    success: function(response) {
+                        // console.log(response);
+                        $('#table_etudiant').html(response);
 
-                        },
-                        error: function (xhr) {
-                            alert("Erreur AJAX : " + xhr.responseText);
-                        }
-                    });
-                }
-            });
-
-            // Suppression des lignes du tableau
-            $(document).on('click', '.remove', function (e) {
-                e.preventDefault();
-                $(this).closest("tr").remove();
-            });
+                    },
+                    error: function(xhr) {
+                        alert("Erreur AJAX : " + xhr.responseText);
+                    }
+                });
+            }
         });
+
+        // Suppression des lignes du tableau
+        $(document).on('click', '.remove', function(e) {
+            e.preventDefault();
+            $(this).closest("tr").remove();
+        });
+    });
     </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
     <script src="<?= ROOT ?>/assets/mon_js/script_extration.js"></script>
 
     <script>
-        document.getElementById('excel_file').addEventListener('change', function () {
-            const loadingMessage = document.getElementById('loadingMessage');
-            const mappingSection = document.getElementById('mappingSection');
+    document.getElementById('excel_file').addEventListener('change', function() {
+        const loadingMessage = document.getElementById('loadingMessage');
+        const mappingSection = document.getElementById('mappingSection');
 
-            // Affiche le message de chargement
-            loadingMessage.classList.remove('d-none');
-            mappingSection.style.display = 'none';
+        // Affiche le message de chargement
+        loadingMessage.classList.remove('d-none');
+        mappingSection.style.display = 'none';
 
-            // Simule le chargement du fichier (à remplacer par ton vrai traitement si besoin)
-            setTimeout(() => {
-                loadingMessage.classList.add('d-none'); // Cache le message
-                mappingSection.style.display = 'block'; // Affiche la suite
-            }, 1500); // 1.5 secondes d'attente
-        });
+        // Simule le chargement du fichier (à remplacer par ton vrai traitement si besoin)
+        setTimeout(() => {
+            loadingMessage.classList.add('d-none'); // Cache le message
+            mappingSection.style.display = 'block'; // Affiche la suite
+        }, 1500); // 1.5 secondes d'attente
+    });
     </script>
 
     <script>
-        const champsBdd = <?= json_encode($champsBdd) ?>; // Les champs de la BDD fournis depuis le serveur
+    const champsBdd = <?= json_encode($champsBdd) ?>; // Les champs de la BDD fournis depuis le serveur
 
-        document.getElementById('excel_file').addEventListener('change', function (e) {
-            const file = e.target.files[0];
-            if (!file) return;
+    document.getElementById('excel_file').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
 
-            const reader = new FileReader();
+        const reader = new FileReader();
 
-            reader.onload = function (e) {
-                const data = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(data, { type: 'array' });
+        reader.onload = function(e) {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, {
+                type: 'array'
+            });
 
-                const sheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[sheetName];
-                const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+            const sheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[sheetName];
+            const rows = XLSX.utils.sheet_to_json(worksheet, {
+                header: 1
+            });
 
-                const entetes = rows[0]; // première ligne : entêtes
-                const tableBody = document.getElementById('mapping_table_body');
-                tableBody.innerHTML = '';
+            const entetes = rows[0]; // première ligne : entêtes
+            const tableBody = document.getElementById('mapping_table_body');
+            tableBody.innerHTML = '';
 
-                entetes.forEach((entete, index) => {
-                    const row = document.createElement('tr');
+            entetes.forEach((entete, index) => {
+                const row = document.createElement('tr');
 
-                    const colExcel = document.createElement('td');
-                    colExcel.textContent = entete;
+                const colExcel = document.createElement('td');
+                colExcel.textContent = entete;
 
-                    const colBdd = document.createElement('td');
-                    const select = document.createElement('select');
-                    select.name = `correspondances[${index}]`;
+                const colBdd = document.createElement('td');
+                const select = document.createElement('select');
+                select.name = `correspondances[${index}]`;
 
-                    const optionNone = document.createElement('option');
-                    optionNone.value = '';
-                    optionNone.textContent = '-- Ne pas associer --';
-                    select.appendChild(optionNone);
+                const optionNone = document.createElement('option');
+                optionNone.value = '';
+                optionNone.textContent = '-- Ne pas associer --';
+                select.appendChild(optionNone);
 
-                    champsBdd.forEach(champ => {
-                        const opt = document.createElement('option');
-                        opt.value = champ;
-                        opt.textContent = champ;
-                        select.appendChild(opt);
-                    });
-
-                    colBdd.appendChild(select);
-                    row.appendChild(colExcel);
-                    row.appendChild(colBdd);
-
-                    tableBody.appendChild(row);
+                champsBdd.forEach(champ => {
+                    const opt = document.createElement('option');
+                    opt.value = champ;
+                    opt.textContent = champ;
+                    select.appendChild(opt);
                 });
-            };
 
-            reader.readAsArrayBuffer(file);
-        });
+                colBdd.appendChild(select);
+                row.appendChild(colExcel);
+                row.appendChild(colBdd);
+
+                tableBody.appendChild(row);
+            });
+        };
+
+        reader.readAsArrayBuffer(file);
+    });
     </script>
     <script>
-        document.getElementById('excel_file').addEventListener('change', function () {
-            const loadingMessage = document.getElementById('loadingMessage');
-            const mappingSection = document.getElementById('mappingSection');
+    document.getElementById('excel_file').addEventListener('change', function() {
+        const loadingMessage = document.getElementById('loadingMessage');
+        const mappingSection = document.getElementById('mappingSection');
 
-            // Affiche le message de chargement
-            loadingMessage.classList.remove('d-none');
-            mappingSection.style.display = 'none';
+        // Affiche le message de chargement
+        loadingMessage.classList.remove('d-none');
+        mappingSection.style.display = 'none';
 
-            // Simule le chargement du fichier (à remplacer par ton vrai traitement si besoin)
-            setTimeout(() => {
-                loadingMessage.classList.add('d-none'); // Cache le message
-                mappingSection.style.display = 'block'; // Affiche la suite
-            }, 1500); // 1.5 secondes d'attente
-        });
+        // Simule le chargement du fichier (à remplacer par ton vrai traitement si besoin)
+        setTimeout(() => {
+            loadingMessage.classList.add('d-none'); // Cache le message
+            mappingSection.style.display = 'block'; // Affiche la suite
+        }, 1500); // 1.5 secondes d'attente
+    });
     </script>
 
 </body>

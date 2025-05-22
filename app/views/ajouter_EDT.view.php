@@ -1,14 +1,14 @@
 <style>
-input {
+    input {
 
-    padding: 8px;
-    font-size: 16px;
-    text-align: center;
-}
+        padding: 8px;
+        font-size: 16px;
+        text-align: center;
+    }
 
-td {
-    padding: 8px 5px !important;
-}
+    td {
+        padding: 8px 5px !important;
+    }
 </style>
 <!-- inclusion du partie header -->
 <?php $this->view("Partials/header") ?>
@@ -74,17 +74,32 @@ td {
                                         <form method="POST" class="form-horizontal" novalidate id="edtForm">
                                             <div class="row d-flex justify-content-around align-items-center">
                                                 <div class="col-6 col-lg-3">
-                                                    <label class="form-label" for="single-select">Filiere</label>
+                                                    <label class="form-label" for="single-select">Année
+                                                        universitaire</label>
                                                     <div class="form-group">
-                                                        <select class="select2 form-control" id="filiere">
-                                                            <option value="0" disabled selected>Selectionner une Filiere
-                                                            </option>
-                                                            <?php foreach ($filieres as $filiere): ?>
-                                                            <option value="<?php echo $filiere->id_filiere ?>"
-                                                                <?= ($idFiliere != null && $idFiliere == $filiere->id_filiere) ? 'selected' : '' ?>>
-                                                                <?php echo strtoupper($filiere->sigle_filiere) ?>
-                                                            </option>
-                                                            <?php endforeach ?>
+                                                        <select class="select2 form-control disabled"
+                                                            id="anneeUniversitaire" name="anneeUniversitaire">
+                                                            <?php
+                                                            $annee_debut = 2012;
+                                                            $annee_actuelle = date('Y');
+                                                            $mois_actuel = date('n');
+
+                                                            // Si on est avant septembre, l'année universitaire en cours commence l'année précédente
+                                                            if ($mois_actuel <= 8) {
+                                                                $annee_actuelle--;
+                                                            }
+
+                                                            $annee_universitaire_courante = $annee_actuelle . '-' . ($annee_actuelle + 1);
+
+                                                            for ($annee = $annee_debut; $annee <= $annee_actuelle; $annee++) {
+                                                                $annee_suivante = $annee + 1;
+                                                                $valeur = $annee . '-' . $annee_suivante;
+
+                                                                // Si cette valeur correspond à l'année universitaire en cours, on ajoute "selected"
+                                                                $selected = ($valeur == $annee_universitaire_courante) ? 'selected' : '';
+                                                                echo "<option value=\"$valeur\" $selected>$valeur</option>";
+                                                            }
+                                                            ?>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -164,8 +179,8 @@ td {
                                                         <tr>
                                                             <th class="text-center">Horaire</th>
                                                             <?php foreach ($jours as $jour): ?>
-                                                            <th class="jour" data-id="<?php echo $jour->id_jour ?>">
-                                                                <?php echo strtoupper($jour->nom_jour) ?></th>
+                                                                <th class="jour" data-id="<?php echo $jour->id_jour ?>">
+                                                                    <?php echo strtoupper($jour->nom_jour) ?></th>
                                                             <?php endforeach ?>
 
                                                         </tr>
@@ -184,14 +199,14 @@ td {
                                                             <option value="" disabled>Sélectionner un
                                                                 enseignant</option>
                                                             <?php foreach ($enseignants as $enseignant): ?>
-                                                            <option value="<?php echo $enseignant->enseignant_id ?>"
-                                                                class=" text-capitalize">
-                                                                <?php echo
+                                                                <option value="<?php echo $enseignant->enseignant_id ?>"
+                                                                    class=" text-capitalize">
+                                                                    <?php echo
                                                                     $enseignant->enseignant_nom . " "
                                                                         . $enseignant->enseignant_prenom
 
                                                                     ?>
-                                                            </option>
+                                                                </option>
                                                             <?php endforeach ?>
                                                             <!-- Ajoutez ici les options des enseignants -->
                                                         </select>
@@ -204,9 +219,9 @@ td {
                                                             <option value="" disabled selected>Selectionner une Salle
                                                             </option>
                                                             <?php foreach ($salles as $salle): ?>
-                                                            <option value="<?php echo $salle->id_salle ?>">
-                                                                <?php echo strtoupper($salle->nom_salle) . "(" . $salle->capacite_salle . ")" ?>
-                                                            </option>
+                                                                <option value="<?php echo $salle->id_salle ?>">
+                                                                    <?php echo strtoupper($salle->nom_salle) . "(" . $salle->capacite_salle . ")" ?>
+                                                                </option>
                                                             <?php endforeach ?>
                                                         </select>
                                                     </div>
@@ -323,103 +338,102 @@ td {
 <script src="<?= ROOT ?>/assets/mon_js/edt.js"></script>
 <script src="<?= ROOT ?>/assets/mon_js/contrainte_date_edt.js"></script>
 <script>
-// la recuperation des liste de promotion d'une filière lors d'une selection de fiilière
-var infoFiliere = [];
-$("#filiere").change(async function() {
-    infoFiliere = await infosFiliere($(this).val());
-    promotionsFiliere(infoFiliere);
-    idSemestre = $("#promotions option:selected").data("id");
-    modulesSemestre(idSemestre, infoFiliere);
-    infoModule($("#infoModule").val(), infoFiliere);
+    // la recuperation des liste de promotion d'une filière lors d'une selection de fiilière
+    var infoFiliere = [];
 
+    $("#anneeUniversitaire").change(async function() {
 
-})
+        classesAnneeUniversitaire($("#anneeUniversitaire option:selected").val());
 
-// la recuperation des modules d'une promotion lors d'une selection de promotion
-$("#promotions").change(function() {
-    idSemestre = $("#promotions option:selected").data("id");
-    modulesSemestre(idSemestre, infoFiliere);
-    infoModule($("#infoModule").val(), infoFiliere);
-})
-
-
-// la recuperation des heures d'un module lors d'une selection de module
-$("#modules").change(function() {
-    infoModule($(this).val(), infoFiliere);
-    getDefaultEnseignantAndSalleModule($("#filiere").val(), $(this).val());
-
-
-})
-
-// les actions lors du rechargement de la page
-$(document).ready(async function() {
-
-    $('#edtForm').submit(function(event) {
-        event.preventDefault();
-        ajouterEdt();
+        infoFiliere = await infosFiliere($("#promotions option:selected").data("filiere"), "all");
+        idSemestre = $("#promotions option:selected").data("semestre");
+        modulesSemestre(idSemestre, infoFiliere);
+        infoModule($("#infoModule").val(), infoFiliere);
 
     })
 
-    // la recupeation des promotions de la filière selectionner après le rechargement
-    infoFiliere = await infosFiliere($("#filiere").val());
-    idPromotion = $("#promotions").data('id');
-    promotionsFiliere(infoFiliere, idPromotion);
-    idSemestre = $("#promotions option:selected").data("id");
-    modulesSemestre(idSemestre, infoFiliere);
-    infoModule($("#modules").val(), infoFiliere);
-})
+    $("#promotions").change(async function() {
+        infoFiliere = await infosFiliere($("#promotions option:selected").data("filiere"), "all");
+        idSemestre = $("#promotions option:selected").data("semestre");
+        modulesSemestre(idSemestre, infoFiliere);
+        infoModule($("#infoModule").val(), infoFiliere);
 
 
-// Mettre un edt en model horizontal
-$('#model-row').click(function() {
-    $('#model-column').removeClass('border-primary');
-    $(this).addClass("border-primary");
-    $(this).css('transition', 'all 0.5s');
-    const heuresModule = calculerHeuresModuleEdt();
-    const model = $(this).data('model');
-    const type = parseInt($('input[name="type"]:checked').val(), 10);
-    genererEdt(heuresModule, model, type);
 
-
-})
-
-// Mettre un edt en model vertical
-$('#model-column').click(function() {
-    $('#model-row').removeClass('border-primary');
-    $(this).addClass("border-primary");
-    $(this).css('transition', 'all 0.5s');
-    const heuresModule = calculerHeuresModuleEdt();
-    const model = $(this).data('model');
-    const type = parseInt($('input[name="type"]:checked').val(), 10);
-    genererEdt(heuresModule, model, type);
-})
-
-// le changement du type de cours d'un edt
-$('.type').click(function() {
-    const heuresModule = calculerHeuresModuleEdt();
-    const model = ($('#model-row').hasClass("border-primary")) ? $('#model-row').data('model') : $(
-        '#model-column').data('model')
-    const type = parseInt($('input[name="type"]:checked').val(), 10);
-    genererEdt(heuresModule, model, type);
-})
-
-// Ajouter une ligne à un edt
-document.getElementById('add-row').addEventListener('click', function() {
-    $('#table-extended-chechbox tbody tr').each(function(index) {
-        if (index == $('#table-extended-chechbox tbody tr').length - 1) {
-            horaireDebut = $(this).find('.horaireFin').val()
-        }
     })
-    heure = horaireDebut.split(':');
-    horaireFin = (parseInt(heure[0], 10) + 2) + ':' + heure[1];
-    const type = parseInt($('input[name="type"]:checked').val(), 10);
-    genererCoursEdt(typeEdt[type]);
-    addHeure(horaireDebut, horaireFin, coursJour);
 
-});
+    // la recuperation des heures d'un module lors d'une selection de module
+    $("#modules").change(function() {
+        infoModule($(this).val(), infoFiliere);
+        getDefaultEnseignantAndSalleModule($("#promotions option:selected").data("filiere"), $(this).val());
 
-// Supprimer une ligne d'un edt
-document.getElementById('remove-row').addEventListener('click', function() {
-    removeHeure();
-});
+
+    })
+
+    // les actions lors du rechargement de la page
+    $(document).ready(async function() {
+
+        $('#edtForm').submit(function(event) {
+            event.preventDefault();
+            ajouterEdt();
+
+        })
+
+        // la recupeation des promotions de la filière selectionner après le rechargement
+        classesAnneeUniversitaire($("#anneeUniversitaire option:selected").val());
+    })
+
+
+    // Mettre un edt en model horizontal
+    $('#model-row').click(function() {
+        $('#model-column').removeClass('border-primary');
+        $(this).addClass("border-primary");
+        $(this).css('transition', 'all 0.5s');
+        const heuresModule = calculerHeuresModuleEdt();
+        const model = $(this).data('model');
+        const type = parseInt($('input[name="type"]:checked').val(), 10);
+        genererEdt(heuresModule, model, type);
+
+
+    })
+
+    // Mettre un edt en model vertical
+    $('#model-column').click(function() {
+        $('#model-row').removeClass('border-primary');
+        $(this).addClass("border-primary");
+        $(this).css('transition', 'all 0.5s');
+        const heuresModule = calculerHeuresModuleEdt();
+        const model = $(this).data('model');
+        const type = parseInt($('input[name="type"]:checked').val(), 10);
+        genererEdt(heuresModule, model, type);
+    })
+
+    // le changement du type de cours d'un edt
+    $('.type').click(function() {
+        const heuresModule = calculerHeuresModuleEdt();
+        const model = ($('#model-row').hasClass("border-primary")) ? $('#model-row').data('model') : $(
+            '#model-column').data('model')
+        const type = parseInt($('input[name="type"]:checked').val(), 10);
+        genererEdt(heuresModule, model, type);
+    })
+
+    // Ajouter une ligne à un edt
+    document.getElementById('add-row').addEventListener('click', function() {
+        $('#table-extended-chechbox tbody tr').each(function(index) {
+            if (index == $('#table-extended-chechbox tbody tr').length - 1) {
+                horaireDebut = $(this).find('.horaireFin').val()
+            }
+        })
+        heure = horaireDebut.split(':');
+        horaireFin = (parseInt(heure[0], 10) + 2) + ':' + heure[1];
+        const type = parseInt($('input[name="type"]:checked').val(), 10);
+        genererCoursEdt(typeEdt[type]);
+        addHeure(horaireDebut, horaireFin, coursJour);
+
+    });
+
+    // Supprimer une ligne d'un edt
+    document.getElementById('remove-row').addEventListener('click', function() {
+        removeHeure();
+    });
 </script>

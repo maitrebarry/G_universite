@@ -74,13 +74,30 @@
                                                     <i class="bx bx-dialpad text-primary"></i>
                                                 </div>
                                                 <div class="col-4 ">
-                                                    <select class="select2 form-control text-center" id="filieres">
-                                                        <option value="0" disabled selected>Filieres</option>
-                                                        <?php foreach ($filieres as $filiere): ?>
-                                                            <option value="<?php echo $filiere->id_filiere ?>">
-                                                                <?php echo strtoupper($filiere->sigle_filiere) ?>
-                                                            </option>
-                                                        <?php endforeach ?>
+                                                    <select class="select2 form-control disabled"
+                                                        id="anneeUniversitaire" name="anneeUniversitaire">
+                                                        <option value="">Filière</option>
+                                                        <?php
+                                                        $annee_debut = 2012;
+                                                        $annee_actuelle = date('Y');
+                                                        $mois_actuel = date('n');
+
+                                                        // Si on est avant septembre, l'année universitaire en cours commence l'année précédente
+                                                        if ($mois_actuel <= 8) {
+                                                            $annee_actuelle--;
+                                                        }
+
+                                                        $annee_universitaire_courante = $annee_actuelle . '-' . ($annee_actuelle + 1);
+
+                                                        for ($annee = $annee_debut; $annee <= $annee_actuelle; $annee++) {
+                                                            $annee_suivante = $annee + 1;
+                                                            $valeur = $annee . '-' . $annee_suivante;
+
+                                                            // Si cette valeur correspond à l'année universitaire en cours, on ajoute "selected"
+                                                            $selected = ($valeur == $annee_universitaire_courante) ? 'selected' : '';
+                                                            echo "<option value=\"$valeur\" $selected>$valeur</option>";
+                                                        }
+                                                        ?>
                                                     </select>
                                                 </div>
                                                 <div class="col-4">
@@ -148,19 +165,33 @@
     //     infoFiliere = await infosFiliere($(this).val(), "all");
     //     promotionsFiliere(infoFiliere);
     // })
-    $("#filieres").change(async function() {
-        infoFiliere = await infosFiliere($(this).val(), "all");
-        promotionsFiliere(infoFiliere);
-        trierListeEdt($(this).val(), $("#promotions").val());
-        url = "http://localhost/G_universite/public/Emploi_du_temps/ajouter_EDT"
-        url += '/' + $(this).val() + '/';
-        $('#nouveauEdt').attr('href', url);
+
+
+    $(document).ready(function() {
+        classesAnneeUniversitaire($("#anneeUniversitaire option:selected").val());
+        infoFiliere = infosFiliere($("#promotions option:selected").data("filiere"), "all");
+        idSemestre = $("#promotions option:selected").data("semestre");
+        modulesSemestre(idSemestre, infoFiliere);
     })
+
+    $("#anneeUniversitaire").change(async function() {
+
+        classesAnneeUniversitaire($("#anneeUniversitaire option:selected").val());
+        trierListeEdt($("#promotions option:selected").data("filiere"), $("#promotions").val(), $(
+            "#promotions option:selected").data("semestre"));
+        // url = "http://localhost/G_universite/public/Emploi_du_temps/ajouter_EDT"
+        // url += '/' + $(this).val() + '/';
+        // $('#nouveauEdt').attr('href', url);
+
+    })
+
     $("#promotions").change(async function() {
-        await trierListeEdt($("#filieres").val(), $(this).val());
-        url = "http://localhost/G_universite/public/Emploi_du_temps/ajouter_EDT"
-        url += '/' + $("#filieres").val() + '/' + $(this).val();
-        $('#nouveauEdt').attr('href', url);
+        await trierListeEdt($("#promotions option:selected").data("filiere"), $("#promotions option:selected")
+            .val(), $(
+                "#promotions option:selected").data("semestre"));
+        // url = "http://localhost/G_universite/public/Emploi_du_temps/ajouter_EDT"
+        // url += '/' + $("#filieres").val() + '/' + $(this).val();
+        // $('#nouveauEdt').attr('href', url);
     })
 
     $('#print').click(function() {

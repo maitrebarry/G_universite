@@ -324,29 +324,33 @@ async function infosFiliere(idFiliere, source = null) {
   var infoFiliere;
 }
 
-// recuperer les promotions d'une filière à travers son id
-function promotionsFiliere(infoFiliere, idPromotion = "") {
-  const promotionContainer = $("#promotions");
-  promotionContainer.empty();
-  promotionContainer.append(
-    `<option value="" disabled>Selectionner une Classe</option>`
-  );
-  const promotions = infoFiliere["promotions"];
-  promotions.forEach((promotion) => {
-    const option = `<option value='${
-      promotion.id_promotion
-    }' class='text-center' data-id='${promotion.id_parcours}' ${
-      promotion.id_promotion == idPromotion ? "selected" : ""
-    }>
-    ${promotion.sigle_filiere.toUpperCase()}-${promotion.sigle_semestre.toUpperCase()}( ${
-      promotion.annee_universitaire
-    } )</option>`;
-    promotionContainer.append(option);
+// recuperer les classes d'une annnée universitaire
+function classesAnneeUniversitaire(anneeUniversitaire) {
+  $.ajax({
+    method: "POST",
+    url: "http://localhost/G_universite/public/Notes/get_classe_annee",
+    dataType: "json",
+
+    data: {
+      anneeUniversitaire: anneeUniversitaire,
+    },
+    success: function (response) {
+      const promotionContainer = $("#promotions");
+      promotionContainer.empty();
+      promotionContainer.append(
+        `<option value="" >Selectionner une Classe</option>`
+      );
+      const promotions = response;
+      promotions.forEach((promotion) => {
+        const option = `<option value='${promotion.id_promotion}' class='text-center' data-filiere='${promotion.id_filiere}'data-semestre='${promotion.id_parcours}'> 
+        ${promotion.classe}</option>`;
+        promotionContainer.append(option);
+      });
+    },
+    error: function () {},
   });
 }
-////////////////////////////////////////////////////////ppppppppppp
 
-// recuperer les semestres d'une filière à travers son id
 function semestresFiliere(infoFiliere) {
   const semestreContainer = $("#semestres");
   semestreContainer.empty();
@@ -448,8 +452,9 @@ function ajouterEdt(url = ROOT_EDT + "/ajouter_EDT", action = "ajouter_EDT") {
   // Debut de la recuperation des données
 
   // la recuperation des données de base de l'emploi
-  const idFiliere = $("#filiere").val();
-  const idPromotion = $("#promotions").val();
+  const idFiliere = $("#promotions option:selected").data("filiere");
+  const idPromotion = $("#promotions option:selected").val();
+  const idSemestre = $("#promotions option:selected").data("semestre");
   const idModule = $("#modules").val();
   const idEnseignant = $("#enseignants").val();
   const idSalle = $("#salles").val();
@@ -459,6 +464,7 @@ function ajouterEdt(url = ROOT_EDT + "/ajouter_EDT", action = "ajouter_EDT") {
   edt = {
     idFiliere: idFiliere,
     idPromotion: idPromotion,
+    idSemestre: idSemestre,
     idModule: idModule,
     idEnseignant: idEnseignant,
     idSalle: idSalle,
@@ -556,7 +562,7 @@ function ajouterEdt(url = ROOT_EDT + "/ajouter_EDT", action = "ajouter_EDT") {
 }
 
 // Trier la liste des edts
-function trierListeEdt(idFiliere, idPromotion) {
+function trierListeEdt(idFiliere, idPromotion, idSemestre) {
   // Debut de l'envoi des données avec Ajax
   $.ajax({
     method: "POST",
@@ -565,6 +571,7 @@ function trierListeEdt(idFiliere, idPromotion) {
       action: "trier_edt",
       idFiliere: idFiliere,
       idPromotion: idPromotion,
+      idSemestre: idSemestre,
     },
     success: function (response) {
       $("#listeEdts").html(response);

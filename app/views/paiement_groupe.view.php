@@ -24,11 +24,11 @@
                     </div>
                 </div>
             </div>
-                <div class="content-body">
-                    <section id="table-chechbox">
-                        <div class="row">
-                            <div class="col-12">
-                            
+            <div class="content-body">
+                <section id="table-chechbox">
+                    <div class="row">
+                        <div class="col-12">
+
                             <div class="card shadow rounded">
                                 <div class="card-body  card-dashboard">
                                     <form action="<?= ROOT ?>/Etudiants/traiter_paiement_groupes" method="POST">
@@ -61,17 +61,14 @@
                                                         </td>
                                                         <td><?= htmlspecialchars($etudiant->total_frais) ?></td>
                                                         <td>
-                                                         <input type="number"
-                                                            name="paiement[<?= $etudiant->id_etudiant ?>]"
-                                                            class="form-control montant-paye"
-                                                            placeholder="Montant"
-                                                            step="0.01"
-                                                            min="0"
-                                                            max="<?= $etudiant->total_frais - $total_paye ?>"
-                                                            required
-                                                            data-frais="<?= $etudiant->total_frais ?>"
-                                                            data-total-paye="<?= $total_paye ?>"
-                                                            oninput="calculerReste(this)">
+                                                            <input type="number"
+                                                                name="paiement[<?= $etudiant->id_etudiant ?>]"
+                                                                class="form-control montant-paye" placeholder="Montant"
+                                                                step="0.01" min="0"
+                                                                max="<?= $etudiant->total_frais - $total_paye ?>" required
+                                                                data-frais="<?= $etudiant->total_frais ?>"
+                                                                data-total-paye="<?= $total_paye ?>"
+                                                                oninput="calculerReste(this)">
 
 
                                                         </td>
@@ -88,15 +85,15 @@
                                     </form>
                                 </div>
                             </div>
-                       
-                            </div>
+
                         </div>
-                       
-                    </section>
-                </div>
+                    </div>
+
+                </section>
             </div>
         </div>
-    
+    </div>
+
 
     <?php $this->view("Partials/foot") ?>
     <?php $this->view("Partials/footer") ?>
@@ -104,34 +101,34 @@
     <script>
         // Fonction qui calcule le reste à payer
         function calculerReste(input) {
-    var frais = parseFloat(input.getAttribute("data-frais")) || 0;
-    var totalPaye = parseFloat(input.getAttribute("data-total-paye")) || 0;
-    var montantPaye = parseFloat(input.value) || 0;
+            var frais = parseFloat(input.getAttribute("data-frais")) || 0;
+            var totalPaye = parseFloat(input.getAttribute("data-total-paye")) || 0;
+            var montantPaye = parseFloat(input.value) || 0;
 
-    var reste = frais - (totalPaye + montantPaye);
+            var reste = frais - (totalPaye + montantPaye);
 
-    // Mise à jour du champ reste à payer
-    var resteChamp = input.closest('tr').querySelector('.reste-a-payer');
+            // Mise à jour du champ reste à payer
+            var resteChamp = input.closest('tr').querySelector('.reste-a-payer');
 
-    // Vérification de dépassement
-    if (montantPaye + totalPaye > frais) {
-        resteChamp.value = ''; // Efface le champ de reste
-        resteChamp.style.backgroundColor = "#ffcccc";
+            // Vérification de dépassement
+            if (montantPaye + totalPaye > frais) {
+                resteChamp.value = ''; // Efface le champ de reste
+                resteChamp.style.backgroundColor = "#ffcccc";
 
-        alert("Le montant saisi dépasse le total des frais à payer !");
-        input.value = ''; // Réinitialiser le champ de saisie
-        return;
-    }
+                alert("Le montant saisi dépasse le total des frais à payer !");
+                input.value = ''; // Réinitialiser le champ de saisie
+                return;
+            }
 
-    resteChamp.value = reste.toFixed(2); // Formater à 2 décimales
+            resteChamp.value = reste.toFixed(2); // Formater à 2 décimales
 
-    // Couleur si reste < 0
-    if (reste < 0) {
-        resteChamp.style.backgroundColor = "#ffcccc";
-    } else {
-        resteChamp.style.backgroundColor = "";
-    }
-}
+            // Couleur si reste < 0
+            if (reste < 0) {
+                resteChamp.style.backgroundColor = "#ffcccc";
+            } else {
+                resteChamp.style.backgroundColor = "";
+            }
+        }
 
 
         // Fonction pour calculer et afficher le reste à payer au chargement de la page
@@ -149,37 +146,37 @@
                 input.style.transition = "border-color 0.5s ease";
             });
         });
+
         function calculerReste(input) {
-    var frais = parseFloat(input.getAttribute("data-frais"));
-    var totalPaye = parseFloat(input.getAttribute("data-total-paye"));
-    var montantPaye = parseFloat(input.value);
+            var frais = parseFloat(input.getAttribute("data-frais"));
+            var totalPaye = parseFloat(input.getAttribute("data-total-paye"));
+            var montantPaye = parseFloat(input.value);
 
-    if (isNaN(montantPaye)) {
-        montantPaye = 0;
-    }
+            if (isNaN(montantPaye)) {
+                montantPaye = 0;
+            }
 
-    var resteAvantPaiement = frais - totalPaye;
-    var reste = resteAvantPaiement - montantPaye;
+            var resteAvantPaiement = frais - totalPaye;
+            var reste = resteAvantPaiement - montantPaye;
 
-    // Si le montant dépasse le reste à payer, on bloque
-    if (montantPaye > resteAvantPaiement) {
-        alert("Le montant saisi dépasse le reste à payer (" + resteAvantPaiement + " F).");
-        input.value = resteAvantPaiement; // Forcer la valeur maximale possible
-        montantPaye = resteAvantPaiement;
-        reste = 0;
-    }
+            // Si le montant dépasse le reste à payer, on bloque
+            if (montantPaye > resteAvantPaiement) {
+                alert("Le montant saisi dépasse le reste à payer (" + resteAvantPaiement + " F).");
+                input.value = resteAvantPaiement; // Forcer la valeur maximale possible
+                montantPaye = resteAvantPaiement;
+                reste = 0;
+            }
 
-    // Mise à jour du champ de reste
-    var resteChamp = input.closest('tr').querySelector('.reste-a-payer');
-    resteChamp.value = reste.toFixed(2);
+            // Mise à jour du champ de reste
+            var resteChamp = input.closest('tr').querySelector('.reste-a-payer');
+            resteChamp.value = reste.toFixed(2);
 
-    // Couleur selon le solde
-    if (reste < 0) {
-        resteChamp.style.backgroundColor = "#ffcccc";
-    } else {
-        resteChamp.style.backgroundColor = "";
-    }
-}
-
+            // Couleur selon le solde
+            if (reste < 0) {
+                resteChamp.style.backgroundColor = "#ffcccc";
+            } else {
+                resteChamp.style.backgroundColor = "";
+            }
+        }
     </script>
 </body>

@@ -117,7 +117,8 @@
                                         <div class="card-body">
                                             <div class="container mt-4">
                                                 <!-- Affichage des détails de l'étudiant -->
-                                                <h3>Paiement pour : <?= htmlspecialchars($etudiant['nom_prenom_etudiant']) ?>
+                                                <h3>Paiement pour :
+                                                    <?= htmlspecialchars($etudiant['nom_prenom_etudiant']) ?>
                                                 </h3>
                                                 <form action="" method="POST">
                                                     <input type="hidden" name="id_etudiant"
@@ -144,7 +145,8 @@
                                                                 ?>
                                                                 <input type="number" id="total-paid"
                                                                     class="form-control bg-secondary text-white"
-                                                                    value="<?= htmlspecialchars($totalPaid) ?>" readonly>
+                                                                    value="<?= htmlspecialchars($totalPaid) ?>"
+                                                                    readonly>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3">
@@ -168,7 +170,7 @@
                                                             <div id="payment-status" class="text-center mt-2"></div>
                                                 </form>
 
-                                               
+
                                             </div>
 
 

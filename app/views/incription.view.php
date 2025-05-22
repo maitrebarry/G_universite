@@ -269,7 +269,11 @@
                                                             <div class="row">
                                                             
                                                                 <div class="col-md-3 mb-2">
+<<<<<<< HEAD
+                                                                    <label >Matricule<span class="text-danger">*</span></label>
+=======
                                                                     <label >N° Etudiant<span class="text-danger">*</span></label>
+>>>>>>> 7d93232ab9b020409746aee02548156ca6dffcc1
                                                                     <input type="text" class="form-control required" name="matricule_etudiant" id="matricule"  placeholder="Matricule" readonly>
 
                                                                 </div>

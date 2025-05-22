@@ -1,4 +1,5 @@
-<?php $this->view("Partials/header") ?>
+<?php
+$this->view("Partials/header") ?>
 <style>
     /* Style pour le texte défilant */
     .scrolling-text {
@@ -167,18 +168,6 @@
                             <div class="card card-animated-border-top">
                                 <div class="card-header">
                                     <h4 class="card-title text-center">Liste des notes</h4>
-                                    <!-- <div class=" d-flex justify-content-center mt-1">
-                                        <div class=" radio radio-primary mr-4">
-                                            <input type="radio" name="choix" id="semestreChoise"
-                                                class="type text-bold-600" value="0" checked>
-                                            <label for="semestreChoise">Par Semestre</label>
-                                        </div>
-                                        <div class=" radio radio-primary mr-4">
-                                            <input type="radio" name="choix" id="licenceChoise"
-                                                class="type text-bold-600" value="0">
-                                            <label for="licenceChoise">Par Licence</label>
-                                        </div>
-                                    </div> -->
                                 </div>
 
                                 <div class="card-content">
@@ -187,46 +176,40 @@
                                         <!-- Section des champs de sélection -->
                                         <div class="form-section " id="session_info">
                                             <div class="row d-flex justify-content-around">
-                                                <div class="col-sm-3">
-                                                    <label class="form-label">Filière</label>
-                                                    <select class="select2 form-control disabled" id="filiere"
-                                                        name="filiere">
-                                                        <option value="0" disabled selected>Selectionner une Filière
-                                                        </option>
-                                                        <?php foreach ($filieres as $filiere): ?>
-                                                            <option value="<?php echo $filiere->id_filiere ?>">
-                                                                <?php echo strtoupper($filiere->sigle_filiere) ?>
-                                                            </option>
-                                                        <?php endforeach ?>
+                                                <div class="col-sm-2">
+                                                    <label class="form-label">Année Universitaire</label>
+                                                    <select class="select2 form-control disabled"
+                                                        id="anneeUniversitaire" name="anneeUniversitaire">
+                                                        <?php
+                                                        $annee_debut = 2012;
+                                                        $annee_actuelle = date('Y');
+                                                        $mois_actuel = date('n');
+
+                                                        // Si on est avant septembre, l'année universitaire en cours commence l'année précédente
+                                                        if ($mois_actuel <= 8) {
+                                                            $annee_actuelle--;
+                                                        }
+
+                                                        $annee_universitaire_courante = $annee_actuelle . '-' . ($annee_actuelle + 1);
+
+                                                        for ($annee = $annee_debut; $annee <= $annee_actuelle; $annee++) {
+                                                            $annee_suivante = $annee + 1;
+                                                            $valeur = $annee . '-' . $annee_suivante;
+
+                                                            // Si cette valeur correspond à l'année universitaire en cours, on ajoute "selected"
+                                                            $selected = ($valeur == $annee_universitaire_courante) ? 'selected' : '';
+                                                            echo "<option value=\"$valeur\" $selected>$valeur</option>";
+                                                        }
+                                                        ?>
                                                     </select>
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <label class="form-label">Classe</label>
                                                     <select class="select2 form-control disabled" id="promotions"
-                                                        name="promotions" onchange="loadEtudiants()">
+                                                        name="promotions">
                                                         <option value="" disabled selected>Selectionner une
                                                             Classe
                                                         </option>
-                                                    </select>
-                                                </div>
-
-                                                <div class="col-sm-3" id="semestreContainer">
-                                                    <label for="semestres" class="form-label ">
-                                                        Semestre</label>
-                                                    <select id="semestres" class="select2 form-control">
-                                                        <option value="">Tous les Semestre</option>
-
-                                                    </select>
-                                                </div>
-
-                                                <div class="col-sm-3 d-none" id="licenceContainer">
-                                                    <label for="licences" class="form-label ">
-                                                        Licences</label>
-                                                    <select id="licences" class="select2 form-control">
-                                                        <option value="">Toutes les Licences</option>
-                                                        <option value="L1">L1</option>
-                                                        <option value="L2">L2</option>
-                                                        <option value="L3">L3</option>
                                                     </select>
                                                 </div>
 
@@ -238,7 +221,7 @@
                                                     </select>
                                                 </div>
 
-                                                <div class="col-sm-3 mt-2" id="moduleContainer">
+                                                <div class="col-sm-4 " id="moduleContainer">
                                                     <label class="form-label">Modules</label>
                                                     <select class="select2 form-control disabled" id="modules">
                                                         <option value="" selected>Tous les Modules
@@ -285,41 +268,10 @@
 <script src="<?= ROOT ?>/assets/mon_js/liste_note.js"></script>
 
 <script>
-    $('#semestreChoise').change(function() {
-        $('#semestreContainer').removeClass("d-none");
-        $('#ueContainer').removeClass("d-none");
-        $('#moduleContainer').removeClass("d-none");
-        $('#licenceContainer').addClass("d-none");
-        $("#table_section").html(
-            "<h6 class='text-center text-bold-600 text-warning'>" +
-            "Selectionner l'ue  et les notes vont apparaître &#x1F603</h6>"
-        );
-
-    })
-    $('#licenceChoise').change(function() {
-        $('#semestreContainer').addClass("d-none");
-        $('#ueContainer').addClass("d-none");
-        $('#moduleContainer').addClass("d-none");
-        $('#licenceContainer').removeClass("d-none");
-        $("#table_section").html(
-            "<h6 class='text-center text-bold-600 text-warning'>" +
-            "Selectionner une licence et les notes vont apparaître &#x1F603</h6>"
-        );
-
-    })
-
-
     var infoFiliere = [];
-    $("#filiere").change(async function() {
-        infoFiliere = await infosFiliere($(this).val(), "all");
-        promotionsFiliere(infoFiliere);
-        semestresPromotion(infoFiliere, $("#promotions option:selected").data("semestre"));
-        licencesPromotion($("#promotions option:selected").data("semestre"));
-        idSemestre = $("#semestres option:selected").data("id");
-        ueSemestre(idSemestre, infoFiliere);
-        $('#ues').val("");
-        moduleUe($("#ues option:selected").data("id"), infoFiliere)
-        loadEtudiants(ROOT + "/get_moyenne_licence_etudiant")
+
+    $(document).ready(function() {
+        classesAnneeUniversitaire($("#anneeUniversitaire option:selected").val());
 
         $("#table_section").html(
             "<h6 class='text-center text-bold-600 text-warning'>" +
@@ -328,27 +280,36 @@
 
     })
 
-    $("#promotions").change(function() {
-        semestresPromotion(infoFiliere, $("#promotions option:selected").data("semestre"));
-        idSemestre = $("#semestres option:selected").data("id");
+    $("#anneeUniversitaire").change(async function() {
+
+        classesAnneeUniversitaire($("#anneeUniversitaire option:selected").val());
+
+        idSemestre = $("#promotions option:selected").data("semestre");
         ueSemestre(idSemestre, infoFiliere);
+        $('#ues').val("");
         moduleUe($("#ues option:selected").data("id"), infoFiliere)
-        loadEtudiants(ROOT + "/get_moyenne_licence_etudiant")
+
         $("#table_section").html(
             "<h6 class='text-center text-bold-600 text-warning'>" +
-            "Selectionner l'ue  et les notes vont apparaître &#x1F603</h6>"
+            "Selectionner l'ue et les notes vont apparaître &#x1F603</h6>"
         );
 
     })
 
-    $("#semestres").change(function() {
-        idSemestre = $("#semestres option:selected").data("id");
+    $("#promotions").change(async function() {
+        infoFiliere = await infosFiliere($("#promotions option:selected").data("filiere"), "all");
+        idSemestre = $("#promotions option:selected").data("semestre");
         ueSemestre(idSemestre, infoFiliere);
         moduleUe($("#ues option:selected").data("id"), infoFiliere)
-        loadEtudiants();
-        if ($("#semestres option:selected").val() == "") {
-            loadEtudiants(ROOT + "/get_moyenne_licence_etudiant")
-        }
+        if (!$("#promotions option:selected").text().includes("S")) {
+            loadEtudiants(ROOT + "/get_moyenne_licence_etudiant");
+            $("#ues").empty();
+            $("#ues").append(
+                `<option value="" >Selectionner ue</option>`
+            );
+
+        } else
+            loadEtudiants();
 
     })
 
@@ -356,10 +317,15 @@
         moduleUe($("#ues option:selected").data("id"), infoFiliere)
         loadEtudiants();
 
+        //sessionStorage.setItem("ue", $("#ues option:selected").data("id"));
+
     })
 
     $("#modules").change(function() {
         loadEtudiants();
+
+
+
 
     })
 </script>

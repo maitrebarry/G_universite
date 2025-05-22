@@ -122,8 +122,6 @@ $this->view("Partials/header") ?>
                                                 <?php foreach ($datas  as $data): ?>
                                                     <tbody>
                                                         <tr>
-                                                          
-                                                          
                                                             <td><?= date_format(date_create($data->date_debut), 'd-m-Y'); ?></td>
                                                             <td><?= date_format(date_create($data->date_fin), 'd-m-Y'); ?></td>
                                                             <td class="text-primary"><span class=" badge badge-light-primary"><?= $data->status ?></span></td>
@@ -134,11 +132,10 @@ $this->view("Partials/header") ?>
                                                                     <div class="dropdown-menu dropdown-menu-right">
                                                                         <a class="dropdown-item edit-btn" data-toggle="modal" data-target="#default"
                                                                             href="#"
-                                                                            data-id="<?= $data->id_anne ?>"
-                                                                            data-anne_scolaire="<?= $data->anne_scolaire ?>"
+                                                                            data-id_periode="<?= $data->id_periode ?>"
                                                                             data-date_debut="<?= $data->date_debut ?>"
                                                                             data-date_fin="<?= $data->date_fin ?>"><i class="bx bx-edit-alt mr-1"></i> edit</a>
-                                                                        <a class="dropdown-item" href="<?= ROOT ?>/Annees_universites/supprimer/<?= $data->id_anne ?>"><i class="bx bx-trash mr-1"></i> delete</a>
+                                                                        <a class="dropdown-item" href="<?= ROOT ?>/Periodes/supprimer/<?= $data->id_periode ?>"><i class="bx bx-trash mr-1"></i> delete</a>
                                                                     </div>
                                                                 </div>
                                                             </td>
@@ -205,25 +202,21 @@ $this->view("Partials/header") ?>
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header bg-primary">
-                                                <h5 class="modal-title white" id="defaultLabel">Modification de l'année</h5>
+                                                <h5 class="modal-title white" id="defaultLabel">Modification de Periode</h5>
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                     <i class="bx bx-x"></i>
                                                 </button>
                                             </div>
-                                            <form method="post" action="<?= ROOT ?>/Annees_universites/update">
+                                            <form method="post" action="<?= ROOT ?>/Periodes/update">
                                                 <div class="modal-body">
-                                                    <input type="hidden" id="inputId_anne" name="id_anne">
-                                                    <div class="form-group">
-                                                        <label for="inputAnne_scolaire">Anne scolaire</label>
-                                                        <input type="text" class="form-control" id="inputAnne_scolaire" name="anne_scolaire" required>
-                                                    </div>
+                                                    <input type="hidden" id="inputId_periode" name="id_periode">
                                                     <div class="form-group">
                                                         <label for="inputDate_debut">Date debut</label>
-                                                        <input type="text" class="form-control" id="inputDate_debut" name="date_debut" required>
+                                                        <input type="date" class="form-control" id="inputDate_debut" name="date_debut" required>
                                                     </div>
                                                     <div class="form-group">
                                                         <label for="inputDate_fin">Date Fin</label>
-                                                        <input type="text" class="form-control" id="inputDate_fin" name="date_fin" required>
+                                                        <input type="date" class="form-control" id="inputDate_fin" name="date_fin" required>
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">
@@ -253,7 +246,7 @@ $this->view("Partials/header") ?>
     <!-- inclusion du partie foot fin-->
     <!-- inclusion du partie footer-->
     <?php $this->view("Partials/footer") ?>
-    <script src="<?= ROOT ?>/assets/mon_js/modification_anne.js"></script>
+    <script src="<?= ROOT ?>/assets/mon_js/modification_periode.js"></script>
 
     <script>
         document.getElementById('dateDebut').addEventListener('change', function() {
@@ -263,6 +256,15 @@ $this->view("Partials/header") ?>
                 dateFin.setMonth(dateFin.getMonth() + 6); // Ajoute 6 mois
                 const isoDate = dateFin.toISOString().split('T')[0]; // Format ISO (YYYY-MM-DD)
                 document.getElementById('dateFin').value = isoDate;
+            }
+        });
+        document.getElementById('inputDate_debut').addEventListener('change', function() {
+            const inputDate_debut = new Date(this.value);
+            if (!isNaN(inputDate_debut)) { // Vérifie si la date est valide
+                const inputDate_fin = new Date(inputDate_debut);
+                inputDate_fin.setMonth(inputDate_fin.getMonth() + 6); // Ajoute 6 mois
+                const isoDate = inputDate_fin.toISOString().split('T')[0]; // Format ISO (YYYY-MM-DD)
+                document.getElementById('inputDate_fin').value = isoDate;
             }
         });
     </script>

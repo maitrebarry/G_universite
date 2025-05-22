@@ -1,6 +1,25 @@
 <?php
 class Note extends Model
 {
+
+    public function findEtudiantByClasse($id_promotion)
+    {
+
+        $query = "SELECT * 
+                    FROM etudiant
+                    INNER JOIN promotion ON etudiant.id_promotion = promotion.id_promotion
+                    INNER JOIN filiere ON promotion.id_filiere = filiere.id_filiere
+                    INNER JOIN parcours ON promotion.id_parcours = parcours.id_parcours
+                    INNER JOIN semestre ON parcours.id_semestre = semestre.id_semestre
+                    WHERE etudiant.id_promotion = :id_promotion";
+        $bdd = $this->bdd();
+        $stmt = $bdd->prepare($query);
+        $stmt->bindParam(':id_promotion', $id_promotion, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $info_etudiant = $stmt->fetchAll(PDO::FETCH_OBJ);
+        return $info_etudiant;
+    }
     // la methode pour pour retourner la dernière peridode crée
     public function getCurrentPeriode()
     {
@@ -106,8 +125,7 @@ class Note extends Model
     public function initialiseNotes($idPromotion, $idSemestre, $idUe, $idModule)
     {
 
-        $etudiantModel = new Etudiant();
-        $etudiants = $etudiantModel->trie_liste_etudiant($idPromotion);
+        $etudiants = $this->findEtudiantByClasse($idPromotion);
         foreach ($etudiants as $etudiant) {
             //insertion de note des étudiants un à un
             try {
@@ -209,8 +227,7 @@ class Note extends Model
             $connection->beginTransaction();
 
             $infosSemestre = $this->getInfoSemestre($idSemestre);
-            $etudiantModel = new Etudiant();
-            $etudiants = $etudiantModel->trie_liste_etudiant($idPromotion);
+            $etudiants = $this->findEtudiantByClasse($idPromotion);
 
 
 
@@ -245,8 +262,7 @@ class Note extends Model
     {
         $moyennesLicence = [];
         $moyennesSemestre = [];
-        $etudiantModel = new Etudiant();
-        $etudiants = $etudiantModel->trie_liste_etudiant($idPromotion);
+        $etudiants = $this->findEtudiantByClasse($idPromotion);
         $infosLicence = $this->getInfoPromotion($idPromotion);
         foreach ($etudiants as $etudiant) {
             $moyenne = $this->isValidateClasse($etudiant->id_etudiant, $idPromotion)['moyenne'];

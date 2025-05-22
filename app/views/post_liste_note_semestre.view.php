@@ -111,7 +111,7 @@ foreach ($infosSemestre as $ue) {
     var tauxReussite = 0;
 
     $("#notesTable").DataTable({
-        "pageLength": 50
+        "pageLength": 100
     })
 
     $.each(moyennes, function(index) {

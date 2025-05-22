@@ -94,7 +94,7 @@
 
 <script>
     $("#notesTable").DataTable({
-        "pageLength": 50
+        "pageLength": 100
     })
 
     var moyennes = <?php echo json_encode($moyenne_des_etudiants); ?>;

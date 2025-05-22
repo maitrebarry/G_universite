@@ -21,9 +21,9 @@ $current_page = basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
     <div class="navbar-header">
         <ul class="nav navbar-nav flex-row">
             <li class="nav-item mr-auto">
-                <a class="navbar-brand" href="<?= ROOT ?>/index">
+                <a class="navbar-brand" href="<?= ROOT ?>/Homes">
                     <div class="brand-logo">
-                        <img class="logo" src="<?= ROOT ?>/assets/images/logo/logo.png" />
+                        <img class="logo" src="<?= ROOT ?>/assets/images/OIP.jpeg" />
                     </div>
                     <h2 class="brand-text mb-0">IUFP</h2>
                 </a>
@@ -80,7 +80,7 @@ $current_page = basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
                     <li class="<?= ($current_page == 'liste_note') ? 'active' : '' ?>">
                         <a href="<?= ROOT ?>/Notes/liste_note">
                             <i class="bx bx-right-arrow-alt"></i>
-                            <span class="menu-item">Liste notes</span>
+                            <span class="menu-item">Résultat Notes</span>
                         </a>
                     </li>
                 
