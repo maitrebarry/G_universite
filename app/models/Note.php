@@ -72,14 +72,17 @@ class Note extends Model
 
             // la recuperation des semestres de la filière
             $requetteSemestre = "SELECT id_parcours, parcours.id_semestre, nom_semestre, sigle_semestre 
-                FROM parcours  INNER JOIN semestre ON parcours.id_semestre=semestre.id_semestre WHERE id_filiere=? AND id_parcours <= ?";
+                FROM parcours  INNER JOIN semestre ON parcours.id_semestre=semestre.id_semestre WHERE id_filiere=? AND id_parcours >=? LIMIT 2";
             $semestres = $this->select_data_table_join_where($requetteSemestre, [$promotions[0]->id_filiere, $promotions[0]->id_parcours]);
             return [
                 'promotion' => $promotions[0],
                 'semestres' => $semestres,
             ];
         }
-        return [];
+        return [
+            'promotion' => [],
+            'semestres' => [],
+        ];
     }
 
     public function getNotes($idPromotion, $idSemestre, $idModule)
@@ -107,18 +110,21 @@ class Note extends Model
         $etudiants = $etudiantModel->trie_liste_etudiant($idPromotion);
         foreach ($etudiants as $etudiant) {
             //insertion de note des étudiants un à un
-            $query = "INSERT INTO note_etudiant(id_etudiant, id_promotion, id_parcours, id_ue, id_module) 
+            try {
+                $query = "INSERT INTO note_etudiant(id_etudiant, id_promotion, id_parcours, id_ue, id_module) 
             VALUES (:idEtudiant, :idPromotion, :idParcours, :idUe, :idModule)
             ON DUPLICATE KEY UPDATE id_module = :idModule";
-
-            $data = [
-                "idEtudiant" => $etudiant->id_etudiant,
-                "idPromotion" => $idPromotion,
-                "idUe" => $idUe,
-                "idModule" => $idModule,
-                "idParcours" => $idSemestre
-            ];
-            $this->insertion_update_simples($query, $data);
+                $data = [
+                    "idEtudiant" => $etudiant->id_etudiant,
+                    "idPromotion" => $idPromotion,
+                    "idUe" => $idUe,
+                    "idModule" => $idModule,
+                    "idParcours" => $idSemestre
+                ];
+                $this->insertion_update_simples($query, $data);
+            } catch (Exception $e) {
+                echo "Erreur d'accès à la base de donnée";
+            }
         }
     }
 
@@ -195,6 +201,7 @@ class Note extends Model
     {
 
         $moyenneSemestre = [];
+        $moyennesUe = [];
         $connection = $this->bdd();
 
         try {
@@ -202,18 +209,22 @@ class Note extends Model
             $connection->beginTransaction();
 
             $infosSemestre = $this->getInfoSemestre($idSemestre);
-            foreach ($infosSemestre as $ue) {
-                $query = "SELECT AVG(moyenne_module) AS moyenne_ue, note_etudiant.id_etudiant, note_etudiant.id_ue
-                    FROM  note_etudiant 
-                    WHERE note_etudiant.id_promotion = ? AND note_etudiant.id_parcours = ? AND note_etudiant.id_ue=? 
-                    GROUP BY note_etudiant.id_etudiant";
+            $etudiantModel = new Etudiant();
+            $etudiants = $etudiantModel->trie_liste_etudiant($idPromotion);
 
-                $moyenneUe = $this->select_data_table_join_where($query, [$idPromotion, $idSemestre, $ue[0]->id_ue]);
 
-                $moyenneSemestre[] = [
-                    'infosUe' => $ue,
-                    "moyennesUe" => $moyenneUe
-                ];
+
+            foreach ($etudiants as $etudiant) {
+                $moyenne = $this->isValidateSemestre($etudiant->id_etudiant, $idSemestre);
+                $moyenneSemestre[] = ['etudiant' => $etudiant, 'moyenne' => $moyenne['moyenne']];
+                $ues = [];
+                foreach ($infosSemestre as $ue) {
+
+                    $moyenneUe = $this->isValidateUe($etudiant->id_etudiant, $ue[0]->id_ue);
+                    $ues[] = ['nom_ue' => $ue[0]->nom_ue, 'moyenne' => $moyenneUe['moyenne']];
+                }
+
+                $moyennesUe[] = ['etudiant' => $etudiant, 'ues' => $ues];
             }
 
             // la fin de la transaction
@@ -225,27 +236,34 @@ class Note extends Model
 
         return [
             "infosSemestre" => $infosSemestre,
-            "moyennesSemestre" => $moyenneSemestre
+            "moyennesSemestre" => $moyenneSemestre,
+            "moyennesUe" => $moyennesUe
         ];
     }
 
-    public function getAllMoyenneLicenceEtudiants($idPromotion, $licence)
+    public function getAllMoyenneLicenceEtudiants($idPromotion)
     {
-        $semestres = explode('|', trim($licence));
         $moyennesLicence = [];
-        $infosLicence = [];
-        foreach ($semestres as $semestre) {
-            $moyennesSemestre = $this->getAllMoyenneSemestreEtudiants($idPromotion, $semestre);
-            $moyennesLicence[] = $moyennesSemestre;
+        $moyennesSemestre = [];
+        $etudiantModel = new Etudiant();
+        $etudiants = $etudiantModel->trie_liste_etudiant($idPromotion);
+        $infosLicence = $this->getInfoPromotion($idPromotion);
+        foreach ($etudiants as $etudiant) {
+            $moyenne = $this->isValidateClasse($etudiant->id_etudiant, $idPromotion)['moyenne'];
+            $moyennesLicence[] = ['etudiant' => $etudiant, 'moyenne' => $moyenne];
 
-            $requetteSemestre = "SELECT id_parcours, parcours.id_semestre, nom_semestre, sigle_semestre 
-            FROM parcours  INNER JOIN semestre ON parcours.id_semestre=semestre.id_semestre WHERE id_parcours = ? LIMIT 1";
-            $infosLicence[] = $this->select_data_table_join_where($requetteSemestre, [$semestre])[0];
+            $semestres = [];
+            foreach ($infosLicence['semestres'] as $semestre) {
+                $note = $this->isValidateSemestre($etudiant->id_etudiant, $semestre->id_parcours)['moyenne'];
+                $semestres[] = ['sigle_semestre' => $semestre->sigle_semestre, 'moyenne' => $note];
+            }
+            $moyennesSemestre[] = ['etudiant' => $etudiant, 'semestres' => $semestres];
         }
 
         return [
-            "moyennesLicence" => $moyennesLicence,
-            "infosLicence" => $infosLicence
+            'infosLicence' => $infosLicence,
+            'moyennesLicence' => $moyennesLicence,
+            'moyennesSemestre' => $moyennesSemestre
         ];
     }
 
@@ -306,35 +324,103 @@ class Note extends Model
         }
     }
 
-    // public function getAllMoyennePromotionEtudiants($idPromotion)
-    // {
 
-    //     $moyenneSemestre = [];
-    //     $connection = $this->bdd();
+    // le methode pour savoir si un etudiant a valider un module
+    public function isValidateModule($idEtudiant, $idModule)
+    {
+        // Requête SQL pour récupérer la moyenne de l'étudiant dans un module
+        $sql = "SELECT moyenne_module 
+                FROM note_etudiant 
+                WHERE id_etudiant = ? AND id_module = ? 
+                ORDER BY id_note DESC LIMIT 1";
 
-    //     try {
-    //         // le debut de la transaction
-    //         $connection->beginTransaction();
+        // Utilisation de la méthode générique
+        $resultat = $this->FetchAllSelectWhere("moyenne_module", "note_etudiant", "id_etudiant = ? AND id_module = ?", [$idEtudiant, $idModule]);
 
-    //         $infosPromotion = $this->getInfoPromotion($idPromotion);
-    //         $semestres = $infosPromotion['semestres'];
-    //         $etudiantModel = new Etudiant();
-    //         $etudiants = $etudiantModel->trie_liste_etudiant($idPromotion);
-    //         foreach ($semestres as $semestre) {
-    //             $moyenneSemestre = $this->getAllMoyenneSemestreEtudiants($idPromotion, $semestre->id_parcours);
+        // Vérifie si une note a été trouvée 
+        if (!empty($resultat)) {
+            $moyenne = $resultat[0]->moyenne_module;
+            $isValidate = $moyenne >= 10;
+            return [
+                'isValidate' => $isValidate,
+                'moyenne' => $moyenne
+            ];
+        } else {
+            // Aucun résultat trouvé
+            return [
+                'isValidate' => false,
+                'moyenne' => null
+            ];
+        }
+    }
 
-    //         }
+    // la methode pour savoir si un etudiant a valider un ue*
+    public function isValidateUe($idEtudiant, $idUe)
+    {
+        $moyenne = 0;
+        $infosUe = $this->getInfosUe($idUe);
+        foreach ($infosUe as $module) {
+            $resultatModule = $this->isValidateModule($idEtudiant, $module->id_ue_module);
+            $moyenne += ($resultatModule['moyenne'] == null) ? 0 : $resultatModule['moyenne'];
+        }
+        $moyenne /= count($infosUe);
+        $isValidate = $moyenne >= 10;
+        return [
+            'isValidate' => $isValidate,
+            'moyenne' => number_format($moyenne, 2)
+        ];
+    }
 
-    //         // la fin de la transaction
-    //         $connection->commit();
-    //     } catch (Exception $e) {
-    //         $connection->rollBack();
-    //         $this->set_flash("Erreur : " . $e->getMessage(), "warning");
-    //     }
+    // la methode pour savoir si un etudiant a valider un semestre 
+    public function isValidateSemestre($idEtudiant, $idSemestre)
+    {
+        $infosSemestre = $this->getInfoSemestre($idSemestre);
+        $moyenne = 0;
+        $coeficient = 0;
+        $projetTutoreNames = ['GESTIONDEPROJET', 'PROJET', 'PROJETTUTORE'];
 
-    //     return [
-    //         "infosSemestre" => $infosSemestre,
-    //         "moyennesSemestre" => $moyenneSemestre
-    //     ];
-    // }
+        foreach ($infosSemestre as $ue) {
+            $coeficientUe = 0;
+            foreach ($ue as $module) {
+                $coeficientUe += $module->coeficient;
+            }
+
+            $resultatUe = $this->isValidateUe($idEtudiant, $ue[0]->id_ue);
+            if ((in_array(strtoupper(str_replace(" ", "", $ue[0]->nom_ue)), $projetTutoreNames)) && $resultatUe['isValidate'] == false) {
+                return [
+                    'isValidate' => false,
+                    'moyenne' => 0
+                ];
+            }
+            $moyenneUe = $resultatUe['moyenne'] * $coeficientUe;
+
+            $coeficient += $coeficientUe;
+            $moyenne += ($moyenneUe == null) ? 0 : $moyenneUe;
+        }
+        $moyenne /= $coeficient;
+        $isValidate = $moyenne >= 10;
+        return [
+            'isValidate' => $isValidate,
+            'moyenne' => number_format($moyenne, 2)
+        ];
+    }
+
+    public function isValidateClasse($idEtudiant, $idPromotion)
+    {
+        $moyenneLicence = 0;
+        $infosLicence = $this->getInfoPromotion($idPromotion);
+        $semestres = $infosLicence['semestres'];
+        foreach ($semestres as $semestre) {
+            $moyenneSemestre = $this->isValidateSemestre($idEtudiant, $semestre->id_parcours);
+            // if ($moyenneSemestre['isValidate' == false]) {
+            //     return ['isValidate' => false, 'moyenne' => 0];
+            // }
+            $moyenneLicence += $moyenneSemestre['moyenne'];
+        }
+        $isValidate = $moyenneLicence >= 10;
+        return [
+            'isValidate' => $isValidate,
+            'moyenne' => $moyenneLicence / 2
+        ];
+    }
 }

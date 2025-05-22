@@ -14,10 +14,10 @@ function toggleSessionFields(show, hideNotes) {
 }
 
 function loadEtudiants(url = ROOT + "/get_moyenne_etudiant") {
-  let filiere_id = $("#filiere").val();
-  let promotion_id = $("#promotions").val();
+  let filiere_id = $("#promotions option:selected").data("filiere");
+  let promotion_id = $("#promotions option:selected").val();
   let licence = $("#licences option:selected").data("semestre");
-  let semestre_id = $("#semestres").val();
+  let semestre_id = $("#promotions option:selected").data("semestre");
   let ue_id = $("#ues option:selected").data("id");
   let module_id = $("#modules option:selected").data("id");
 
@@ -40,7 +40,7 @@ function loadEtudiants(url = ROOT + "/get_moyenne_etudiant") {
       } else if (response.trim().include("empty")) {
         $("#table_section").html(
           "<h6 class='text-center text-bold-600 text-warning'>" +
-            "Aucun étudiant trouvé pour cette promotion !</h6>"
+            "Aucun étudiant trouvé pour cette classe !</h6>"
         );
       } else {
         $("#table_section").html(
@@ -111,124 +111,39 @@ async function infosFiliere(idFiliere, source = null) {
     });
     return response;
   } catch (error) {
-    console.error(error);
+    console.log("hohohohoh");
+    console.log(idFiliere);
   }
   var infoFiliere;
 }
 
-// recuperer les promotions d'une filière à travers son id
-function promotionsFiliere(infoFiliere, idPromotion = "") {
-  const promotionContainer = $("#promotions");
-  promotionContainer.empty();
-  promotionContainer.append(
-    `<option value="" disabled>Selectionner une Promotion</option>`
-  );
-  const promotions = infoFiliere["promotions"];
-  promotions.forEach((promotion) => {
-    const option = `<option value='${
-      promotion.id_promotion
-    }' class='text-center' data-id='${
-      promotion.id_parcours
-    }'data-semestre='${promotion.sigle_semestre.toUpperCase()}' ${
-      promotion.id_promotion == idPromotion ? "selected" : ""
-    }>
-      ${promotion.sigle_filiere.toUpperCase()}-${promotion.sigle_semestre.toUpperCase()}( ${
-      promotion.annee_universitaire
-    } )</option>`;
-    promotionContainer.append(option);
-  });
-}
+// recuperer les classes d'une annnée universitaire
+function classesAnneeUniversitaire(anneeUniversitaire) {
+  $.ajax({
+    method: "POST",
+    url: ROOT + "/get_classe_annee",
+    dataType: "json",
 
-// recuperer les semestres d'une filière à travers son id
-function licencesPromotion(semestreCourant) {
-  const licenceContainer = $("#licences");
-  licenceContainer.empty();
-  licenceContainer.append(
-    `<option value="" selected data-id="">Toutes Licences</option>`
-  );
-  semestreCourant = parseInt(semestreCourant.slice(-1), 10);
-  const nbrLicence = parseInt(semestreCourant / 2, 10);
-  if (nbrLicence > 0) {
-    for (let index = 1; index <= nbrLicence; index++) {
-      licenceContainer.append(
-        `<option value="${index}" data-id="${index}" data-semestre="">L ${index}</option>`
+    data: {
+      anneeUniversitaire: anneeUniversitaire,
+      action: "liste_note",
+    },
+    success: function (response) {
+      console.log(response);
+
+      const promotionContainer = $("#promotions");
+      promotionContainer.empty();
+      promotionContainer.append(
+        `<option value="" >Selectionner une Classe</option>`
       );
-    }
-  } else {
-    licenceContainer.empty();
-    licenceContainer.append(
-      `<option value="" selected disabled>Aucune Licence Trouvée</option>`
-    );
-  }
-}
-
-// recuperer les semestres d'une filière à travers son id
-function semestresLicence(infoFiliere, licence) {
-  const semestres = infoFiliere["semestres"];
-  var semestreLicence = [];
-  switch (licence) {
-    case 1:
-      semestres.forEach((semestre) => {
-        if (
-          parseInt(semestre.sigle_semestre.slice(-1), 10) == 1 ||
-          parseInt(semestre.sigle_semestre.slice(-1), 10) == 2
-        ) {
-          semestreLicence += "|" + semestre.id_parcours;
-        }
+      const promotions = response;
+      promotions.forEach((promotion) => {
+        const option = `<option value='${promotion.id_promotion}' class='text-center' data-filiere='${promotion.id_filiere}' data-semestre='${promotion.id_parcours}'> 
+        ${promotion.classe}</option>`;
+        promotionContainer.append(option);
       });
-      break;
-
-    case 2:
-      semestres.forEach((semestre) => {
-        if (
-          parseInt(semestre.sigle_semestre.slice(-1), 10) == 3 ||
-          parseInt(semestre.sigle_semestre.slice(-1), 10) == 4
-        ) {
-          semestreLicence += "|" + semestre.id_parcours;
-        }
-      });
-      break;
-
-    case 3:
-      semestres.forEach((semestre) => {
-        if (
-          parseInt(semestre.sigle_semestre.slice(-1), 10) == 5 ||
-          parseInt(semestre.sigle_semestre.slice(-1), 10) == 6
-        ) {
-          semestreLicence += "|" + semestre.id_parcours;
-        }
-      });
-      break;
-
-    default:
-      break;
-  }
-
-  $("#licences option:selected").attr(
-    "data-semestre",
-    semestreLicence.slice(1)
-  );
-}
-
-// recuperer les semestres d'une filière à travers son id
-function semestresPromotion(infoFiliere, semestreCourant) {
-  const semestreContainer = $("#semestres");
-  semestreContainer.empty();
-  semestreContainer.append(
-    `<option value="" selected>Tous les Semestres</option>`
-  );
-  const semestres = infoFiliere["semestres"];
-  semestreCourant = parseInt(semestreCourant.slice(-1), 10);
-
-  semestres.forEach((semestre) => {
-    if (parseInt(semestre.sigle_semestre.slice(-1), 10) <= semestreCourant) {
-      const option = `<option value='${
-        semestre.id_parcours
-      }' class='text-center' data-id='${
-        semestre.id_parcours
-      }'>${semestre.sigle_semestre.toUpperCase()}</option>`;
-      semestreContainer.append(option);
-    }
+    },
+    error: function () {},
   });
 }
 

@@ -165,20 +165,8 @@
                                                                     value="<?= htmlspecialchars($etudiant['total_frais'] - $totalPaid) ?>"
                                                                     readonly>
                                                             </div>
-                                                        </div>
-                                                    </div>
 
-                                                    <!-- Bouton centré -->
-
-                                                    <!-- Boutons pour soumettre ou aller à la liste des étudiants -->
-                                                    <div class="text-center mt-3">
-                                                        <button type="submit" name="paie" class="btn btn-success">Effectuer le
-                                                            Paiement</button>
-                                                        <a href="<?= ROOT ?>/Etudiants/" class="btn btn-primary">Liste des
-                                                            Étudiants</a>
-                                                    </div>
-
-                                                    <div id="payment-status" class="text-center mt-2"></div>
+                                                            <div id="payment-status" class="text-center mt-2"></div>
                                                 </form>
 
                                                 <!-- Historique des paiements -->
@@ -207,10 +195,49 @@
                                                     </table>
                                                 </div>
                                             </div>
+
+
+                                            <!-- Bouton centré -->
+
+                                            <!-- Boutons pour soumettre ou aller à la liste des étudiants -->
+                                            <div class="text-center mt-3">
+                                                <button type="submit" name="paie" class="btn btn-success">Effectuer le
+                                                    Paiement</button>
+                                                <a href="<?= ROOT ?>/Etudiants/" class="btn btn-primary">Liste des
+                                                    Étudiants</a>
+                                            </div>
+
+                                            <div id="payment-status" class="text-center mt-2"></div>
+                                            </form>
+
+                                            <!-- Historique des paiements -->
+                                            <div class="mt-4">
+                                                <h4>Historique des Paiements</h4>
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Date</th>
+                                                            <th>Montant</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <?php foreach ($payments as $payment) : ?>
+                                                            <tr>
+                                                                <td>
+                                                                    <?= htmlspecialchars($payment['date']) ?>
+                                                                </td>
+                                                                <td>
+                                                                    <?= htmlspecialchars($payment['montant_paye']) ?>
+                                                                    FCFA
+                                                                </td>
+                                                            </tr>
+                                                        <?php endforeach; ?>
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
                         </section>
                     </div>
                 </div>

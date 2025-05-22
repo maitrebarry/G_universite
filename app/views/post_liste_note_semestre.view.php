@@ -1,6 +1,7 @@
 <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/vendors/css/tables/datatable/datatables.min.css">
 
 <?php
+
 $creditTotal = 0;
 foreach ($infosSemestre as $ue) {
     foreach ($ue as $module) {
@@ -43,9 +44,9 @@ foreach ($infosSemestre as $ue) {
                 <th class="text-center d-none d-lg-table-cell">Nom & Prenom</th>
                 <th class="text-center  genre d-none d-lg-table-cell">Genre</th>
                 <?php foreach ($infosSemestre as $ue): ?>
-                    <th class="text-center moyenne  noteContainer ">
-                        <?= $ue[0]->nom_ue ?>
-                    </th>
+                <th class="text-center moyenne  noteContainer ">
+                    <?= $ue[0]->nom_ue ?>
+                </th>
                 <?php endforeach ?>
                 <th class="text-center moyenne noteContainer">M/S</th>
                 <th class="text-center moyenne noteContainer">Observation</th>
@@ -53,38 +54,43 @@ foreach ($infosSemestre as $ue) {
         </thead>
         <tbody id="tableBody">
             <!-- Affichage dynamique via PHP -->
-            <?php foreach ($etudiants as $etudiant): ?>
-                <tr>
-                    <td class="text-bold-500 text-center d-lg-none etudiant" style="font-size: 14px;">
-                        <div><?= strtoupper($etudiant->nom_prenom_etudiant) ?></div>
-                        <div><a href=""><?= $etudiant->matricule_etudiant ?></a></div>
-                    </td>
-                    <td class="text-bold-500 text-left d-none d-lg-table-cell" style="font-size: 14px;">
-                        <a href=""><?= $etudiant->matricule_etudiant ?></a>
-                    </td>
-                    <td class="text-bold-500 text-left d-none d-lg-table-cell" style="font-size: 14px;">
-                        <?= strtoupper($etudiant->nom_prenom_etudiant) ?>
-                    </td>
-                    <td class="genre d-none d-lg-table-cell" style="font-size: 14px;">
-                        <?= ($etudiant->genre_etudiant == "Féminin") ? 'F' : "M" ?>
-                    </td>
-                    <?php foreach ($infosSemestre as $ue): ?>
-                        <td class=" noteContainer">
-                            <input type="number" class="form-control moyenneUe note text-bold-600 text-center"
-                                id="<?= 'e_' . $etudiant->id_etudiant . '_u_' . $ue[0]->id_ue ?>" step="0.1" disabled>
-                        </td>
-                    <?php endforeach ?>
-                    <td class="noteContainer">
-                        <!-- Moyenne affichée dans un input readonly -->
-                        <input type="number" class="form-control moyenneSemestre note text-bold-600 text-center" disabled>
-                    </td>
+            <?php for ($i = 0; $i < count($moyennesSemestre); $i++) : ?>
+            <?php $etudiant = $moyennesSemestre[$i]['etudiant'];
+                $note = $moyennesSemestre[$i]['moyenne'] ?>
+            <tr>
+                <td class="text-bold-500 text-center d-lg-none etudiant" style="font-size: 14px;">
+                    <div><?= strtoupper($etudiant->nom_prenom_etudiant) ?></div>
+                    <div><a href=""><?= $etudiant->matricule_etudiant ?></a></div>
+                </td>
+                <td class="text-bold-500 text-left d-none d-lg-table-cell" style="font-size: 14px;">
+                    <a href=""><?= $etudiant->matricule_etudiant ?></a>
+                </td>
+                <td class="text-bold-500 text-left d-none d-lg-table-cell" style="font-size: 14px;">
+                    <?= strtoupper($etudiant->nom_prenom_etudiant) ?>
+                </td>
+                <td class="genre d-none d-lg-table-cell" style="font-size: 14px;">
+                    <?= ($etudiant->genre_etudiant == "Féminin") ? 'F' : "M" ?>
+                </td>
 
-                    <td>
-                        <span class=" badge etatSemestre text-bold-600 text-center"></span>
-                    </td>
+                <?php $ues = $moyennesUe[$i]['ues']; ?>
+                <?php foreach ($ues as $ue): ?>
+                <td class=" noteContainer">
+                    <input type="number" class="form-control moyenneUe note text-bold-600 text-center" step="0.1"
+                        disabled value="<?php echo $ue['moyenne'] ?>">
+                </td>
+                <?php endforeach ?>
+                <td class="noteContainer">
+                    <!-- Moyenne affichée dans un input readonly -->
+                    <input type="number" class="form-control moyenneSemestre note text-bold-600 text-center" disabled
+                        value="<?php echo $note ?>">
+                </td>
 
-                </tr>
-            <?php endforeach ?>
+                <td>
+                    <span class=" badge etatSemestre text-bold-600 text-center"></span>
+                </td>
+
+            </tr>
+            <?php endfor ?>
         </tbody>
     </table>
 </div>
@@ -97,69 +103,66 @@ foreach ($infosSemestre as $ue) {
 <script src="<?= ROOT ?>/assets/js/scripts/datatables/datatable.js"></script>
 
 <script>
-    var moyennes = <?php echo json_encode($moyennesSemestre); ?>;
-    var nombreUe = 0;
-    var nbrEtudiant = 0;
-    var moyenneTotalSemestre = 0;
-    var nbrValide = 0;
-    var tauxReussite = 0;
+var moyennes = <?php echo json_encode($moyennesSemestre); ?>;
+var nombreUe = 0;
+var nbrEtudiant = 0;
+var moyenneTotalSemestre = 0;
+var nbrValide = 0;
+var tauxReussite = 0;
 
-    $("#notesTable").DataTable({
-        "pageLength": 50
-    })
+$("#notesTable").DataTable({
+    "pageLength": 100
+})
 
-    $.each(moyennes, function(index) {
-        nombreUe++;
-        const ue = $(this);
-        const infosUe = ue[0].infosUe;
-        const moyennesUe = ue[0].moyennesUe;
+$.each(moyennes, function(index) {
+    nombreUe++;
+    const ue = $(this);
+    const infosUe = ue[0].infosUe;
+    const moyennesUe = ue[0].moyennesUe;
 
-        $.each(moyennesUe, function(index2) {
-            const idMoyenne =
-                '#e_' + $(this)[0].id_etudiant + "_u_" + infosUe[0].id_ue;
+    $.each(moyennesUe, function(index2) {
+        const idMoyenne =
+            '#e_' + $(this)[0].id_etudiant + "_u_" + infosUe[0].id_ue;
 
-            $(idMoyenne).val(parseFloat($(this)[0].moyenne_ue).toFixed(2))
-        });
+        $(idMoyenne).val(parseFloat($(this)[0].moyenne_ue).toFixed(2))
     });
+});
 
-    $("#notesTable tbody tr").each(function(index) {
-        nbrEtudiant++;
-        var moyenneSemestre = 0;
-        const row = $(this);
+$("#notesTable tbody tr").each(function(index) {
+    nbrEtudiant++;
+    var moyenneSemestre = 0;
+    const row = $(this);
 
-        $(this).find(".moyenneUe").each(function() {
-            let moyenneUe = parseFloat($(this).val(), 10) || 0; // Convertir en nombre et éviter NaN
-            moyenneSemestre += moyenneUe;
-        });
-        moyenneSemestre = (moyenneSemestre / nombreUe);
-        if (moyenneSemestre < 10) {
-            row.find('.etatSemestre').text("Ajourné");
-            row.find('.etatSemestre').addClass('badge-light-danger');
-            row.find(".moyenneSemestre").addClass('bg-rgba-danger')
 
-        } else {
-            row.find('.etatSemestre').text("Admis");
-            row.find('.etatSemestre').addClass('badge-light-success');
-            row.find(".moyenneSemestre").addClass('bg-rgba-success')
-            nbrValide++;
-        }
-        row.find(".moyenneSemestre").val(moyenneSemestre.toFixed(2));
+    moyenneSemestre = parseInt(row.find(".moyenneSemestre").val(), 10);
+    if (moyenneSemestre < 10) {
+        row.find('.etatSemestre').text("Ajourné");
+        row.find('.etatSemestre').addClass('badge-light-danger');
+        row.find(".moyenneSemestre").addClass('bg-rgba-danger')
 
-        moyenneTotalSemestre += moyenneSemestre;
-    });
-    moyenneTotalSemestre = (moyenneTotalSemestre / nbrEtudiant).toFixed(2);
-    $('#moyenneTotalSemestre').text(moyenneTotalSemestre);
-    if (moyenneTotalSemestre < 10) {
-        $('#moyenneTotalSemestre').addClass('text-danger');
     } else {
-        $('#moyenneTotalSemestre').addClass('text-success');
+        row.find('.etatSemestre').text("Admis");
+        row.find('.etatSemestre').addClass('badge-light-success');
+        row.find(".moyenneSemestre").addClass('bg-rgba-success')
+        nbrValide++;
     }
+    // row.find(".moyenneSemestre").val(moyenneSemestre.toFixed(2));
 
-    tauxReussite = ((nbrValide * 100) / nbrEtudiant).toFixed(2);
-    $('#tauxReussite').text(tauxReussite + "%");
-    if (tauxReussite < 50) {
-        $('#tauxReussite').addClass('badge-light-danger');
-    } else {
-        $('#tauxReussite').addClass('badge-light-success');
-    }
+    moyenneTotalSemestre += moyenneSemestre;
+});
+moyenneTotalSemestre = (moyenneTotalSemestre / nbrEtudiant).toFixed(2);
+$('#moyenneTotalSemestre').text(moyenneTotalSemestre);
+if (moyenneTotalSemestre < 10) {
+    $('#moyenneTotalSemestre').addClass('text-danger');
+} else {
+    $('#moyenneTotalSemestre').addClass('text-success');
+}
+
+tauxReussite = ((nbrValide * 100) / nbrEtudiant).toFixed(2);
+$('#tauxReussite').text(tauxReussite + "%");
+if (tauxReussite < 50) {
+    $('#tauxReussite').addClass('badge-light-danger');
+} else {
+    $('#tauxReussite').addClass('badge-light-success');
+}
 </script>

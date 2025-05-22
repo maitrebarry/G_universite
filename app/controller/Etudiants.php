@@ -13,6 +13,7 @@ class Etudiants extends Controller
         $this->view('liste_incrit', [
             'listeFilieres' => $listeFilieres  // Nom du tableau de données envoyé à la vue
         ]);
+        
     }
     
     public function incrit_etudiant() {
@@ -160,4 +161,79 @@ public function paiement_groupe() {
 
 
     
+  
+  
+public function importExcel() {
+    $Etudiants = new Etudiant();
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excelFile'])) {
+        // Récupérer le fichier Excel téléchargé
+        $file = $_FILES['excelFile']['tmp_name'];
+
+        // Charger le fichier Excel
+        $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($file);
+        $sheet = $spreadsheet->getActiveSheet();
+        $rowIterator = $sheet->getRowIterator(2); // Commence à la ligne 2 (ignorer les en-têtes)
+
+        // Instancier le modèle Etudian
+        $etudiantModel = new EtudiantModel();
+
+        // Parcourir les lignes du fichier Excel
+        foreach ($rowIterator as $row) {
+            $data = [];
+            $cellIterator = $row->getCellIterator();
+            $cellIterator->setIterateOnlyExistingCells(false);
+
+            foreach ($cellIterator as $cell) {
+                $data[] = $cell->getFormattedValue();
+            }
+
+            // Vérifier que la ligne contient bien 27 valeurs
+            if (count($data) === 26) {
+                // Préparer les données sous forme de tableau associatif
+                $etudiantData = [
+                   
+                    'nom_prenom_etudiant' => $data[0],
+                    'date_naissance_etudiant' => $data[1],
+                    'lieu_naissance_etudiant' => $data[2],
+                    'genre_etudiant' => $data[3],
+                    'matricule_etudiant' => $data[4],
+                    'contact_etudiant' => $data[5],
+                    'diplom' => $data[6],
+                    'id_statut' => $data[7],
+                    'annee' => $data[8],
+                    'numetudiant' => $data[9],
+                    'prenompere' => $data[10],
+                    'prenomnommere' => $data[11],
+                    'cercleNais' => $data[12],
+                    'commNais' => $data[13],
+                    'nationnalite' => $data[14],
+                    'anneediplome' => $data[15],
+                    'serie' => $data[16],
+                    'pays' => $data[17],
+                    'academie' => $data[18],
+                    'lieuresidenceparents' => $data[19],
+                    'adresseactuel' => $data[20],
+                    'numplace' => $data[21],
+                    'profilname' => $data[22],
+                    'id_promotion' => $data[23],
+                    'montant' => $data[24],
+                    'total_frais' => $data[25]
+                ];
+
+                // Appeler la méthode du modèle pour insérer les données
+                $etudiantModel->insertEtudiant($etudiantData);
+            }
+        }
+
+        // Retourner une réponse (ex : confirmation d'import)
+        echo "Les données ont été importées avec succès!";
+    } else {
+        // Si aucun fichier n'a été téléchargé, afficher un message d'erreur
+        echo "Veuillez télécharger un fichier Excel.";
+    }
+}
+ public function liste_inscription_groupe(){
+   
+    $this->view('liste_inscription_groupe');
+}
 }

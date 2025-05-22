@@ -44,7 +44,7 @@ class Notes extends Controller
                 return;
             } else {
                 echo   "<h6 class='text-center text-bold-600 text-warning'>" .
-                    "Aucun étudiant trouvé pour cette promotion !</h6>";
+                    "Aucun étudiant trouvé pour cette promotion 000 !</h6>";
                 return;
             }
 
@@ -111,6 +111,8 @@ class Notes extends Controller
             $etudiantModel = new Etudiant();
 
             if (isset($_POST['idUe']) && !trim(empty($_POST['idUe']))) {
+
+
                 if (isset($_POST['idModule']) && !trim(empty($_POST['idModule']))) {
 
                     $idModule = $_POST['idModule'];
@@ -148,15 +150,15 @@ class Notes extends Controller
                 $resultat = $noteModel->getAllMoyenneSemestreEtudiants($idPromotion, $idSemestre);
                 $moyennesSemestre = $resultat["moyennesSemestre"];
                 $infosSemestre = $resultat['infosSemestre'];
-                $etudiants = $etudiantModel->trie_liste_etudiant($idPromotion);
+
                 if (!empty($moyennesSemestre)) {
 
                     $this->view(
                         'post_liste_note_semestre',
                         [
                             'moyennesSemestre' => $moyennesSemestre,
+                            'moyennesUe' => $resultat["moyennesUe"],
                             "infosSemestre" => $infosSemestre,
-                            "etudiants" => $etudiants
                         ]
                     );
                     return;
@@ -180,28 +182,25 @@ class Notes extends Controller
 
         //Etpa 1: Vérification de la des idPromoton et idModule pour voir leur validité
         if (
-            isset(
-                $_POST['idPromotion'],
-                $_POST['licence']
-            ) && !empty($_POST['idPromotion'])
-            && !empty($_POST['licence'])
+            isset($_POST['idPromotion'],) && !empty($_POST['idPromotion'])
+
         ) {
             $idPromotion = htmlspecialchars(trim($_POST['idPromotion']));
-            $licence = htmlspecialchars(trim($_POST['licence']));
             $noteModel = new Note();
             $etudiantModel = new Etudiant();
 
-            $resultat = $noteModel->getAllMoyenneLicenceEtudiants($idPromotion, $licence);
+            $resultat = $noteModel->getAllMoyenneLicenceEtudiants($idPromotion);
             $infosLicence = $resultat['infosLicence'];
             $moyennesLicence = $resultat['moyennesLicence'];
-            $etudiants = $etudiantModel->trie_liste_etudiant($idPromotion);
+            $moyennesSemestre = $resultat['moyennesSemestre'];
+
             if (!empty($moyennesLicence)) {
                 $this->view(
                     'post_liste_note_licence',
                     [
                         'infosLicence' => $infosLicence,
                         'moyennesLicence' => $moyennesLicence,
-                        "etudiants" => $etudiants
+                        'moyennesSemestre' => $moyennesSemestre
                     ]
                 );
                 return;
@@ -217,6 +216,62 @@ class Notes extends Controller
         } else {
             echo "notfound";
             exit;
+        }
+    }
+
+
+    public function get_classe_annee()
+    {
+        if (isset($_POST['anneeUniversitaire']) && !empty(trim(htmlspecialchars($_POST['anneeUniversitaire'])))) {
+            $anneeUniversitaire = $_POST['anneeUniversitaire'];
+            $noteModel = new Note();
+            $requette = "SELECT id_promotion, annee_universitaire, promotion.statut, promotion.id_parcours, promotion.id_filiere, nom_filiere, 
+            sigle_filiere, nom_semestre, sigle_semestre FROM promotion INNER JOIN filiere ON promotion.id_filiere=filiere.id_filiere
+            INNER JOIN parcours ON promotion.id_parcours=parcours.id_parcours INNER JOIN semestre ON parcours.id_semestre=semestre.id_semestre
+            WHERE promotion.annee_universitaire=?";
+
+            $promotions = $noteModel->select_data_table_join_where($requette, [$anneeUniversitaire]);
+            $classes = [];
+
+            foreach ($promotions as $promotion) {
+
+                // la recuperation des semestres de la promotion
+                $requetteSemestre = "SELECT id_parcours, parcours.id_semestre, nom_semestre, sigle_semestre 
+                FROM parcours  INNER JOIN semestre ON parcours.id_semestre=semestre.id_semestre WHERE id_filiere=? AND id_parcours >=? LIMIT 2";
+                $semestres = $noteModel->select_data_table_join_where($requetteSemestre, [$promotion->id_filiere, $promotion->id_parcours]);
+
+                // la deduction du niveau
+                if (strtolower($promotion->sigle_semestre) == 's1' || strtolower($promotion->sigle_semestre) == 's2') {
+                    $niveau = 'L1';
+                } elseif (strtolower($promotion->sigle_semestre) == 's3' || strtolower($promotion->sigle_semestre) == 's4') {
+                    $niveau = 'L2';
+                } else {
+                    $niveau = 'L3';
+                }
+                if (isset($_POST['action']) && $_POST['action'] === "liste_note") {
+                    $classes[] = (object) [
+                        "id_filiere" => $promotion->id_filiere,
+                        "id_promotion" => $promotion->id_promotion,
+                        "classe" => strtoupper(
+                            $promotion->sigle_filiere . '-' . $niveau . '-' . $promotion->annee_universitaire . ''
+                        ),
+                        "id_parcours" => $promotion->id_parcours
+                    ];
+                }
+
+                foreach ($semestres as $semestre) {
+                    $classes[] = (object) [
+                        "id_filiere" => $promotion->id_filiere,
+                        "id_promotion" => $promotion->id_promotion,
+                        "classe" => strtoupper(
+                            $promotion->sigle_filiere . '-' . $niveau . '-' . $semestre->sigle_semestre . '-' . $promotion->annee_universitaire . ''
+                        ),
+                        "id_parcours" => $semestre->id_parcours
+                    ];
+                }
+            }
+            header("Content-Type:application/json");
+            echo json_encode($classes);
         }
     }
 }

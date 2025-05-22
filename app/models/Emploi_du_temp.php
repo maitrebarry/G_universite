@@ -22,8 +22,8 @@ class Emploi_du_temp  extends Model
             }
             $periode = $this->getCurrentPeriode();
             $this->e(extract($edt));
-            $requetteEdt = "INSERT INTO edt(date_creation, date_debut, date_Fin, statut, heure_total, id_filiere, id_promotion, id_module, id_enseignant, id_salle, id_periode) 
-            VALUES (:dateCreation, :dateDebut, :dateFin, :statut, :heureTotal, :idFiliere, :idPromotion, :idModule, :idEnseignant, :idSalle, :idPeriode)";
+            $requetteEdt = "INSERT INTO edt(date_creation, date_debut, date_Fin, statut, heure_total, id_filiere, id_promotion, id_semestre, id_module, id_enseignant, id_salle, id_periode) 
+            VALUES (:dateCreation, :dateDebut, :dateFin, :statut, :heureTotal, :idFiliere, :idPromotion, :idSemestre, :idModule, :idEnseignant, :idSalle, :idPeriode)";
             $dateFin = new DateTime($dateDebut);
             $dateFin->add(new DateInterval('P7D'));
             $param = [
@@ -34,6 +34,7 @@ class Emploi_du_temp  extends Model
                 "heureTotal" => $heureTotal,
                 "idFiliere" => $idFiliere,
                 "idPromotion" => $idPromotion,
+                "idSemestre" => $idSemestre,
                 "idModule" => $idModule,
                 "idEnseignant" => $idEnseignant,
                 "idSalle" => $idSalle,
@@ -216,14 +217,14 @@ class Emploi_du_temp  extends Model
     }
 
     // la methode pour trier la liste des edts
-    public function trierListeEdt($idFiliere, $idPromotion = null)
+    public function trierListeEdt($idFiliere, $idPromotion, $idSemestre)
     {
-        $whereCondition = "id_filiere=? AND id_promotion=?";
-        $whereValues = [$idFiliere, $idPromotion];
-        if ($idPromotion == null || empty($idPromotion)) {
-            $whereCondition = "id_filiere=?";
-            $whereValues = [$idFiliere];
-        }
+        $whereCondition = "id_filiere=? AND id_promotion=? AND id_semestre=?";
+        $whereValues = [$idFiliere, $idPromotion, $idSemestre];
+        // if ($idPromotion == null || empty($idPromotion)) {
+        //     $whereCondition = "id_filiere=?";
+        //     $whereValues = [$idFiliere];
+        // }
         $edts = [];
 
         $listeEdts = $this->FetchAllSelectWhere("id_edt", "edt", $whereCondition, $whereValues);

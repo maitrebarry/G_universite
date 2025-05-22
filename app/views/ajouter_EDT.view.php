@@ -74,17 +74,32 @@ td {
                                         <form method="POST" class="form-horizontal" novalidate id="edtForm">
                                             <div class="row d-flex justify-content-around align-items-center">
                                                 <div class="col-6 col-lg-3">
-                                                    <label class="form-label" for="single-select">Filiere</label>
+                                                    <label class="form-label" for="single-select">Année
+                                                        universitaire</label>
                                                     <div class="form-group">
-                                                        <select class="select2 form-control" id="filiere">
-                                                            <option value="0" disabled selected>Selectionner une Filiere
-                                                            </option>
-                                                            <?php foreach ($filieres as $filiere): ?>
-                                                            <option value="<?php echo $filiere->id_filiere ?>"
-                                                                <?= ($idFiliere != null && $idFiliere == $filiere->id_filiere) ? 'selected' : '' ?>>
-                                                                <?php echo strtoupper($filiere->sigle_filiere) ?>
-                                                            </option>
-                                                            <?php endforeach ?>
+                                                        <select class="select2 form-control disabled"
+                                                            id="anneeUniversitaire" name="anneeUniversitaire">
+                                                            <?php
+                                                            $annee_debut = 2012;
+                                                            $annee_actuelle = date('Y');
+                                                            $mois_actuel = date('n');
+
+                                                            // Si on est avant septembre, l'année universitaire en cours commence l'année précédente
+                                                            if ($mois_actuel <= 8) {
+                                                                $annee_actuelle--;
+                                                            }
+
+                                                            $annee_universitaire_courante = $annee_actuelle . '-' . ($annee_actuelle + 1);
+
+                                                            for ($annee = $annee_debut; $annee <= $annee_actuelle; $annee++) {
+                                                                $annee_suivante = $annee + 1;
+                                                                $valeur = $annee . '-' . $annee_suivante;
+
+                                                                // Si cette valeur correspond à l'année universitaire en cours, on ajoute "selected"
+                                                                $selected = ($valeur == $annee_universitaire_courante) ? 'selected' : '';
+                                                                echo "<option value=\"$valeur\" $selected>$valeur</option>";
+                                                            }
+                                                            ?>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -325,28 +340,32 @@ td {
 <script>
 // la recuperation des liste de promotion d'une filière lors d'une selection de fiilière
 var infoFiliere = [];
-$("#filiere").change(async function() {
-    infoFiliere = await infosFiliere($(this).val());
-    promotionsFiliere(infoFiliere);
-    idSemestre = $("#promotions option:selected").data("id");
+
+$("#anneeUniversitaire").change(async function() {
+
+    classesAnneeUniversitaire($("#anneeUniversitaire option:selected").val());
+
+    infoFiliere = await infosFiliere($("#promotions option:selected").data("filiere"), "all");
+    idSemestre = $("#promotions option:selected").data("semestre");
+    modulesSemestre(idSemestre, infoFiliere);
+    infoModule($("#infoModule").val(), infoFiliere);
+
+})
+
+$("#promotions").change(async function() {
+    infoFiliere = await infosFiliere($("#promotions option:selected").data("filiere"), "all");
+    idSemestre = $("#promotions option:selected").data("semestre");
     modulesSemestre(idSemestre, infoFiliere);
     infoModule($("#infoModule").val(), infoFiliere);
 
 
-})
 
-// la recuperation des modules d'une promotion lors d'une selection de promotion
-$("#promotions").change(function() {
-    idSemestre = $("#promotions option:selected").data("id");
-    modulesSemestre(idSemestre, infoFiliere);
-    infoModule($("#infoModule").val(), infoFiliere);
 })
-
 
 // la recuperation des heures d'un module lors d'une selection de module
 $("#modules").change(function() {
     infoModule($(this).val(), infoFiliere);
-    getDefaultEnseignantAndSalleModule($("#filiere").val(), $(this).val());
+    getDefaultEnseignantAndSalleModule($("#promotions option:selected").data("filiere"), $(this).val());
 
 
 })
@@ -361,12 +380,7 @@ $(document).ready(async function() {
     })
 
     // la recupeation des promotions de la filière selectionner après le rechargement
-    infoFiliere = await infosFiliere($("#filiere").val());
-    idPromotion = $("#promotions").data('id');
-    promotionsFiliere(infoFiliere, idPromotion);
-    idSemestre = $("#promotions option:selected").data("id");
-    modulesSemestre(idSemestre, infoFiliere);
-    infoModule($("#modules").val(), infoFiliere);
+    classesAnneeUniversitaire($("#anneeUniversitaire option:selected").val());
 })
 
 
