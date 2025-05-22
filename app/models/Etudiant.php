@@ -10,7 +10,6 @@ class Etudiant  extends Model{
         $default_image = '/profile/guem.png'; 
         $taillemax = 2067152; 
         $extensions_valides = ['gif', 'png', 'jpg', 'jpeg'];
-
         // Vérifiez si le fichier est passé et n'a pas d'erreurs
         if (isset($file['name']) && $file['error'] == 0) {
             $file_name = basename($file['name']);
@@ -428,9 +427,6 @@ public function getTotalPaye($id_etudiant) {
     $result = $stmt->fetch();
     return $result['total_payé'] ? $result['total_payé'] : 0; // Renvoie 0 si aucun paiement effectué
 }
-
-
-
 
 }
     

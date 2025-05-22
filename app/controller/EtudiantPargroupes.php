@@ -197,14 +197,43 @@ public function importerEnChunks()
                     $nom = $donnees['nom_prenom_etudiant'] ?? '';
                     $prenom = $donnees['prenom'] ?? '';
                     $donnees['matricule_etudiant'] = $this->genererMatricule($anneeDiplome, $nom, $prenom, $genre, $indexMatricule);
+// 👉 Ajouter la logique du montant selon le statut
+$statutBrut = $donnees['id_statut'] ?? '';
+// Normaliser le statut : minuscule, retirer accents, trim
+$statut = strtolower(trim($statutBrut));
+$statut = str_replace(['é', 'è', 'ê', 'ë'], 'e', $statut); // pour tous les accents possibles
+// Affectation du montant selon le statut
+switch ($statut) {
+    case 'reg':
+    case 'regulier':
+        $donnees['total_frais'] = 6000;
+        break;
+    case 'cl':
+        $donnees['total_frais'] = 81000;
+        break;
+    case 'privee':
+        case 'prive':
+             case 'Prof. Prive':
+        $donnees['total_frais'] = 200000;
+        break;
 
-                    // 👉 Ajouter la logique du montant selon le statut
-                    $statut = strtolower(trim($donnees['id_statut'] ?? ''));
-                    $donnees['total_frais'] =  (strcasecmp($statut, 'reg') === 0) ? 6000 : 150000;
+    case 'public':
+        case 'publique':
+            case 'PROFPUBLIQ':
+                case 'PRO. Collect':
+    case 'collectivite':
+        $donnees['total_frais'] = 150000;
+        break;
 
-                    if ($etudiantModel->insertEtudiant($donnees)) {
-                        $success++;
-                    }
+    default:
+        // Statut inconnu, ignorer cet enregistrement
+        $donnees['total_frais'] = 150000;
+}
+
+    // Insertion sans restriction
+if ($etudiantModel->insertEtudiant($donnees)) {
+    $success++;
+}
                 }
             }
 

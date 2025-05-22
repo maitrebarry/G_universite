@@ -125,11 +125,11 @@
                                                                 <!-- Promotion -->
                                                                 <div class="col-md-6 mb-3">
                                                                     <label for="id_promotion"
-                                                                        class="form-label">Promotion <span
+                                                                        class="form-label">Semestre <span
                                                                             class="text-danger">*</span></label>
                                                                     <select class="form-select" id="id_promotion"
                                                                         name="id_promotion" required>
-                                                                        <option value="">-- Sélectionner la promotion --
+                                                                        <option value="">-- Sélectionner le Semestre --
                                                                         </option>
                                                                     </select>
                                                                 </div>
@@ -186,7 +186,7 @@
                 promotionsParAnnee[anneeSelectionnee].forEach(promo => {
                     const option = document.createElement('option');
                     option.value = promo.id_promotion;
-                    option.textContent = `${promo.sigle_filiere}-${promo.sigle_semestre} (${promo.annee_universitaire})`;
+                    option.textContent = `${promo.sigle_filiere}-${promo.sigle_semestre} `;
                     selectPromotion.appendChild(option);
                 });
             }
