@@ -289,11 +289,14 @@
             await classesAnneeUniversitaire(anneeSaved);
             infoFiliere = JSON.parse(sessionStorage.getItem('infoFiliere'));
             idSemestre = sessionStorage.getItem('semestre');
-            modulesSemestre(idSemestre, infoFiliere);
-            if ($("#modules option:selected").val() != "" && $("#modules option:selected").val() != null) {
-                loadEtudiants(true);
+            if (infoFiliere) {
+                modulesSemestre(idSemestre, infoFiliere);
+                if ($("#modules option:selected").val() != "" && $("#modules option:selected").val() != null) {
+                    loadEtudiants(true);
 
+                }
             }
+
 
         })
 
@@ -301,16 +304,20 @@
 
             classesAnneeUniversitaire($("#anneeUniversitaire option:selected").val());
 
-            infoFiliere = await infosFiliere($("#promotions option:selected").data("filiere"), "all");
+
             idSemestre = $("#promotions option:selected").data("semestre");
-            modulesSemestre(idSemestre, infoFiliere);
             $("#table_section").html(
                 "<h6 class='text-center text-bold-600 text-warning'>" +
                 "Veuillez selectionner un module &#x1F603</h6>"
             );
-            sessionStorage.setItem("annee", $("#anneeUniversitaire option:selected").val());
-            sessionStorage.setItem("module", $("#modules option:selected").val());
 
+            $("#modules").empty();
+            $("#modules").append(`<option value="" >Selectionner un Module</option>`);
+
+            sessionStorage.setItem("annee", $("#anneeUniversitaire option:selected").val());
+
+            sessionStorage.setItem("module", $("#modules option:selected").val());
+            console.log('A : ')
 
 
         })
