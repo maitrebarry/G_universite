@@ -1,10 +1,10 @@
 <!-- inclusion du partie header -->
 <?php $this->view("Partials/header") ?>
 <style>
-td {
-    padding: 0 !;
-    margin: 0 !important;
-}
+    td {
+        padding: 0 !;
+        margin: 0 !important;
+    }
 </style>
 
 <body
@@ -158,58 +158,58 @@ td {
 <!-- END: Body-->
 <script src="<?= ROOT ?>/assets/mon_js/edt.js"></script>
 <script>
-var infoFiliere = [];
+    var infoFiliere = [];
 
-// $(document).ready(async function() {
-//     trierListeEdt($("#filieres").val(), $("#promotions").val());
-//     infoFiliere = await infosFiliere($(this).val(), "all");
-//     promotionsFiliere(infoFiliere);
-// })
+    // $(document).ready(async function() {
+    //     trierListeEdt($("#filieres").val(), $("#promotions").val());
+    //     infoFiliere = await infosFiliere($(this).val(), "all");
+    //     promotionsFiliere(infoFiliere);
+    // })
 
 
-$(document).ready(function() {
-    classesAnneeUniversitaire($("#anneeUniversitaire option:selected").val());
-    infoFiliere = infosFiliere($("#promotions option:selected").data("filiere"), "all");
-    idSemestre = $("#promotions option:selected").data("semestre");
-    modulesSemestre(idSemestre, infoFiliere);
-})
+    $(document).ready(function() {
+        classesAnneeUniversitaire($("#anneeUniversitaire option:selected").val());
+        infoFiliere = infosFiliere($("#promotions option:selected").data("filiere"), "all");
+        idSemestre = $("#promotions option:selected").data("semestre");
+        modulesSemestre(idSemestre, infoFiliere);
+    })
 
-$("#anneeUniversitaire").change(async function() {
+    $("#anneeUniversitaire").change(async function() {
 
-    classesAnneeUniversitaire($("#anneeUniversitaire option:selected").val());
-    trierListeEdt($("#promotions option:selected").data("filiere"), $("#promotions").val(), $(
-        "#promotions option:selected").data("semestre"));
-    // url = "http://localhost/G_universite/public/Emploi_du_temps/ajouter_EDT"
-    // url += '/' + $(this).val() + '/';
-    // $('#nouveauEdt').attr('href', url);
-
-})
-
-$("#promotions").change(async function() {
-    await trierListeEdt($("#promotions option:selected").data("filiere"), $("#promotions option:selected")
-        .val(), $(
+        classesAnneeUniversitaire($("#anneeUniversitaire option:selected").val());
+        trierListeEdt($("#promotions option:selected").data("filiere"), $("#promotions").val(), $(
             "#promotions option:selected").data("semestre"));
-    // url = "http://localhost/G_universite/public/Emploi_du_temps/ajouter_EDT"
-    // url += '/' + $("#filieres").val() + '/' + $(this).val();
-    // $('#nouveauEdt').attr('href', url);
-})
+        // url = "http://localhost/G_universite/public/Emploi_du_temps/ajouter_EDT"
+        // url += '/' + $(this).val() + '/';
+        // $('#nouveauEdt').attr('href', url);
 
-$('#print').click(function() {
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-    });
-    setTimeout(function() {
-        $('#edts tbody tr').each(function() {
-            if ($(this).find('.isSelected').prop("checked")) {
-                imprimerEdt($(this).find('.isSelected').data("id"), $(this).find(
-                        '.isSelected')
-                    .data(
-                        "nom"))
-            }
-        })
-    }, 600)
-})
+    })
+
+    $("#promotions").change(async function() {
+        await trierListeEdt($("#promotions option:selected").data("filiere"), $("#promotions option:selected")
+            .val(), $(
+                "#promotions option:selected").data("semestre"));
+        // url = "http://localhost/G_universite/public/Emploi_du_temps/ajouter_EDT"
+        // url += '/' + $("#filieres").val() + '/' + $(this).val();
+        // $('#nouveauEdt').attr('href', url);
+    })
+
+    $('#print').click(function() {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+        });
+        setTimeout(function() {
+            $('#edts tbody tr').each(function() {
+                if ($(this).find('.isSelected').prop("checked")) {
+                    imprimerEdt($(this).find('.isSelected').data("id"), $(this).find(
+                            '.isSelected')
+                        .data(
+                            "nom"))
+                }
+            })
+        }, 600)
+    })
 </script>
 
 </html>

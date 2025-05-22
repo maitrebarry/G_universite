@@ -91,7 +91,6 @@
         <div class="content-wrapper">
             <div class="content-header row">
                 <?php $this->view("set_flash") ?>
-
                 <div class="content-header-left col-12 mb-2 mt-1">
                     <div class="row breadcrumbs-top">
                         <div class="col-12">
@@ -118,7 +117,8 @@
                                         <div class="card-body">
                                             <div class="container mt-4">
                                                 <!-- Affichage des détails de l'étudiant -->
-                                                <h3>Paiement pour : <?= htmlspecialchars($etudiant['nom_prenom_etudiant']) ?>
+                                                <h3>Paiement pour :
+                                                    <?= htmlspecialchars($etudiant['nom_prenom_etudiant']) ?>
                                                 </h3>
                                                 <form action="" method="POST">
                                                     <input type="hidden" name="id_etudiant"
@@ -145,7 +145,8 @@
                                                                 ?>
                                                                 <input type="number" id="total-paid"
                                                                     class="form-control bg-secondary text-white"
-                                                                    value="<?= htmlspecialchars($totalPaid) ?>" readonly>
+                                                                    value="<?= htmlspecialchars($totalPaid) ?>"
+                                                                    readonly>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3">
@@ -169,31 +170,7 @@
                                                             <div id="payment-status" class="text-center mt-2"></div>
                                                 </form>
 
-                                                <!-- Historique des paiements -->
-                                                <div class="mt-4">
-                                                    <h4>Historique des Paiements</h4>
-                                                    <table class="table table-striped">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Date</th>
-                                                                <th>Montant</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <?php foreach ($payments as $payment) : ?>
-                                                                <tr>
-                                                                    <td>
-                                                                        <?= htmlspecialchars($payment['date']) ?>
-                                                                    </td>
-                                                                    <td>
-                                                                        <?= htmlspecialchars($payment['montant_paye']) ?>
-                                                                        FCFA
-                                                                    </td>
-                                                                </tr>
-                                                            <?php endforeach; ?>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
+
                                             </div>
 
 

@@ -1,120 +1,120 @@
 <?php
 $this->view("Partials/header") ?>
 <style>
-/* Style pour le texte défilant */
-.scrolling-text {
-    background-color: #007bff;
-    /* Couleur d'arrière-plan */
-    color: white;
-    /* Couleur du texte */
-    font-size: 20px;
-    /* Taille du texte */
-    padding: 10px 0;
-    /* Espacement autour du texte */
-    text-align: center;
-    /* Centrer le texte */
-    width: 100%;
-    /* Largeur complète */
-    overflow: hidden;
-    /* Empêcher le texte de déborder */
-}
-
-.scrolling-text span {
-    display: inline-block;
-    white-space: nowrap;
-    animation: scroll-left 10s linear infinite;
-}
-
-@keyframes scroll-left {
-    0% {
-        transform: translateX(100%);
-        /* Début du texte à droite */
+    /* Style pour le texte défilant */
+    .scrolling-text {
+        background-color: #007bff;
+        /* Couleur d'arrière-plan */
+        color: white;
+        /* Couleur du texte */
+        font-size: 20px;
+        /* Taille du texte */
+        padding: 10px 0;
+        /* Espacement autour du texte */
+        text-align: center;
+        /* Centrer le texte */
+        width: 100%;
+        /* Largeur complète */
+        overflow: hidden;
+        /* Empêcher le texte de déborder */
     }
 
-    100% {
-        transform: translateX(-100%);
-        /* Fin du texte à gauche */
+    .scrolling-text span {
+        display: inline-block;
+        white-space: nowrap;
+        animation: scroll-left 10s linear infinite;
     }
-}
 
-/* Style pour les cadres */
-.form-section,
-.table-container {
-    width: 100%;
+    @keyframes scroll-left {
+        0% {
+            transform: translateX(100%);
+            /* Début du texte à droite */
+        }
 
-    /* Largeur maximale uniforme */
-    margin: 0 auto;
-    /* Centrer les éléments */
-    padding: 20px;
-    border: 2px solid #007bff;
-    border-radius: 10px;
-    margin-bottom: 20px;
-}
+        100% {
+            transform: translateX(-100%);
+            /* Fin du texte à gauche */
+        }
+    }
 
-/* Tableau */
-#notesTable {
-    width: 100%;
-    max-width: 100%;
-    border-collapse: collapse;
-    margin: auto;
-}
+    /* Style pour les cadres */
+    .form-section,
+    .table-container {
+        width: 100%;
 
-#notesTable th,
-#notesTable td {
-    padding: 5px;
-    text-align: center;
-    width: auto;
-    /* Centrer les contenus des cellules */
-}
+        /* Largeur maximale uniforme */
+        margin: 0 auto;
+        /* Centrer les éléments */
+        padding: 20px;
+        border: 2px solid #007bff;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
 
-.noteContainer {
-    max-width: 80px !important;
-    min-width: 60px !important;
-    padding: auto 0 !important;
+    /* Tableau */
+    #notesTable {
+        width: 100%;
+        max-width: 100%;
+        border-collapse: collapse;
+        margin: auto;
+    }
 
-}
+    #notesTable th,
+    #notesTable td {
+        padding: 5px;
+        text-align: center;
+        width: auto;
+        /* Centrer les contenus des cellules */
+    }
 
-#notesTable th {
-    background-color: rgb(96, 103, 105);
-    /* Couleur d'entête */
-    color: white;
-    width: auto;
-}
+    .noteContainer {
+        max-width: 80px !important;
+        min-width: 60px !important;
+        padding: auto 0 !important;
 
-/* Cadre des boutons */
-.button-container {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 10px;
-}
+    }
+
+    #notesTable th {
+        background-color: rgb(96, 103, 105);
+        /* Couleur d'entête */
+        color: white;
+        width: auto;
+    }
+
+    /* Cadre des boutons */
+    .button-container {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
 
 
 
-/* Style pour les champs de sélection */
-.form-section select {
-    width: 100%;
-    padding: 8px;
-    font-size: 16px;
-    text-align: center;
-}
+    /* Style pour les champs de sélection */
+    .form-section select {
+        width: 100%;
+        padding: 8px;
+        font-size: 16px;
+        text-align: center;
+    }
 
-/* Style pour les champs de texte */
-.note_input {
-    width: 80% !important;
-    padding: 8px;
-    font-size: 16px;
-    text-align: center;
-}
+    /* Style pour les champs de texte */
+    .note_input {
+        width: 80% !important;
+        padding: 8px;
+        font-size: 16px;
+        text-align: center;
+    }
 
-.etudiant {
-    width: auto !important;
-}
+    .etudiant {
+        width: auto !important;
+    }
 
-.genre {
+    .genre {
 
-    max-width: 40px !important;
-}
+        max-width: 40px !important;
+    }
 </style>
 <!-- inclusion du partie header -->
 
@@ -268,64 +268,64 @@ $this->view("Partials/header") ?>
 <script src="<?= ROOT ?>/assets/mon_js/liste_note.js"></script>
 
 <script>
-var infoFiliere = [];
+    var infoFiliere = [];
 
-$(document).ready(function() {
-    classesAnneeUniversitaire($("#anneeUniversitaire option:selected").val());
+    $(document).ready(function() {
+        classesAnneeUniversitaire($("#anneeUniversitaire option:selected").val());
 
-    $("#table_section").html(
-        "<h6 class='text-center text-bold-600 text-warning'>" +
-        "Selectionner l'ue et les notes vont apparaître &#x1F603</h6>"
-    );
-
-})
-
-$("#anneeUniversitaire").change(async function() {
-
-    classesAnneeUniversitaire($("#anneeUniversitaire option:selected").val());
-
-    idSemestre = $("#promotions option:selected").data("semestre");
-    ueSemestre(idSemestre, infoFiliere);
-    $('#ues').val("");
-    moduleUe($("#ues option:selected").data("id"), infoFiliere)
-
-    $("#table_section").html(
-        "<h6 class='text-center text-bold-600 text-warning'>" +
-        "Selectionner l'ue et les notes vont apparaître &#x1F603</h6>"
-    );
-
-})
-
-$("#promotions").change(async function() {
-    infoFiliere = await infosFiliere($("#promotions option:selected").data("filiere"), "all");
-    idSemestre = $("#promotions option:selected").data("semestre");
-    ueSemestre(idSemestre, infoFiliere);
-    moduleUe($("#ues option:selected").data("id"), infoFiliere)
-    if (!$("#promotions option:selected").text().includes("S")) {
-        loadEtudiants(ROOT + "/get_moyenne_licence_etudiant");
-        $("#ues").empty();
-        $("#ues").append(
-            `<option value="" >Selectionner ue</option>`
+        $("#table_section").html(
+            "<h6 class='text-center text-bold-600 text-warning'>" +
+            "Selectionner l'ue et les notes vont apparaître &#x1F603</h6>"
         );
 
-    } else
+    })
+
+    $("#anneeUniversitaire").change(async function() {
+
+        classesAnneeUniversitaire($("#anneeUniversitaire option:selected").val());
+
+        idSemestre = $("#promotions option:selected").data("semestre");
+        ueSemestre(idSemestre, infoFiliere);
+        $('#ues').val("");
+        moduleUe($("#ues option:selected").data("id"), infoFiliere)
+
+        $("#table_section").html(
+            "<h6 class='text-center text-bold-600 text-warning'>" +
+            "Selectionner l'ue et les notes vont apparaître &#x1F603</h6>"
+        );
+
+    })
+
+    $("#promotions").change(async function() {
+        infoFiliere = await infosFiliere($("#promotions option:selected").data("filiere"), "all");
+        idSemestre = $("#promotions option:selected").data("semestre");
+        ueSemestre(idSemestre, infoFiliere);
+        moduleUe($("#ues option:selected").data("id"), infoFiliere)
+        if (!$("#promotions option:selected").text().includes("S")) {
+            loadEtudiants(ROOT + "/get_moyenne_licence_etudiant");
+            $("#ues").empty();
+            $("#ues").append(
+                `<option value="" >Selectionner ue</option>`
+            );
+
+        } else
+            loadEtudiants();
+
+    })
+
+    $("#ues").change(function() {
+        moduleUe($("#ues option:selected").data("id"), infoFiliere)
         loadEtudiants();
 
-})
+        //sessionStorage.setItem("ue", $("#ues option:selected").data("id"));
 
-$("#ues").change(function() {
-    moduleUe($("#ues option:selected").data("id"), infoFiliere)
-    loadEtudiants();
+    })
 
-    //sessionStorage.setItem("ue", $("#ues option:selected").data("id"));
-
-})
-
-$("#modules").change(function() {
-    loadEtudiants();
+    $("#modules").change(function() {
+        loadEtudiants();
 
 
 
 
-})
+    })
 </script>

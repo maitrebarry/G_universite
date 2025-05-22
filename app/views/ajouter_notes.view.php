@@ -1,129 +1,129 @@
 <?php $this->view("Partials/header") ?>
 <style>
-/* Style pour le texte défilant */
-.scrolling-text {
-    background-color: #007bff;
-    /* Couleur d'arrière-plan */
-    color: white;
-    /* Couleur du texte */
-    font-size: 20px;
-    /* Taille du texte */
-    padding: 10px 0;
-    /* Espacement autour du texte */
-    text-align: center;
-    /* Centrer le texte */
-    width: 100%;
-    /* Largeur complète */
-    overflow: hidden;
-    /* Empêcher le texte de déborder */
-}
-
-.scrolling-text span {
-    display: inline-block;
-    white-space: nowrap;
-    animation: scroll-left 10s linear infinite;
-}
-
-@keyframes scroll-left {
-    0% {
-        transform: translateX(100%);
-        /* Début du texte à droite */
+    /* Style pour le texte défilant */
+    .scrolling-text {
+        background-color: #007bff;
+        /* Couleur d'arrière-plan */
+        color: white;
+        /* Couleur du texte */
+        font-size: 20px;
+        /* Taille du texte */
+        padding: 10px 0;
+        /* Espacement autour du texte */
+        text-align: center;
+        /* Centrer le texte */
+        width: 100%;
+        /* Largeur complète */
+        overflow: hidden;
+        /* Empêcher le texte de déborder */
     }
 
-    100% {
-        transform: translateX(-100%);
-        /* Fin du texte à gauche */
+    .scrolling-text span {
+        display: inline-block;
+        white-space: nowrap;
+        animation: scroll-left 10s linear infinite;
     }
-}
 
-/* Style pour les cadres */
-.form-section,
-.table-container {
-    width: 100%;
+    @keyframes scroll-left {
+        0% {
+            transform: translateX(100%);
+            /* Début du texte à droite */
+        }
 
-    /* Largeur maximale uniforme */
-    margin: 0 auto;
-    /* Centrer les éléments */
-    padding: 20px;
-    border: 2px solid #007bff;
-    border-radius: 10px;
-    margin-bottom: 20px;
-}
+        100% {
+            transform: translateX(-100%);
+            /* Fin du texte à gauche */
+        }
+    }
 
-/* Tableau */
-#notesTable {
-    width: 100%;
-    max-width: 100%;
-    border-collapse: collapse;
-    margin: auto;
-}
+    /* Style pour les cadres */
+    .form-section,
+    .table-container {
+        width: 100%;
 
-#notesTable th,
-#notesTable td {
-    padding: 5px;
-    text-align: center;
-    width: auto;
-    /* Centrer les contenus des cellules */
-}
+        /* Largeur maximale uniforme */
+        margin: 0 auto;
+        /* Centrer les éléments */
+        padding: 20px;
+        border: 2px solid #007bff;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
 
-.noteContainer {
-    max-width: 80px !important;
-}
+    /* Tableau */
+    #notesTable {
+        width: 100%;
+        max-width: 100%;
+        border-collapse: collapse;
+        margin: auto;
+    }
 
-#notesTable th {
-    background-color: rgb(96, 103, 105);
-    /* Couleur d'entête */
-    color: white;
-    width: auto;
-}
+    #notesTable th,
+    #notesTable td {
+        padding: 5px;
+        text-align: center;
+        width: auto;
+        /* Centrer les contenus des cellules */
+    }
 
-/* Cadre des boutons */
-.button-container {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 10px;
-}
+    .noteContainer {
+        max-width: 80px !important;
+    }
 
-.session-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
+    #notesTable th {
+        background-color: rgb(96, 103, 105);
+        /* Couleur d'entête */
+        color: white;
+        width: auto;
+    }
 
-.session-button:active {
-    background-color: #0056b3;
-}
+    /* Cadre des boutons */
+    .button-container {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
 
-/* Style pour les champs de sélection */
-.form-section select {
-    width: 100%;
-    padding: 8px;
-    font-size: 16px;
-    text-align: center;
-}
+    .session-button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
 
-/* Style pour les champs de texte */
-.note_input {
-    width: 80% !important;
-    padding: 8px;
-    font-size: 16px;
-    text-align: center;
-}
+    .session-button:active {
+        background-color: #0056b3;
+    }
 
-.etudiant {
-    width: auto !important;
-}
+    /* Style pour les champs de sélection */
+    .form-section select {
+        width: 100%;
+        padding: 8px;
+        font-size: 16px;
+        text-align: center;
+    }
 
-.genre {
+    /* Style pour les champs de texte */
+    .note_input {
+        width: 80% !important;
+        padding: 8px;
+        font-size: 16px;
+        text-align: center;
+    }
 
-    max-width: 40px !important;
-}
+    .etudiant {
+        width: auto !important;
+    }
+
+    .genre {
+
+        max-width: 40px !important;
+    }
 </style>
 <!-- inclusion du partie header -->
 
@@ -263,92 +263,92 @@
     <script src="<?= ROOT ?>/assets/mon_js/note.js"></script>
 
     <script>
-    var infoFiliere = [];
-    $(document).ready(async function() {
-        let anneeSaved = sessionStorage.getItem('annee');
+        var infoFiliere = [];
+        $(document).ready(async function() {
+            let anneeSaved = sessionStorage.getItem('annee');
 
-        const debut = 2012;
-        const today = new Date();
-        let annee_actuelle = today.getFullYear();
-        let mois = today.getMonth() + 1; // janvier = 0, donc on ajoute 1
+            const debut = 2012;
+            const today = new Date();
+            let annee_actuelle = today.getFullYear();
+            let mois = today.getMonth() + 1; // janvier = 0, donc on ajoute 1
 
-        // Si on est avant septembre (mois 9), l'année universitaire commence l'année précédente
-        if (mois <= 8) {
-            annee_actuelle -= 1;
-        }
+            // Si on est avant septembre (mois 9), l'année universitaire commence l'année précédente
+            if (mois <= 8) {
+                annee_actuelle -= 1;
+            }
 
-        const annee_en_cours = annee_actuelle + '-' + (annee_actuelle + 1);
+            const annee_en_cours = annee_actuelle + '-' + (annee_actuelle + 1);
 
-        for (let annee = debut; annee <= annee_actuelle; annee++) {
-            let annee_suivante = annee + 1;
-            let valeur = annee + '-' + annee_suivante;
-            let selected = (valeur === anneeSaved) ? 'selected' : '';
-            $('#anneeUniversitaire').append(`<option value="${valeur}" ${selected}>${valeur}</option>`);
-        }
+            for (let annee = debut; annee <= annee_actuelle; annee++) {
+                let annee_suivante = annee + 1;
+                let valeur = annee + '-' + annee_suivante;
+                let selected = (valeur === anneeSaved) ? 'selected' : '';
+                $('#anneeUniversitaire').append(`<option value="${valeur}" ${selected}>${valeur}</option>`);
+            }
 
-        await classesAnneeUniversitaire(anneeSaved);
-        infoFiliere = JSON.parse(sessionStorage.getItem('infoFiliere'));
-        idSemestre = sessionStorage.getItem('semestre');
-        modulesSemestre(idSemestre, infoFiliere);
-        if ($("#modules option:selected").val() != "" && $("#modules option:selected").val() != null) {
-            loadEtudiants(true);
+            await classesAnneeUniversitaire(anneeSaved);
+            infoFiliere = JSON.parse(sessionStorage.getItem('infoFiliere'));
+            idSemestre = sessionStorage.getItem('semestre');
+            modulesSemestre(idSemestre, infoFiliere);
+            if ($("#modules option:selected").val() != "" && $("#modules option:selected").val() != null) {
+                loadEtudiants(true);
 
-        }
+            }
 
-    })
+        })
 
-    $("#anneeUniversitaire").change(async function() {
+        $("#anneeUniversitaire").change(async function() {
 
-        classesAnneeUniversitaire($("#anneeUniversitaire option:selected").val());
+            classesAnneeUniversitaire($("#anneeUniversitaire option:selected").val());
 
-        infoFiliere = await infosFiliere($("#promotions option:selected").data("filiere"), "all");
-        idSemestre = $("#promotions option:selected").data("semestre");
-        modulesSemestre(idSemestre, infoFiliere);
-        $("#table_section").html(
-            "<h6 class='text-center text-bold-600 text-warning'>" +
-            "Veuillez selectionner un module &#x1F603</h6>"
-        );
-        sessionStorage.setItem("annee", $("#anneeUniversitaire option:selected").val());
-        sessionStorage.setItem("module", $("#modules option:selected").val());
-
-
-
-    })
-
-    $("#promotions").change(async function() {
-
-        sessionStorage.setItem("classe", $("#promotions option:selected").val());
-        sessionStorage.setItem("semestre", $("#promotions option:selected").data('semestre'));
-        sessionStorage.setItem("filiere", $("#promotions option:selected").data('filiere'));
-
-
-        infoFiliere = await infosFiliere($("#promotions option:selected").data("filiere"), "all");
-        idSemestre = $("#promotions option:selected").data("semestre");
-        sessionStorage.setItem("infoFiliere", JSON.stringify(infoFiliere));
-        modulesSemestre(idSemestre, infoFiliere);
-        $("#table_section").html(
-            "<h6 class='text-center text-bold-600 text-warning'>" +
-            "Veuillez selectionner un module &#x1F603</h6>"
-        );
-
-        sessionStorage.setItem("module", $("#modules option:selected").val());
-
-    })
-
-    $("#modules").change(function() {
-
-        if ($("#modules option:selected").val() != "" && $("#modules option:selected").val() != null) {
-            loadEtudiants(); //Foncton pour chargér les étudiant et leur note lorsque le module est selectionnée
-        } else {
+            infoFiliere = await infosFiliere($("#promotions option:selected").data("filiere"), "all");
+            idSemestre = $("#promotions option:selected").data("semestre");
+            modulesSemestre(idSemestre, infoFiliere);
             $("#table_section").html(
                 "<h6 class='text-center text-bold-600 text-warning'>" +
                 "Veuillez selectionner un module &#x1F603</h6>"
             );
-        }
-
-        sessionStorage.setItem("module", $("#modules option:selected").val());
-    })
+            sessionStorage.setItem("annee", $("#anneeUniversitaire option:selected").val());
+            sessionStorage.setItem("module", $("#modules option:selected").val());
 
 
-    // }) //KONE
+
+        })
+
+        $("#promotions").change(async function() {
+
+            sessionStorage.setItem("classe", $("#promotions option:selected").val());
+            sessionStorage.setItem("semestre", $("#promotions option:selected").data('semestre'));
+            sessionStorage.setItem("filiere", $("#promotions option:selected").data('filiere'));
+
+
+            infoFiliere = await infosFiliere($("#promotions option:selected").data("filiere"), "all");
+            idSemestre = $("#promotions option:selected").data("semestre");
+            sessionStorage.setItem("infoFiliere", JSON.stringify(infoFiliere));
+            modulesSemestre(idSemestre, infoFiliere);
+            $("#table_section").html(
+                "<h6 class='text-center text-bold-600 text-warning'>" +
+                "Veuillez selectionner un module &#x1F603</h6>"
+            );
+
+            sessionStorage.setItem("module", $("#modules option:selected").val());
+
+        })
+
+        $("#modules").change(function() {
+
+            if ($("#modules option:selected").val() != "" && $("#modules option:selected").val() != null) {
+                loadEtudiants(); //Foncton pour chargér les étudiant et leur note lorsque le module est selectionnée
+            } else {
+                $("#table_section").html(
+                    "<h6 class='text-center text-bold-600 text-warning'>" +
+                    "Veuillez selectionner un module &#x1F603</h6>"
+                );
+            }
+
+            sessionStorage.setItem("module", $("#modules option:selected").val());
+        })
+
+
+        // }) //KONE
     </script>
