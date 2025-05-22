@@ -1,6 +1,7 @@
 <!-- inclusion du partie header -->
 <?php $this->view("Partials/header") ?>
 <style>
+    
     .table-paiement th {
         cursor: default;
         /* Empêche le clic */
@@ -130,29 +131,27 @@
                                         <form action="<?= ROOT ?>/Etudiants/paiement_groupe" method="POST">
                                             <div class="table-responsive">
                                                 <!-- Affichage des étudiants -->
-                                                <div id="liste_etudiants" class="mt-4">
-                                                    <table class="table zero-configuration">
-                                                        <thead class="text-center">
-                                                            <tr>
-                                                                <th class="text-center">
-                                                                    Tout<br>
-                                                                    <input type="checkbox" id="select-all"
-                                                                        title="Sélectionner tout"
-                                                                        style="margin-top: 5px;">
-                                                                </th>
-                                                                <th>Nom & Prénom</th>
-                                                                <th>Matricule</th>
-                                                                <th>Status</th>
-                                                                <th>Filière</th>
-                                                                <th>Diplôme</th>
-                                                                <th>Action</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody id="table_etudiant" class="text-center">
-                                                            <!-- Les données AJAX seront insérées ici -->
-                                                        </tbody>
-                                                    </table>
-                                                </div>
+                                               <div id="liste_etudiants" class="mt-4">
+    <table class="table zero-configuration">
+        <thead class="text-center">
+            <tr>
+                <th class="text-center">
+                    Tout<br>
+                    <input type="checkbox" id="select-all" title="Sélectionner tout" style="margin-top: 5px;">
+                </th>
+                <th>Nom & Prénom</th>
+                <th>Matricule</th>
+                <th>Status</th>
+                <th>Filière</th>
+                <th>Diplôme</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="table_etudiant" class="text-center">
+            <!-- Les données AJAX seront insérées ici -->
+        </tbody>
+    </table>
+</div>
 
                                                 <button type="submit" class="btn btn-primary">Paiement en
                                                     Groupe</button>
@@ -189,24 +188,22 @@
         $('.zero-configuration').DataTable({
             ordering: false
         });
-        //pour eviter de clicker sur les th
-        document.getElementById('select-all').addEventListener('click', function(event) {
-            event.stopPropagation();
-        });
-        document.getElementById('select-all').addEventListener('change', function() {
-            const checkboxes = document.querySelectorAll('input[name="paie[]"]');
-            checkboxes.forEach(checkbox => checkbox.checked = this.checked);
+            //pour eviter de clicker sur les th
+  document.getElementById('select-all').addEventListener('click', function(event) {
+    event.stopPropagation();
+});
+          document.getElementById('select-all').addEventListener('change', function() {
+        const checkboxes = document.querySelectorAll('input[name="paie[]"]');
+        checkboxes.forEach(checkbox => checkbox.checked = this.checked);
         });
 
-        $(document).ready(function() {
-            $('.select2').select2({
-                width: '100%'
-            });
+        $(document).ready(function () {
+            $('.select2').select2({ width: '100%' });
 
             const dataParAnnee = <?= json_encode($listeParAnnee) ?>;
 
             // Quand une année est sélectionnée
-            $('#annee_universitaire').on('change', function() {
+            $('#annee_universitaire').on('change', function () {
                 const annee = $(this).val();
                 const $filiere = $('#id_filiere');
                 const $semestre = $('#id_semestre');
@@ -232,7 +229,7 @@
             });
 
             // Quand une filière est sélectionnée
-            $('#id_filiere').on('change', function() {
+            $('#id_filiere').on('change', function () {
                 const annee = $('#annee_universitaire').val();
                 const id_filiere = $(this).val();
                 const $semestre = $('#id_semestre');
@@ -267,7 +264,7 @@
             });
 
             // Quand un semestre est sélectionné => charger la liste des étudiants
-            $('#id_semestre').on('change', function() {
+            $('#id_semestre').on('change', function () {
                 const annee = $('#annee_universitaire').val();
                 const id_filiere = $('#id_filiere').val();
                 const id_semestre = $(this).val();
@@ -281,10 +278,10 @@
                             id_filiere: id_filiere,
                             id_semestre: id_semestre
                         },
-                        success: function(response) {
+                        success: function (response) {
                             $('#table_etudiant').html(response);
                         },
-                        error: function(xhr) {
+                        error: function (xhr) {
                             alert("Erreur AJAX : " + xhr.responseText);
                         }
                     });
