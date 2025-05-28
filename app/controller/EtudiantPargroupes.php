@@ -79,7 +79,18 @@ class EtudiantPargroupes extends Controller
     }
 
     // Champs de la BDD (table `etudiant`)
-    $champsBdd = ['nom_prenom_etudiant','prenom', 'date_naissance_etudiant', 'genre_etudiant','matricule_etudiant','diplome','id_statut','lieu_naissance_etudiant','contact_etudiant'];
+$champsBdd = [
+    'nom_prenom_etudiant' => 'Nom',
+    'prenom' => 'Prénom',
+    'date_naissance_etudiant' => 'Date de Naissance',
+    'genre_etudiant' => 'Sexe',
+    'matricule_etudiant' => 'N° Etudiant',
+    'diplome' => 'Diplôme',
+    'id_statut' => 'Statut',
+    'lieu_naissance_etudiant' => 'Lieu de Naissance',
+    'contact_etudiant' => 'Contact',
+    'numetudiant' => 'Matricule Cenou'
+];
 
     // Entêtes Excel si présentes
     $entetesExcel = isset($_SESSION['entetes'])  ? $_SESSION['entetes'] : [];
@@ -135,7 +146,7 @@ public function uploadExcel()
         $_SESSION['excel_file_path'] = $destination;
         $_SESSION['entetes'] = $entetes;
 
-$champsBdd = [ 'nom_prenom_etudiant','prenom', 'date_naissance_etudiant', 'genre_etudiant','matricule_etudiant','diplome','id_statut','lieu_naissance_etudiant','contact_etudiant'];
+$champsBdd = ['nom_prenom_etudiant','prenom', 'date_naissance_etudiant', 'genre_etudiant','matricule_etudiant','diplome','id_statut','lieu_naissance_etudiant','contact_etudiant','numetudiant'];
 
         $this->view('liste_inscription_groupe', [
             'entetesExcel' => $entetes,
@@ -143,8 +154,6 @@ $champsBdd = [ 'nom_prenom_etudiant','prenom', 'date_naissance_etudiant', 'genre
         ]);
     }
 }
-
-
 
 public function importerEnChunks()
 {
@@ -196,7 +205,7 @@ public function importerEnChunks()
                     $genre = $donnees['genre_etudiant'] ?? '';
                     $nom = $donnees['nom_prenom_etudiant'] ?? '';
                     $prenom = $donnees['prenom'] ?? '';
-                     $index = $donnees['id_etudiant'] + 1 ?? '';
+                    $index = $i + 1;
                     $donnees['matricule_etudiant'] = $this->genererMatricule($anneeDiplome, $nom, $prenom, $genre, $index);
 // 👉 Ajouter la logique du montant selon le statut
 $statutBrut = $donnees['id_statut'] ?? '';

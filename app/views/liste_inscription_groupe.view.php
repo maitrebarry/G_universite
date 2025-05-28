@@ -123,7 +123,7 @@
                                                                 </div>
 
 
-                                                                
+
                                                                 <!-- Promotion -->
                                                                 <div class="col-md-6 mb-3">
                                                                     <label for="id_promotion" class="form-label d-block">Classe
@@ -299,7 +299,7 @@
     <script>
     const champsBdd = <?= json_encode($champsBdd) ?>; // Les champs de la BDD fournis depuis le serveur
 
-    document.getElementById('excel_file').addEventListener('change', function(e) {
+     document.getElementById('excel_file').addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (!file) return;
 
@@ -336,12 +336,12 @@
                 optionNone.textContent = '-- Ne pas associer --';
                 select.appendChild(optionNone);
 
-                champsBdd.forEach(champ => {
-                    const opt = document.createElement('option');
-                    opt.value = champ;
-                    opt.textContent = champ;
-                    select.appendChild(opt);
-                });
+              Object.entries(champsBdd).forEach(([value, label]) => {
+                const opt = document.createElement('option');
+                opt.value = value;
+                opt.textContent = label;
+                select.appendChild(opt);
+            });
 
                 colBdd.appendChild(select);
                 row.appendChild(colExcel);
