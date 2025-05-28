@@ -19,9 +19,9 @@ if (!isset($_SESSION['id_utilisateur'])) {
     <meta name="keywords"
         content="admin template, Frest admin template, dashboard template, flat admin template, responsive admin template, web app">
     <meta name="author" content="PIXINVENT">
-    <title>Form Validation - Frest - Bootstrap HTML admin template</title>
-    <link rel="apple-touch-icon" href="<?= ROOT ?>/assets/images/ico/apple-icon-120.png">
-    <link rel="shortcut icon" type="image/x-icon" href="<?= ROOT ?>/assets/images/ico/favicon.ico">
+    <title>Institut universaire de formation de Ségou</title>
+    <link rel="apple-touch-icon" href="<?= ROOT ?>/assets/images/OIP.jpeg">
+    <link rel="shortcut icon" type="image/x-icon" href="<?= ROOT ?>/assets/images/OIP.jpeg">
     <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,600%7CIBM+Plex+Sans:300,400,500,600,700"
         rel="stylesheet">
 
@@ -75,7 +75,7 @@ if (!isset($_SESSION['id_utilisateur'])) {
     animation: border-shift 3s linear infinite;
 }
 
-    }
+    
 
     .card-animated-border-top {
         border-top: 2px solid;
@@ -123,21 +123,10 @@ if (!isset($_SESSION['id_utilisateur'])) {
         }
     }
 
-    0% {
-        border-image-source: linear-gradient(to bottom, #ff416c, #ff4b2b); /* Rouge-Orange */
+    .card-animated-border-top2 {
+        border-top: 2px solid;
+        border-image-slice: 1;
+        border-image-source: linear-gradient(to right, #ff416c, #ff4b2b);
+        animation: border-shift 3s linear infinite;
     }
-    25% {
-        border-image-source: linear-gradient(to bottom, #4facfe, #00f2fe); /* Bleu-Cyan */
-    }
-    50% {
-        border-image-source: linear-gradient(to bottom, #f9d423, #ff4e50); /* Jaune-Rouge */
-    }
-    75% {
-        border-image-source: linear-gradient(to bottom, #30cfd0, #330867); /* Vert-Voilet */
-    }
-    100% {
-        border-image-source: linear-gradient(to bottom, #ff416c, #ff4b2b); /* Retour au Rouge-Orange */
-    }
-}
-
 </style>
