@@ -36,40 +36,41 @@
 
             <!-- Affichage dynamique via PHP -->
             <?php foreach ($note_des_etudiants as $note): ?>
-                <?php
+            <?php
 
                 ?>
-                <tr class="rowt" data-id="<?= $note->id_note ?>">
+            <tr class="rowt" data-id="<?= $note->id_note ?>">
 
-                    <td class="text-bold-500 text-center d-lg-none etudiant">
-                        <div><?= strtoupper($note->nom_prenom_etudiant) ?></div>
-                        <div><a href=""><?= $note->matricule_etudiant ?></a></div>
-                    </td>
-                    <td class="text-bold-500 text-left d-none d-lg-table-cell">
-                        <a href=""><?= $note->matricule_etudiant ?></a>
-                    </td>
-                    <td class="text-bold-500 text-left d-none d-lg-table-cell">
-                        <?= strtoupper($note->nom_prenom_etudiant) ?>
-                    </td>
-                    <td class="genre d-none d-md-table-cell"><?= ($note->genre_etudiant == "Féminin") ? 'F' : "M" ?></td>
-                    <td class=" noteContainer">
-                        <input type="number" class="form-control noteDevoir note" value="<?= $note->note_devoir ?>"
-                            step="0.1">
-                    </td>
-                    <td class=" noteContainer">
-                        <input type="number" class="form-control noteEvaluation note" value="<?= $note->note_evaluation ?>"
-                            step="0.1">
-                    </td>
-                    <td class="noteContainer">
-                        <input type="number" class="form-control noteSession note" value="<?= $note->note_session ?>"
-                            step="0.1">
-                    </td>
-                    <td class="noteContainer">
-                        <!-- Moyenne affichée dans un input readonly -->
-                        <input type="number" class="form-control moyenne moyenneModule" value="<?= $note->moyenne_module ?>"
-                            disabled>
-                    </td>
-                </tr>
+                <td class="text-bold-500 text-center d-lg-none etudiant">
+                    <div><?= ucwords(strtolower($note->prenom . ' ' . $note->nom_prenom_etudiant)) ?></div>
+                    <div><a href=""><?= $note->matricule_etudiant ?></a></div>
+                </td>
+                <td class="text-bold-500 text-left d-none d-lg-table-cell">
+                    <a href=""><?= $note->matricule_etudiant ?></a>
+                </td>
+                <td class="text-bold-500 text-left d-none d-lg-table-cell">
+                    <?= ucwords(strtolower($note->prenom . ' ' . $note->nom_prenom_etudiant))
+                        ?>
+                </td>
+                <td class="genre d-none d-md-table-cell"><?= ($note->genre_etudiant == "Féminin") ? 'F' : "M" ?></td>
+                <td class=" noteContainer">
+                    <input type="number" class="form-control noteDevoir note" value="<?= $note->note_devoir ?>"
+                        step="0.1">
+                </td>
+                <td class=" noteContainer">
+                    <input type="number" class="form-control noteEvaluation note" value="<?= $note->note_evaluation ?>"
+                        step="0.1">
+                </td>
+                <td class="noteContainer">
+                    <input type="number" class="form-control noteSession note" value="<?= $note->note_session ?>"
+                        step="0.1">
+                </td>
+                <td class="noteContainer">
+                    <!-- Moyenne affichée dans un input readonly -->
+                    <input type="number" class="form-control moyenne moyenneModule" value="<?= $note->moyenne_module ?>"
+                        disabled>
+                </td>
+            </tr>
             <?php endforeach ?>
         </tbody>
     </table>
@@ -90,7 +91,7 @@
 <!-- BEGIN: Page Vendor JS-->
 
 <script>
-    $("#notesTable").DataTable({
-        "pageLength": 50
-    })
+$("#notesTable").DataTable({
+    "pageLength": 50
+})
 </script>

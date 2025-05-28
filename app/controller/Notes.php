@@ -39,7 +39,7 @@ class Notes extends Controller
 
             if (!empty($note_des_etudiants)) {
                 usort($note_des_etudiants, function ($a, $b) {
-                    return strcasecmp($a->nom_prenom_etudiant, $b->nom_prenom_etudiant); // comparaison insensible à la casse
+                    return strcasecmp($a->prenom, $b->prenom); // comparaison insensible à la casse
                 });
 
                 $this->view('post_ajouter_notes', ['note_des_etudiants' => $note_des_etudiants, "infosModule" => $infosModule]);
