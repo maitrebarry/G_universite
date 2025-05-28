@@ -3,7 +3,7 @@
     <input type="checkbox" name="paie[]" value="<?= $etudiant->id_etudiant ?>">
 </td>
 
-                <td><?=$etudiant->nom_prenom_etudiant?></td>
+                <td><?=$etudiant->nom_prenom_etudiant?> <?=$etudiant->prenom?></td>
                 <td><?=$etudiant->matricule_etudiant?></td>
                 <td><?=$etudiant->id_statut?></td>
                 <td><?=$etudiant->nom_filiere?></td>

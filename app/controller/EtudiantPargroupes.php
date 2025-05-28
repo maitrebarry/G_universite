@@ -79,7 +79,7 @@ class EtudiantPargroupes extends Controller
     }
 
     // Champs de la BDD (table `etudiant`)
-    $champsBdd = ['nom_prenom_etudiant','prenom', 'date_naissance_etudiant', 'genre_etudiant','matricule_etudiant','diplome','id_statut','lieu_naissance_etudiant'];
+    $champsBdd = ['nom_prenom_etudiant','prenom', 'date_naissance_etudiant', 'genre_etudiant','matricule_etudiant','diplome','id_statut','lieu_naissance_etudiant','contact_etudiant'];
 
     // Entêtes Excel si présentes
     $entetesExcel = isset($_SESSION['entetes'])  ? $_SESSION['entetes'] : [];
@@ -135,7 +135,7 @@ public function uploadExcel()
         $_SESSION['excel_file_path'] = $destination;
         $_SESSION['entetes'] = $entetes;
 
-$champsBdd = [ 'nom_prenom_etudiant','prenom', 'date_naissance_etudiant', 'genre_etudiant','matricule_etudiant','diplome','id_statut','lieu_naissance_etudiant'];
+$champsBdd = [ 'nom_prenom_etudiant','prenom', 'date_naissance_etudiant', 'genre_etudiant','matricule_etudiant','diplome','id_statut','lieu_naissance_etudiant','contact_etudiant'];
 
         $this->view('liste_inscription_groupe', [
             'entetesExcel' => $entetes,
@@ -196,7 +196,8 @@ public function importerEnChunks()
                     $genre = $donnees['genre_etudiant'] ?? '';
                     $nom = $donnees['nom_prenom_etudiant'] ?? '';
                     $prenom = $donnees['prenom'] ?? '';
-                    $donnees['matricule_etudiant'] = $this->genererMatricule($anneeDiplome, $nom, $prenom, $genre, $indexMatricule);
+                     $index = $donnees['id_etudiant'] + 1 ?? '';
+                    $donnees['matricule_etudiant'] = $this->genererMatricule($anneeDiplome, $nom, $prenom, $genre, $index);
 // 👉 Ajouter la logique du montant selon le statut
 $statutBrut = $donnees['id_statut'] ?? '';
 // Normaliser le statut : minuscule, retirer accents, trim
