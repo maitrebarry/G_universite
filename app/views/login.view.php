@@ -6,13 +6,16 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-    <meta name="description" content="Frest admin is super flexible, powerful, clean &amp; modern responsive bootstrap 4 admin template with unlimited possibilities.">
-    <meta name="keywords" content="admin template, Frest admin template, dashboard template, flat admin template, responsive admin template, web app">
+    <meta name="description"
+        content="Frest admin is super flexible, powerful, clean &amp; modern responsive bootstrap 4 admin template with unlimited possibilities.">
+    <meta name="keywords"
+        content="admin template, Frest admin template, dashboard template, flat admin template, responsive admin template, web app">
     <meta name="author" content="PIXINVENT">
     <title>Login Page - Frest - Bootstrap HTML admin template</title>
     <link rel="apple-touch-icon" href="<?= ROOT ?>/assets/images/ico/apple-icon-120.png">
     <link rel="shortcut icon" type="image/x-icon" href="<?= ROOT ?>/assets/images/ico/favicon.ico">
-    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,600%7CIBM+Plex+Sans:300,400,500,600,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,600%7CIBM+Plex+Sans:300,400,500,600,700"
+        rel="stylesheet">
 
     <!-- BEGIN: Vendor CSS-->
     <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/vendors/css/vendors.min.css">
@@ -56,7 +59,9 @@
 </style>
 <!-- BEGIN: Body-->
 
-<body class="vertical-layout vertical-menu-modern semi-dark-layout 1-column  navbar-sticky footer-static bg-full-screen-image  blank-page blank-page" data-open="click" data-menu="vertical-menu-modern" data-col="1-column" data-layout="semi-dark-layout">
+<body
+    class="vertical-layout vertical-menu-modern semi-dark-layout 1-column  navbar-sticky footer-static bg-full-screen-image  blank-page blank-page"
+    data-open="click" data-menu="vertical-menu-modern" data-col="1-column" data-layout="semi-dark-layout">
     <!-- BEGIN: Content-->
     <div class="app-content content">
         <div class="content-overlay"></div>
@@ -71,7 +76,8 @@
                             <div class="row m-0">
                                 <!-- left section-login -->
                                 <div class="col-md-6 col-12 px-0">
-                                    <div class="card disable-rounded-right mb-0 p-2 h-100 d-flex justify-content-center">
+                                    <div
+                                        class="card disable-rounded-right mb-0 p-2 h-100 d-flex justify-content-center">
                                         <div class="card-header pb-1">
                                             <div class="card-title">
                                                 <h4 class="text-center mb-2">Welcome Back</h4>
@@ -81,35 +87,50 @@
                                             <div class="card-body">
 
                                                 <div class="divider">
-                                                    <div class="divider-text text-uppercase text-muted"><small>or login with
+                                                    <div class="divider-text text-uppercase text-muted"><small>or login
+                                                            with
                                                             email</small>
                                                     </div>
                                                 </div>
                                                 <?php $this->view("set_flash"); ?>
                                                 <form method="post">
                                                     <div class="form-group mb-50">
-                                                        <label class="text-bold-600" for="exampleInputEmail1">Email address</label>
-                                                        <input type="email" class="form-control" name="email_utilisateurs" placeholder="Email address">
+                                                        <label class="text-bold-600" for="exampleInputEmail1">Email
+                                                            address</label>
+                                                        <input type="email" class="form-control"
+                                                            name="email_utilisateurs" placeholder="Email address">
                                                     </div>
                                                     <div class="form-group">
-                                                        <label class="text-bold-600" for="exampleInputPassword1">Password</label>
-                                                        <input type="password" class="form-control " name="mot_passe" placeholder="Password">
+                                                        <label class="text-bold-600"
+                                                            for="exampleInputPassword1">Password</label>
+                                                        <input type="password" class="form-control " name="mot_passe"
+                                                            placeholder="Password">
                                                     </div>
-                                                    <div class="form-group d-flex flex-md-row flex-column justify-content-between align-items-center">
+                                                    <div
+                                                        class="form-group d-flex flex-md-row flex-column justify-content-between align-items-center">
                                                         <div class="text-left">
                                                             <div class="checkbox checkbox-sm">
-                                                                <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                                                                <label class="checkboxsmall" for="exampleCheck1"><small>Keep me logged
+                                                                <input type="checkbox" class="form-check-input"
+                                                                    id="exampleCheck1">
+                                                                <label class="checkboxsmall"
+                                                                    for="exampleCheck1"><small>Keep me logged
                                                                         in</small></label>
                                                             </div>
                                                         </div>
-                                                        <div class="text-right"><a href="auth-forgot-password.html" class="card-link"><small>Forgot Password?</small></a></div>
+                                                        <div class="text-right"><a href="auth-forgot-password.html"
+                                                                class="card-link"><small>Forgot Password?</small></a>
+                                                        </div>
                                                     </div>
-                                                    <button type="submit" class="btn btn-primary glow w-100 position-relative" name="submit">Login<i id="icon-arrow" class="bx bx-right-arrow-alt"></i></button>
+                                                    <button type="submit"
+                                                        class="btn btn-primary glow w-100 position-relative"
+                                                        name="submit">Login<i id="icon-arrow"
+                                                            class="bx bx-right-arrow-alt"></i></button>
 
                                                 </form>
                                                 <hr>
-                                                <div class="text-center"><small class="mr-25">Don't have an account?</small><a href="auth-register.html"><small>Sign up</small></a></div>
+                                                <div class="text-center"><small class="mr-25">Don't have an
+                                                        account?</small><a href="auth-register.html"><small>Sign
+                                                            up</small></a></div>
                                             </div>
                                         </div>
                                     </div>
@@ -117,7 +138,8 @@
                                 <!-- right section image -->
                                 <div class="col-md-6 d-md-block d-none text-center align-self-center p-3">
                                     <div class="card-content">
-                                        <img class="img-fluid" src="<?= ROOT ?>/assets/images/pages/login.png" alt="branding logo">
+                                        <img class="img-fluid" src="<?= ROOT ?>/assets/images/pages/login.png"
+                                            alt="branding logo">
                                     </div>
                                 </div>
                             </div>
@@ -133,7 +155,9 @@
 
 
     <?php $this->view("Partials/footer") ?>
-
+    <script>
+        sessionStorage.clear();
+    </script>
 </body>
 <!-- END: Body-->
 

@@ -377,8 +377,6 @@ function modulesSemestre(idSemestre, infoFiliere, idModule = "") {
 
   ues.forEach((ue) => {
     if (ue.id_parcours == idSemestre) {
-      const ueOption = `<option disabled class="mt-1">${ue.nom_ue}</option>`;
-      mouduleContainer.append(ueOption);
       modules.forEach((module) => {
         if (module.id_ue == ue.id_ue) {
           const option = `<option value='${

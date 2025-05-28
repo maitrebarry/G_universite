@@ -36,11 +36,13 @@ class Notes extends Controller
             $note_des_etudiants = $noteModel->getAllNotesEtudiant($idPromotion, $idSemestre, $idModule);
             //Les informations du module sélectionner
             $infosModule = $noteModel->getInfoModule($idModule);
-            // var_dump($infosModule); exit;
-            //Etape 5 : Debogagevar_dump($etudiants); //post_liste_note est un fichier qui gère l'affichage qui se trouve dans le view
+
             if (!empty($note_des_etudiants)) {
-                # cod //Etape 6: Passage des donnée à la view depuis la le fichier post_liste_note.php qui est responsable de l'affichage dynamique dans notre cas
-                $this->view('post_ajouter_notes', ['note_des_etudiants' => $note_des_etudiants, "infosModule" => $infosModule]); //Pour afficher la listes des étudiant en arriere plan par ajax
+                usort($note_des_etudiants, function ($a, $b) {
+                    return strcasecmp($a->nom_prenom_etudiant, $b->nom_prenom_etudiant); // comparaison insensible à la casse
+                });
+
+                $this->view('post_ajouter_notes', ['note_des_etudiants' => $note_des_etudiants, "infosModule" => $infosModule]);
                 return;
             } else {
                 echo   "<h6 class='text-center text-bold-600 text-warning'>" .
