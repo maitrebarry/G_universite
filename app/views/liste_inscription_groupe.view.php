@@ -109,9 +109,9 @@
                                                                 <!-- Année universitaire -->
                                                                 <div class="col-md-6 mb-3">
                                                                     <label for="annee_universitaire"
-                                                                        class="form-label">Année universitaire <span
+                                                                        class="form-label d-block">Année universitaire <span
                                                                             class="text-danger">*</span></label>
-                                                                    <select class="form-select" id="annee_universitaire"
+                                                                    <select class="form-control" id="annee_universitaire"
                                                                         required>
                                                                         <option value="">-- Sélectionner l'année --
                                                                         </option>
@@ -124,9 +124,9 @@
 
                                                                 <!-- Promotion -->
                                                                 <div class="col-md-6 mb-3">
-                                                                    <label for="id_promotion" class="form-label">Classe
+                                                                    <label for="id_promotion" class="form-label d-block">Classe
                                                                         <span class="text-danger">*</span></label>
-                                                                    <select class="form-select" id="id_promotion"
+                                                                    <select class="form-control" id="id_promotion"
                                                                         name="id_promotion" required>
                                                                         <option value="">-- Sélectionner la classe --
                                                                         </option>
@@ -297,7 +297,7 @@
     <script>
     const champsBdd = <?= json_encode($champsBdd) ?>; // Les champs de la BDD fournis depuis le serveur
 
-    document.getElementById('excel_file').addEventListener('change', function(e) {
+     document.getElementById('excel_file').addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (!file) return;
 
@@ -334,12 +334,12 @@
                 optionNone.textContent = '-- Ne pas associer --';
                 select.appendChild(optionNone);
 
-                champsBdd.forEach(champ => {
-                    const opt = document.createElement('option');
-                    opt.value = champ;
-                    opt.textContent = champ;
-                    select.appendChild(opt);
-                });
+              Object.entries(champsBdd).forEach(([value, label]) => {
+                const opt = document.createElement('option');
+                opt.value = value;
+                opt.textContent = label;
+                select.appendChild(opt);
+            });
 
                 colBdd.appendChild(select);
                 row.appendChild(colExcel);

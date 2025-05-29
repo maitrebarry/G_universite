@@ -46,8 +46,8 @@
                                             <tbody>
                                                 <?php foreach ($etudiants as $etudiant): ?>
                                                     <tr>
-                                                        <td><?= htmlspecialchars($etudiant->nom_prenom_etudiant) ?></td>
-                                                        <td><?= htmlspecialchars($etudiant->numetudiant) ?></td>
+                                                        <td><?= htmlspecialchars($etudiant->nom_prenom_etudiant) ?> <?= htmlspecialchars($etudiant->prenom) ?></td>
+                                                        <td><?= htmlspecialchars($etudiant->matricule_etudiant) ?></td>
                                                         <td>
                                                             <?php
                                                             $total_paye = 0;
@@ -169,7 +169,7 @@
 
             // Mise à jour du champ de reste
             var resteChamp = input.closest('tr').querySelector('.reste-a-payer');
-            resteChamp.value = reste.toFixed(2);
+            resteChamp.value = reste.toFixed(0);
 
             // Couleur selon le solde
             if (reste < 0) {
