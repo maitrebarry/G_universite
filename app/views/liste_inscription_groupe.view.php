@@ -111,7 +111,7 @@
                                                                     <label for="annee_universitaire"
                                                                         class="form-label d-block">Année universitaire <span
                                                                             class="text-danger">*</span></label>
-                                                                    <select class="form-select" id="annee_universitaire"
+                                                                    <select class="form-control" id="annee_universitaire"
                                                                         required>
                                                                         <option value="">-- Sélectionner l'année --
                                                                         </option>
@@ -122,13 +122,11 @@
                                                                     </select>
                                                                 </div>
 
-
-
                                                                 <!-- Promotion -->
                                                                 <div class="col-md-6 mb-3">
                                                                     <label for="id_promotion" class="form-label d-block">Classe
                                                                         <span class="text-danger">*</span></label>
-                                                                    <select class="form-select" id="id_promotion"
+                                                                    <select class="form-control" id="id_promotion"
                                                                         name="id_promotion" required>
                                                                         <option value="">-- Sélectionner la classe --
                                                                         </option>
