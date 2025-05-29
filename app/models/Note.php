@@ -109,7 +109,7 @@ class Note extends Model
         // La verification  de l'existance des notes des étudiants
         try {
             $query = "SELECT id_note, note_devoir, note_evaluation, note_session, moyenne_module, note_etudiant.id_etudiant, 
-                    note_etudiant.id_promotion, note_etudiant.id_module, nom_prenom_etudiant, matricule_etudiant,
+                    note_etudiant.id_promotion, note_etudiant.id_module, nom_prenom_etudiant, prenom, matricule_etudiant,
                     genre_etudiant
                     FROM  note_etudiant INNER JOIN etudiant ON note_etudiant.id_etudiant= etudiant.id_etudiant
                     WHERE note_etudiant.id_promotion = ? AND note_etudiant.id_parcours = ? AND note_etudiant.id_module=?";
