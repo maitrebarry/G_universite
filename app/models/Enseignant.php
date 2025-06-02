@@ -236,9 +236,76 @@ class Enseignant extends Model
     {
         $query = "SELECT id_periode, date_debut, date_fin, status FROM periode";
         return $this->select_data_table_join_where($query);
+    } 
+    public function getTotalHeuresParEnseignant($date_debut, $date_fin)
+    {
+        $sql = "SELECT e.enseignant_id, SUM(edt.heure_total) AS total_heures
+                FROM enseignants e
+                JOIN edt ON edt.id_enseignant = e.enseignant_id
+                WHERE edt.date_debut >= :date_debut AND edt.date_fin <= :date_fin
+                GROUP BY e.enseignant_id";
+        $params = [
+            'date_debut' => $date_debut,
+            'date_fin' => $date_fin
+        ];
+        return $this->select_data_table_join_where($sql, $params);
     }
-
-
+    public function getEnseignantsParPeriode($date_debut, $date_fin)
+    {
+        $sql = "SELECT 
+                    e.enseignant_id, 
+                    e.enseignant_nom, 
+                    e.enseignant_prenom,
+                    SUM(edt.heure_total) AS total_heures
+                FROM enseignants e
+                JOIN edt ON edt.id_enseignant = e.enseignant_id
+                WHERE edt.date_debut >= :date_debut AND edt.date_fin <= :date_fin
+                GROUP BY e.enseignant_id, e.enseignant_nom, e.enseignant_prenom";
+        $params = [
+            'date_debut' => $date_debut,
+            'date_fin' => $date_fin
+        ];
+        return $this->select_data_table_join_where($sql, $params);
+    }
+    public function getEDTIndividuelsParPeriode($date_debut, $date_fin, $enseignant_id = null)
+    {
+        $sql = "SELECT 
+            e.enseignant_id, 
+            e.enseignant_nom, 
+            e.enseignant_prenom, 
+            e.enseignant_statut,
+            filiere.sigle_filiere AS sigle_filiere,
+            module.nom_module AS modules,
+            salle.nom_salle AS salle,
+            CONCAT(filiere.sigle_filiere, '-', semestre.sigle_semestre, '(', promotion.annee_universitaire, ')') AS classe,
+            edt.heure_total AS heures_total,
+            CASE 
+                WHEN e.enseignant_statut = 'PERMANANT' THEN grade.heures_dues
+                ELSE 0
+            END AS heures_dues,
+            edt.date_debut
+        FROM enseignants e
+        JOIN edt ON edt.id_enseignant = e.enseignant_id
+        LEFT JOIN filiere ON edt.id_filiere = filiere.id_filiere
+        LEFT JOIN promotion ON edt.id_promotion = promotion.id_promotion
+        LEFT JOIN parcours ON promotion.id_parcours = parcours.id_parcours
+        LEFT JOIN semestre ON parcours.id_semestre = semestre.id_semestre
+        LEFT JOIN ue_module ON edt.id_module = ue_module.id_ue_module
+        LEFT JOIN module ON ue_module.id_module = module.id_module
+        LEFT JOIN salle ON edt.id_salle = salle.id_salle
+        LEFT JOIN grade ON e.id_grade = grade.id_grade
+        WHERE edt.date_debut >= :date_debut AND edt.date_fin <= :date_fin";
+        $params = [
+            'date_debut' => $date_debut,
+            'date_fin' => $date_fin
+        ];
+        if ($enseignant_id) {
+            $sql .= " AND e.enseignant_id = :enseignant_id";
+            $params['enseignant_id'] = $enseignant_id;
+        }
+        $sql .= " ORDER BY e.enseignant_id, edt.date_debut ASC";
+        return $this->select_data_table_join_where($sql, $params);
+    }
     public function getEmploiDuTempsByEnseignant($id, $date_debut, $date_fin, $search = 'inachevé')
     {
         $query = "
@@ -289,7 +356,7 @@ class Enseignant extends Model
             edt.id_enseignant = :id AND 
             edt.date_debut >= :date_debut AND 
             edt.date_fin <= :date_fin
-    ";
+         ";
         if ($search == 'achevé') {
             $query .= " AND periode.status = 'achevé'";
         } else {
