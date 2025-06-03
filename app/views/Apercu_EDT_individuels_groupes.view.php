@@ -1,8 +1,4 @@
 
-
-    <button type="button" onclick="imprimerToutEDTGroupes()" class="btn btn-primary no-print" style="margin-bottom:20px;">
-        <i class="bx bx-printer"></i> Imprimer tous les EDT affichés
-    </button>
     <?php foreach ($apercus as $apercu): ?>
         <?php
             // On extrait les variables pour réutiliser le même template
@@ -14,7 +10,7 @@
             $semestres_promotions = $apercu['semestres_promotions'];
             $date_debut = $apercu['date_debut'];
             $date_fin = $apercu['date_fin'];
-            $status = $apercu['status'];
+            // $status = $apercu['status'];
             $mode_groupe = true; // Pour masquer le bouton PDF individuel
         ?>
         <div style="page-break-after: always;">
@@ -27,11 +23,11 @@
         </div>
     <?php endforeach; ?>
 
-        <script>
+        <!-- <script>
     function imprimerToutEDTGroupes() {
         document.querySelectorAll('.edtIndiBloc').forEach(function(bloc, i) {
             const nom = bloc.getAttribute('data-name') || 'edtIndividuel_' + (i+1);
             imprimerEdtIndi(nom, bloc);
         });
     }
-    </script>
+    </script> -->

@@ -169,10 +169,10 @@ $titre = "EMPLOI DU TEMPS INDIVIDUEL : du " . date('d-m-Y', strtotime($date_debu
                                     </div>
                                 </div>
                             <?php endif; ?>
-                            <div class=" d-flex align-items-lg-center">
+                            <!-- <div class=" d-flex align-items-lg-center">
                                 <img src="<?= ROOT ?>/assets/images/logo.jpg" alt=""
                                 class=" img-thumbnail mr-1 d-block" style="width: 100px;">                                   
-                            </div>
+                            </div> -->
                             <div class="header">
                                 <h1>INSTITUT UNIVERSITAIRE DE LA FORMATION PROFESSIONNELLE (IUFP)</h1>
                                 <h2>EMPLOI DU TEMPS INDIVIDUEL DE M. 
@@ -239,7 +239,7 @@ $titre = "EMPLOI DU TEMPS INDIVIDUEL : du " . date('d-m-Y', strtotime($date_debu
                                             $formatted_date_fin = date('d-m-Y', strtotime($date_fin_str));
 
                                             // Construction du niveau (ex: L1S1)
-                                            $niveau = htmlspecialchars($edt->nom_parcours . $edt->sigle_semestre);
+                                            $niveau = htmlspecialchars($edt->sigle_filiere ."-". $edt->sigle_semestre);
 
                                             if (isset($traited_dates[$date_debut_str][$date_fin_str])) {
                                                 $traited_dates[$date_debut_str][$date_fin_str][] = [

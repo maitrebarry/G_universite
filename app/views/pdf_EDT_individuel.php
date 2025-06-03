@@ -1,5 +1,4 @@
 
-<!-- filepath: c:\xampp\htdocs\G_universite\app\views\pdf_EDT_individuel.php -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -109,7 +108,7 @@
                 foreach ($emplois_du_temps as $edt) {
                     $date_debut_str = $edt->date_debut;
                     $date_fin_str = $edt->date_fin;
-                    $niveau = htmlspecialchars($edt->nom_parcours . $edt->sigle_semestre);
+                    $niveau = htmlspecialchars($edt->sigle_filiere ."-". $edt->sigle_semestre);
 
                     if (isset($traited_dates[$date_debut_str][$date_fin_str])) {
                         $traited_dates[$date_debut_str][$date_fin_str][] = [

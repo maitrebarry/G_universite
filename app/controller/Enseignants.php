@@ -160,57 +160,74 @@ class Enseignants extends Controller
         }
         $perso->redirect('Enseignants/liste_enseignant');
     }
-    public function periodes()
-    {
-        $model = new Enseignant();
-        $periodes = $model->getPeriodes();
-        echo json_encode($periodes);
-    } 
-    public function enseignants_par_periode()
-    {
-        $date_debut = $_POST['date_debut'] ?? null;
-        $date_fin = $_POST['date_fin'] ?? null;
-        $model = new Enseignant();
-        $profs = $model->getEnseignantsParPeriode($date_debut, $date_fin);
-        echo json_encode($profs);
-    }
     public function listeEDT_individuels_par_periode()
     {
         $date_debut = $_POST['date_debut'] ?? null;
         $date_fin = $_POST['date_fin'] ?? null;
+        $periode_id = $_POST['periode_id'] ?? null; // Ajout du filtre par ID période
         $enseignant_id = $_POST['enseignant_id'] ?? null;
+
         $model = new Enseignant();
-        $liste = $model->getEDTIndividuelsParPeriode($date_debut, $date_fin, $enseignant_id);
+        $liste = $model->getEDTIndividuelsParPeriode($date_debut, $date_fin, $periode_id, $enseignant_id);
+
         $this->view("listeEDT_individuels_par_periode", [
-            "liste" => $liste,
+            "liste" => !empty($liste) ? $liste : [],
             "date_debut" => $date_debut,
-            "date_fin" => $date_fin
+            "date_fin" => $date_fin,
+            "periode_id" => $periode_id 
         ]);
     }
+
     public function table_EDT_individuels()
     {
+        // var_dump($_POST);
         $date_debut = $_POST['date_debut'] ?? null;
         $date_fin = $_POST['date_fin'] ?? null;
+        $periode_id = $_POST['periode_id'] ?? null; // Ajout du filtre par ID période
         $enseignant_id = $_POST['enseignant_id'] ?? null;
+        
         $model = new Enseignant();
-        $liste = $model->getEDTIndividuelsParPeriode($date_debut, $date_fin, $enseignant_id);
-    
+        $liste = $model->getEDTIndividuelsParPeriode($date_debut, $date_fin, $periode_id, $enseignant_id);
+
+        // Vérification des données avant affichage
+        // var_dump($liste); exit;
+
         // Récupère le total global par enseignant
         $totaux = [];
         foreach ($model->getTotalHeuresParEnseignant($date_debut, $date_fin) as $row) {
             $totaux[$row->enseignant_id] = $row->total_heures;
         }
-    
+        
         $this->view("table_EDT_individuels", [
-            "liste" => $liste,
+            "liste" => !empty($liste) ? $liste : [],
             "date_debut" => $date_debut,
             "date_fin" => $date_fin,
-            "totaux_heures" => $totaux
+            "totaux_heures" => $totaux,
+            "periode_id" => $periode_id 
         ]);
     }
 
+    public function periodes()
+    {
+        $model = new Enseignant();
+        $periodes = $model->getPeriodes();
+        echo json_encode($periodes);
+    }
+
+    public function enseignants_par_periode()
+    {
+        $date_debut = $_POST['date_debut'] ?? null;
+        $date_fin = $_POST['date_fin'] ?? null;
+        $periode_id = $_POST['periode_id'] ?? null; // Ajout du filtre par ID période
+        
+        $model = new Enseignant();
+        $profs = $model->getEnseignantsParPeriode($date_debut, $date_fin, $periode_id);
+        
+        echo json_encode($profs);
+    }
     public function imprimerEDTIndividuels()
     {
+        // var_dump($_POST);exit;
         require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
         ini_set('display_errors', 1);
         ini_set('display_startup_errors', 1);
@@ -220,11 +237,11 @@ class Enseignants extends Controller
         $date_debut = $_POST['date_debut'] ?? null;
         $date_fin = $_POST['date_fin'] ?? null;
         $enseignants = $_POST['enseignants'] ?? [];
-    
+        $periode_id = $_POST['periode_id'] ?? null;
         if (count($enseignants) === 1) {
             // Impression individuelle
             $eid = $enseignants[0];
-            $emplois = $model->getEmploiDuTempsByEnseignant($eid, $date_debut, $date_fin, 'inachevé');
+            $emplois = $model->getEmploiDuTempsByEnseignant($eid, $date_debut, $date_fin, $periode_id);
             if (!empty($emplois)) {
                 $enseignant = $emplois[0];
                 $heures_totales = 0;
@@ -247,7 +264,7 @@ class Enseignants extends Controller
                 ob_start();
                 include(__DIR__ . '/../views/pdf_EDT_individuel.php');
                 $html = ob_get_clean();
-    
+                // var_dump($html);exit;
                 $dompdf = new \Dompdf\Dompdf();
                 $dompdf->loadHtml($html);
                 $dompdf->setPaper('A4', 'portrait');
@@ -276,7 +293,8 @@ class Enseignants extends Controller
             }
             $nbPdf = 0;
             foreach ($enseignants as $eid) {
-                $emplois = $model->getEmploiDuTempsByEnseignant($eid, $date_debut, $date_fin, 'inachevé');
+                $emplois = $model->getEmploiDuTempsByEnseignant($eid, $date_debut, $date_fin, $periode_id);
+                
                 if (!empty($emplois)) {
                     $enseignant = $emplois[0];
                     $heures_totales = 0;
@@ -309,6 +327,7 @@ class Enseignants extends Controller
                     // ]);
                     // exit;
                     $emplois_du_temps = $emplois;
+                    $enseignant = $emplois[0] ?? null;
                     ob_start();
                     include(__DIR__ . '/../views/pdf_EDT_individuel.php');
                     $html = ob_get_clean();
@@ -345,22 +364,69 @@ class Enseignants extends Controller
             die("Aucun enseignant sélectionné.");
         }
     }
+  
+    
     // Affichage de l'aperçu HTML
+    // public function apercuEDTIndividuel($id)
+    // {
+    //     $model = new Enseignant();
+    //     $date_debut = $_POST['date_debut'] ?? null;
+    //     $date_fin = $_POST['date_fin'] ?? null;
+    //     $status = $_POST['status'] ?? 'inachevé';
+    
+    //     $emplois = $model->getEmploiDuTempsByEnseignant($id, $date_debut, $date_fin, $status);
+    //     $enseignant = !empty($emplois) ? $emplois[0] : null;
+    
+    //     // Calculs
+    //     $heures_totales = 0;
+    //     $heures_dues = $enseignant->heures_dues ?? 0;
+    //     $heures_supp = 0;
+    //     $semestres_promotions = [];
+    //     foreach ($emplois as $edt) {
+    //         $heures_totales += $edt->heure_total;
+    //         $semestre_promotion = $edt->nom_semestre . " (" . $edt->annee_universitaire . ")";
+    //         if (!in_array($semestre_promotion, $semestres_promotions)) {
+    //             $semestres_promotions[] = $semestre_promotion;
+    //         }
+    //     }
+    //     if ($enseignant && $enseignant->enseignant_statut == 'PERMANANT') {
+    //         $heures_supp = max(0, $heures_totales - $heures_dues);
+    //     } else {
+    //         $heures_supp = $heures_totales;
+    //     }
+    
+    //     $this->view('apercu_EDT_individuel', [
+    //         'enseignant' => $enseignant,
+    //         'emplois_du_temps' => $emplois,
+    //         'heures_totales' => $heures_totales,
+    //         'heures_dues' => $heures_dues,
+    //         'heures_supp' => $heures_supp,
+    //         'semestres_promotions' => $semestres_promotions,
+    //         'date_debut' => $date_debut,
+    //         'date_fin' => $date_fin,
+    //         'status' => $status
+    //     ]);
+    // }
     public function apercuEDTIndividuel($id)
     {
         $model = new Enseignant();
         $date_debut = $_POST['date_debut'] ?? null;
         $date_fin = $_POST['date_fin'] ?? null;
-        $status = $_POST['status'] ?? 'inachevé';
-    
-        $emplois = $model->getEmploiDuTempsByEnseignant($id, $date_debut, $date_fin, $status);
+        $periode_id = $_POST['periode_id'] ?? null; // 🔹 Ajout du filtre période
+
+        if (!$periode_id) {
+            die("Erreur : periode_id est requis !");
+        }
+
+        $emplois = $model->getEmploiDuTempsByEnseignant($id, $date_debut, $date_fin, $periode_id);
         $enseignant = !empty($emplois) ? $emplois[0] : null;
-    
+
         // Calculs
         $heures_totales = 0;
         $heures_dues = $enseignant->heures_dues ?? 0;
         $heures_supp = 0;
         $semestres_promotions = [];
+
         foreach ($emplois as $edt) {
             $heures_totales += $edt->heure_total;
             $semestre_promotion = $edt->nom_semestre . " (" . $edt->annee_universitaire . ")";
@@ -368,12 +434,13 @@ class Enseignants extends Controller
                 $semestres_promotions[] = $semestre_promotion;
             }
         }
+
         if ($enseignant && $enseignant->enseignant_statut == 'PERMANANT') {
             $heures_supp = max(0, $heures_totales - $heures_dues);
         } else {
             $heures_supp = $heures_totales;
         }
-    
+
         $this->view('apercu_EDT_individuel', [
             'enseignant' => $enseignant,
             'emplois_du_temps' => $emplois,
@@ -383,28 +450,82 @@ class Enseignants extends Controller
             'semestres_promotions' => $semestres_promotions,
             'date_debut' => $date_debut,
             'date_fin' => $date_fin,
-            'status' => $status
+            'periode_id' => $periode_id // 🔹 Ajout de la période sélectionnée
         ]);
     }
+    // public function apercuEDTIndividuelsGroupes()
+    // {
+    //     $model = new Enseignant();
+    //     // echo "<h2>Aperçu des EDT individuels sélectionnés</h2>";exit;
+    //     $ids = isset($_GET['enseignants']) ? explode(',', $_GET['enseignants']) : [];
+    //     $ids = array_unique($ids);
+    //     $date_debut = $_GET['date_debut'] ?? null;
+    //     $date_fin = $_GET['date_fin'] ?? null;
+    //     $status = $_GET['status'] ?? 'inachevé';
+    
+    //     $apercus = [];
+    //     foreach ($ids as $eid) {
+    //         $emplois = $model->getEmploiDuTempsByEnseignant($eid, $date_debut, $date_fin, $status);
+    //         if (!empty($emplois)) {
+    //             $enseignant = $emplois[0];
+    //             $heures_totales = 0;
+    //             $heures_dues = $enseignant->heures_dues ?? 0;
+    //             $heures_supp = 0;
+    //             $semestres_promotions = [];
+    //             foreach ($emplois as $edt) {
+    //                 $heures_totales += $edt->heure_total;
+    //                 $semestre_promotion = $edt->nom_semestre . " (" . $edt->annee_universitaire . ")";
+    //                 if (!in_array($semestre_promotion, $semestres_promotions)) {
+    //                     $semestres_promotions[] = $semestre_promotion;
+    //                 }
+    //             }
+    //             if ($enseignant->enseignant_statut == 'PERMANANT') {
+    //                 $heures_supp = max(0, $heures_totales - $heures_dues);
+    //             } else {
+    //                 $heures_supp = $heures_totales;
+    //             }
+    //             $apercus[] = [
+    //                 'enseignant' => $enseignant,
+    //                 'emplois_du_temps' => $emplois,
+    //                 'heures_totales' => $heures_totales,
+    //                 'heures_dues' => $heures_dues,
+    //                 'heures_supp' => $heures_supp,
+    //                 'semestres_promotions' => $semestres_promotions,
+    //                 'date_debut' => $date_debut,
+    //                 'date_fin' => $date_fin,
+    //                 'status' => $status
+    //             ];
+    //         }
+    //     }
+    //     // var_dump($apercus);exit;
+    //     $this->view('apercu_EDT_individuels_groupes', [
+    //         'apercus' => $apercus
+    //     ]);
+    // }
     public function apercuEDTIndividuelsGroupes()
     {
         $model = new Enseignant();
-        // echo "<h2>Aperçu des EDT individuels sélectionnés</h2>";exit;
+        
         $ids = isset($_GET['enseignants']) ? explode(',', $_GET['enseignants']) : [];
         $ids = array_unique($ids);
         $date_debut = $_GET['date_debut'] ?? null;
         $date_fin = $_GET['date_fin'] ?? null;
-        $status = $_GET['status'] ?? 'inachevé';
-    
+        $periode_id = $_GET['periode_id'] ?? null; // 🔹 Ajout du filtre période
+
+        if (!$periode_id) {
+            die("Erreur : periode_id est requis !");
+        }
+
         $apercus = [];
         foreach ($ids as $eid) {
-            $emplois = $model->getEmploiDuTempsByEnseignant($eid, $date_debut, $date_fin, $status);
+            $emplois = $model->getEmploiDuTempsByEnseignant($eid, $date_debut, $date_fin, $periode_id);
             if (!empty($emplois)) {
                 $enseignant = $emplois[0];
                 $heures_totales = 0;
                 $heures_dues = $enseignant->heures_dues ?? 0;
                 $heures_supp = 0;
                 $semestres_promotions = [];
+
                 foreach ($emplois as $edt) {
                     $heures_totales += $edt->heure_total;
                     $semestre_promotion = $edt->nom_semestre . " (" . $edt->annee_universitaire . ")";
@@ -412,11 +533,13 @@ class Enseignants extends Controller
                         $semestres_promotions[] = $semestre_promotion;
                     }
                 }
+
                 if ($enseignant->enseignant_statut == 'PERMANANT') {
                     $heures_supp = max(0, $heures_totales - $heures_dues);
                 } else {
                     $heures_supp = $heures_totales;
                 }
+
                 $apercus[] = [
                     'enseignant' => $enseignant,
                     'emplois_du_temps' => $emplois,
@@ -426,67 +549,166 @@ class Enseignants extends Controller
                     'semestres_promotions' => $semestres_promotions,
                     'date_debut' => $date_debut,
                     'date_fin' => $date_fin,
-                    'status' => $status
+                    'periode_id' => $periode_id // 🔹 Ajout de la période sélectionnée
                 ];
             }
         }
-        // var_dump($apercus);exit;
+
         $this->view('apercu_EDT_individuels_groupes', [
             'apercus' => $apercus
         ]);
     }
     // gestion d'edt individuel
+    // public function listeEDT_individuel($id, $date_debut = null, $date_fin = null)
+    // {
+    //     $model = new Enseignant();
+    //     $errors = [];
+    //     $periodes = $model->getPeriodes();
+    //     $status = isset($_POST['status']) ? $_POST['status'] : 'inachevé';
+    //     $periode_selectionnee = null;
+    //     foreach ($periodes as $periode) {
+    //         if (trim($periode->status) === trim($status)) {
+    //             $periode_selectionnee = $periode;
+    //             break;
+    //         }
+    //     }
+    //     // Gestion des dates (priorité à celles saisies par l'utilisateur)
+    //         $date_debut = isset($_POST['date_debut']) ? $_POST['date_debut'] : null;
+    //         $date_fin = isset($_POST['date_fin']) ? $_POST['date_fin'] : null;
+
+    //         // Si aucune date n'est choisie, afficher seulement le formulaire de filtrage
+    //         if ($date_debut === null || $date_fin === null) {
+    //             $this->view("filtreEDT_individuel", [
+    //                 "periodes" => $periodes,
+    //                 "errors" => $errors,
+    //                 "status" => $status
+    //             ]);
+    //             return;
+    //         }
+    //     if (!$periode_selectionnee) {
+    //         $errors[] = "Aucune période correspondant au statut '$status' n'a été trouvée.";
+    //     }
+
+    //     // Gestion des dates (priorité à celles saisies par l'utilisateur)
+    //     $date_debut = isset($_POST['date_debut']) ? $_POST['date_debut'] : ($periode_selectionnee->date_debut ?? null);
+    //     $date_fin = isset($_POST['date_fin']) ? $_POST['date_fin'] : ($periode_selectionnee->date_fin ?? null);
+    //     if ($date_debut === null || $date_fin === null) {
+    //         $errors[] = "Les dates de début et de fin doivent être spécifiées ou disponibles dans la période sélectionnée.";
+    //     }
+
+    //     // Vérifier que les dates spécifiées sont cohérentes avec la période sélectionnée
+    //     if ($periode_selectionnee && (new DateTime($date_debut) < new DateTime($periode_selectionnee->date_debut) || new DateTime($date_fin) > new DateTime($periode_selectionnee->date_fin))) {
+    //         $errors[] = "Les dates fournies (du $date_debut au $date_fin) ne correspondent pas à la période '$status' sélectionnée (du {$periode_selectionnee->date_debut} au {$periode_selectionnee->date_fin}).";
+    //     }
+
+    //     // Récupération des emplois du temps
+    //     $emplois_du_temps = [];
+    //     if (empty($errors)) {
+    //         $emplois_du_temps = $model->getEmploiDuTempsByEnseignant($id, $date_debut, $date_fin, $status);
+
+    //         if (empty($emplois_du_temps)) {
+    //             $errors[] = "Aucun emploi du temps trouvé pour cet enseignant durant la période sélectionnée.";
+    //         }
+    //     }
+    //     $enseignant = null;
+    //     $heures_totales = 0;
+    //     $heures_dues = 0;
+    //     $heures_supp = 0;
+    //     $semestres_promotions = [];
+
+    //     if (empty($errors)) {
+    //         $enseignant = $emplois_du_temps[0];
+    //         $enseignant->enseignant_statut = ($enseignant->enseignant_statut == 'PERMANANT') ? 'PERMANANT' : 'NON_PERMANANT';
+
+    //         foreach ($emplois_du_temps as $edt) {
+    //             $heures_totales += $edt->heure_total;
+    //             $semestre_promotion = $edt->nom_semestre . " (" . $edt->annee_universitaire . ")";
+    //             if (!in_array($semestre_promotion, $semestres_promotions)) {
+    //                 $semestres_promotions[] = $semestre_promotion;
+    //             }
+    //         }
+
+    //         $heures_dues = $enseignant->heures_dues ?? 0;
+    //         if ($enseignant->enseignant_statut == 'PERMANANT') {
+    //             $heures_supp = max(0, $heures_totales - $heures_dues);
+    //         } else {
+    //             $heures_supp = $heures_totales;
+    //         }
+    //     }
+    //     if(isset($_POST['action'])){
+    //         // Affichage de la vue
+    //             $this->view("plusierlisteEDT_individuel", [
+    //                 "enseignant" => $enseignant,
+    //                 "emplois_du_temps" => $emplois_du_temps,
+    //                 "heures_totales" => $heures_totales,
+    //                 "heures_dues" => $heures_dues,
+    //                 "heures_supp" => $heures_supp,
+    //                 "semestres_promotions" => $semestres_promotions,
+    //                 "date_debut" => $date_debut,
+    //                 "date_fin" => $date_fin,
+    //                 "errors" => $errors,
+    //                 "status" => $status
+    //             ]);
+    //             return;
+    //     }
+    //     // Affichage de la vue
+    //     $this->view("listeEDT_individuel", [
+    //         "enseignant" => $enseignant,
+    //         "emplois_du_temps" => $emplois_du_temps,
+    //         "heures_totales" => $heures_totales,
+    //         "heures_dues" => $heures_dues,
+    //         "heures_supp" => $heures_supp,
+    //         "semestres_promotions" => $semestres_promotions,
+    //         "date_debut" => $date_debut,
+    //         "date_fin" => $date_fin,
+    //         "errors" => $errors,
+    //         "status" => $status
+    //     ]);
+    // }
+
     public function listeEDT_individuel($id, $date_debut = null, $date_fin = null)
     {
         $model = new Enseignant();
         $errors = [];
         $periodes = $model->getPeriodes();
-        $status = isset($_POST['status']) ? $_POST['status'] : 'inachevé';
+        $periode_id = isset($_POST['periode_id']) ? $_POST['periode_id'] : null; // 🔹 Ajout du filtre période
         $periode_selectionnee = null;
+
         foreach ($periodes as $periode) {
-            if (trim($periode->status) === trim($status)) {
+            if ($periode->id_periode == $periode_id) { // 🔹 Filtrer par ID de période et non par statut
                 $periode_selectionnee = $periode;
                 break;
             }
-        }
-        // Gestion des dates (priorité à celles saisies par l'utilisateur)
-            $date_debut = isset($_POST['date_debut']) ? $_POST['date_debut'] : null;
-            $date_fin = isset($_POST['date_fin']) ? $_POST['date_fin'] : null;
-
-            // Si aucune date n'est choisie, afficher seulement le formulaire de filtrage
-            if ($date_debut === null || $date_fin === null) {
-                $this->view("filtreEDT_individuel", [
-                    "periodes" => $periodes,
-                    "errors" => $errors,
-                    "status" => $status
-                ]);
-                return;
-            }
-        if (!$periode_selectionnee) {
-            $errors[] = "Aucune période correspondant au statut '$status' n'a été trouvée.";
         }
 
         // Gestion des dates (priorité à celles saisies par l'utilisateur)
         $date_debut = isset($_POST['date_debut']) ? $_POST['date_debut'] : ($periode_selectionnee->date_debut ?? null);
         $date_fin = isset($_POST['date_fin']) ? $_POST['date_fin'] : ($periode_selectionnee->date_fin ?? null);
-        if ($date_debut === null || $date_fin === null) {
+
+        // Si aucune période sélectionnée ou dates invalides, afficher le formulaire de filtrage
+        if (!$periode_selectionnee || $date_debut === null || $date_fin === null) {
             $errors[] = "Les dates de début et de fin doivent être spécifiées ou disponibles dans la période sélectionnée.";
+            $this->view("filtreEDT_individuel", [
+                "periodes" => $periodes,
+                "errors" => $errors
+            ]);
+            return;
         }
 
         // Vérifier que les dates spécifiées sont cohérentes avec la période sélectionnée
-        if ($periode_selectionnee && (new DateTime($date_debut) < new DateTime($periode_selectionnee->date_debut) || new DateTime($date_fin) > new DateTime($periode_selectionnee->date_fin))) {
-            $errors[] = "Les dates fournies (du $date_debut au $date_fin) ne correspondent pas à la période '$status' sélectionnée (du {$periode_selectionnee->date_debut} au {$periode_selectionnee->date_fin}).";
+        if (new DateTime($date_debut) < new DateTime($periode_selectionnee->date_debut) || new DateTime($date_fin) > new DateTime($periode_selectionnee->date_fin)) {
+            $errors[] = "Les dates fournies (du $date_debut au $date_fin) ne correspondent pas à la période sélectionnée (du {$periode_selectionnee->date_debut} au {$periode_selectionnee->date_fin}).";
         }
 
         // Récupération des emplois du temps
         $emplois_du_temps = [];
         if (empty($errors)) {
-            $emplois_du_temps = $model->getEmploiDuTempsByEnseignant($id, $date_debut, $date_fin, $status);
-
+            $emplois_du_temps = $model->getEmploiDuTempsByEnseignant($id, $date_debut, $date_fin, $periode_id);
             if (empty($emplois_du_temps)) {
                 $errors[] = "Aucun emploi du temps trouvé pour cet enseignant durant la période sélectionnée.";
             }
         }
+
         $enseignant = null;
         $heures_totales = 0;
         $heures_dues = 0;
@@ -512,24 +734,9 @@ class Enseignants extends Controller
                 $heures_supp = $heures_totales;
             }
         }
-        if(isset($_POST['action'])){
-            // Affichage de la vue
-                $this->view("plusierlisteEDT_individuel", [
-                    "enseignant" => $enseignant,
-                    "emplois_du_temps" => $emplois_du_temps,
-                    "heures_totales" => $heures_totales,
-                    "heures_dues" => $heures_dues,
-                    "heures_supp" => $heures_supp,
-                    "semestres_promotions" => $semestres_promotions,
-                    "date_debut" => $date_debut,
-                    "date_fin" => $date_fin,
-                    "errors" => $errors,
-                    "status" => $status
-                ]);
-                return;
-        }
+
         // Affichage de la vue
-        $this->view("listeEDT_individuel", [
+        $this->view(isset($_POST['action']) ? "plusierlisteEDT_individuel" : "listeEDT_individuel", [
             "enseignant" => $enseignant,
             "emplois_du_temps" => $emplois_du_temps,
             "heures_totales" => $heures_totales,
@@ -538,8 +745,7 @@ class Enseignants extends Controller
             "semestres_promotions" => $semestres_promotions,
             "date_debut" => $date_debut,
             "date_fin" => $date_fin,
-            "errors" => $errors,
-            "status" => $status
+            "errors" => $errors
         ]);
     }
 }
