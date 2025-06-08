@@ -23,11 +23,4 @@
         </div>
     <?php endforeach; ?>
 
-        <!-- <script>
-    function imprimerToutEDTGroupes() {
-        document.querySelectorAll('.edtIndiBloc').forEach(function(bloc, i) {
-            const nom = bloc.getAttribute('data-name') || 'edtIndividuel_' + (i+1);
-            imprimerEdtIndi(nom, bloc);
-        });
-    }
-    </script> -->
+      

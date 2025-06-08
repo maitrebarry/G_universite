@@ -75,16 +75,23 @@
                                        
                                     <form method="POST" enctype="multipart/form-data" id="updateForm" class="form-horizontal">
                                         <div class="row">
-                                            <div class="col-sm-6">
+                                            <div class="col-sm-12">
                                                 <label class="form-label" for="statut">Statut</label>
                                                 <select class="select2 form-control" name="enseignant_statut" id="statut" onchange="toggleFields()">
                                                     <option value="NON_PERMANANT" <?= $enseignant->enseignant_statut === 'NON_PERMANANT' ? 'selected' : '' ?>>NON PERMANANT</option>
                                                     <option value="PERMANANT" <?= $enseignant->enseignant_statut === 'PERMANANT' ? 'selected' : '' ?>>PERMANANT</option>
                                                 </select>
                                             </div>
+                                        </div>
+
+                                        <div class="row">
                                             <div class="col-sm-6">
                                                 <label class="form-label">Nom</label>
                                                 <input type="text" name="enseignant_nom" class="form-control" value="<?= htmlspecialchars($enseignant->enseignant_nom) ?>" />
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <label class="form-label">Matricule</label>
+                                                <input type="text" name="enseignant_matricule" class="form-control" value="<?= htmlspecialchars($enseignant->enseignant_matricule) ?>" />
                                             </div>
                                         </div>
 
@@ -118,20 +125,20 @@
                                                     <option value="Doctorat" <?= $enseignant->enseignant_diplome === 'Doctorat' ? 'selected' : '' ?>>Doctorat</option>
                                                 </select>
                                             </div>
-                                            <div class="col-sm-6">
+                                            <div class="col-sm-6" id="cv-container">
                                                 <label class="form-label">CV</label>
-                                                <input type="file" name="enseignant_cv" id="cv-container" class="form-control" />
+                                                <input type="file" name="enseignant_cv" class="form-control" />
+                                                <?php if (!empty($enseignant->enseignant_cv)): ?>
+                                                    <small>Fichier existant : <a href="<?= ROOT ?>/public/assets/cv/<?= htmlspecialchars($enseignant->enseignant_cv) ?>" target="_blank">Voir</a></small>
+                                                <?php endif; ?>
                                             </div>
                                         </div>
 
-                                        <div id="matricule-container" class="row" style="display: <?= $enseignant->enseignant_statut === 'PERMANANT' ? 'flex' : 'none' ?>;">
-                                            <div class="col-sm-6">
-                                                <label class="form-label">Matricule</label>
-                                                <input type="text" name="enseignant_matricule" class="form-control" value="<?= htmlspecialchars($enseignant->enseignant_matricule) ?>" />
-                                            </div>
+                                        <!-- PERMANANT: Grade seulement -->
+                                        <div id="grade-container" class="row" style="display: <?= $enseignant->enseignant_statut === 'PERMANANT' ? 'flex' : 'none' ?>;">
                                             <div class="col-sm-6">
                                                 <label class="form-label">Grade</label>
-                                                <select class="select2 form-control" name="id_grade" id="grade-container">
+                                                <select class="select2 form-control" name="id_grade">
                                                     <?php foreach ($grades as $grade): ?>
                                                         <option value="<?= $grade->id_grade ?>" <?= $enseignant->id_grade == $grade->id_grade ? 'selected' : '' ?>>
                                                             <?= htmlspecialchars($grade->nom_grade, ENT_QUOTES, 'UTF-8') ?>
@@ -141,10 +148,26 @@
                                             </div>
                                         </div>
 
+                                        <!-- NON PERMANANT: Contrat et code bancaire -->
+                                        <div id="non-permanent-fields" class="row" style="display: <?= $enseignant->enseignant_statut === 'NON_PERMANANT' ? 'flex' : 'none' ?>;">
+                                            <div class="col-sm-6">
+                                                <label class="form-label">Contrat</label>
+                                                <input type="file" name="contrat" class="form-control" />
+                                                <?php if (!empty($enseignant->contrat)): ?>
+                                                    <small>Fichier existant : <a href="<?= ROOT ?>/public/assets/contrat/<?= htmlspecialchars($enseignant->contrat) ?>" target="_blank">Voir</a></small>
+                                                <?php endif; ?>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <label class="form-label">Code Bancaire</label>
+                                                <input type="text" name="code_bancaire" class="form-control" value="<?= htmlspecialchars($enseignant->code_bancaire ?? '') ?>" />
+                                            </div>
+                                        </div>
+
                                         <div class="col-12 d-flex justify-content-end mt-4">
                                             <button name="submit" type="submit" class="btn btn-primary">Modifier</button>
                                         </div>
                                     </form>
+
                                     </div>
                                 </div>
                             </div>
@@ -166,19 +189,24 @@
     <script>
         function toggleFields() {
             const statut = document.getElementById("statut").value;
-            const matriculeContainer = document.getElementById("matricule-container");
+            const gradeContainer = document.getElementById("grade-container");
+            const nonPermanentFields = document.getElementById("non-permanent-fields");
             const cvContainer = document.getElementById("cv-container");
 
             if (statut === "PERMANANT") {
-                matriculeContainer.style.display = "flex";
-                cvContainer.parentElement.style.display = "none"; 
+                gradeContainer.style.display = "flex";
+                nonPermanentFields.style.display = "none";
+                cvContainer.style.display = "none";
             } else {
-                matriculeContainer.style.display = "none";
-                cvContainer.parentElement.style.display = "flex"; 
+                gradeContainer.style.display = "none";
+                nonPermanentFields.style.display = "flex";
+                cvContainer.style.display = "flex";
+                }
             }
-        }
-        document.addEventListener('DOMContentLoaded', toggleFields);
+
+            document.addEventListener('DOMContentLoaded', toggleFields);
     </script>
+
     <script src="<?= ROOT ?>/assets/mon_js/formate_numberphone.js"></script>
 </body>
 </html>

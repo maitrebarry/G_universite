@@ -103,9 +103,11 @@
                                                             <tr>
                                                               
                                                                 <th>PRÉNOM & NOM </th>
+                                                                <th>MATRICULE</th>
                                                                 <th>TÉLÉPHONE</th>
                                                                 <th>DIPLÔME</th>
                                                                 <th>CV</th>
+                                                                <th>Contrat</th>
                                                                 <th width='1%'>OPÉRATION</th>
                                                             </tr>
                                                         </thead>
@@ -115,6 +117,8 @@
                                                             <?php foreach ($enseignat_VCT as $enseignant): ?>
                                                             <tr>                               
                                                                 <td><?= htmlspecialchars($enseignant->enseignant_prenom . ' ' . $enseignant->enseignant_nom, ENT_QUOTES, 'UTF-8'); ?>
+                                                                </td>
+                                                                 <td><?= htmlspecialchars($enseignant->enseignant_matricule, ENT_QUOTES, 'UTF-8'); ?>
                                                                 </td>
                                                                 <td><?= htmlspecialchars($enseignant->enseignant_telephone, ENT_QUOTES, 'UTF-8'); ?>
                                                                 </td>
@@ -129,6 +133,17 @@
                                                                     <?php else: ?>
                                                                     <i class="bx bx-block"
                                                                         title="Aucun CV disponible"></i>
+                                                                    <?php endif; ?>
+                                                                </td>
+                                                                <td>
+                                                                    <?php if (!empty($enseignant->contrat)): ?>
+                                                                    <a href="<?= ROOT ?><?= $enseignant->contrat ?>"
+                                                                        target="_blank">
+                                                                        <i class="bx bx-file" title="Voir le Contrat"></i>
+                                                                    </a>
+                                                                    <?php else: ?>
+                                                                    <i class="bx bx-block"
+                                                                        title="Aucun Contrat disponible"></i>
                                                                     <?php endif; ?>
                                                                 </td>
                                                                 <td class="text-center">

@@ -9,9 +9,13 @@
     <input type="hidden" name="periode_id" value="<?= $periode_id ?>">
     <div class="d-flex justify-content-end mb-2">
         <button type="button" class="btn btn-success mr-2" id="voirEDTBtn">Voir les EDT individuels</button>
-        <button type="submit" class="btn btn-primary">
+        <button type="submit" class="btn btn-primary mr-2">
             <i class="bx bx-printer"></i> Imprimer tout
         </button>
+        <button type="submit" class="btn btn-info" formaction="<?= ROOT ?>/Enseignants/genererPDF">
+            <i class="bx bx-file"></i> Récap EDT 📄
+        </button>
+
     </div>   
     <table class="table table-bordered">
         <thead>
@@ -80,12 +84,15 @@
     </table>    
     <div class="d-flex justify-content mt-2">
         <button type="button" class="btn btn-success mr-2" id="voirEDTBtnBottom">Voir les EDT individuels</button>
-        <button type="submit" class="btn btn-primary">
+        <button type="submit" class="btn btn-primary mr-2">
             <i class="bx bx-printer"></i> Imprimer tout
         </button>
+        <button type="submit" class="btn btn-info" formaction="<?= ROOT ?>/Enseignants/genererPDF">
+            <i class="bx bx-file"></i> Récap EDT 📄
+        </button>
+
     </div>
 </form>
-
 <script src="<?= ROOT ?>/assets/vendors/js/tables/datatable/datatables.min.js"></script>
 <script src="<?= ROOT ?>/assets/vendors/js/tables/datatable/dataTables.bootstrap4.min.js"></script>
 <script src="<?= ROOT ?>/assets/vendors/js/tables/datatable/dataTables.buttons.min.js"></script>
