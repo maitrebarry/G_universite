@@ -7,7 +7,7 @@
     <!-- inclusion du partie header fin-->
     <!-- inclusion du partie seibar-->
     <?php $this->view("Partials/seibar") ?>
-    <!-- inclusion du partie seibar fin-->
+    <!-- inclusion du partie seibar fin--> 
     <!--  Content-->
     <div class="app-content content">
         <div class="content-overlay"></div>

@@ -131,23 +131,26 @@
                                             <div class="table-responsive">
                                                 <!-- Affichage des étudiants -->
                                                 <div id="liste_etudiants" class="mt-4">
-                                                    <table class="table zero-configuration">
-                                                        <thead class="text-center">
-                                                            <tr>
-                                                                <th class="text-center">
-                                                                    Tout<br>
-                                                                    <input type="checkbox" id="select-all"
-                                                                        title="Sélectionner tout"
-                                                                        style="margin-top: 5px;">
-                                                                </th>
-                                                                <th>Nom & Prénom</th>
-                                                                <th>Matricule</th>
-                                                                <th>Status</th>
-                                                                <th>Filière</th>
-                                                                <th>Diplôme</th>
-                                                                <th>Action</th>
-                                                            </tr>
-                                                        </thead>
+                                                    <div class="mb-3">
+    <input type="text" id="customSearch" class="form-control" placeholder="Rechercher un étudiant...">
+</div>
+                                                    <table class="table zze">
+                                                       <thead class="text-center">
+                <tr>
+                    <th class="text-center">
+                        Tout<br>
+                        <input type="checkbox" id="select-all"
+                            title="Sélectionner tout"
+                            style="margin-top: 5px;">
+                    </th>
+                    <th>Nom & Prénom</th>
+                    <th>Matricule</th>
+                    <th>Status</th>
+                    <th>Filière</th>
+                    <th>Diplôme</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
                                                         <tbody id="table_etudiant" class="text-center">
                                                             <!-- Les données AJAX seront insérées ici -->
                                                         </tbody>
@@ -185,6 +188,16 @@
     <?php $this->view("Partials/footer") ?>
     <!-- inclusion du partie footer fin-->
 
+<script>
+    document.getElementById('customSearch').addEventListener('input', function() {
+    let filter = this.value.toLowerCase();
+    let rows = document.querySelectorAll('#table_etudiant tr');
+    rows.forEach(row => {
+        let text = row.innerText.toLowerCase();
+        row.style.display = text.includes(filter) ? '' : 'none';
+    });
+});
+</script>
     <script>
         $('.zero-configuration').DataTable({
             ordering: false

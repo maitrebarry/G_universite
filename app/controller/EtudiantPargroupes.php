@@ -112,10 +112,11 @@ public function genererMatricule($anneeDiplome, $nom, $prenom, $genre, $index)
     $premiereLettreNom = isset($noms[0][0]) ? strtoupper($noms[0][0]) : '';
     $premiereLettrePrenom = isset($prenoms[0][0]) ? strtoupper($prenoms[0][0]) : '';
 
-    $suffixe = str_pad($index + 1, 3, '0', STR_PAD_LEFT); // Exemple : 001, 002, etc.
+    $suffixe = str_pad($index + 1, 4, '0', STR_PAD_LEFT); // Exemple : 0001, 0002, etc.
 
-    return $anneeDiplome . $premiereLettreNom . $premiereLettrePrenom . strtoupper($genre) . $suffixe;
+    return 'IUFP' . $anneeDiplome . $premiereLettreNom . $premiereLettrePrenom . strtoupper($genre) . $suffixe;
 }
+
 
 
 
