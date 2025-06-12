@@ -132,25 +132,25 @@
                                                 <!-- Affichage des étudiants -->
                                                 <div id="liste_etudiants" class="mt-4">
                                                     <div class="mb-3">
-    <input type="text" id="customSearch" class="form-control" placeholder="Rechercher un étudiant...">
-</div>
-                                                    <table class="table zze">
-                                                       <thead class="text-center">
-                <tr>
-                    <th class="text-center">
-                        Tout<br>
-                        <input type="checkbox" id="select-all"
-                            title="Sélectionner tout"
-                            style="margin-top: 5px;">
-                    </th>
-                    <th>Nom & Prénom</th>
-                    <th>Matricule</th>
-                    <th>Status</th>
-                    <th>Filière</th>
-                    <th>Diplôme</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
+                                                    <input type="text" id="customSearch" class="form-control" placeholder="Rechercher un étudiant...">
+                                                </div>
+                                                            <table class="table zze">
+                                                            <thead class="text-center">
+                                                                <tr>
+                                                                    <th class="text-center">
+                                                                        Tout<br>
+                                                                        <input type="checkbox" id="select-all"
+                                                                            title="Sélectionner tout"
+                                                                            style="margin-top: 5px;">
+                                                                    </th>
+                                                                    <th>Nom & Prénom</th>
+                                                                    <th>Matricule</th>
+                                                                    <th>Status</th>
+                                                                    <th>Filière</th>
+                                                                    <th>Diplôme</th>
+                                                                    <th>Action</th>
+                                                                </tr>
+                                                            </thead>
                                                         <tbody id="table_etudiant" class="text-center">
                                                             <!-- Les données AJAX seront insérées ici -->
                                                         </tbody>
