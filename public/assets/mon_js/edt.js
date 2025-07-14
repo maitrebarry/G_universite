@@ -491,7 +491,6 @@ function ajouterEdt(url = ROOT_EDT + "/ajouter_EDT", action = "ajouter_EDT") {
       console.log(response);
 
       // location.reload();
-
       document.getElementById("message").innerHTML = response;
       if (response.includes("primary") && action == "ajouter_EDT") {
         document.querySelector("#table-extended-chechbox tbody").innerHTML = "";
