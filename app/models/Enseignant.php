@@ -288,15 +288,21 @@ class Enseignant extends Model
     } 
     public function getTotalHeuresParEnseignant($date_debut, $date_fin)
     {
-        $sql = "SELECT e.enseignant_id, SUM(edt.heure_total) AS total_heures
+        $sql = "SELECT 
+                    e.enseignant_id, 
+                    SUM(edt.heure_total) AS total_heures
                 FROM enseignants e
-                JOIN edt ON edt.id_enseignant = e.enseignant_id
-                WHERE edt.date_debut >= :date_debut AND edt.date_fin <= :date_fin
+                JOIN enseignant_edt ee ON ee.id_enseignant = e.enseignant_id
+                JOIN edt ON edt.id_edt = ee.id_edt
+                WHERE edt.date_debut >= :date_debut 
+                AND edt.date_fin <= :date_fin
                 GROUP BY e.enseignant_id";
+
         $params = [
             'date_debut' => $date_debut,
             'date_fin' => $date_fin
         ];
+
         return $this->select_data_table_join_where($sql, $params);
     }
     public function getEnseignantsParPeriode($date_debut, $date_fin)
@@ -307,16 +313,20 @@ class Enseignant extends Model
                     e.enseignant_prenom,
                     SUM(edt.heure_total) AS total_heures
                 FROM enseignants e
-                JOIN edt ON edt.id_enseignant = e.enseignant_id
-                WHERE edt.date_debut >= :date_debut AND edt.date_fin <= :date_fin
+                JOIN enseignant_edt ee ON ee.id_enseignant = e.enseignant_id
+                JOIN edt ON edt.id_edt = ee.id_edt
+                WHERE edt.date_debut >= :date_debut 
+                AND edt.date_fin <= :date_fin
                 GROUP BY e.enseignant_id, e.enseignant_nom, e.enseignant_prenom";
+
         $params = [
             'date_debut' => $date_debut,
             'date_fin' => $date_fin
         ];
+
         return $this->select_data_table_join_where($sql, $params);
     }
- 
+
     public function getEDTIndividuelsParPeriode($date_debut, $date_fin, $periode_id, $enseignant_id = null)
     {
         $sql = "SELECT 
@@ -335,7 +345,8 @@ class Enseignant extends Model
             END AS heures_dues,
             edt.date_debut
         FROM enseignants e
-        JOIN edt ON edt.id_enseignant = e.enseignant_id
+        JOIN enseignant_edt ee ON ee.id_enseignant = e.enseignant_id
+        JOIN edt ON ee.id_edt = edt.id_edt
         LEFT JOIN filiere ON edt.id_filiere = filiere.id_filiere
         LEFT JOIN promotion ON edt.id_promotion = promotion.id_promotion
         LEFT JOIN parcours ON promotion.id_parcours = parcours.id_parcours
@@ -362,7 +373,6 @@ class Enseignant extends Model
         $sql .= " ORDER BY e.enseignant_id, edt.date_debut ASC";
         return $this->select_data_table_join_where($sql, $params);
     }
-   
     public function getEmploiDuTempsByEnseignant($id, $date_debut, $date_fin, $periode_id)
     {
         $query = "
@@ -389,43 +399,35 @@ class Enseignant extends Model
             END AS heures_dues
         FROM 
             edt
-        LEFT JOIN 
-            ue_module ON edt.id_module = ue_module.id_ue_module
-        LEFT JOIN 
-            module ON ue_module.id_module = module.id_module
-        LEFT JOIN 
-            salle ON edt.id_salle = salle.id_salle
-        LEFT JOIN 
-            filiere ON edt.id_filiere = filiere.id_filiere
-        LEFT JOIN 
-            promotion ON edt.id_promotion = promotion.id_promotion
-        LEFT JOIN 
-            parcours ON promotion.id_parcours = parcours.id_parcours
-        LEFT JOIN 
-            semestre ON parcours.id_semestre = semestre.id_semestre
-        LEFT JOIN 
-            enseignants ON edt.id_enseignant = enseignants.enseignant_id
-        LEFT JOIN 
-            grade ON enseignants.id_grade = grade.id_grade
-        LEFT JOIN 
-            periode ON edt.id_periode = periode.id_periode
+        JOIN enseignant_edt ee ON edt.id_edt = ee.id_edt
+        LEFT JOIN enseignants ON ee.id_enseignant = enseignants.enseignant_id
+        LEFT JOIN ue_module ON edt.id_module = ue_module.id_ue_module
+        LEFT JOIN module ON ue_module.id_module = module.id_module
+        LEFT JOIN salle ON edt.id_salle = salle.id_salle
+        LEFT JOIN filiere ON edt.id_filiere = filiere.id_filiere
+        LEFT JOIN promotion ON edt.id_promotion = promotion.id_promotion
+        LEFT JOIN parcours ON promotion.id_parcours = parcours.id_parcours
+        LEFT JOIN semestre ON parcours.id_semestre = semestre.id_semestre
+        LEFT JOIN grade ON enseignants.id_grade = grade.id_grade
+        LEFT JOIN periode ON edt.id_periode = periode.id_periode
         WHERE 
-            edt.id_enseignant = :id AND 
+            ee.id_enseignant = :id AND 
             edt.date_debut >= :date_debut AND 
             edt.date_fin <= :date_fin AND 
             edt.id_periode = :periode_id"; 
-    
+
         $query .= " ORDER BY edt.date_debut ASC";
-    
+
         $params = [
             "id" => $id,
             "date_debut" => $date_debut,
             "date_fin" => $date_fin,
-            "periode_id" => $periode_id  // 🔹 Ajout du filtre periode_id
+            "periode_id" => $periode_id  
         ];
-    
+
         return $this->select_data_table_join_where($query, $params);
     }
+
     public function getEmploiDuTempsByEnseignantRecap($id, $date_debut, $date_fin, $periode_id)
     {
         $query = "
@@ -446,12 +448,14 @@ class Enseignant extends Model
                 promotion.id_promotion, promotion.annee_universitaire, promotion.statut AS promotion_statut,
                 promotion.id_filiere, promotion.id_parcours,
                 semestre.nom_semestre, semestre.sigle_semestre,
+
                 -- Infos enseignant
                 enseignants.enseignant_id,
                 enseignants.enseignant_matricule,
                 enseignants.enseignant_nom, enseignants.enseignant_prenom, enseignants.enseignant_date_naissance, 
                 enseignants.enseignant_telephone, enseignants.enseignant_diplome, 
                 enseignants.enseignant_email, enseignants.enseignant_statut,
+
                 -- Infos utilisateur
                 utilisateur.role, 
 
@@ -484,13 +488,14 @@ class Enseignant extends Model
                 (
                     SELECT GROUP_CONCAT(m.nom_module SEPARATOR ', ') 
                     FROM edt e
+                    JOIN enseignant_edt ee2 ON e.id_edt = ee2.id_edt
                     JOIN ue_module um ON e.id_module = um.id_ue_module
                     JOIN module m ON um.id_module = m.id_module
-                    WHERE e.id_enseignant = enseignants.enseignant_id
+                    WHERE ee2.id_enseignant = enseignants.enseignant_id
                 ) AS emplois_du_temps
 
             FROM edt  
-
+            JOIN enseignant_edt ee ON edt.id_edt = ee.id_edt
             LEFT JOIN ue_module ON edt.id_module = ue_module.id_ue_module  
             LEFT JOIN module ON ue_module.id_module = module.id_module  
             LEFT JOIN salle ON edt.id_salle = salle.id_salle  
@@ -498,13 +503,13 @@ class Enseignant extends Model
             LEFT JOIN promotion ON edt.id_promotion = promotion.id_promotion  
             LEFT JOIN parcours ON promotion.id_parcours = parcours.id_parcours  
             LEFT JOIN semestre ON edt.id_semestre = semestre.id_semestre  
-            LEFT JOIN enseignants ON edt.id_enseignant = enseignants.enseignant_id  
+            LEFT JOIN enseignants ON ee.id_enseignant = enseignants.enseignant_id  
             LEFT JOIN grade ON enseignants.id_grade = grade.id_grade  
             LEFT JOIN periode ON edt.id_periode = periode.id_periode  
             LEFT JOIN utilisateur ON enseignants.enseignant_id = utilisateur.enseignant_id  
 
             WHERE  
-                edt.id_enseignant = :id AND  
+                ee.id_enseignant = :id AND  
                 edt.date_debut >= :date_debut AND  
                 edt.date_fin <= :date_fin AND  
                 edt.id_periode = :periode_id
@@ -522,7 +527,6 @@ class Enseignant extends Model
         return $this->select_data_table_join_where($query, $params);
     }
 
-    
 
 
 
