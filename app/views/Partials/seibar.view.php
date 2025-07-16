@@ -80,7 +80,7 @@ $current_page = basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
                     <li class="<?= ($current_page == 'liste_note') ? 'active' : '' ?>">
                         <a href="<?= ROOT ?>/Notes/liste_note">
                             <i class="bx bx-right-arrow-alt"></i>
-                            <span class="menu-item">Résultat Annuelles</span>
+                            <span class="menu-item">Résultats Annuels</span>
                         </a>
                     </li>
                 
