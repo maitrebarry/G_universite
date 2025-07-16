@@ -32,8 +32,9 @@ class Emploi_du_temps extends Controller
         if (isset($_POST['action']) && $_POST['action'] === "ajouter_EDT") {
             @$edt = $_POST['edt'];
             @$horaires = $_POST['horaires'];
+            @$enseignants= $_POST['enseignants'];
             $edtModel = new Emploi_du_temp();
-            $edtModel->ajouterEdt($edt, $horaires);
+            $edtModel->ajouterEdt($edt, $horaires, $enseignants);
             $this->view("set_flash");
             return;
         }
@@ -65,12 +66,16 @@ class Emploi_du_temps extends Controller
             $infosEdt = $edtModel->getInfoEdt($idEdt);
             $horairesEdt = $edtModel->getHorairesEdt($idEdt);
             $jours = $edtModel->SelectAllData("*", "jour");
+            $requetteEnseignant = "SELECT id_enseignant, groupe, enseignant_prenom, enseignant_nom, enseignant_telephone 
+            FROM enseignant_edt INNER JOIN enseignants ON enseignant_edt.id_enseignant=enseignants.enseignant_id WHERE id_edt=? ";
+                
+            $enseignants = $edtModel->select_data_table_join_where($requetteEnseignant, [$idEdt]);
             if (!empty($infosEdt)) {
                 if (isset($_POST['action']) && $_POST['action'] == "print") {
-                    $this->view("post_apercu_edt", ["infosEdt" => $infosEdt, "horairesEdt" => $horairesEdt, "jours" => $jours]);
+                    $this->view("post_apercu_edt", ["infosEdt" => $infosEdt, "horairesEdt" => $horairesEdt, "jours" => $jours, "enseignants" => $enseignants]);
                     return;
                 }
-                $this->view("apercu_edt", ["infosEdt" => $infosEdt, "horairesEdt" => $horairesEdt, "jours" => $jours]);
+                $this->view("apercu_edt", ["infosEdt" => $infosEdt, "horairesEdt" => $horairesEdt, "jours" => $jours, "enseignants" => $enseignants]);
             }
         }
     }

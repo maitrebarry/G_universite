@@ -1,3 +1,4 @@
+
 <style>
     input {
 
@@ -8,6 +9,52 @@
 
     td {
         padding: 8px 5px !important;
+    }
+
+        .custom-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      font-weight:bold;
+    }
+
+    .custom-checkbox input[type="checkbox"] {
+      display: none;
+    }
+
+    .checkmark {
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
+      background-color: #e0e0e0;
+      position: relative;
+      transition: background-color 0.3s;
+      border: 2px solid #aaa;
+    }
+
+    .custom-checkbox input:checked + .checkmark {
+      background-color:rgb(0, 36, 241);
+      border-color:rgb(47, 0, 255);
+    }
+
+    .checkmark::after {
+      content: "";
+      position: absolute;
+      left: 4px;
+      top: 2px;
+      width: 8px;
+      height: 12px;
+      border: solid white;
+      border-width: 0 4px 4px 0;
+      transform: rotate(45deg);
+      opacity: 0;
+      transition: opacity 0.2s ease-in-out;
+    }
+
+    .custom-checkbox input:checked + .checkmark::after {
+      opacity: 1;
     }
 </style>
 <!-- inclusion du partie header -->
@@ -104,11 +151,11 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-6 col-lg-3">
-                                                    <label class="form-label" for="single-select">Promotion</label>
+                                                    <label class="form-label" for="single-select">Classe</label>
                                                     <div class="form-group">
                                                         <select class="select2 form-control" id="promotions"
                                                             data-id="<?php echo $idPromotion ?>">
-                                                            <option value="" disabled>Selectioner une Promotion
+                                                            <option value="" disabled>Selectioner une Classe
                                                             </option>
 
                                                         </select>
@@ -195,12 +242,17 @@
                                                     <label class="form-label" for="enseignants">ENSEIGNANT :</label>
                                                     <div class="form-group">
                                                         <select class=" form-control champ" id="enseignants"
-                                                            name="enseignants">
-                                                            <option value="" disabled>Sélectionner un
+                                                            name="enseignants" >
+                                                            <option value="" disabled 
+                                                             >
+                                                             Sélectionner un
                                                                 enseignant</option>
                                                             <?php foreach ($enseignants as $enseignant): ?>
                                                                 <option value="<?php echo $enseignant->enseignant_id ?>"
-                                                                    class=" text-capitalize">
+                                                                    class=" text-capitalize"
+                                                                    data-enseignant="<?php echo $enseignant->enseignant_nom . " ". $enseignant->enseignant_prenom?>"
+                                                                    data-id="<?php echo $enseignant->enseignant_id ?>"
+                                                                    >
                                                                     <?php echo
                                                                     $enseignant->enseignant_nom . " "
                                                                         . $enseignant->enseignant_prenom
@@ -236,6 +288,37 @@
                                                 </div>
 
                                             </div>
+                                           
+                                            <div class="col d-flex justify-content-center align-items-center mt-2"> 
+                                                <label class="custom-checkbox">
+                                                    <input type="checkbox" id="groupeSelect">
+                                                    <span class="checkmark"></span>
+                                                    Partager en Groupe
+                                                </label>
+                                            </div>
+                                            
+                                            <div class="table-responsive d-none m-auto" id="listEnseignant" style="width:600px" >
+                                                <div class=" col-12 m-0  d-flex justify-content-end mb-1">
+                                                 <!-- Bouton pour supprimer la dernière ligne -->
+                                                    <i class="bx bx-minus btn btn-danger d-flex justify-content-center align-items-center"
+                                                    id="removeEnseignant" style="width: 20px !important; height:20px;"></i>
+                                                 </div>
+                                                <table id=""
+                                                    class="table table-striped table-bordered m-auto" >
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="text-center">Num</th>
+                                                            <th class="text-center">Enseignant</th>
+                                                            <th class="text-center">Groupe</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="corpsEnseignant">
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                            
                                             <button type="submit" style="float: right;" class="btn btn-primary"
                                                 id="valider">Enregistrer</button><br>
                                         </form>
@@ -337,9 +420,102 @@
 </html>
 <script src="<?= ROOT ?>/assets/mon_js/edt.js"></script>
 <script src="<?= ROOT ?>/assets/mon_js/contrainte_date_edt.js"></script>
+
 <script>
     // la recuperation des liste de promotion d'une filière lors d'une selection de fiilière
     var infoFiliere = [];
+    var num=0;
+
+    $("#removeEnseignant").click(function () {
+        var tableBody = document.querySelector("#corpsEnseignant");
+        var rows = tableBody.querySelectorAll("tr");
+        if (rows.length > 0) {
+            tableBody.removeChild(rows[rows.length - 1]);
+            num--;
+         }
+    })
+
+    $("#enseignants").change(function () {
+        if( $('#listEnseignant').hasClass('d-block')){
+            let id=$('#enseignants option:selected').data("id");
+            let isExist=false;
+
+            $("#corpsEnseignant tr").each(function(index) {
+                row = $(this);
+                if (id==row.find('.id').attr('id')) {
+                    isExist=true;
+                }
+            });
+
+            if(!isExist){
+                let enseignant=$('#enseignants option:selected').data("enseignant");
+                let newRow = document.createElement("tr");
+                 num++;
+                newRow.innerHTML = ` 
+                <td style='min-width: 40px !important;' id="${id}" class="id">
+                    <span>${num}</span>
+                </td>                  
+                <td style='min-width: 236px !important;' id="">
+                    <span>${enseignant}</span>
+                </td>
+                <td style='min-width: 236px !important;' id="">
+                    <div class='m-auto'>
+                        <input type="text" class="form-control" id="groupe">
+                    </div>
+                </td>
+                ` 
+                document.querySelector("#corpsEnseignant").appendChild(newRow);
+            }
+        }
+    })
+
+    $("#groupeSelect").change(function () {
+        if( $('#listEnseignant').hasClass('d-none')){
+            $('#listEnseignant').removeClass('d-none');
+         
+            $('#listEnseignant').addClass('d-block');
+
+            let id=$('#enseignants option:selected').data("id");
+            let isExist=false;
+
+
+           if (id!=null) {
+            $("#corpsEnseignant tr").each(function(index) {
+                row = $(this);
+                if (id==row.find('id').attr('id')) {
+                    isExist=true;
+                }
+            });
+
+             if(!isExist){
+                let enseignant=$('#enseignants option:selected').data("enseignant");
+                let newRow = document.createElement("tr");
+                num++;
+                newRow.innerHTML = ` 
+                <td style='min-width: 40px !important;' id="${id}" class="id">
+                    <span>${num}</span>
+                </td>                  
+                <td style='min-width: 236px !important;' id="">
+                    <span>${enseignant}</span>
+                </td>
+                <td style='min-width: 236px !important;' id="">
+                    <div class='m-auto'>
+                        <input type="text" class="form-control" id="groupe">
+                    </div>
+                </td>
+                ` 
+                document.querySelector("#corpsEnseignant").appendChild(newRow);
+            }
+           }
+            
+
+        }else{
+            $('#listEnseignant').removeClass('d-block');
+            $('#listEnseignant').addClass('d-none');
+            document.querySelector("#corpsEnseignant").innerHTML="";
+            num=0;
+        }
+    })
 
     $("#anneeUniversitaire").change(async function() {
 

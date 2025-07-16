@@ -90,7 +90,7 @@ function addHeure(horaireDebut, horaireFin, coursJour) {
   heureTotal = calculerHeuresModuleEdt().heureTotal;
   isExams =
     $("#table-extended-chechbox tbody").find("tr").length === 0 &&
-    heureTotal <= 40
+      heureTotal <= 40
       ? "selected"
       : "";
 
@@ -107,132 +107,97 @@ function addHeure(horaireDebut, horaireFin, coursJour) {
         </td>
         <td>
             <select class='select2 form-control tache'>
-                <option value='x' class='text-center' ${
-                  coursJour.l == "x" ? "selected" : ""
-                }>X</option>
-                <option value='cm' class='text-center' ${
-                  coursJour.l == "cm" ? "selected" : ""
-                }>CM</option>
-                <option value='td' class='text-center' ${
-                  coursJour.l == "td" ? "selected" : ""
-                }>TD</option>
-                <option value='tp' class='text-center' ${
-                  coursJour.l == "tp" ? "selected" : ""
-                }>TP</option>
-                <option value='tpe' class='text-center' ${
-                  coursJour.l == "tpe" ? "selected" : ""
-                }>TPE</option>
-                <option value='examen' class='text-center' ${
-                  coursJour.l == "examen" ? "selected" : ""
-                }>EXAMEN</option>
+                <option value='x' class='text-center' ${coursJour.l == "x" ? "selected" : ""
+    }>X</option>
+                <option value='cm' class='text-center' ${coursJour.l == "cm" ? "selected" : ""
+    }>CM</option>
+                <option value='td' class='text-center' ${coursJour.l == "td" ? "selected" : ""
+    }>TD</option>
+                <option value='tp' class='text-center' ${coursJour.l == "tp" ? "selected" : ""
+    }>TP</option>
+                <option value='tpe' class='text-center' ${coursJour.l == "tpe" ? "selected" : ""
+    }>TPE</option>
+                <option value='examen' class='text-center' ${coursJour.l == "examen" ? "selected" : ""
+    }>EXAMEN</option>
             </select>
         </td>
         <td>
             <select class='select2 form-control tache'>
-                <option value='x' class='text-center' ${
-                  coursJour.m == "x" ? "selected" : ""
-                }>X</option>
-                <option value='cm' class='text-center' ${
-                  coursJour.m == "cm" ? "selected" : ""
-                }>CM</option>
-                <option value='td' class='text-center' ${
-                  coursJour.m == "td" ? "selected" : ""
-                }>TD</option>
-                <option value='tp' class='text-center' ${
-                  coursJour.m == "tp" ? "selected" : ""
-                }>TP</option>
-                <option value='tpe' class='text-center' ${
-                  coursJour.m == "tpe" ? "selected" : ""
-                }>TPE</option>
-                <option value='examen' class='text-center' ${
-                  coursJour.m == "examen" ? "selected" : ""
-                }>EXAMEN</option>
+                <option value='x' class='text-center' ${coursJour.m == "x" ? "selected" : ""
+    }>X</option>
+                <option value='cm' class='text-center' ${coursJour.m == "cm" ? "selected" : ""
+    }>CM</option>
+                <option value='td' class='text-center' ${coursJour.m == "td" ? "selected" : ""
+    }>TD</option>
+                <option value='tp' class='text-center' ${coursJour.m == "tp" ? "selected" : ""
+    }>TP</option>
+                <option value='tpe' class='text-center' ${coursJour.m == "tpe" ? "selected" : ""
+    }>TPE</option>
+                <option value='examen' class='text-center' ${coursJour.m == "examen" ? "selected" : ""
+    }>EXAMEN</option>
             </select>
         </td>
         <td>
             <select class='select2 form-control tache'>
-                <option value='x' class='text-center' ${
-                  coursJour.mer == "x" ? "selected" : ""
-                }>X</option>
-                <option value='cm' class='text-center' ${
-                  coursJour.mer == "cm" ? "selected" : ""
-                }>CM</option>
-                <option value='td' class='text-center' ${
-                  coursJour.mer == "td" ? "selected" : ""
-                }>TD</option>
-                <option value='tp' class='text-center' ${
-                  coursJour.mer == "tp" ? "selected" : ""
-                }>TP</option>
-                <option value='tpe' class='text-center' ${
-                  coursJour.mer == "tpe" ? "selected" : ""
-                }>TPE</option>
-                <option value='examen' class='text-center' ${
-                  coursJour.mer == "examen" ? "selected" : ""
-                }>EXAMEN</option>
+                <option value='x' class='text-center' ${coursJour.mer == "x" ? "selected" : ""
+    }>X</option>
+                <option value='cm' class='text-center' ${coursJour.mer == "cm" ? "selected" : ""
+    }>CM</option>
+                <option value='td' class='text-center' ${coursJour.mer == "td" ? "selected" : ""
+    }>TD</option>
+                <option value='tp' class='text-center' ${coursJour.mer == "tp" ? "selected" : ""
+    }>TP</option>
+                <option value='tpe' class='text-center' ${coursJour.mer == "tpe" ? "selected" : ""
+    }>TPE</option>
+                <option value='examen' class='text-center' ${coursJour.mer == "examen" ? "selected" : ""
+    }>EXAMEN</option>
             </select>
         </td>
         <td>
             <select class='select2 form-control tache'>
-                <option value='x' class='text-center' ${
-                  coursJour.j == "x" ? "selected" : ""
-                }>X</option>
-                <option value='cm' class='text-center' ${
-                  coursJour.j == "cm" ? "selected" : ""
-                }>CM</option>
-                <option value='td' class='text-center' ${
-                  coursJour.j == "td" ? "selected" : ""
-                }>TD</option>
-                <option value='tp' class='text-center' ${
-                  coursJour.j == "tp" ? "selected" : ""
-                }>TP</option>
-                <option value='tpe' class='text-center' ${
-                  coursJour.j == "tpe" ? "selected" : ""
-                }>TPE</option>
-                <option value='examen' class='text-center' ${
-                  coursJour.j == "examen" ? "selected" : ""
-                }>EXAMEN</option>
+                <option value='x' class='text-center' ${coursJour.j == "x" ? "selected" : ""
+    }>X</option>
+                <option value='cm' class='text-center' ${coursJour.j == "cm" ? "selected" : ""
+    }>CM</option>
+                <option value='td' class='text-center' ${coursJour.j == "td" ? "selected" : ""
+    }>TD</option>
+                <option value='tp' class='text-center' ${coursJour.j == "tp" ? "selected" : ""
+    }>TP</option>
+                <option value='tpe' class='text-center' ${coursJour.j == "tpe" ? "selected" : ""
+    }>TPE</option>
+                <option value='examen' class='text-center' ${coursJour.j == "examen" ? "selected" : ""
+    }>EXAMEN</option>
             </select>
         </td>
         <td>
             <select class='select2 form-control tache'>
-                <option value='x' class='text-center' ${
-                  coursJour.v == "x" ? "selected" : ""
-                }>X</option>
-                <option value='cm' class='text-center' ${
-                  coursJour.v == "cm" ? "selected" : ""
-                }>CM</option>
-                <option value='td' class='text-center' ${
-                  coursJour.v == "td" ? "selected" : ""
-                }>TD</option>
-                <option value='tp' class='text-center' ${
-                  coursJour.v == "tp" ? "selected" : ""
-                }>TP</option>
-                <option value='tpe' class='text-center' ${
-                  coursJour.v == "tpe" ? "selected" : ""
-                }>TPE</option>
-                <option value='examen' class='text-center' ${
-                  coursJour.v == "examen" ? "selected" : ""
-                }>EXAMEN</option>
+                <option value='x' class='text-center' ${coursJour.v == "x" ? "selected" : ""
+    }>X</option>
+                <option value='cm' class='text-center' ${coursJour.v == "cm" ? "selected" : ""
+    }>CM</option>
+                <option value='td' class='text-center' ${coursJour.v == "td" ? "selected" : ""
+    }>TD</option>
+                <option value='tp' class='text-center' ${coursJour.v == "tp" ? "selected" : ""
+    }>TP</option>
+                <option value='tpe' class='text-center' ${coursJour.v == "tpe" ? "selected" : ""
+    }>TPE</option>
+                <option value='examen' class='text-center' ${coursJour.v == "examen" ? "selected" : ""
+    }>EXAMEN</option>
             </select>
         </td>
        
         <td>
             <select class='select2 form-control tache'>
-                <option value='x' class='text-center' ${
-                  coursJour.s == "x" && heureTotal > 40 ? "selected" : ""
-                }>X</option>
-                <option value='cm' class='text-center' ${
-                  coursJour.s == "cm" && heureTotal > 40 ? "selected" : ""
-                }>CM</option>
-                <option value='td' class='text-center' ${
-                  coursJour.s == "td" && heureTotal > 40 ? "selected" : ""
-                }>TD</option>
-                <option value='tp' class='text-center' ${
-                  coursJour.s == "tp" && heureTotal > 40 ? "selected" : ""
-                }>TP</option>
-                <option value='tpe' class='text-center' ${
-                  coursJour.s == "tpe" && heureTotal > 40 ? "selected" : ""
-                }>TPE</option>
+                <option value='x' class='text-center' ${coursJour.s == "x" && heureTotal > 40 ? "selected" : ""
+    }>X</option>
+                <option value='cm' class='text-center' ${coursJour.s == "cm" && heureTotal > 40 ? "selected" : ""
+    }>CM</option>
+                <option value='td' class='text-center' ${coursJour.s == "td" && heureTotal > 40 ? "selected" : ""
+    }>TD</option>
+                <option value='tp' class='text-center' ${coursJour.s == "tp" && heureTotal > 40 ? "selected" : ""
+    }>TP</option>
+                <option value='tpe' class='text-center' ${coursJour.s == "tpe" && heureTotal > 40 ? "selected" : ""
+    }>TPE</option>
                 <option value='examen' class='text-center' ${isExams} >EXAMEN</option>
             </select>
         </td>
@@ -347,7 +312,7 @@ function classesAnneeUniversitaire(anneeUniversitaire) {
         promotionContainer.append(option);
       });
     },
-    error: function () {},
+    error: function () { },
   });
 }
 
@@ -379,11 +344,9 @@ function modulesSemestre(idSemestre, infoFiliere, idModule = "") {
     if (ue.id_parcours == idSemestre) {
       modules.forEach((module) => {
         if (module.id_ue == ue.id_ue) {
-          const option = `<option value='${
-            module.id_ue_module
-          }' class='text-center' ${
-            module.id_ue_module == idModule ? "selected" : ""
-          }>
+          const option = `<option value='${module.id_ue_module
+            }' class='text-center' ${module.id_ue_module == idModule ? "selected" : ""
+            }>
           ${module.nom_module}(${module.code_module})
           </option>`;
           mouduleContainer.append(option);
@@ -454,7 +417,22 @@ function ajouterEdt(url = ROOT_EDT + "/ajouter_EDT", action = "ajouter_EDT") {
   const idPromotion = $("#promotions option:selected").val();
   const idSemestre = $("#promotions option:selected").data("semestre");
   const idModule = $("#modules").val();
-  const idEnseignant = $("#enseignants").val();
+  var enseignants = [];
+  if ($('#listEnseignant').hasClass('d-block')) {
+    $("#corpsEnseignant tr").each(function (index) {
+      row = $(this);
+      enseignants.push({
+        enseignant: row.find('.id').attr('id'),
+        groupe: row.find('#groupe').val()
+      });
+    });
+  } else {
+    enseignants.push({
+      enseignant: $("#enseignants").val(),
+      groupe: ""
+    });
+  }
+
   const idSalle = $("#salles").val();
   const dateDebut = $("#dateDebut").val();
   const heureTotal = parseInt($("#vht").val(), 10);
@@ -464,7 +442,6 @@ function ajouterEdt(url = ROOT_EDT + "/ajouter_EDT", action = "ajouter_EDT") {
     idPromotion: idPromotion,
     idSemestre: idSemestre,
     idModule: idModule,
-    idEnseignant: idEnseignant,
     idSalle: idSalle,
     dateDebut: dateDebut,
     heureTotal: heureTotal,
@@ -508,6 +485,7 @@ function ajouterEdt(url = ROOT_EDT + "/ajouter_EDT", action = "ajouter_EDT") {
       action: action,
       edt: edt,
       horaires: horaires,
+      enseignants: enseignants,
     },
     success: function (response) {
       console.log(response);
@@ -541,6 +519,7 @@ function ajouterEdt(url = ROOT_EDT + "/ajouter_EDT", action = "ajouter_EDT") {
           $(".champ").val("");
           $("#modules").val("");
         });
+        $("#corpsEnseignant tr").html("");
       }
       if (response.includes("primary") && action == "editer_edt") {
         window.location.href = ROOT_EDT + "/";
@@ -625,7 +604,7 @@ function trierListeEdt(idFiliere, idPromotion, idSemestre) {
       });
     },
 
-    error: function (error) {},
+    error: function (error) { },
   });
   // Fin de l'envoi des données avec Ajax
 }
@@ -743,6 +722,6 @@ function getDefaultEnseignantAndSalleModule(idFiliere, idModule) {
         $("#enseignants").addClass("select2");
       }
     },
-    error: function (error) {},
+    error: function (error) { },
   });
 }

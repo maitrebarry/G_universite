@@ -159,20 +159,20 @@ $modules = $infoFiliere['modules'];
 
                         <div class="col-12 w-100  pb-1 d-flex justify-content-center align-items-center row">
                             <?php foreach ($semestres as $semestre): ?>
-                                <<<<<<< HEAD <div class="col-2 d-flex justify-content-center align-items-center">
+                              <div class="col-2 d-flex justify-content-center align-items-center">
                                     <input type="checkbox" class="form-check showOption"
                                         data-id="s_<?php echo $semestre->id_parcours ?>" checked>
                                     <label class="form-label pl-2" for="s_<?php echo $semestre->id_parcours ?>"
                                         style="font-size: 16px;"><?php echo $semestre->sigle_semestre ?></label>
                         </div>
-                        =======
+                        
                         <div class="col-2 d-flex justify-content-center align-items-center">
                             <input type="checkbox" class="form-check showOption"
                                 data-id="s_<?php echo $semestre->id_parcours ?>" checked>
                             <label class="form-label pl-2" for="s_<?php echo $semestre->id_parcours ?>"
                                 style="font-size: 16px;"><?php echo $semestre->sigle_semestre ?></label>
                         </div>
-                        >>>>>>> 7d93232ab9b020409746aee02548156ca6dffcc1
+                       
                     <?php endforeach ?>
                     </div>
 
@@ -208,7 +208,7 @@ $modules = $infoFiliere['modules'];
                                         </div>
 
                                         <?php foreach ($semestres as $semestre): ?>
-                                            <<<<<<< HEAD <?php $nbrUe = 0;
+                                             <?php $nbrUe = 0;
                                                             $nbrModule = 0;
                                                             $totalCredit = 0;
                                                             $totalHeure = 0 ?> <!-- SEMESTRE -->
@@ -388,7 +388,7 @@ $modules = $infoFiliere['modules'];
 
                                                     </table>
                                                 </div>
-                                                =======
+                                               
                                                 <?php $nbrUe = 0;
                                                 $nbrModule = 0;
                                                 $totalCredit = 0;
@@ -570,7 +570,7 @@ $modules = $infoFiliere['modules'];
 
                                                     </table>
                                                 </div>
-                                                >>>>>>> 7d93232ab9b020409746aee02548156ca6dffcc1
+                                             
                                             <?php endforeach ?>
                                     </div>
 

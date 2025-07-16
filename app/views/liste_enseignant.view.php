@@ -101,37 +101,24 @@
                                                         class="table table-striped table-bordered" style="width:100%">
                                                         <thead>
                                                             <tr>
-                                                                <th>
-                                                                    <div class="checkbox">
-                                                                        <input type="checkbox" class="checkbox-input"
-                                                                            id="allSelectContractuels">
-                                                                        <label for="allSelectContractuels"></label>
-                                                                    </div>
-                                                                </th>
+                                                              
                                                                 <th>PRÉNOM & NOM </th>
+                                                                <th>MATRICULE</th>
                                                                 <th>TÉLÉPHONE</th>
                                                                 <th>DIPLÔME</th>
                                                                 <th>CV</th>
+                                                                <th>Contrat</th>
                                                                 <th width='1%'>OPÉRATION</th>
                                                             </tr>
                                                         </thead>
 
                                                         <tbody>
-                                                            <?php $index = 0 ?>
+                                                            
                                                             <?php foreach ($enseignat_VCT as $enseignant): ?>
-                                                            <tr>
-                                                                <td>
-                                                                    <div class="checkbox">
-                                                                        <input type="checkbox"
-                                                                            class="checkbox-input rowCheckboxContractuels"
-                                                                            id="contractCheckbox<?= $index ?>"
-                                                                            data-id="<?= $enseignant->enseignant_id ?>"
-                                                                            data-name="<?= htmlspecialchars($enseignant->enseignant_prenom . ' ' . $enseignant->enseignant_nom, ENT_QUOTES, 'UTF-8') ?>">
-                                                                        <label
-                                                                            for="contractCheckbox<?= $index ?>"></label>
-                                                                    </div>
-                                                                </td>
+                                                            <tr>                               
                                                                 <td><?= htmlspecialchars($enseignant->enseignant_prenom . ' ' . $enseignant->enseignant_nom, ENT_QUOTES, 'UTF-8'); ?>
+                                                                </td>
+                                                                 <td><?= htmlspecialchars($enseignant->enseignant_matricule, ENT_QUOTES, 'UTF-8'); ?>
                                                                 </td>
                                                                 <td><?= htmlspecialchars($enseignant->enseignant_telephone, ENT_QUOTES, 'UTF-8'); ?>
                                                                 </td>
@@ -146,6 +133,17 @@
                                                                     <?php else: ?>
                                                                     <i class="bx bx-block"
                                                                         title="Aucun CV disponible"></i>
+                                                                    <?php endif; ?>
+                                                                </td>
+                                                                <td>
+                                                                    <?php if (!empty($enseignant->contrat)): ?>
+                                                                    <a href="<?= ROOT ?><?= $enseignant->contrat ?>"
+                                                                        target="_blank">
+                                                                        <i class="bx bx-file" title="Voir le Contrat"></i>
+                                                                    </a>
+                                                                    <?php else: ?>
+                                                                    <i class="bx bx-block"
+                                                                        title="Aucun Contrat disponible"></i>
                                                                     <?php endif; ?>
                                                                 </td>
                                                                 <td class="text-center">
@@ -186,28 +184,19 @@
                                                                         </div>
                                                                     </div>
                                                                 </td>
-                                                            </tr>
-                                                            <?php $index++ ?>
+                                                            </tr>                                              
                                                             <?php endforeach; ?>
                                                         </tbody>
                                                     </table>
                                                 </div>
                                             </div>
-
                                             <!-- Liste des enseignants permanents -->
                                             <div class="tab-pane" id="vacataires" role="tabpanel">
                                                 <div class="table-responsive">
                                                     <table id="table_vacataires"
                                                         class="table table-striped table-bordered" style="width:100%">
                                                         <thead>
-                                                            <tr>
-                                                                <th>
-                                                                    <div class="checkbox">
-                                                                        <input type="checkbox" class="checkbox-input"
-                                                                            id="allSelect">
-                                                                        <label for="allSelect"></label>
-                                                                    </div>
-                                                                </th>
+                                                            <tr>                                                          
                                                                 <th>PRÉNOM & NOM </th>
                                                                 <th>MATRICULE</th>
                                                                 <th>GRADE</th>
@@ -216,20 +205,9 @@
                                                                 <th width='1%'>OPÉRATION</th>
                                                             </tr>
                                                         </thead>
-                                                        <tbody>
-                                                            <?php $index = 0 ?>
+                                                        <tbody>                                                            
                                                             <?php foreach ($enseignat_CDI as $enseignant): ?>
                                                             <tr>
-                                                                <td>
-                                                                    <div class="checkbox">
-                                                                        <input type="checkbox"
-                                                                            class="checkbox-input rowCheckbox"
-                                                                            id="checkbox<?= $index ?>"
-                                                                            data-id="<?= $enseignant->enseignant_id ?>"
-                                                                            data-name="<?= htmlspecialchars($enseignant->enseignant_prenom . ' ' . $enseignant->enseignant_nom, ENT_QUOTES, 'UTF-8') ?>">
-                                                                        <label for="checkbox<?= $index ?>"></label>
-                                                                    </div>
-                                                                </td>
                                                                 <td><?= htmlspecialchars($enseignant->enseignant_prenom . ' ' . $enseignant->enseignant_nom, ENT_QUOTES, 'UTF-8'); ?>
                                                                 </td>
                                                                 <td><?= htmlspecialchars($enseignant->enseignant_matricule, ENT_QUOTES, 'UTF-8'); ?>
@@ -279,7 +257,7 @@
                                                                     </div>
                                                                 </td>
                                                             </tr>
-                                                            <?php $index++ ?>
+                                                            
                                                             <?php endforeach; ?>
                                                         </tbody>
                                                     </table>
@@ -316,7 +294,7 @@
     <script>
     var ROOT = "<?= ROOT ?>";
     </script>
-    <script>
+    <!-- <script>
     document.addEventListener("DOMContentLoaded", function() {
         function handleCheckboxSelection(selectId, checkboxClass, printButtonId) {
             const allSelect = document.getElementById(selectId);
@@ -393,7 +371,7 @@
         handleCheckboxSelection("allSelect", ".rowCheckbox", "print");
         handleCheckboxSelection("allSelectContractuels", ".rowCheckboxContractuels", "print");
     });
-    </script>
+    </script> -->
     <script src="<?= ROOT ?>/assets/mon_js/pdfedIndividuel.js"></script>
 </body>
 

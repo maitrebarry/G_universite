@@ -14,7 +14,7 @@ div {
 }
 
 td {
-    padding: 15px 5px !important;
+    padding: 10px 5px !important;
 }
 </style>
 <div class="card card-animated-border-top m-auto mt-0" id="edt" style="height:100%; overflow:visible"
@@ -32,7 +32,7 @@ td {
                 Formation Initiale
             </span>
         </h4>
-        <h5 class="text-center">
+        <h5 class="text-center text-uppercase">
             Edt du
             <span class=" h6 au "><?php echo $infosEdt->edt->date_debut ?> au
                 <?php echo $infosEdt->edt->date_fin ?></span>
@@ -92,7 +92,7 @@ td {
                     <tbody>
                         <?php foreach ($horairesEdt as $horaire): ?>
                         <tr>
-                            <td>
+                            <td style='min-width: 160px !important;'>
                                 <div class='row m-auto'>
                                     <div class='col-sm-6'>
                                         <h6><?php echo substr($horaire->heure_debut, 0, 5) ?>
@@ -105,7 +105,7 @@ td {
                                 </div>
                             </td>
                             <?php foreach ($horaire->taches as $tache): ?>
-                            <td>
+                            <td style="font-size:13px">
                                 <?php if (strtoupper($tache->type_tache) != "X"): ?>
                                 <span class=" text-center d-block text-bold-6 00">
                                     <?php echo (strlen($infosEdt->module->nom_module) < 20) ? strtoupper($infosEdt->module->nom_module) : strtoupper($infosEdt->module->sigle_module) ?>
@@ -132,38 +132,50 @@ td {
                 </h6>
             </div>
             <?php endif ?>
-            <div>
-                <h6 class="text-bold-600">
-                    <span class=" text-uppercase"><?php echo $infosEdt->promotion->sigle_filiere ?>
-                        - </span>
-                    <span class=" text-capitalize">
-                        <?php echo $infosEdt->edt->enseignant_prenom . ' ' . $infosEdt->edt->enseignant_nom ?>
-                    </span>
-                </h6>
-            </div>
-            <div class=" text-right mr-2">
-                <div class="d-flex justify-content-end ">
-                    <h6 class=" text-muted text-right">Segou, le
-                        <?php echo date('d-m-Y') ?></h6>
-                </div>
-                <div class="">
-                    <h6 class=" text-bold-600 text-center d-flex justify-content-end w-100">
-                        Le
-                        Chef de DER
-                        <?php echo (isset($_SESSION['sigle_departement'])) ? strtoupper($_SESSION['sigle_departement']) : "" ?>
-                    </h6>
-                    <h6 class=" d-flex text-center justify-content-end w-100">
-                        <img src="<?= ROOT ?><?= $_SESSION['signature'] ?>" alt="user image" class="d-block rounded  "
-                            style="width: 150px; max-height: 60px;" />
+                <div>
+                    <h6 class="text-bold-200">
+                        <div class="d-flex justify-content-arround mb-1">
+                            <?php foreach ($enseignants as $enseignant): ?>
+                                <span class=" text-capitalize d-block mr-1">
+                                    
+                                    <?php echo $enseignant->enseignant_prenom . ' ' . $enseignant->enseignant_nom ?>
+                                    <?php if(!empty(trim($enseignant->groupe))): ?>
+                                    (
+                                    <b> <?php echo $enseignant->groupe ?></b>
+                                    )
+                                    <?php endif ?>
+                            <?php endforeach ?>
+                        </div>
                     </h6>
                 </div>
-                <div class=" d-flex justify-content-end" style="min-width:100%; overflow:visible">
-                    <h6 class=" text-right">Dr
-                        <?php echo (isset($_SESSION['nom_prenom'])) ? strtoupper($_SESSION['nom_prenom']) : "" ?>
-                        <br>
-                        <?php echo (isset($_SESSION['nom_grade'])) ? strtoupper($_SESSION['nom_grade']) : "" ?>
-                    </h6>
-                </div>
+                <div class=" text-right mr-2" style="min-width:100%">
+                    <div class="d-flex justify-content-end " style="min-width:100%">
+                        <h6 class=" text-muted text-right" style="min-width:100%">Segou, le
+                            <?php echo date('d-m-Y') ?></h6>
+                    </div>
+                    <div class="" style="min-width:100%">
+                        <h6 class=" text-bold-600 text-center d-flex justify-content-end w-100"
+                            style="min-width:100%">
+                            Le
+                            Chef de DER
+                            <?php echo (isset($_SESSION['sigle_departement'])) ? strtoupper($_SESSION['sigle_departement']) : "" ?>
+                        </h6>
+                        <h6 class=" d-flex text-center justify-content-end w-100"
+                            style="min-width:100%">
+                            <img src="<?= ROOT ?><?= $_SESSION['signature'] ?>" alt="user image"
+                                class="d-block rounded  "
+                                style="width: 150px; max-height: 60px;" />
+                        </h6>
+                    </div>
+                    <div class=" d-flex justify-content-end" style="min-width:100%">
+                        <h6 class=" text-right" style="min-width:100%">Dr
+                            <?php echo (isset($_SESSION['nom_prenom'])) ? strtoupper($_SESSION['nom_prenom']) : "" ?>
+                            <br>
+                            <i style="font-size:11px"> 
+                                <?php echo (isset($_SESSION['nom_grade'])) ? strtoupper($_SESSION['nom_grade']) : "" ?>
+                            </i>
+                        </h6>
+                    </div>
             </div>
         </div>
     </div>

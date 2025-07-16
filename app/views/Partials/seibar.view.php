@@ -58,7 +58,6 @@ $current_page = basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
             <!-- Enseignants -->
             <li class="nav-item <?= ($current_page == 'Enseignants') ? 'active' : '' ?>">
                 <a class="nav-link" href="<?= ROOT ?>/Enseignants">
-
                     <i class="bx bx-user"></i>
                     <span class="menu-title">Enseignants</span>
                 </a>
@@ -80,21 +79,33 @@ $current_page = basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
                     <li class="<?= ($current_page == 'liste_note') ? 'active' : '' ?>">
                         <a href="<?= ROOT ?>/Notes/liste_note">
                             <i class="bx bx-right-arrow-alt"></i>
-                            <span class="menu-item">Résultats Annuels</span>
+                            <span class="menu-item">Résultat Annuelles</span>
                         </a>
                     </li>
                 
                 </ul>
             </li>
-
-            <!-- Emploi du temps -->
-            <li class="nav-item <?= ($current_page == 'Emploi_du_temps') ? 'active' : '' ?>">
+            <li class="nav-item <?= (strpos($_SERVER['REQUEST_URI'], 'Emploi_du_temps') !== false) ?  : '' ?>">
                 <a class="nav-link" href="<?= ROOT ?>/Emploi_du_temps">
-                    <i class="bx bx-calendar"></i> <!-- Calendrier pour l'emploi du temps -->
-                    <span class="menu-title">EDT</span>
+                    <i class="bx bx-book"></i> 
+                    <span class="menu-title">Emploi du temps</span>
                 </a>
+                <ul class="menu-content">
+                    <li class="<?= ($current_page == 'Emploi_du_temps') ? 'active' : '' ?>">
+                        <a href="<?= ROOT ?>/Emploi_du_temps">
+                            <i class="bx bx-right-arrow-alt"></i>
+                            <span class="menu-item">EDT</span>
+                        </a>
+                    </li>
+                    <li class="<?= ($current_page == 'listeEDT_individuels_par_periode') ? 'active' : '' ?>">
+                        <a href="<?= ROOT ?>/Enseignants/listeEDT_individuels_par_periode">
+                            <i class="bx bx-right-arrow-alt"></i>
+                            <span class="menu-item">EDT INDIVIDUEL</span>
+                        </a>
+                    </li>
+                
+                </ul>
             </li>
-
             <!-- Étudiants (Sous-menus) -->
             <li class="nav-item <?= (strpos($_SERVER['REQUEST_URI'], 'Etudiants') !== false) ?: '' ?>">
                 <a class="nav-link" href="#">

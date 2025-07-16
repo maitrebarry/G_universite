@@ -12,7 +12,7 @@
             <th>Filière</th>
             <th>Promotion</th>
             <th>Module</th>
-            <th class="d-none d-lg-table-cell">Professeur</th>
+            <th class="d-none d-lg-table-cell">Date</th>
             <th class=" d-none d-xl-table-cell">Salle</th>
             <th class=" d-none d-xxl-table-cell">Date Debut</th>
             <th>Action</th>
@@ -31,7 +31,7 @@
                     <div class="checkbox">
                         <input type="checkbox" class="checkbox-input isSelected" id="checkbox<?= $index ?>"
                             data-id="<?php echo $edtInfo->id_edt ?>"
-                            data-nom="<?php echo 'edt-' . $module->sigle_module . '-' . $promotion->sigle_filiere . '-' .  $promotion->sigle_semestre . '-' . $promotion->annee_universitaire . '_' . strtoupper($edtInfo->enseignant_nom); ?>"
+                            data-nom="<?php echo 'EDT-' . $module->sigle_module . '-' . $promotion->sigle_filiere . '-' .  $promotion->sigle_semestre . '-' . $promotion->annee_universitaire ; ?>"
                             data-statut="<?php echo $edtInfo->statut ?>">
 
                         <label for="checkbox<?= $index ?>"></label>
@@ -39,7 +39,7 @@
                 </td>
                 <td>
                     <a class="h6 d-flex text-bold-600 imprimerEdt" href="#" data-id="<?php echo $edtInfo->id_edt ?>"
-                        data-nom="<?php echo 'edt-' . $module->sigle_module . '-' . $promotion->sigle_filiere . '-' .  $promotion->sigle_semestre . '-' . $promotion->annee_universitaire . '_' . strtoupper($edtInfo->enseignant_nom); ?>">
+                        data-nom="<?php echo 'EDT-' . $module->sigle_module . '-' . $promotion->sigle_filiere . '-' .  $promotion->sigle_semestre . '-' . $promotion->annee_universitaire ; ?>">
                         <?php if ($edtInfo->statut == 0): ?>
                             <div class="badge badge-warning badge-icon">
                                 <span>x</span>
@@ -60,7 +60,7 @@
                     <?php echo strtoupper($module->nom_module) ?>
                 </td>
                 <td class="h6 text-bold-700 text-italic d-none d-lg-table-cell" style="font-size: 13px;">
-                    <?php echo strtoupper($edtInfo->enseignant_prenom . ' ' . $edtInfo->enseignant_nom) ?>
+                    <?php echo $edtInfo->date_debut?>
                 </td>
 
                 <td class="d-none d-xl-table-cell">
@@ -88,7 +88,7 @@
                                         class="bx bx-edit-alt mr-1"></i> Editer</a>
                             <?php endif ?>
                             <a class="dropdown-item imprimerEdt" href="#" data-id="<?php echo $edtInfo->id_edt ?>"
-                                data-nom="<?php echo 'edt-' . $module->sigle_module . '-' . $promotion->sigle_filiere . '-' .  $promotion->sigle_semestre . '-' . $promotion->annee_universitaire . '_' . strtoupper($edtInfo->enseignant_nom); ?>">
+                                data-nom="<?php echo 'EDT-' . $module->sigle_module . '-' . $promotion->sigle_filiere . '-' .  $promotion->sigle_semestre . '-' . $promotion->annee_universitaire ; ?>">
                                 <i class=" bx bx-printer mr-1"></i>Imprimer</a>
 
                         </div>
