@@ -286,7 +286,7 @@ async function infosFiliere(idFiliere, source = null) {
   } catch (error) {
     console.error(error);
   }
-  var infoFiliere;
+  var infoFiliere; 
 }
 
 // recuperer les classes d'une annnée universitaire
@@ -363,6 +363,7 @@ function infoModule(idModule, infoFiliere, makeEdt = true) {
     modules.forEach((module) => {
       if (module.id_ue_module == idModule) {
         $("#infoModule").removeClass("d-none");
+        $("#infoModule").addClass("d-flex justify-content-end");
         $("#infoModule").attr("display", "block");
         $(".cm").val(module.cm);
         $(".td").val(module.td);
