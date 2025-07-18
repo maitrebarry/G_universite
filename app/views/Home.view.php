@@ -1,4 +1,8 @@
 <style>
+    .badge.bg-pink {
+        background-color: #e83e8c;
+    }
+
     .card-animated-border-top1 {
         border-top: 3px solid;
         border-image-slice: 1;
@@ -317,289 +321,238 @@
             <!-- SECTION CHEF DER (GEA OU ST) -->
             <!-- ==================================== -->
             <?php elseif ($_SESSION['role'] === 'Chef DR'): ?>
-            <section id="dashboard-chef-der" class="role-specific">
-                <div class="row mt-3">
-                    <!-- Cartes Chef DER -->
-                    <div class="row col-12 mt-2">
-                       <!-- Étudiants L1 -->
-                        <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
-                            <div class="card card-animated-border-top1">
-                                <div class="card-body d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <p class="text-muted mb-1">Étudiants L1</p>
-                                        <h4 class="text-primary mb-0"><?= $statsNiveaux->l1 ?></h4>
-                                        <small class="text-muted">
-                                            <?php 
-                                            $totalEtudiants = $statsNiveaux->l1 + $statsNiveaux->l2 + $statsNiveaux->l3;
-                                            echo $totalEtudiants > 0 ? round(($statsNiveaux->l1 / $totalEtudiants) * 100, 1).'%' : '0%';
-                                            ?> du total
-                                        </small>
+                <section id="dashboard-chef-der" class="role-specific">
+                    <div class="row mt-3">
+
+                        <!-- ✅ Statistiques principales -->
+                        <div class="row col-12 mt-2">
+                            <?php
+                            $totalEtudiants = $statsNiveaux->l1 + $statsNiveaux->l2 + $statsNiveaux->l3;
+                            $totalGeneral = $totalEtudiants + $statsNiveaux->unregistered;
+                            ?>
+                            <!-- Étudiants L1 -->
+                            <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
+                                <div class="card card-animated-border-top1">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <p class="text-muted mb-1">Étudiants L1</p>
+                                            <h4 class="text-primary mb-0"><?= $statsNiveaux->l1 ?></h4>
+                                            <small><?= $totalEtudiants > 0 ? round(($statsNiveaux->l1 / $totalEtudiants) * 100, 1).'%' : '0%' ?> du total</small>
+                                        </div>
+                                        <div class="widget-icon bg-primary text-white"><i class="fa-solid fa-users"></i></div>
                                     </div>
-                                    <div class="widget-icon bg-primary text-white">
-                                        <i class="fa-solid fa-users"></i>
+                                </div>
+                            </div>
+
+                            <!-- Étudiants L2 -->
+                            <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
+                                <div class="card card-animated-border-top1">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <p class="text-muted mb-1">Étudiants L2</p>
+                                            <h4 class="text-success mb-0"><?= $statsNiveaux->l2 ?></h4>
+                                            <small><?= $totalEtudiants > 0 ? round(($statsNiveaux->l2 / $totalEtudiants) * 100, 1).'%' : '0%' ?> du total</small>
+                                        </div>
+                                        <div class="widget-icon bg-success text-white"><i class="fa-solid fa-users"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Étudiants L3 -->
+                            <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
+                                <div class="card card-animated-border-top1">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <p class="text-muted mb-1">Étudiants L3</p>
+                                            <h4 class="text-info mb-0"><?= $statsNiveaux->l3 ?></h4>
+                                            <small><?= $totalEtudiants > 0 ? round(($statsNiveaux->l3 / $totalEtudiants) * 100, 1).'%' : '0%' ?> du total</small>
+                                        </div>
+                                        <div class="widget-icon bg-info text-white"><i class="fa-solid fa-users"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Non-inscrits -->
+                            <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
+                                <div class="card card-animated-border-top1">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <p class="text-muted mb-1">Non-inscrits</p>
+                                            <h4 class="text-danger mb-0"><?= $statsNiveaux->unregistered ?></h4>
+                                            <small><?= $totalGeneral > 0 ? round(($statsNiveaux->unregistered / $totalGeneral) * 100, 1).'%' : '0%' ?> du total</small>
+                                        </div>
+                                        <div class="widget-icon bg-danger text-white"><i class="fa-solid fa-user-slash"></i></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Étudiants L2 -->
-                        <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
-                            <div class="card card-animated-border-top1">
-                                <div class="card-body d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <p class="text-muted mb-1">Étudiants L2</p>
-                                        <h4 class="text-success mb-0"><?= $statsNiveaux->l2 ?></h4>
-                                        <small class="text-muted">
-                                            <?php 
-                                            $totalEtudiants = $statsNiveaux->l1 + $statsNiveaux->l2 + $statsNiveaux->l3;
-                                            echo $totalEtudiants > 0 ? round(($statsNiveaux->l2 / $totalEtudiants) * 100, 1).'%' : '0%';
-                                            ?> du total
-                                        </small>
-                                    </div>
-                                    <div class="widget-icon bg-success text-white">
-                                        <i class="fa-solid fa-users"></i>
+                        <!-- ✅ Enseignants, Cours, Taux, Examens -->
+                        <div class="row col-12 mt-2">
+                            <!-- Professeurs -->
+                            <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
+                                <div class="card card-animated-border-top1">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <p class="text-muted mb-1">Professeurs</p>
+                                            <h4 class="text-warning mb-0"><?= $statsEnseignants->total ?? 0 ?></h4>
+                                            <small><?= $statsEnseignants->actifs ?? 0 ?> actifs</small>
+                                        </div>
+                                        <div class="widget-icon bg-warning text-white"><i class="fa-solid fa-chalkboard-user"></i></div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Étudiants L3 -->
-                        <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
-                            <div class="card card-animated-border-top1">
-                                <div class="card-body d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <p class="text-muted mb-1">Étudiants L3</p>
-                                        <h4 class="text-info mb-0"><?= $statsNiveaux->l3 ?></h4>
-                                        <small class="text-muted">
-                                            <?php 
-                                            $totalEtudiants = $statsNiveaux->l1 + $statsNiveaux->l2 + $statsNiveaux->l3;
-                                            echo $totalEtudiants > 0 ? round(($statsNiveaux->l3 / $totalEtudiants) * 100, 1).'%' : '0%';
-                                            ?> du total
-                                        </small>
-                                    </div>
-                                    <div class="widget-icon bg-info text-white">
-                                        <i class="fa-solid fa-users"></i>
+                            <!-- Cours programmés -->
+                            <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
+                                <div class="card card-animated-border-top1">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <p class="text-muted mb-1">Cours programmés</p>
+                                            <h4 class="text-purple mb-0"><?= $coursProgrammes->total ?? 0 ?></h4>
+                                            <small><?= $coursProgrammes->confirmes ?? 0 ?> confirmés</small>
+                                        </div>
+                                        <div class="widget-icon bg-purple text-white"><i class="fa-solid fa-calendar-check"></i></div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Non-inscrits -->
-                        <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
-                            <div class="card card-animated-border-top1">
-                                <div class="card-body d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <p class="text-muted mb-1">Non-inscrits</p>
-                                        <h4 class="text-danger mb-0"><?= $statsNiveaux->unregistered ?></h4>
-                                        <small class="text-muted">
-                                            <?php 
-                                            $totalGeneral = $statsNiveaux->l1 + $statsNiveaux->l2 + $statsNiveaux->l3 + $statsNiveaux->unregistered;
-                                            echo $totalGeneral > 0 ? round(($statsNiveaux->unregistered / $totalGeneral) * 100, 1).'%' : '0%';
-                                            ?> du total
-                                        </small>
-                                    </div>
-                                    <div class="widget-icon bg-danger text-white">
-                                        <i class="fa-solid fa-user-slash"></i>
+                            <!-- Taux de réussite -->
+                            <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
+                                <div class="card card-animated-border-top1">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <p class="text-muted mb-1">Taux de réussite</p>
+                                            <h4 class="text-teal mb-0"><?= ($tauxReussite->total ?? 0) > 0 ? round($tauxReussite->taux ?? 0, 1) : 0 ?>%</h4>
+                                            <small><?= $tauxReussite->reussis ?? 0 ?>/<?= $tauxReussite->total ?? 0 ?> étudiants</small>
+                                        </div>
+                                        <div class="widget-icon bg-teal text-white"><i class="fa-solid fa-chart-line"></i></div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <!-- Deuxième ligne Chef DER -->
-                    <div class="row col-12 mt-2">
-                        <!-- Professeurs -->
-                        <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
-                            <div class="card card-animated-border-top1">
-                                <div class="card-body d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <p class="text-muted mb-1">Professeurs</p>
-                                        <h4 class="text-warning mb-0"><?= $statsEnseignants->total ?? 0 ?></h4>
-                                        <small class="text-muted"><?= $statsEnseignants->actifs ?? 0 ?> actifs</small>
-                                    </div>
-                                    <div class="widget-icon bg-warning text-white">
-                                        <i class="fa-solid fa-chalkboard-user"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Cours programmés -->
-                        <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
-                            <div class="card card-animated-border-top1">
-                                <div class="card-body d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <p class="text-muted mb-1">Cours programmés</p>
-                                        <h4 class="text-purple mb-0"><?= $coursProgrammes->total ?? 0 ?></h4>
-                                        <small class="text-muted"><?= $coursProgrammes->confirmes ?? 0 ?> confirmés</small>
-                                    </div>
-                                    <div class="widget-icon bg-purple text-white">
-                                        <i class="fa-solid fa-calendar-check"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                      <!-- Taux de réussite -->
-                        <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
-                            <div class="card card-animated-border-top1">
-                                <div class="card-body d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <p class="text-muted mb-1">Taux de réussite</p>
-                                        <h4 class="text-teal mb-0">
-                                            <?= ($tauxReussite->total ?? 0) > 0 ? round($tauxReussite->taux ?? 0, 1) : 0 ?>%
-                                        </h4>
-                                        <small class="text-muted">
-                                            <?= $tauxReussite->reussis ?? 0 ?>/<?= $tauxReussite->total ?? 0 ?> étudiants
-                                        </small>
-                                    </div>
-                                    <div class="widget-icon bg-teal text-white">
-                                        <i class="fa-solid fa-chart-line"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Examens à venir -->
-                           <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
+                            <!-- Examens à venir -->
+                            <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
                                 <div class="card card-animated-border-top1">
                                     <div class="card-body d-flex justify-content-between align-items-center">
                                         <div>
                                             <p class="text-muted mb-1">Examens à venir</p>
                                             <h4 class="text-pink mb-0"><?= $examensAVenir ?></h4>
-                                            <small class="text-muted">30 prochains jours</small>
+                                            <small>30 prochains jours</small>
                                         </div>
-                                        <div class="widget-icon bg-pink text-white">
-                                            <i class="fa-solid fa-clipboard-list"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                    </div>
-                        <!-- Tableau des examens à venir -->
-                <div class="row col-12 mt-2">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4 class="card-title">Détails des examens à venir</h4>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>Date</th>
-                                                <th>Heure</th>
-                                                <th>Matière</th>
-                                                <th>Niveau</th>
-                                                <th>Salle</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php if (!empty($examensDetails)): ?>
-                                                <?php foreach ($examensDetails as $examen): ?>
-                                                <tr>
-                                                    <td><?= $examen->date_examen ?></td>
-                                                    <td><?= $examen->heure ?></td>
-                                                    <td><?= $examen->module ?></td>
-                                                    <td><?= $examen->niveau ?></td>
-                                                    <td><?= $examen->salle ?></td>
-                                                </tr>
-                                                <?php endforeach; ?>
-                                            <?php else: ?>
-                                                <tr>
-                                                    <td colspan="5" class="text-center">Aucun examen prévu dans les 30 prochains jours</td>
-                                                </tr>
-                                            <?php endif; ?>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                    <!-- Graphiques Chef DER -->
-                    <div class="row col-12 mt-3">
-                        <!-- Répartition par niveau -->
-                        <div class="col-lg-6 col-md-12">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h4 class="card-title">Répartition par niveau</h4>
-                                </div>
-                                <div class="card-body">
-                                    <div class="chart-container">
-                                        <canvas id="levelChart" height="300"></canvas>
+                                        <div class="widget-icon bg-pink text-white"><i class="fa-solid fa-clipboard-list"></i></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Répartition par genre -->
-                        <div class="col-lg-6 col-md-12">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h4 class="card-title">Répartition par genre</h4>
-                                </div>
-                                <div class="card-body">
-                                    <div class="chart-container">
-                                        <canvas id="genderChart" height="300"></canvas>
+                        <!-- ✅ Graphiques -->
+                        <div class="row col-12 mt-3">
+                            <!-- Répartition par Niveau -->
+                            <div class="col-lg-6 col-md-12 mb-3">
+                                <div class="card shadow-sm">
+                                    <div class="card-header bg-primary text-white">
+                                        <i class="fa-solid fa-layer-group me-2"></i> Répartition des étudiants par niveau
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <canvas id="levelChart" style="max-height: 300px;"></canvas>
+                                        <p class="mt-3"><strong>Total inscrits :</strong> <?= $totalEtudiants ?></p>
+                                        <p>
+                                            <span class="badge bg-primary">L1 : <?= $statsNiveaux->l1 ?></span>
+                                            <span class="badge bg-success">L2 : <?= $statsNiveaux->l2 ?></span>
+                                            <span class="badge bg-info">L3 : <?= $statsNiveaux->l3 ?></span>
+                                        </p>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <!-- Tableau des cours programmés -->
-                    <div class="row col-12 mt-2">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h4 class="card-title">Cours programmés cette semaine</h4>
-                                </div>
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>Date</th>
-                                                <th>Heure</th>
-                                                <th>Matière</th>
-                                                <th>Niveau</th>
-                                                <th>Professeur</th>
-                                                <th>Salle</th>
-                                                <th>Statut</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php if (!empty($coursProgrammesListe)): ?>
-                                                <?php foreach ($coursProgrammesListe as $cours): ?>
-                                                <tr>
-                                                    <td><?= $cours->date_cours ?></td>
-                                                    <td><?= $cours->heure ?></td>
-                                                    <td><?= $cours->sigle ?> - <?= $cours->module ?></td>
-                                                    <td><?= $cours->niveau ?></td>
-                                                    <td><?= $cours->professeurs ?></td>
-                                                    <td><?= $cours->salle ?></td>
-                                                    <td>
-                                                        <span class="badge <?= $cours->statut === 'Confirmé' ? 'bg-success' : 'bg-warning' ?>">
-                                                            <?= $cours->statut ?>
-                                                        </span>
-                                                    </td>
-                                                </tr>
-                                                <?php endforeach; ?>
-                                            <?php else: ?>
-                                                <tr>
-                                                    <td colspan="7" class="text-center">Aucun cours programmé cette semaine</td>
-                                                </tr>
-                                            <?php endif; ?>
-                                        </tbody>
-                                    </table>
+                            <!-- Répartition par Genre -->
+                            <div class="col-lg-6 col-md-12 mb-3">
+                                <div class="card shadow-sm">
+                                    <div class="card-header bg-secondary text-white">
+                                        <i class="fa-solid fa-venus-mars me-2"></i> Répartition par genre
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <canvas id="genderChart" style="max-height: 300px;"></canvas>
+                                        <p class="mt-3"><strong>Total étudiants :</strong> <?= $statsGenre->male + $statsGenre->female ?></p>
+                                        <p>
+                                            <span class="badge bg-dark">Hommes : <?= $statsGenre->male ?></span>
+                                            <span class="badge bg-pink">Femmes : <?= $statsGenre->female ?></span>
+                                        </p>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- ✅ Examens à venir -->
+                        <div class="row col-12 mt-2">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header bg-primary  text-center"><h6 class="text-white">Détails des examens à venir</h6></div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead class="table-light text-center">
+                                                    <tr><th>Date</th><th>Heure</th><th>Matière</th><th>Niveau</th><th>Salle</th></tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php if (!empty($examensDetails)): ?>
+                                                        <?php foreach ($examensDetails as $examen): ?>
+                                                            <tr>
+                                                                <td><?= $examen->date_examen ?></td>
+                                                                <td><?= $examen->heure ?></td>
+                                                                <td><?= $examen->module ?></td>
+                                                                <td><?= $examen->niveau ?></td>
+                                                                <td><?= $examen->salle ?></td>
+                                                            </tr>
+                                                        <?php endforeach; ?>
+                                                    <?php else: ?>
+                                                        <tr><td colspan="5" class="text-center">Aucun examen prévu</td></tr>
+                                                    <?php endif; ?>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ✅ Cours programmés -->
+                        <div class="row col-12 mt-2">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header bg-primary text-white text-center"><h6 class="text-white">Cours programmés cette semaine</h6></div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover text-center">
+                                                <thead class="table-light">
+                                                    <tr><th>Date</th><th>Matière</th><th>Niveau</th><th>Professeur</th><th>Salle</th><th>Statut</th></tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php if (!empty($coursProgrammesListe)): ?>
+                                                        <?php foreach ($coursProgrammesListe as $cours): ?>
+                                                            <tr>
+                                                                <td><?= $cours->date_cours ?></td>
+                                                                <td><?= $cours->module ?></td>
+                                                                <td><?= $cours->niveau ?></td>
+                                                                <td><?= $cours->professeurs ?></td>
+                                                                <td><?= $cours->salle ?></td>
+                                                                <td><span class="badge <?= $cours->statut === 'Confirmé' ? 'bg-success' : 'bg-warning' ?>"><?= $cours->statut ?></span></td>
+                                                            </tr>
+                                                        <?php endforeach; ?>
+                                                    <?php else: ?>
+                                                        <tr><td colspan="6">Aucun cours programmé</td></tr>
+                                                    <?php endif; ?>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
-                </div>
-            </section>
+                </section>
             <!-- ==================================== -->
             <!-- SECTION DIRECTEUR GENERAL ADJOINT (DGA) -->
             <!-- ==================================== -->  
@@ -778,6 +731,61 @@
 
 <!-- Scripts pour les graphiques et gestion des rôles -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const levelChart = new Chart(document.getElementById('levelChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['L1', 'L2', 'L3'],
+            datasets: [{
+                data: [<?= $statsNiveaux->l1 ?>, <?= $statsNiveaux->l2 ?>, <?= $statsNiveaux->l3 ?>],
+                backgroundColor: ['#007bff', '#28a745', '#17a2b8']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' },
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            let total = <?= $statsNiveaux->l1 + $statsNiveaux->l2 + $statsNiveaux->l3 ?>;
+                            let value = context.parsed;
+                            let percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                            return `${context.label}: ${value} (${percentage}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    const genderChart = new Chart(document.getElementById('genderChart'), {
+        type: 'pie',
+        data: {
+            labels: ['Hommes', 'Femmes'],
+            datasets: [{
+                data: [<?= $statsGenre->male ?>, <?= $statsGenre->female ?>],
+                backgroundColor: ['#6c757d', '#e83e8c']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' },
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            let total = <?= $statsGenre->male + $statsGenre->female ?>;
+                            let value = context.parsed;
+                            let percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                            return `${context.label}: ${value} (${percentage}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
 
 
 <?php $this->view("Partials/foot") ?>
