@@ -79,11 +79,12 @@ class Utilisateur extends Model
                 $this->redirect("Utilisateurs/liste_utilisateur");
                 return;
             }
-        } else {
-            $this->set_flash("La signature est obligatoire.", 'danger');
-            $this->redirect("Utilisateurs/liste_utilisateur");
-            return;
-        }
+        } 
+        // else {
+        //     $this->set_flash("La signature est obligatoire.", 'danger');
+        //     $this->redirect("Utilisateurs/liste_utilisateur");
+        //     return;
+        // }
 
         // Vérification si l'email est déjà utilisé (dans utilisateurs et enseignants)
         if ($type_utilisateur == 0  && isset($nom_prenom) && !empty($nom_prenom)) {

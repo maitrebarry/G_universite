@@ -112,7 +112,7 @@ class Enseignant extends Model
         $diplome = $post['diplome'] ?? null;
         $code = $post['code'] ?? null;
         $administration = $post['administration'] ?? 0;
-    
+        $id_departement = $post['id_departement'] ?? null; 
         // Gérer les champs en fonction du statut (avec orthographe originale)
         if ($statut === "NON_PERMANANT") {
             $grade = null;
@@ -176,12 +176,12 @@ class Enseignant extends Model
         $sql = "INSERT INTO enseignants 
             (enseignant_statut, id_grade, enseignant_matricule, enseignant_nom, enseignant_prenom, 
             enseignant_date_naissance, enseignant_email, enseignant_telephone, enseignant_diplome, 
-            enseignant_cv, contrat, code_bancaire, administration) 
+            enseignant_cv, contrat, code_bancaire, administration,id_departement) 
             VALUES 
             (:enseignant_statut, :id_grade, :enseignant_matricule, :enseignant_nom, :enseignant_prenom, 
             :enseignant_date_naissance, :enseignant_email, :enseignant_telephone, :enseignant_diplome, 
-            :enseignant_cv, :contrat, :code_bancaire, :administration)";
-    
+            :enseignant_cv, :contrat, :code_bancaire, :administration, :id_departement)";
+
         $stmt = $bdd->prepare($sql);
     
         $success = $stmt->execute([
@@ -197,7 +197,8 @@ class Enseignant extends Model
             ":enseignant_cv" => $cv,
             ":contrat" => $contrat,
             ":code_bancaire" => $code,
-            ":administration" => $administration
+            ":administration" => $administration,
+            ":id_departement" => $id_departement
         ]);
     
         if ($success) {

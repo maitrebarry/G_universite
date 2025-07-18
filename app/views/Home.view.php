@@ -51,90 +51,141 @@
     <div class="content-wrapper">
         <div class="content-header row">
             <div class="col-12">
-                <h2 class="content-header-title float-start mb-0">Tableau de bord</h2>
-                <div class="breadcrumb-wrapper">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item active" id="role-indicator">Enseignant</li>
+                <h5 class="content-header-title float-left pr-1 mb-0">Accueil</h5>
+                <div class="breadcrumb-wrapper col-12">
+                    <ol class="breadcrumb p-0 mb-0">
+                        <li class="breadcrumb-item">
+                          
+                        </li>
+                       
                     </ol>
                 </div>
             </div>
         </div>
+        <?php if (isset($_SESSION['role'])): ?>
         <div class="content-body">
-
             <!-- ==================================== -->
             <!-- SECTION ENSEIGNANT (BASE POUR TOUS) -->
             <!-- ==================================== -->
+             <?php if ($_SESSION['role'] === 'Enseignant'): ?>
             <section id="dashboard-enseignant">
                 <div class="row">
                     <?php $this->view("set_flash") ?>
+                    <?php
+                    $activite = $activiteSemaine ?? (object)[
+                        'total_cours' => 0,
+                        'cours_confirmes' => 0,
+                        'cours_en_attente' => 0,
+                        'heures_confirmées' => 0,
+                        'heures_en_attente' => 0
+                    ];
+                    ?>
 
                     <!-- Cartes Enseignant -->
                     <div class="row col-12 mt-2">
-                        <!-- Mes Cours -->
-                        <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
+
+                        <!-- Activité hebdomadaire -->
+                        <div class="col-lg-4 col-md-6 col-sm-12 mb-2">
                             <div class="card card-animated-border-top1">
-                                <div class="card-body d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <p class="text-muted mb-1">Mes cours</p>
-                                        <h4 class="text-primary mb-0">8</h4>
-                                        <small class="text-muted">Cette semaine</small>
-                                    </div>
-                                    <div class="widget-icon bg-primary text-white">
-                                        <i class="fa-solid fa-book-open"></i>
-                                    </div>
+                                <div class="card-body">
+                                    <p class="text-muted mb-1">Cours planifiés</p>
+                                    <h4 class="text-primary mb-0"><?= $activite->total_cours ?> cours</h4>
+                                    <small class="text-muted">
+                                        <?= $activite->cours_confirmes ?> confirmés, <?= $activite->cours_en_attente ?> en attente
+                                    </small>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Étudiants -->
-                        <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
+                        <!-- Heures enseignées -->
+                        <div class="col-lg-4 col-md-6 col-sm-12 mb-2">
                             <div class="card card-animated-border-top1">
-                                <div class="card-body d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <p class="text-muted mb-1">Étudiants</p>
-                                        <h4 class="text-success mb-0">142</h4>
-                                        <small class="text-muted">Total</small>
-                                    </div>
-                                    <div class="widget-icon bg-success text-white">
-                                        <i class="fa-solid fa-users"></i>
-                                    </div>
+                                <div class="card-body">
+                                    <p class="text-muted mb-1">Heures enseignées</p>
+                                    <h4 class="text-success mb-0"><?= $activite->heures_confirmées ?>h</h4>
+                                    <small class="text-muted"><?= $activite->heures_en_attente ?>h en attente</small>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Présences -->
-                        <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
+                        <!-- Semaine en cours -->
+                        <div class="col-lg-4 col-md-6 col-sm-12 mb-2">
                             <div class="card card-animated-border-top1">
-                                <div class="card-body d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <p class="text-muted mb-1">Présences</p>
-                                        <h4 class="text-info mb-0">85%</h4>
-                                        <small class="text-muted">Moyenne</small>
-                                    </div>
-                                    <div class="widget-icon bg-info text-white">
-                                        <i class="fa-solid fa-user-check"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Notifications -->
-                        <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
-                            <div class="card card-animated-border-top1">
-                                <div class="card-body d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <p class="text-muted mb-1">Notifications</p>
-                                        <h4 class="text-warning mb-0">3</h4>
-                                        <small class="text-muted">Non lues</small>
-                                    </div>
-                                    <div class="widget-icon bg-warning text-white">
-                                        <i class="fa-solid fa-bell"></i>
-                                    </div>
+                                <div class="card-body">
+                                    <p class="text-muted mb-1">Semaine en cours</p>
+                                    <small class="text-info mb-0">
+                                        <?= date('d/m/Y', strtotime('monday this week')) ?> - <?= date('d/m/Y', strtotime('sunday this week')) ?>
+                                    </small>
+                                    <?php if (!empty($periodeActive)): ?>
+                                        <div class="mt-2">
+                                            <small class="text-muted">
+                                                📘 Période pédagogique :
+                                                <?= date('d/m/Y', strtotime($periodeActive->date_debut)) ?>
+                                                - <?= date('d/m/Y', strtotime($periodeActive->date_fin)) ?>
+                                                (<?= htmlspecialchars($periodeActive->status) ?>)
+                                            </small>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
                     </div>
 
+                    <!-- Ligne suivante : Performance Globale -->
+                    <div class="row col-12 mt-2">
+                        <?php if (!empty($statsMoyenne)): ?>
+                            <?php
+                                $pourcentageGlobal = $statsMoyenne['pourcentage'];
+                                $avecMoyenne = $statsMoyenne['avec_moyenne'];
+                                $totalEvalues = $statsMoyenne['total_evalues'];
+                            ?>
+                            <div class="col-lg-6 col-md-6 col-sm-12 mb-2">
+                                <div class="card card-animated-border-top1">
+                                    <div class="card-body">
+                                        <p class="text-muted mb-1">Performance globale</p>
+                                        <h4 class="text-success mb-0"><?= $pourcentageGlobal ?>%</h4>
+                                        <small class="text-muted"><?= $avecMoyenne ?> sur <?= $totalEvalues ?> étudiants évalués</small>
+                                        <div class="progress mt-2" style="height: 6px;">
+                                            <div class="progress-bar bg-success" role="progressbar"
+                                                style="width: <?= $pourcentageGlobal ?>%;"
+                                                aria-valuenow="<?= $pourcentageGlobal ?>" aria-valuemin="0" aria-valuemax="100">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
+                        <!-- Détails par parcours -->
+                        <?php if (!empty($statsParcours)): ?>
+                            <?php foreach ($statsParcours as $stat): ?>
+                                <?php
+                                    $total = (int) $stat->total_etudiants;
+                                    $avecMoyenne = (int) $stat->avec_moyenne;
+                                    $pourcentage = $total > 0 ? round(($avecMoyenne / $total) * 100, 1) : 0;
+                                ?>
+                                <div class="col-lg-6 col-md-6 col-sm-12 mb-2">
+                                    <div class="card card-animated-border-top1">
+                                        <div class="card-body">
+                                            <p class="text-muted mb-1"><?= htmlspecialchars($stat->nom_parcours) ?></p>
+                                            <h4 class="text-info mb-0"><?= $pourcentage ?>%</h4>
+                                            <small class="text-muted"><?= $avecMoyenne ?> sur <?= $total ?> ont la moyenne</small>
+                                            <div class="progress mt-2" style="height: 6px;">
+                                                <div class="progress-bar bg-info" role="progressbar"
+                                                    style="width: <?= $pourcentage ?>%;"
+                                                    aria-valuenow="<?= $pourcentage ?>" aria-valuemin="0" aria-valuemax="100">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <div class="col-12">
+                                <div class="alert alert-warning">Aucune donnée disponible pour les parcours.</div>
+                            </div>
+                        <?php endif; ?>
+                    </div>
                     <!-- Emploi du temps -->
                     <div class="row col-12 mt-2">
                         <div class="col-12">
@@ -147,31 +198,37 @@
                                         <table class="table table-hover">
                                             <thead>
                                                 <tr>
-                                                    <th>Jour</th>
-                                                    <th>Heure</th>
-                                                    <th>Matière</th>
-                                                    <th>Niveau</th>
+                                                    <th>Filière</th>
+                                                    <th>Promotion</th>
+                                                    <th>Module</th>
+                                                    <th>Date</th>
                                                     <th>Salle</th>
                                                     <th>Statut</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td>Lundi</td>
-                                                    <td>08:00-10:00</td>
-                                                    <td>Comptabilité</td>
-                                                    <td>L2 GEA</td>
-                                                    <td>B12</td>
-                                                    <td><span class="badge bg-success">Confirmé</span></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Mardi</td>
-                                                    <td>10:30-12:30</td>
-                                                    <td>Statistiques</td>
-                                                    <td>L1 ST</td>
-                                                    <td>A07</td>
-                                                    <td><span class="badge bg-warning">En attente</span></td>
-                                                </tr>
+                                                <?php if (!empty($emploiDuTemps)) : ?>
+                                                    <?php foreach ($emploiDuTemps as $cours) : ?>
+                                                        <tr>
+                                                            <td><?= htmlspecialchars($cours->filiere) ?></td>
+                                                            <td><?= htmlspecialchars($cours->promotion) ?></td>
+                                                            <td><?= htmlspecialchars($cours->module) ?></td>
+                                                            <td><?= htmlspecialchars($cours->date_cours) ?></td>
+                                                            <td><?= htmlspecialchars($cours->nom_salle) ?></td>
+                                                            <td>
+                                                                <?php if ($cours->statut == 1) : ?>
+                                                                    <span class="badge bg-success">Confirmé</span>
+                                                                <?php else : ?>
+                                                                    <span class="badge bg-warning">En attente</span>
+                                                                <?php endif; ?>
+                                                            </td>
+                                                        </tr>
+                                                    <?php endforeach; ?>
+                                                <?php else : ?>
+                                                    <tr>
+                                                        <td colspan="6" class="text-center text-muted">Aucun emploi du temps trouvé</td>
+                                                    </tr>
+                                                <?php endif; ?>
                                             </tbody>
                                         </table>
                                     </div>
@@ -179,17 +236,16 @@
                             </div>
                         </div>
                     </div>
+
                 </div>
             </section>
-
             <!-- ==================================== -->
             <!-- SECTION SECRETAIRE GENERAL (SGP) -->
             <!-- ==================================== -->
+            <?php elseif ($_SESSION['role'] === 'Sécretaire principale'): ?>
             <section id="dashboard-sgp" class="role-specific">
                 <div class="row mt-3">
-                    <div class="col-12">
-                        <h4 class="mb-2">Vue Secrétaire Général</h4>
-                    </div>
+                
 
                     <!-- Cartes SGP -->
                     <div class="row col-12 mt-2">
@@ -254,29 +310,30 @@
                         </div>
                     </div>
 
-                  
+                
                 </div>
-            </section>
-
+            </section>          
             <!-- ==================================== -->
             <!-- SECTION CHEF DER (GEA OU ST) -->
             <!-- ==================================== -->
+            <?php elseif ($_SESSION['role'] === 'Chef DR'): ?>
             <section id="dashboard-chef-der" class="role-specific">
                 <div class="row mt-3">
-                    <div class="col-12">
-                        <h4 class="mb-2" id="chef-der-title">Vue Chef Département</h4>
-                    </div>
-
                     <!-- Cartes Chef DER -->
                     <div class="row col-12 mt-2">
-                        <!-- Étudiants L1 -->
+                       <!-- Étudiants L1 -->
                         <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
                             <div class="card card-animated-border-top1">
                                 <div class="card-body d-flex justify-content-between align-items-center">
                                     <div>
                                         <p class="text-muted mb-1">Étudiants L1</p>
-                                        <h4 class="text-primary mb-0" id="l1-count">0</h4>
-                                        <small class="text-muted" id="l1-trend">--</small>
+                                        <h4 class="text-primary mb-0"><?= $statsNiveaux->l1 ?></h4>
+                                        <small class="text-muted">
+                                            <?php 
+                                            $totalEtudiants = $statsNiveaux->l1 + $statsNiveaux->l2 + $statsNiveaux->l3;
+                                            echo $totalEtudiants > 0 ? round(($statsNiveaux->l1 / $totalEtudiants) * 100, 1).'%' : '0%';
+                                            ?> du total
+                                        </small>
                                     </div>
                                     <div class="widget-icon bg-primary text-white">
                                         <i class="fa-solid fa-users"></i>
@@ -291,8 +348,13 @@
                                 <div class="card-body d-flex justify-content-between align-items-center">
                                     <div>
                                         <p class="text-muted mb-1">Étudiants L2</p>
-                                        <h4 class="text-success mb-0" id="l2-count">0</h4>
-                                        <small class="text-muted" id="l2-trend">--</small>
+                                        <h4 class="text-success mb-0"><?= $statsNiveaux->l2 ?></h4>
+                                        <small class="text-muted">
+                                            <?php 
+                                            $totalEtudiants = $statsNiveaux->l1 + $statsNiveaux->l2 + $statsNiveaux->l3;
+                                            echo $totalEtudiants > 0 ? round(($statsNiveaux->l2 / $totalEtudiants) * 100, 1).'%' : '0%';
+                                            ?> du total
+                                        </small>
                                     </div>
                                     <div class="widget-icon bg-success text-white">
                                         <i class="fa-solid fa-users"></i>
@@ -307,8 +369,13 @@
                                 <div class="card-body d-flex justify-content-between align-items-center">
                                     <div>
                                         <p class="text-muted mb-1">Étudiants L3</p>
-                                        <h4 class="text-info mb-0" id="l3-count">0</h4>
-                                        <small class="text-muted" id="l3-trend">--</small>
+                                        <h4 class="text-info mb-0"><?= $statsNiveaux->l3 ?></h4>
+                                        <small class="text-muted">
+                                            <?php 
+                                            $totalEtudiants = $statsNiveaux->l1 + $statsNiveaux->l2 + $statsNiveaux->l3;
+                                            echo $totalEtudiants > 0 ? round(($statsNiveaux->l3 / $totalEtudiants) * 100, 1).'%' : '0%';
+                                            ?> du total
+                                        </small>
                                     </div>
                                     <div class="widget-icon bg-info text-white">
                                         <i class="fa-solid fa-users"></i>
@@ -323,8 +390,13 @@
                                 <div class="card-body d-flex justify-content-between align-items-center">
                                     <div>
                                         <p class="text-muted mb-1">Non-inscrits</p>
-                                        <h4 class="text-danger mb-0" id="unregistered-count">0</h4>
-                                        <small class="text-muted" id="unregistered-detail">--</small>
+                                        <h4 class="text-danger mb-0"><?= $statsNiveaux->unregistered ?></h4>
+                                        <small class="text-muted">
+                                            <?php 
+                                            $totalGeneral = $statsNiveaux->l1 + $statsNiveaux->l2 + $statsNiveaux->l3 + $statsNiveaux->unregistered;
+                                            echo $totalGeneral > 0 ? round(($statsNiveaux->unregistered / $totalGeneral) * 100, 1).'%' : '0%';
+                                            ?> du total
+                                        </small>
                                     </div>
                                     <div class="widget-icon bg-danger text-white">
                                         <i class="fa-solid fa-user-slash"></i>
@@ -342,8 +414,8 @@
                                 <div class="card-body d-flex justify-content-between align-items-center">
                                     <div>
                                         <p class="text-muted mb-1">Professeurs</p>
-                                        <h4 class="text-warning mb-0" id="teachers-count">0</h4>
-                                        <small class="text-muted" id="teachers-detail">--</small>
+                                        <h4 class="text-warning mb-0"><?= $statsEnseignants->total ?? 0 ?></h4>
+                                        <small class="text-muted"><?= $statsEnseignants->actifs ?? 0 ?> actifs</small>
                                     </div>
                                     <div class="widget-icon bg-warning text-white">
                                         <i class="fa-solid fa-chalkboard-user"></i>
@@ -351,15 +423,15 @@
                                 </div>
                             </div>
                         </div>
-
+                        
                         <!-- Cours programmés -->
                         <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
                             <div class="card card-animated-border-top1">
                                 <div class="card-body d-flex justify-content-between align-items-center">
                                     <div>
                                         <p class="text-muted mb-1">Cours programmés</p>
-                                        <h4 class="text-purple mb-0" id="courses-count">0</h4>
-                                        <small class="text-muted" id="courses-period">--</small>
+                                        <h4 class="text-purple mb-0"><?= $coursProgrammes->total ?? 0 ?></h4>
+                                        <small class="text-muted"><?= $coursProgrammes->confirmes ?? 0 ?> confirmés</small>
                                     </div>
                                     <div class="widget-icon bg-purple text-white">
                                         <i class="fa-solid fa-calendar-check"></i>
@@ -368,14 +440,18 @@
                             </div>
                         </div>
 
-                        <!-- Taux de réussite -->
+                      <!-- Taux de réussite -->
                         <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
                             <div class="card card-animated-border-top1">
                                 <div class="card-body d-flex justify-content-between align-items-center">
                                     <div>
                                         <p class="text-muted mb-1">Taux de réussite</p>
-                                        <h4 class="text-teal mb-0" id="success-rate">0%</h4>
-                                        <small class="text-muted" id="success-period">--</small>
+                                        <h4 class="text-teal mb-0">
+                                            <?= ($tauxReussite->total ?? 0) > 0 ? round($tauxReussite->taux ?? 0, 1) : 0 ?>%
+                                        </h4>
+                                        <small class="text-muted">
+                                            <?= $tauxReussite->reussis ?? 0 ?>/<?= $tauxReussite->total ?? 0 ?> étudiants
+                                        </small>
                                     </div>
                                     <div class="widget-icon bg-teal text-white">
                                         <i class="fa-solid fa-chart-line"></i>
@@ -383,24 +459,64 @@
                                 </div>
                             </div>
                         </div>
-
                         <!-- Examens à venir -->
-                        <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
-                            <div class="card card-animated-border-top1">
-                                <div class="card-body d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <p class="text-muted mb-1">Examens à venir</p>
-                                        <h4 class="text-pink mb-0" id="exams-count">0</h4>
-                                        <small class="text-muted" id="exams-period">--</small>
+                           <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
+                                <div class="card card-animated-border-top1">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <p class="text-muted mb-1">Examens à venir</p>
+                                            <h4 class="text-pink mb-0"><?= $examensAVenir ?></h4>
+                                            <small class="text-muted">30 prochains jours</small>
+                                        </div>
+                                        <div class="widget-icon bg-pink text-white">
+                                            <i class="fa-solid fa-clipboard-list"></i>
+                                        </div>
                                     </div>
-                                    <div class="widget-icon bg-pink text-white">
-                                        <i class="fa-solid fa-clipboard-list"></i>
-                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                        <!-- Tableau des examens à venir -->
+                <div class="row col-12 mt-2">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Détails des examens à venir</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Heure</th>
+                                                <th>Matière</th>
+                                                <th>Niveau</th>
+                                                <th>Salle</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php if (!empty($examensDetails)): ?>
+                                                <?php foreach ($examensDetails as $examen): ?>
+                                                <tr>
+                                                    <td><?= $examen->date_examen ?></td>
+                                                    <td><?= $examen->heure ?></td>
+                                                    <td><?= $examen->module ?></td>
+                                                    <td><?= $examen->niveau ?></td>
+                                                    <td><?= $examen->salle ?></td>
+                                                </tr>
+                                                <?php endforeach; ?>
+                                            <?php else: ?>
+                                                <tr>
+                                                    <td colspan="5" class="text-center">Aucun examen prévu dans les 30 prochains jours</td>
+                                                </tr>
+                                            <?php endif; ?>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
                     </div>
-
+                </div>
                     <!-- Graphiques Chef DER -->
                     <div class="row col-12 mt-3">
                         <!-- Répartition par niveau -->
@@ -432,48 +548,51 @@
                         </div>
                     </div>
 
-                   <!-- Tableau des cours ST -->
+                    <!-- Tableau des cours programmés -->
                     <div class="row col-12 mt-2">
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h4 class="card-title">Cours programmés</h4>
+                                    <h4 class="card-title">Cours programmés cette semaine</h4>
                                 </div>
                                 <div class="card-body">
                                     <div class="table-responsive">
-                                        <table class="table table-hover">
-                                            <thead>
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Heure</th>
+                                                <th>Matière</th>
+                                                <th>Niveau</th>
+                                                <th>Professeur</th>
+                                                <th>Salle</th>
+                                                <th>Statut</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php if (!empty($coursProgrammesListe)): ?>
+                                                <?php foreach ($coursProgrammesListe as $cours): ?>
                                                 <tr>
-                                                    <th>Date</th>
-                                                    <th>Heure</th>
-                                                    <th>Matière</th>
-                                                    <th>Niveau</th>
-                                                    <th>Professeur</th>
-                                                    <th>Salle</th>
-                                                    <th>Statut</th>
+                                                    <td><?= $cours->date_cours ?></td>
+                                                    <td><?= $cours->heure ?></td>
+                                                    <td><?= $cours->sigle ?> - <?= $cours->module ?></td>
+                                                    <td><?= $cours->niveau ?></td>
+                                                    <td><?= $cours->professeurs ?></td>
+                                                    <td><?= $cours->salle ?></td>
+                                                    <td>
+                                                        <span class="badge <?= $cours->statut === 'Confirmé' ? 'bg-success' : 'bg-warning' ?>">
+                                                            <?= $cours->statut ?>
+                                                        </span>
+                                                    </td>
                                                 </tr>
-                                            </thead>
-                                            <tbody>
+                                                <?php endforeach; ?>
+                                            <?php else: ?>
                                                 <tr>
-                                                    <td>15/03/2023</td>
-                                                    <td>10:30-12:30</td>
-                                                    <td>Statistiques</td>
-                                                    <td>L1 ST</td>
-                                                    <td>Pr. Martin</td>
-                                                    <td>A07</td>
-                                                    <td><span class="badge bg-warning">En attente</span></td>
+                                                    <td colspan="7" class="text-center">Aucun cours programmé cette semaine</td>
                                                 </tr>
-                                                <tr>
-                                                    <td>17/03/2023</td>
-                                                    <td>09:00-11:00</td>
-                                                    <td>Informatique appliquée</td>
-                                                    <td>L2 ST</td>
-                                                    <td>Pr. Dubois</td>
-                                                    <td>D15</td>
-                                                    <td><span class="badge bg-success">Confirmé</span></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                            <?php endif; ?>
+                                        </tbody>
+                                    </table>
                                     </div>
                                 </div>
                             </div>
@@ -481,16 +600,13 @@
                     </div>
                 </div>
             </section>
-
             <!-- ==================================== -->
             <!-- SECTION DIRECTEUR GENERAL ADJOINT (DGA) -->
-            <!-- ==================================== -->
+            <!-- ==================================== -->  
+            <?php elseif ($_SESSION['role'] === 'DGA'): ?>
             <section id="dashboard-dga" class="role-specific">
                 <div class="row mt-3">
-                    <div class="col-12">
-                        <h4 class="mb-2">Vue Directeur Général Adjoint</h4>
-                    </div>
-
+            
                     <!-- Cartes DGA -->
                     <div class="row col-12 mt-2">
                         <!-- Taux de réussite global -->
@@ -542,19 +658,15 @@
                         </div>
                     </div>
 
-                   
+                
                 </div>
             </section>
-
             <!-- ==================================== -->
             <!-- SECTION DIRECTEUR GENERAL (DG) -->
             <!-- ==================================== -->
+            <?php elseif ($_SESSION['role'] === 'DG'): ?>
             <section id="dashboard-dg" class="role-specific">
                 <div class="row mt-3">
-                    <div class="col-12">
-                        <h4 class="mb-2">Vue Directeur Général</h4>
-                    </div>
-
                     <!-- KPI DG -->
                     <div class="row col-12 mt-2">
                         <!-- Satisfaction étudiants -->
@@ -654,10 +766,15 @@
                     </div>
                 </div>
             </section>
-
+                </div>
+                <?php else: ?>
+                <p>Rôle non reconnu.</p>
+                    <?php endif; ?>
+                <?php else: ?>
+                    <p>Vous n’êtes pas connecté.</p>
+                <?php endif; ?>
+            </div>
         </div>
-    </div>
-</div>
 
 <!-- Scripts pour les graphiques et gestion des rôles -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

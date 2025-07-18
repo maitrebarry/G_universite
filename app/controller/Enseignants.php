@@ -22,17 +22,65 @@ class Enseignants extends Controller
             ]
         );
     } 
+    // public function ajouter_enseignant()
+    // {
+    //     $enseignant = new Enseignant();
+    //     $filiere = $enseignant->SelectAllData("*", "grade");
+
+    //     if (isset($_POST["envoyer"])) {
+    //         $_POST = array_map('trim', $_POST);
+    //         $_POST['administration'] = $_POST['administration'] ?? 0;
+            
+    //         // Passer $filiere comme troisième paramètre
+    //         $enseignant->enregistrement($_FILES, $_POST, $filiere);
+    //         if (!empty($enseignant->errors)) {
+    //             $_SESSION['input'] = $_POST;
+    //             $_SESSION['errors'] = $enseignant->errors;
+    //         } else {
+    //             unset($_SESSION['input'], $_SESSION['errors']);
+    //         }
+    //     }
+
+    //     $input_values = $_SESSION['input'] ?? [];
+    //     $errors = $_SESSION['errors'] ?? [];
+    //     unset($_SESSION['input'], $_SESSION['errors']);
+
+    //     $this->view("ajouter_enseignant", [
+    //         'errors' => $errors,
+    //         'filiere' => $filiere,
+    //         'input_values' => $input_values
+    //     ]);
+    // }
     public function ajouter_enseignant()
     {
+         $enseignant = new Enseignant();
+         if (isset($_SESSION['id_departement'])) {
+                $_POST['id_departement'] = $_SESSION['id_departement'];
+            } else {
+                $_SESSION['errors'][] = "Votre identifiant de département est introuvable. Veuillez vous reconnecter.";
+               $enseignant->redirect("Enseignants/ajouter_enseignant"); 
+                exit;
+            }
+        // Vérifier que l'utilisateur est connecté et est chef DR
+        if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Chef DR') {
+            // Rediriger ou afficher une erreur
+            $_SESSION['errors'][] = "Accès refusé. Seuls les chefs de département peuvent ajouter des enseignants.";
+            $enseignant->redirect("ajouter_enseignant"); 
+            exit;
+        }
+
         $enseignant = new Enseignant();
         $filiere = $enseignant->SelectAllData("*", "grade");
 
         if (isset($_POST["envoyer"])) {
             $_POST = array_map('trim', $_POST);
             $_POST['administration'] = $_POST['administration'] ?? 0;
-            
-            // Passer $filiere comme troisième paramètre
+
+            // Injecter le département du chef DR connecté
+            $_POST['id_departement'] = $_SESSION['id_departement'];
+
             $enseignant->enregistrement($_FILES, $_POST, $filiere);
+
             if (!empty($enseignant->errors)) {
                 $_SESSION['input'] = $_POST;
                 $_SESSION['errors'] = $enseignant->errors;
