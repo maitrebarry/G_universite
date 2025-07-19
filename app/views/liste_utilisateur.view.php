@@ -418,6 +418,7 @@ if (isset($_POST['valider'])) {
                                                                 <option value="DG">DG</option>
                                                                 <option value="DGA">DGA</option>
                                                                 <option value="Sécretaire principale">SP</option>
+                                                                <option value="Scolarite">Scolarite</option>
                                                                 <option value="Chef DR"> Chef Dr</option>
                                                                 <option value="Enseignant">Enseignant</option>
                                                             </select>

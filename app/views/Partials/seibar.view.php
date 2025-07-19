@@ -1,22 +1,108 @@
 <?php
-// Récupère le nom de la page actuelle
 $current_page = basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
-?>
-<style>
-    .nav-item.active>.nav-link {
-        background-color: #007bff;
-        /* Couleur de fond */
-        color: #fff;
-        /* Couleur du texte */
-        font-weight: bold;
-    }
+$role = $_SESSION['role'] ?? '';
 
-    .menu-content .active>a {
-        color: #007bff;
-        /* Couleur pour le sous-menu actif */
-        font-weight: bold;
-    }
+// ✅ Définition des permissions par rôle
+$menu_permissions = [
+    'SupAdmin' => ['dashboard', 'filieres', 'enseignants', 'notes', 'emploi', 'etudiants', 'configuration'],
+    'DG'       => ['dashboard', 'filieres', 'enseignants', 'notes', 'emploi', 'etudiants'],
+    'DGA'      => ['dashboard', 'filieres', 'enseignants', 'notes', 'emploi', 'etudiants'],
+    'Chef DR'  => ['dashboard', 'filieres', 'enseignants', 'notes', 'emploi', 'etudiants'],
+    'Enseignant' => ['dashboard', 'notes_simple', 'etudiant_simple'], 
+    'Sécretaire principale' => ['dashboard', 'etudiants_sp'],
+    'Scolarite' => ['etudiants', 'notes']
+];
+
+// ✅ Menus disponibles
+$menus = [
+    'dashboard' => [
+        'title' => 'Tableau Bord',
+        'icon'  => 'bx bx-home-alt',
+        'url'   => ROOT . '/Homes'
+    ],
+    'filieres' => [
+        'title' => 'Filières',
+        'icon'  => 'bx bx-bookmark-alt',
+        'url'   => ROOT . '/Filieres'
+    ],
+    'enseignants' => [
+        'title' => 'Enseignants',
+        'icon'  => 'bx bx-user',
+        'url'   => ROOT . '/Enseignants'
+    ],
+    'notes' => [
+        'title' => 'Notes',
+        'icon'  => 'bx bx-book',
+        'submenu' => [
+            ['url' => ROOT . '/Notes', 'title' => 'Saisie des Notes'],
+            ['url' => ROOT . '/Notes/liste_note', 'title' => 'Résultat Annuel']
+        ]
+    ],
+    'emploi' => [
+        'title' => 'Emploi du temps',
+        'icon'  => 'bx bx-calendar',
+        'submenu' => [
+            ['url' => ROOT . '/Emploi_du_temps', 'title' => 'EDT'],
+            ['url' => ROOT . '/Enseignants/listeEDT_individuels_par_periode', 'title' => 'EDT Individuel']
+        ]
+    ],
+    'etudiants' => [
+        'title' => 'Étudiants',
+        'icon'  => 'bx bx-group',
+        'submenu' => [
+            ['url' => ROOT . '/Etudiants', 'title' => 'Liste Étudiants'],
+            ['url' => ROOT . '/EtudiantPargroupes', 'title' => 'Importer une Liste'],
+            ['url' => ROOT . '/Reinsciptions', 'title' => 'Réinscription']
+        ]
+    ],
+    'configuration' => [
+        'title' => 'Configuration',
+        'icon'  => 'bx bx-cog',
+        'url'   => ROOT . '/Modules/listeModule'
+    ],
+
+    // ✅ Menus simplifiés pour Enseignant
+    'notes_simple' => [
+        'title' => 'Saisie des Notes',
+        'icon'  => 'bx bx-book',
+        'url'   => ROOT . '/Notes'
+    ],
+    'etudiant_simple' => [
+        'title' => 'Liste Étudiants',
+        'icon'  => 'bx bx-user-pin',
+        'url'   => ROOT . '/Etudiants'
+    ],
+
+    // ✅ Menu spécial SP
+    'etudiants_sp' => [
+        'title' => 'Étudiants',
+        'icon'  => 'bx bx-group',
+        'submenu' => [
+            ['url' => ROOT . '/Etudiants', 'title' => 'Liste Étudiants'],
+            ['url' => ROOT . '/EtudiantPargroupes', 'title' => 'Importer une Liste'],
+            ['url' => ROOT . '/Reinsciptions', 'title' => 'Réinscription']
+        ]
+    ]
+];
+?>
+
+<style>
+.nav-item.active > .nav-link {
+    color: #007bff;
+    font-weight: bold;
+}
+.menu-content .active > a {
+    color: #007bff;
+    font-weight: bold;
+}
+.menu-content {
+    display: none;
+}
+.nav-item.open .menu-content {
+    display: block;
+}
 </style>
+
 <div class="main-menu menu-fixed menu-light menu-accordion menu-shadow" data-scroll-to-active="true">
     <div class="navbar-header">
         <ul class="nav navbar-nav flex-row">
@@ -31,182 +117,54 @@ $current_page = basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
             <li class="nav-item nav-toggle">
                 <a class="nav-link modern-nav-toggle pr-0" data-toggle="collapse">
                     <i class="bx bx-x d-block d-xl-none font-medium-4 primary toggle-icon"></i>
-                    <i class="toggle-icon bx bx-disc font-medium-4 d-none d-xl-block collapse-toggle-icon primary"
-                        data-ticon="bx-disc"></i>
+                    <i class="toggle-icon bx bx-disc font-medium-4 d-none d-xl-block collapse-toggle-icon primary" data-ticon="bx-disc"></i>
                 </a>
             </li>
         </ul>
     </div>
-   <div class="main-menu-content">
-    <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation">
-        <?php if (isset($_SESSION['role'])): ?>
-            <?php if ($_SESSION['role'] === 'Enseignant'): ?>
-                <!-- Menu Enseignant -->
-                <li class="nav-item <?= ($current_page == 'index') ? 'active' : '' ?>">
-                    <a class="nav-link" href="<?= ROOT ?>/Homes">
-                        <i class="bx bx-home-alt"></i>
-                        <span class="menu-title">Tableau Bord</span>
-                    </a>
-                </li>
-                
-                <li class="nav-item <?= (strpos($_SERVER['REQUEST_URI'], 'Notes') !== false) ? 'active' : '' ?>">
-                    <a class="nav-link" href="<?= ROOT ?>/Notes">
-                        <i class="bx bx-book-alt"></i>
-                        <span class="menu-title">Saisie des Notes</span>
-                    </a>
-                </li>
-                <li class="nav-item <?= (strpos($_SERVER['REQUEST_URI'], 'Etudiants') !== false) ? 'active' : '' ?>">
-                    <a class="nav-link" href="<?= ROOT ?>/Etudiants">
-                       <i class="bx bx-user-pin"></i>
-                        <span class="menu-title">Liste Étudiants</span>
-                    </a>
-                </li>         
-            <?php elseif ($_SESSION['role'] === 'Sécretaire principale'): ?>
-                <!-- Menu Secrétaire Principale -->
-                <li class="nav-item <?= (strpos($_SERVER['REQUEST_URI'], 'Etudiants') !== false) ? 'active' : '' ?>">
-                    <a class="nav-link" href="#">
-                        <i class="bx bx-group"></i>
-                        <span class="menu-title">Étudiants</span>
-                    </a>
-                    <ul class="menu-content">
-                        <li class="<?= ($current_page == 'Etudiants') ? 'active' : '' ?>">
-                            <a href="<?= ROOT ?>/Etudiants">
-                                <i class="bx bx-right-arrow-alt"></i>
-                                <span class="menu-item">Liste Étudiants</span>
-                            </a>
-                        </li>
-                        <li class="<?= ($current_page == 'EtudiantPargroupes') ? 'active' : '' ?>">
-                            <a href="<?= ROOT ?>/EtudiantPargroupes">
-                                <i class="bx bx-right-arrow-alt"></i>
-                                <span class="menu-item">Importer une Liste</span>
-                            </a>
-                        </li>
-                        <li class="<?= ($current_page == 'Reinsciptions') ? 'active' : '' ?>">
-                            <a href="<?= ROOT ?>/Reinsciptions">
-                                <i class="bx bx-right-arrow-alt"></i>
-                                <span class="menu-item">Réinscription</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
 
-            <?php else: ?>
-                <!-- Menu Complet pour autres rôles -->
-                <li class="nav-item <?= ($current_page == 'index') ? 'active' : '' ?>">
-                    <a class="nav-link" href="<?= ROOT ?>/Homes">
-                        <i class="bx bx-home-alt"></i>
-                        <span class="menu-title">Tableau Bord</span>
-                    </a>
-                </li>
+    <div class="main-menu-content">
+        <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation">
+        <?php if ($role && isset($menu_permissions[$role])): ?>
+            <?php foreach ($menu_permissions[$role] as $menu_key): ?>
+                <?php if (isset($menus[$menu_key])): ?>
+                    <?php $menu = $menus[$menu_key]; ?>
 
-                <li class="nav-item <?= ($current_page == 'Filieres') ? 'active' : '' ?>">
-                    <a class="nav-link" href="<?= ROOT ?>/Filieres">
-                        <i class="bx bx-bookmark-alt"></i>
-                        <span class="menu-title">Filières</span>
-                    </a>
-                </li>
+                    <?php
+                        $isActive = false;
+                        $isOpen = false;
+                        if (isset($menu['submenu'])) {
+                            foreach ($menu['submenu'] as $sub) {
+                                if ($current_page == basename($sub['url'])) {
+                                    $isActive = false; 
+                                    $isOpen = true;
+                                    break;
+                                }
+                            }
+                        } else {
+                            $isActive = ($current_page == basename($menu['url']));
+                        }
+                    ?>
 
-                <li class="nav-item <?= ($current_page == 'Enseignants') ? 'active' : '' ?>">
-                    <a class="nav-link" href="<?= ROOT ?>/Enseignants">
-                        <i class="bx bx-user"></i>
-                        <span class="menu-title">Enseignants</span>
-                    </a>
-                </li>
+                    <li class="nav-item <?= $isOpen ? 'open' : '' ?> <?= $isActive ? 'active' : '' ?>">
+                        <a class="nav-link" href="<?= isset($menu['url']) ? $menu['url'] : '#' ?>">
+                            <i class="<?= $menu['icon'] ?>"></i>
+                            <span class="menu-title"><?= $menu['title'] ?></span>
+                        </a>
 
-                <li class="nav-item <?= (strpos($_SERVER['REQUEST_URI'], 'Notes') !== false) ? 'active' : '' ?>">
-                    <a class="nav-link" href="<?= ROOT ?>/Notes">
-                        <i class="bx bx-book"></i>
-                        <span class="menu-title">Notes</span>
-                    </a>
-                    <ul class="menu-content">
-                        <li class="<?= ($current_page == 'Notes') ? 'active' : '' ?>">
-                            <a href="<?= ROOT ?>/Notes">
-                                <i class="bx bx-right-arrow-alt"></i>
-                                <span class="menu-item">Saisie des Notes</span>
-                            </a>
-                        </li>
-                        <li class="<?= ($current_page == 'liste_note') ? 'active' : '' ?>">
-                            <a href="<?= ROOT ?>/Notes/liste_note">
-                                <i class="bx bx-right-arrow-alt"></i>
-                                <span class="menu-item">Résultat Annuel</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                <li class="nav-item <?= (strpos($_SERVER['REQUEST_URI'], 'Emploi_du_temps') !== false) ? 'active' : '' ?>">
-                    <a class="nav-link" href="<?= ROOT ?>/Emploi_du_temps">
-                        <i class="bx bx-book"></i>
-                        <span class="menu-title">Emploi du temps</span>
-                    </a>
-                    <ul class="menu-content">
-                        <li class="<?= ($current_page == 'Emploi_du_temps') ? 'active' : '' ?>">
-                            <a href="<?= ROOT ?>/Emploi_du_temps">
-                                <i class="bx bx-right-arrow-alt"></i>
-                                <span class="menu-item">EDT</span>
-                            </a>
-                        </li>
-                        <li class="<?= ($current_page == 'listeEDT_individuels_par_periode') ? 'active' : '' ?>">
-                            <a href="<?= ROOT ?>/Enseignants/listeEDT_individuels_par_periode">
-                                <i class="bx bx-right-arrow-alt"></i>
-                                <span class="menu-item">EDT INDIVIDUEL</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                <li class="nav-item <?= (strpos($_SERVER['REQUEST_URI'], 'Etudiants') !== false) ? 'active' : '' ?>">
-                    <a class="nav-link" href="#">
-                        <i class="bx bx-group"></i>
-                        <span class="menu-title">Étudiants</span>
-                    </a>
-                    <ul class="menu-content">
-                        <li class="<?= ($current_page == 'Etudiants') ? 'active' : '' ?>">
-                            <a href="<?= ROOT ?>/Etudiants">
-                                <i class="bx bx-right-arrow-alt"></i>
-                                <span class="menu-item">Liste Étudiants</span>
-                            </a>
-                        </li>
-                        <li class="<?= ($current_page == 'EtudiantPargroupes') ? 'active' : '' ?>">
-                            <a href="<?= ROOT ?>/EtudiantPargroupes">
-                                <i class="bx bx-right-arrow-alt"></i>
-                                <span class="menu-item">Importer une Liste</span>
-                            </a>
-                        </li>
-                        <li class="<?= ($current_page == 'Reinsciptions') ? 'active' : '' ?>">
-                            <a href="<?= ROOT ?>/Reinsciptions">
-                                <i class="bx bx-right-arrow-alt"></i>
-                                <span class="menu-item">Réinscription</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                <li class="nav-item <?= ($current_page == 'Modules/listeModule') ? 'active' : '' ?>">
-                    <a class="nav-link" href="<?= ROOT ?>/Modules/listeModule">
-                        <i class="bx bx-cog"></i>
-                        <span class="menu-title">Configuration</span>
-                    </a>
-                </li>
-            <?php endif; ?>
+                        <?php if (isset($menu['submenu'])): ?>
+                        <ul class="menu-content">
+                            <?php foreach ($menu['submenu'] as $sub): ?>
+                                <li class="<?= ($current_page == basename($sub['url'])) ? 'active' : '' ?>">
+                                    <a href="<?= $sub['url'] ?>"><i class="bx bx-right-arrow-alt"></i><?= $sub['title'] ?></a>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                        <?php endif; ?>
+                    </li>
+                <?php endif; ?>
+            <?php endforeach; ?>
         <?php endif; ?>
-    </ul>
+        </ul>
+    </div>
 </div>
-</div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const currentPage = window.location.pathname.split("/").pop(); // Récupère le nom de la page
-        const menuItems = document.querySelectorAll(".main-menu .nav-item");
-
-        menuItems.forEach(item => {
-            const link = item.querySelector("a");
-            if (link) {
-                const linkPage = link.getAttribute("href").split("/").pop();
-                if (linkPage === currentPage) {
-                    item.classList.add("active");
-                }
-            }
-        });
-    });
-</script>

@@ -149,313 +149,198 @@ class Home extends Model
     }
 
         /**
-     * Statistiques des étudiants par niveau (L1, L2, L3, Non-inscrits)
+     * tableau de bord pour le chef DR
      */
-    // public function getStatsEtudiantsParNiveau()
-    // {
-    //     $query = "
-    //         SELECT 
-    //             COUNT(CASE WHEN e.id_promotion = 1 THEN 1 END) as l1,
-    //             COUNT(CASE WHEN e.id_promotion = 2 THEN 1 END) as l2,
-    //             COUNT(CASE WHEN e.id_promotion = 3 THEN 1 END) as l3,
-    //             COUNT(CASE WHEN e.id_statut = 0 THEN 1 END) as unregistered
-    //         FROM etudiant e
-    //     ";
-        
-    //     return $this->select_data_table_join_where($query)[0] ?? (object)[
-    //         'l1' => 0,
-    //         'l2' => 0,
-    //         'l3' => 0,
-    //         'unregistered' => 0
-    //     ];
-    // }
+   
 
-
-    /**
-     * Statistiques étudiants par niveau (L1, L2, L3)
-     */
-    public function getStatsEtudiantsParNiveau($id_departement)
-    {
+    public function getStatsEnseignants($id_departement) {
         $query = "
             SELECT 
+                COUNT(*) AS total,
+                SUM(CASE WHEN enseignant_statut = 'PERMANANT' THEN 1 ELSE 0 END) AS permanents,
+                SUM(CASE WHEN enseignant_statut = 'NON_PERMANANT' THEN 1 ELSE 0 END) AS non_permanents
+            FROM enseignants
+            WHERE id_departement = :id_departement
+        ";
+        return $this->select_data_table_join_where($query, ['id_departement' => $id_departement])[0] ?? (object)[
+            'total' => 0,
+            'permanents' => 0,
+            'non_permanents' => 0
+        ];
+    }
+    public function getStatsEtudiantsParFiliereNiveau($id_departement) {
+        $query = "
+            SELECT 
+                f.id_filiere,
+                f.nom_filiere,
+                f.sigle_filiere,
                 CASE 
                     WHEN se.id_semestre IN (1, 2) THEN 'L1'
                     WHEN se.id_semestre IN (3, 4) THEN 'L2'
                     WHEN se.id_semestre IN (5, 6) THEN 'L3'
+                    ELSE 'Autre'
                 END AS niveau,
-                COUNT(CASE WHEN e.total_frais != 0 THEN 1 END) AS total_inscrits
-            FROM etudiant e
-            INNER JOIN promotion p ON e.id_promotion = p.id_promotion
-            INNER JOIN parcours pa ON p.id_parcours = pa.id_parcours
-            INNER JOIN semestre se ON pa.id_semestre = se.id_semestre
-            INNER JOIN filiere f ON p.id_filiere = f.id_filiere
+                p.annee_universitaire,
+                COUNT(DISTINCT CASE WHEN e.total_frais > 0 THEN e.id_etudiant END) AS inscrits,
+                COUNT(DISTINCT CASE WHEN e.total_frais = 0 AND se.id_semestre IN (3,4,5,6) THEN e.id_etudiant END) AS non_inscrits,
+                COUNT(DISTINCT CASE WHEN e.genre_etudiant = 'M' THEN e.id_etudiant END) AS hommes,
+                COUNT(DISTINCT CASE WHEN e.genre_etudiant = 'F' THEN e.id_etudiant END) AS femmes
+            FROM filiere f
+            LEFT JOIN promotion p ON f.id_filiere = p.id_filiere
+            LEFT JOIN parcours pa ON p.id_parcours = pa.id_parcours
+            LEFT JOIN semestre se ON pa.id_semestre = se.id_semestre
+            LEFT JOIN etudiant e ON p.id_promotion = e.id_promotion
             WHERE f.id_departement = :id_departement
-            GROUP BY niveau
+            AND p.annee_universitaire = (
+                SELECT MAX(annee_universitaire) 
+                FROM promotion 
+                WHERE id_filiere = f.id_filiere
+            )
+            GROUP BY f.id_filiere, se.id_semestre
+            HAVING niveau IS NOT NULL
+            ORDER BY f.nom_filiere, se.id_semestre
         ";
-
-        $rows = $this->select_data_table_join_where($query, ['id_departement' => $id_departement]);
-        $stats = (object)['l1' => 0, 'l2' => 0, 'l3' => 0, 'unregistered' => $this->getNonInscrits($id_departement)];
-
-        foreach ($rows as $row) {
-            if ($row->niveau === 'L1') $stats->l1 = $row->total_inscrits;
-            if ($row->niveau === 'L2') $stats->l2 = $row->total_inscrits;
-            if ($row->niveau === 'L3') $stats->l3 = $row->total_inscrits;
-        }
-
-        return $stats;
-    }
-    /**
-     * Étudiants non inscrits
-     */
-    public function getNonInscrits($id_departement)
-    {
-        $query = "
-            SELECT COUNT(*) AS non_inscrits
-            FROM etudiant e
-            INNER JOIN promotion p ON e.id_promotion = p.id_promotion
-            INNER JOIN filiere f ON p.id_filiere = f.id_filiere
-            WHERE f.id_departement = :id_departement AND e.total_frais = 0
-        ";
-        $result = $this->select_data_table_join_where($query, ['id_departement' => $id_departement]);
-        return $result ? $result[0]->non_inscrits : 0;
-    }
-    /**
-     * Statistiques des étudiants par genre
-     */
-    // public function getStatsEtudiantsParGenre()
-    // {
-    //     $query = "
-    //         SELECT 
-    //             COUNT(CASE WHEN genre_etudiant = 'M' THEN 1 END) as male,
-    //             COUNT(CASE WHEN genre_etudiant = 'F' THEN 1 END) as female
-    //         FROM etudiant
-    //     ";
         
-    //     return $this->select_data_table_join_where($query)[0] ?? (object)[
-    //         'male' => 0,
-    //         'female' => 0
-    //     ];
-    // }
-
-     /**
-     * Répartition par genre
-     */
-    public function getStatsEtudiantsParGenre($id_departement)
-    {
-        $query = "
-            SELECT 
-                SUM(CASE WHEN genre_etudiant = 'M' AND total_frais != 0 THEN 1 ELSE 0 END) AS male,
-                SUM(CASE WHEN genre_etudiant = 'F' AND total_frais != 0 THEN 1 ELSE 0 END) AS female
-            FROM etudiant e
-            INNER JOIN promotion p ON e.id_promotion = p.id_promotion
-            INNER JOIN filiere f ON p.id_filiere = f.id_filiere
-            WHERE f.id_departement = :id_departement
-        ";
-        $result = $this->select_data_table_join_where($query, ['id_departement' => $id_departement]);
-        return $result ? $result[0] : (object)['male' => 0, 'female' => 0];
+        return $this->select_data_table_join_where($query, ['id_departement' => $id_departement]);
     }
-
-    /**
-     * Statistiques des enseignants
-     */
-    // public function getStatsEnseignants() 
-    // {
-    //     $query = "
-    //         SELECT 
-    //             COUNT(*) as total,
-    //             SUM(CASE WHEN enseignant_statut = 1 THEN 1 ELSE 0 END) as actifs
-    //         FROM enseignants
-    //     ";
-        
-    //     return $this->select_data_table_join_where($query)[0] ?? (object)[
-    //         'total' => 0,
-    //         'actifs' => 0
-    //     ];
-    // }
-
-    /**
-     * Enseignants par département
-     */
-    public function getStatsEnseignants($id_departement)
-    {
+    public function getIndicateursGeneraux($id_departement) {
         $query = "
-            SELECT 
-                COUNT(*) AS total,
-                SUM(CASE WHEN enseignant_statut = 'Actif' THEN 1 ELSE 0 END) AS actifs
-            FROM enseignants
-            WHERE id_departement = :id_departement
+            SELECT
+                (SELECT COUNT(*) FROM etudiant e 
+                JOIN promotion p ON e.id_promotion = p.id_promotion
+                JOIN filiere f ON p.id_filiere = f.id_filiere
+                WHERE f.id_departement = :id_departement) AS total_etudiants,
+                
+                (SELECT COUNT(*) FROM etudiant e 
+                JOIN promotion p ON e.id_promotion = p.id_promotion
+                JOIN filiere f ON p.id_filiere = f.id_filiere
+                WHERE f.id_departement = :id_departement AND e.total_frais > 0) AS total_inscrits,
+                
+                (SELECT COUNT(*) FROM enseignants WHERE id_departement = :id_departement) AS total_enseignants,
+                
+                (SELECT COUNT(*) FROM filiere WHERE id_departement = :id_departement) AS total_filieres
         ";
-        $result = $this->select_data_table_join_where($query, ['id_departement' => $id_departement]);
-        return $result ? $result[0] : (object)['total' => 0, 'actifs' => 0];
-    }
-
-    /**
-     * Cours programmés (cette semaine)
-     */
-   
-    public function getCoursProgrammes()
-    {
-        $start = date('Y-m-d', strtotime('monday this week'));
-        $end = date('Y-m-d', strtotime('sunday this week'));
-
-        $query = "
-            SELECT 
-                COUNT(*) as total,
-                SUM(CASE WHEN e.statut = 1 THEN 1 ELSE 0 END) as confirmes,
-                SUM(e.heure_total) as heures_total
-            FROM edt e
-            WHERE e.date_debut BETWEEN :start AND :end
-        ";
-
-        $params = ['start' => $start, 'end' => $end];
-        return $this->select_data_table_join_where($query, $params)[0] ?? (object)[
-            'total' => 0,
-            'confirmes' => 0,
-            'heures_total' => 0
+        return $this->select_data_table_join_where($query, ['id_departement' => $id_departement])[0] ?? (object)[
+            'total_etudiants' => 0,
+            'total_inscrits' => 0,
+            'total_enseignants' => 0,
+            'total_filieres' => 0
         ];
     }
-
-    /**
-     * Taux de réussite global
-     */
-    public function getTauxReussiteGlobal() {
+    public function getCoursProgrammes($id_departement) {
         $query = "
-            SELECT 
-                COUNT(*) as total,
-                SUM(CASE WHEN moyenne_module >= 10 THEN 1 ELSE 0 END) as reussis,
-                ROUND((SUM(CASE WHEN moyenne_module >= 10 THEN 1 ELSE 0 END) * 100.0 / COUNT(*)), 1) as taux
-            FROM note_etudiant
-            WHERE moyenne_module IS NOT NULL
-        ";
-        
-        return $this->select_data_table_join_where($query)[0] ?? (object)[
-            'total' => 0,
-            'reussis' => 0,
-            'taux' => 0
-        ];
-    }
-    /**
-     * Examens à venir (30 prochains jours)
-     */
-    // public function getExamensAVenir() {
-    //     $start = date('Y-m-d');
-    //     $end = date('Y-m-d', strtotime('+30 days'));
-
-    //     $query = "
-    //         SELECT COUNT(*) as total
-    //         FROM edt e
-    //         WHERE e.date_debut BETWEEN :start AND :end
-    //         AND e.id_edt IN (
-    //             SELECT MAX(e2.id_edt)
-    //             FROM edt e2
-    //             GROUP BY e2.id_module, e2.id_promotion
-    //         )
-    //     ";
-
-    //     $params = ['start' => $start, 'end' => $end];
-    //     $result = $this->select_data_table_join_where($query, $params);
-    //     return $result[0]->total ?? 0;
-    // }
-
-/**
- * Liste détaillée des cours programmés
- */
-    public function getListeCoursProgrammes() {
-        $start = date('Y-m-d', strtotime('monday this week'));
-        $end = date('Y-m-d', strtotime('sunday this week'));
-        $query = "
-            SELECT 
+            SELECT DISTINCT
                 DATE_FORMAT(e.date_debut, '%d/%m/%Y') as date_cours,
                 m.nom_module as module,
                 m.sigle_module as sigle,
-                CONCAT(f.sigle_filiere, '-S', se.id_semestre, ' (', p.annee_universitaire, ')') as niveau,
-              GROUP_CONCAT(DISTINCT CONCAT(en.enseignant_nom, ' ', en.enseignant_prenom) SEPARATOR ', ') AS professeurs,
+                CONCAT(f.sigle_filiere, '-S', se.id_semestre) as niveau,
+                GROUP_CONCAT(DISTINCT CONCAT(en.enseignant_nom, ' ', en.enseignant_prenom) SEPARATOR ', ') AS professeurs,
                 s.nom_salle as salle,
-                CASE WHEN e.statut = 1 THEN 'Confirmé' ELSE 'En attente' END as statut
+                'À venir' as statut
             FROM edt e
-            LEFT JOIN module m ON e.id_module = m.id_module
-            LEFT JOIN filiere f ON e.id_filiere = f.id_filiere
-            LEFT JOIN promotion p ON e.id_promotion = p.id_promotion
-            LEFT JOIN semestre se ON e.id_semestre = se.id_semestre
+            JOIN module m ON e.id_module = m.id_module
+            JOIN filiere f ON e.id_filiere = f.id_filiere
+            JOIN promotion p ON e.id_promotion = p.id_promotion
+            JOIN semestre se ON e.id_semestre = se.id_semestre
             LEFT JOIN enseignant_edt ee ON e.id_edt = ee.id_edt
             LEFT JOIN enseignants en ON ee.id_enseignant = en.enseignant_id
-            LEFT JOIN salle s ON e.id_salle = s.id_salle
-            WHERE e.date_debut BETWEEN :start AND :end
+            JOIN salle s ON e.id_salle = s.id_salle
+            WHERE e.date_debut >= DATE(NOW())
+            AND e.statut = 0
+            AND f.id_departement = :id_departement
             GROUP BY e.id_edt
             ORDER BY e.date_debut ASC
+            LIMIT 5
         ";
-        $params = ['start' => $start, 'end' => $end];
-        return $this->select_data_table_join_where($query, $params);
+        
+        return $this->select_data_table_join_where($query, [
+            'id_departement' => $id_departement
+        ]);
     }
-
-    // public function getExamensAVenirDetails() {
-    //     $start = date('Y-m-d');
-    //     $end = date('Y-m-d', strtotime('+30 days'));
-    //     $query = "
-    //     SELECT 
-    //     DATE_FORMAT(e.date_fin, '%d/%m/%Y') AS date_examen,
-    //     CONCAT( TIME_FORMAT(h.heure_debut, '%H:%i'), '-', TIME_FORMAT(h.heure_fin, '%H:%i')) AS heure,
-    //     m.nom_module AS module,
-    //     CONCAT(f.sigle_filiere, '-S', se.id_semestre, ' (', p.annee_universitaire, ')') AS niveau,
-    //     s.nom_salle AS salle
-    //         FROM edt e
-    //         LEFT JOIN module m ON e.id_module = m.id_module
-    //         LEFT JOIN filiere f ON e.id_filiere = f.id_filiere
-    //         LEFT JOIN promotion p ON e.id_promotion = p.id_promotion
-    //         LEFT JOIN semestre se ON e.id_semestre = se.id_semestre
-    //         LEFT JOIN salle s ON e.id_salle = s.id_salle
-    //         LEFT JOIN (
-    //             SELECT id_edt, MIN(heure_debut) AS heure_debut, MIN(heure_fin) AS heure_fin
-    //             FROM horaire
-    //             GROUP BY id_edt) h ON e.id_edt = h.id_edt
-    //         WHERE e.date_fin BETWEEN :start AND :end
-    //         AND e.id_edt IN (
-    //             SELECT MAX(e2.id_edt)
-    //             FROM edt e2
-    //             GROUP BY e2.id_module, e2.id_promotion
-    //         )
-    //         ORDER BY e.date_fin ASC";
-
-    //     $params = ['start' => $start, 'end' => $end];
-    //     return $this->select_data_table_join_where($query, $params);
-    // }
-
-     /**
-     * Examens à venir (dernière séance)
-     */
-    public function getExamensAVenirDetails($id_departement)
-    {
+    public function getExamensAVenirDetails($id_departement) {
         $start = date('Y-m-d');
         $end = date('Y-m-d', strtotime('+30 days'));
 
         $query = "
             SELECT 
-                DATE_FORMAT(MAX(e.date_fin), '%d/%m/%Y') AS date_examen,
-                '08:00-10:00' AS heure,
+                DATE_FORMAT(e.date_fin, '%d/%m/%Y') AS date_examen,
+                CONCAT(TIME_FORMAT(e.date_debut, '%H:%i'), '-', TIME_FORMAT(e.date_fin, '%H:%i')) AS heure,
                 m.nom_module AS module,
                 CONCAT(f.sigle_filiere, '-S', se.id_semestre, ' (', p.annee_universitaire, ')') AS niveau,
                 s.nom_salle AS salle
             FROM edt e
-            INNER JOIN module m ON e.id_module = m.id_module
-            INNER JOIN filiere f ON e.id_filiere = f.id_filiere
-            INNER JOIN promotion p ON e.id_promotion = p.id_promotion
-            INNER JOIN semestre se ON e.id_semestre = se.id_semestre
-            INNER JOIN salle s ON e.id_salle = s.id_salle
-            WHERE e.date_debut BETWEEN :start AND :end
+            JOIN module m ON e.id_module = m.id_module
+            JOIN filiere f ON e.id_filiere = f.id_filiere
+            JOIN promotion p ON e.id_promotion = p.id_promotion
+            JOIN semestre se ON e.id_semestre = se.id_semestre
+            JOIN salle s ON e.id_salle = s.id_salle
+            WHERE e.date_fin BETWEEN :start AND :end
             AND f.id_departement = :id_departement
-            GROUP BY e.id_module, e.id_promotion
-            ORDER BY date_examen ASC
+            ORDER BY e.date_fin ASC
         ";
 
-        $params = ['start' => $start, 'end' => $end, 'id_departement' => $id_departement];
-        return $this->select_data_table_join_where($query, $params);
+        return $this->select_data_table_join_where($query, [
+            'start' => $start,
+            'end' => $end,
+            'id_departement' => $id_departement
+        ]);
     }
 
-    public function getExamensAVenir($id_departement)
-    {
-        $details = $this->getExamensAVenirDetails($id_departement);
-        return count($details);
+    public function getStatsEtudiantsParFiliereNiveau_scolarite() {
+        $query = "
+            SELECT 
+                f.id_filiere,
+                f.nom_filiere,
+                f.sigle_filiere,
+                d.nom_departement,
+                CASE 
+                    WHEN se.id_semestre IN (1, 2) THEN 'L1'
+                    WHEN se.id_semestre IN (3, 4) THEN 'L2'
+                    WHEN se.id_semestre IN (5, 6) THEN 'L3'
+                    ELSE 'Autre'
+                END AS niveau,
+                p.annee_universitaire,
+                COUNT(DISTINCT CASE WHEN e.total_frais > 0 THEN e.id_etudiant END) AS inscrits,
+                COUNT(DISTINCT CASE WHEN e.total_frais = 0 AND se.id_semestre IN (3,4,5,6) THEN e.id_etudiant END) AS non_inscrits,
+                COUNT(DISTINCT CASE WHEN e.genre_etudiant = 'M' THEN e.id_etudiant END) AS hommes,
+                COUNT(DISTINCT CASE WHEN e.genre_etudiant = 'F' THEN e.id_etudiant END) AS femmes,
+                COUNT(DISTINCT CASE WHEN ne.moyenne_module >= 10 THEN e.id_etudiant END) AS admis,
+                COUNT(DISTINCT CASE WHEN ne.moyenne_module < 10 THEN e.id_etudiant END) AS ajournes
+            FROM filiere f
+            JOIN departement d ON f.id_departement = d.id_departement
+            LEFT JOIN promotion p ON f.id_filiere = p.id_filiere
+            LEFT JOIN parcours pa ON p.id_parcours = pa.id_parcours
+            LEFT JOIN semestre se ON pa.id_semestre = se.id_semestre
+            LEFT JOIN etudiant e ON p.id_promotion = e.id_promotion
+            LEFT JOIN note_etudiant ne ON e.id_etudiant = ne.id_etudiant AND p.id_promotion = ne.id_promotion
+            GROUP BY f.id_filiere, se.id_semestre, p.annee_universitaire
+            HAVING niveau IS NOT NULL
+            ORDER BY d.nom_departement, f.nom_filiere, se.id_semestre, p.annee_universitaire DESC
+        ";
+        
+        return $this->select_data_table_join_where($query, []);
     }
 
+    public function getIndicateursGeneraux_scolarite() {
+        $query = "
+            SELECT
+                (SELECT COUNT(*) FROM etudiant) AS total_etudiants,
+                (SELECT COUNT(*) FROM etudiant WHERE total_frais > 0) AS total_inscrits,
+                (SELECT COUNT(*) FROM enseignants) AS total_enseignants,
+                (SELECT COUNT(*) FROM filiere) AS total_filieres,
+                (SELECT COUNT(*) FROM departement) AS total_departements,
+                (SELECT COUNT(DISTINCT id_etudiant) FROM note_etudiant WHERE moyenne_module >= 10) AS total_admis,
+                (SELECT COUNT(DISTINCT id_etudiant) FROM note_etudiant WHERE moyenne_module < 10) AS total_ajournes
+        ";
+        return $this->select_data_table_join_where($query, [])[0] ?? (object)[
+            'total_etudiants' => 0,
+            'total_inscrits' => 0,
+            'total_enseignants' => 0,
+            'total_filieres' => 0,
+            'total_departements' => 0,
+            'total_admis' => 0,
+            'total_ajournes' => 0
+        ];
+    }
 }
 ?>

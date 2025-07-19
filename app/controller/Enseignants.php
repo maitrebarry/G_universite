@@ -5,15 +5,42 @@ class Enseignants extends Controller
     {
         $this->lsite_enseignant();
     }
+    // public function lsite_enseignant()
+    // {
+
+    //     $commandeModel = new Enseignant();
+    //     $enseignat_enseignat_PERMANANT = $commandeModel->getEnseignantCDI();
+    //     $enseignat_NON_PERMANANT = $commandeModel->getEnseignantVCT();
+    //     //  var_dump($enseignat_enseignat_PERMANANT);
+    //     //  var_dump($enseignat_NON_PERMANANT);
+    //     //  exit;
+    //     $this->view(
+    //         'liste_enseignant',
+    //         [
+    //             'enseignat_CDI' => $enseignat_enseignat_PERMANANT,
+    //             'enseignat_VCT' => $enseignat_NON_PERMANANT
+    //         ]
+    //     );
+    // } 
     public function lsite_enseignant()
     {
-
         $commandeModel = new Enseignant();
-        $enseignat_enseignat_PERMANANT = $commandeModel->getEnseignantCDI();
-        $enseignat_NON_PERMANANT = $commandeModel->getEnseignantVCT();
-        //  var_dump($enseignat_enseignat_PERMANANT);
-        //  var_dump($enseignat_NON_PERMANANT);
-        //  exit;
+
+        // Par défaut, on ne filtre pas par département (SupAdmin, DG, etc.)
+        $id_departement = null;
+
+        // Si l'utilisateur est Chef DR ou un rôle lié à un département, on filtre
+        if (
+            isset($_SESSION['role']) &&
+            in_array($_SESSION['role'], ['Chef DR', 'Sécretaire principale', 'Scolarite'])
+            && isset($_SESSION['id_departement'])
+        ) {
+            $id_departement = $_SESSION['id_departement'];
+        }
+
+        $enseignat_enseignat_PERMANANT = $commandeModel->getEnseignantCDI($id_departement);
+        $enseignat_NON_PERMANANT = $commandeModel->getEnseignantVCT($id_departement);
+
         $this->view(
             'liste_enseignant',
             [
@@ -21,36 +48,7 @@ class Enseignants extends Controller
                 'enseignat_VCT' => $enseignat_NON_PERMANANT
             ]
         );
-    } 
-    // public function ajouter_enseignant()
-    // {
-    //     $enseignant = new Enseignant();
-    //     $filiere = $enseignant->SelectAllData("*", "grade");
-
-    //     if (isset($_POST["envoyer"])) {
-    //         $_POST = array_map('trim', $_POST);
-    //         $_POST['administration'] = $_POST['administration'] ?? 0;
-            
-    //         // Passer $filiere comme troisième paramètre
-    //         $enseignant->enregistrement($_FILES, $_POST, $filiere);
-    //         if (!empty($enseignant->errors)) {
-    //             $_SESSION['input'] = $_POST;
-    //             $_SESSION['errors'] = $enseignant->errors;
-    //         } else {
-    //             unset($_SESSION['input'], $_SESSION['errors']);
-    //         }
-    //     }
-
-    //     $input_values = $_SESSION['input'] ?? [];
-    //     $errors = $_SESSION['errors'] ?? [];
-    //     unset($_SESSION['input'], $_SESSION['errors']);
-
-    //     $this->view("ajouter_enseignant", [
-    //         'errors' => $errors,
-    //         'filiere' => $filiere,
-    //         'input_values' => $input_values
-    //     ]);
-    // }
+    }
     public function ajouter_enseignant()
     {
          $enseignant = new Enseignant();

@@ -244,13 +244,121 @@
                 </div>
             </section>
             <!-- ==================================== -->
+            <!-- SECTION Scolarite -->
+            <!-- ==================================== -->
+            <?php elseif ($_SESSION['role'] === 'Scolarite'): ?>
+           <section id="dashboard-scolarite" class="role-specific">
+    <!-- ✅ Indicateurs clés -->
+    <div class="row mt-3">
+        <!-- Total Étudiants -->
+        <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
+            <div class="card card-animated-border-top1">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="text-muted mb-1">Étudiants</p>
+                        <h4 class="text-primary mb-0"><?= $indicateurs->total_etudiants ?></h4>
+                        <small><?= $indicateurs->total_inscrits ?> inscrits</small>
+                    </div>
+                    <div class="widget-icon bg-primary text-white"><i class="fa-solid fa-users"></i></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Filières -->
+        <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
+            <div class="card card-animated-border-top1">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="text-muted mb-1">Filières</p>
+                        <h4 class="text-info mb-0"><?= $indicateurs->total_filieres ?></h4>
+                    </div>
+                    <div class="widget-icon bg-info text-white"><i class="fa-solid fa-graduation-cap"></i></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Admis -->
+        <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
+            <div class="card card-animated-border-top1">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="text-muted mb-1">Admis</p>
+                        <h4 class="text-success mb-0"><?= $indicateurs->total_admis ?></h4>
+                        <small><?= $indicateurs->total_etudiants > 0 ? round(($indicateurs->total_admis/$indicateurs->total_etudiants)*100, 1).'%' : '0%' ?> de réussite</small>
+                    </div>
+                    <div class="widget-icon bg-success text-white"><i class="fa-solid fa-check-circle"></i></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Ajournés -->
+        <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
+            <div class="card card-animated-border-top1">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="text-muted mb-1">Ajournés</p>
+                        <h4 class="text-warning mb-0"><?= $indicateurs->total_ajournes ?></h4>
+                        <small><?= $indicateurs->total_etudiants > 0 ? round(($indicateurs->total_ajournes/$indicateurs->total_etudiants)*100, 1).'%' : '0%' ?> d'échec</small>
+                    </div>
+                    <div class="widget-icon bg-warning text-white"><i class="fa-solid fa-exclamation-circle"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ Tableau des étudiants -->
+    <div class="row mt-3">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <i class="fa-solid fa-users me-2"></i> Répartition des étudiants
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Département</th>
+                                    <th>Filière</th>
+                                    <th>Niveau</th>
+                                    <th>Année</th>
+                                    <th>Inscrits</th>
+                                    <th>Hommes</th>
+                                    <th>Femmes</th>
+                                    <th>Non-inscrits</th>
+                                    <th>Admis</th>
+                                    <th>Ajournés</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($etudiants as $e): ?>
+                                <tr>
+                                    <td><?= $e->nom_departement ?></td>
+                                    <td><?= $e->nom_filiere ?> (<?= $e->sigle_filiere ?>)</td>
+                                    <td><?= $e->niveau ?></td>
+                                    <td><?= $e->annee_universitaire ?></td>
+                                    <td><?= $e->inscrits ?></td>
+                                    <td><?= $e->hommes ?></td>
+                                    <td><?= $e->femmes ?></td>
+                                    <td><?= $e->non_inscrits ?></td>
+                                    <td><?= $e->admis ?></td>
+                                    <td><?= $e->ajournes ?></td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+            <!-- ==================================== -->
             <!-- SECTION SECRETAIRE GENERAL (SGP) -->
             <!-- ==================================== -->
             <?php elseif ($_SESSION['role'] === 'Sécretaire principale'): ?>
             <section id="dashboard-sgp" class="role-specific">
                 <div class="row mt-3">
-                
-
                     <!-- Cartes SGP -->
                     <div class="row col-12 mt-2">
                         <!-- Départements -->
@@ -282,7 +390,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <!-- Étudiants -->
                         <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
                             <div class="card card-animated-border-top1">
@@ -297,7 +404,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <!-- Enseignants -->
                         <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
                             <div class="card card-animated-border-top1">
@@ -312,247 +418,203 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                
+                    </div>             
                 </div>
             </section>          
             <!-- ==================================== -->
             <!-- SECTION CHEF DER (GEA OU ST) -->
             <!-- ==================================== -->
             <?php elseif ($_SESSION['role'] === 'Chef DR'): ?>
-                <section id="dashboard-chef-der" class="role-specific">
-                    <div class="row mt-3">
-
-                        <!-- ✅ Statistiques principales -->
-                        <div class="row col-12 mt-2">
-                            <?php
-                            $totalEtudiants = $statsNiveaux->l1 + $statsNiveaux->l2 + $statsNiveaux->l3;
-                            $totalGeneral = $totalEtudiants + $statsNiveaux->unregistered;
-                            ?>
-                            <!-- Étudiants L1 -->
-                            <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
-                                <div class="card card-animated-border-top1">
-                                    <div class="card-body d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <p class="text-muted mb-1">Étudiants L1</p>
-                                            <h4 class="text-primary mb-0"><?= $statsNiveaux->l1 ?></h4>
-                                            <small><?= $totalEtudiants > 0 ? round(($statsNiveaux->l1 / $totalEtudiants) * 100, 1).'%' : '0%' ?> du total</small>
-                                        </div>
-                                        <div class="widget-icon bg-primary text-white"><i class="fa-solid fa-users"></i></div>
-                                    </div>
+            <section id="dashboard-chef-der" class="role-specific">
+                <!-- ✅ Indicateurs clés -->
+                <div class="row mt-3">
+                    <!-- Total Étudiants -->
+                    <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
+                        <div class="card card-animated-border-top1">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-muted mb-1">Étudiants</p>
+                                    <h4 class="text-primary mb-0"><?= $indicateurs->total_etudiants ?></h4>
+                                    <small><?= $indicateurs->total_inscrits ?> inscrits</small>
                                 </div>
-                            </div>
-
-                            <!-- Étudiants L2 -->
-                            <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
-                                <div class="card card-animated-border-top1">
-                                    <div class="card-body d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <p class="text-muted mb-1">Étudiants L2</p>
-                                            <h4 class="text-success mb-0"><?= $statsNiveaux->l2 ?></h4>
-                                            <small><?= $totalEtudiants > 0 ? round(($statsNiveaux->l2 / $totalEtudiants) * 100, 1).'%' : '0%' ?> du total</small>
-                                        </div>
-                                        <div class="widget-icon bg-success text-white"><i class="fa-solid fa-users"></i></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Étudiants L3 -->
-                            <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
-                                <div class="card card-animated-border-top1">
-                                    <div class="card-body d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <p class="text-muted mb-1">Étudiants L3</p>
-                                            <h4 class="text-info mb-0"><?= $statsNiveaux->l3 ?></h4>
-                                            <small><?= $totalEtudiants > 0 ? round(($statsNiveaux->l3 / $totalEtudiants) * 100, 1).'%' : '0%' ?> du total</small>
-                                        </div>
-                                        <div class="widget-icon bg-info text-white"><i class="fa-solid fa-users"></i></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Non-inscrits -->
-                            <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
-                                <div class="card card-animated-border-top1">
-                                    <div class="card-body d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <p class="text-muted mb-1">Non-inscrits</p>
-                                            <h4 class="text-danger mb-0"><?= $statsNiveaux->unregistered ?></h4>
-                                            <small><?= $totalGeneral > 0 ? round(($statsNiveaux->unregistered / $totalGeneral) * 100, 1).'%' : '0%' ?> du total</small>
-                                        </div>
-                                        <div class="widget-icon bg-danger text-white"><i class="fa-solid fa-user-slash"></i></div>
-                                    </div>
-                                </div>
+                                <div class="widget-icon bg-primary text-white"><i class="fa-solid fa-users"></i></div>
                             </div>
                         </div>
-
-                        <!-- ✅ Enseignants, Cours, Taux, Examens -->
-                        <div class="row col-12 mt-2">
-                            <!-- Professeurs -->
-                            <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
-                                <div class="card card-animated-border-top1">
-                                    <div class="card-body d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <p class="text-muted mb-1">Professeurs</p>
-                                            <h4 class="text-warning mb-0"><?= $statsEnseignants->total ?? 0 ?></h4>
-                                            <small><?= $statsEnseignants->actifs ?? 0 ?> actifs</small>
-                                        </div>
-                                        <div class="widget-icon bg-warning text-white"><i class="fa-solid fa-chalkboard-user"></i></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Cours programmés -->
-                            <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
-                                <div class="card card-animated-border-top1">
-                                    <div class="card-body d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <p class="text-muted mb-1">Cours programmés</p>
-                                            <h4 class="text-purple mb-0"><?= $coursProgrammes->total ?? 0 ?></h4>
-                                            <small><?= $coursProgrammes->confirmes ?? 0 ?> confirmés</small>
-                                        </div>
-                                        <div class="widget-icon bg-purple text-white"><i class="fa-solid fa-calendar-check"></i></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Taux de réussite -->
-                            <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
-                                <div class="card card-animated-border-top1">
-                                    <div class="card-body d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <p class="text-muted mb-1">Taux de réussite</p>
-                                            <h4 class="text-teal mb-0"><?= ($tauxReussite->total ?? 0) > 0 ? round($tauxReussite->taux ?? 0, 1) : 0 ?>%</h4>
-                                            <small><?= $tauxReussite->reussis ?? 0 ?>/<?= $tauxReussite->total ?? 0 ?> étudiants</small>
-                                        </div>
-                                        <div class="widget-icon bg-teal text-white"><i class="fa-solid fa-chart-line"></i></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Examens à venir -->
-                            <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
-                                <div class="card card-animated-border-top1">
-                                    <div class="card-body d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <p class="text-muted mb-1">Examens à venir</p>
-                                            <h4 class="text-pink mb-0"><?= $examensAVenir ?></h4>
-                                            <small>30 prochains jours</small>
-                                        </div>
-                                        <div class="widget-icon bg-pink text-white"><i class="fa-solid fa-clipboard-list"></i></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- ✅ Graphiques -->
-                        <div class="row col-12 mt-3">
-                            <!-- Répartition par Niveau -->
-                            <div class="col-lg-6 col-md-12 mb-3">
-                                <div class="card shadow-sm">
-                                    <div class="card-header bg-primary text-white">
-                                        <i class="fa-solid fa-layer-group me-2"></i> Répartition des étudiants par niveau
-                                    </div>
-                                    <div class="card-body text-center">
-                                        <canvas id="levelChart" style="max-height: 300px;"></canvas>
-                                        <p class="mt-3"><strong>Total inscrits :</strong> <?= $totalEtudiants ?></p>
-                                        <p>
-                                            <span class="badge bg-primary">L1 : <?= $statsNiveaux->l1 ?></span>
-                                            <span class="badge bg-success">L2 : <?= $statsNiveaux->l2 ?></span>
-                                            <span class="badge bg-info">L3 : <?= $statsNiveaux->l3 ?></span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Répartition par Genre -->
-                            <div class="col-lg-6 col-md-12 mb-3">
-                                <div class="card shadow-sm">
-                                    <div class="card-header bg-secondary text-white">
-                                        <i class="fa-solid fa-venus-mars me-2"></i> Répartition par genre
-                                    </div>
-                                    <div class="card-body text-center">
-                                        <canvas id="genderChart" style="max-height: 300px;"></canvas>
-                                        <p class="mt-3"><strong>Total étudiants :</strong> <?= $statsGenre->male + $statsGenre->female ?></p>
-                                        <p>
-                                            <span class="badge bg-dark">Hommes : <?= $statsGenre->male ?></span>
-                                            <span class="badge bg-pink">Femmes : <?= $statsGenre->female ?></span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- ✅ Examens à venir -->
-                        <div class="row col-12 mt-2">
-                            <div class="col-12">
-                                <div class="card">
-                                    <div class="card-header bg-primary  text-center"><h6 class="text-white">Détails des examens à venir</h6></div>
-                                    <div class="card-body">
-                                        <div class="table-responsive">
-                                            <table class="table table-hover">
-                                                <thead class="table-light text-center">
-                                                    <tr><th>Date</th><th>Heure</th><th>Matière</th><th>Niveau</th><th>Salle</th></tr>
-                                                </thead>
-                                                <tbody>
-                                                    <?php if (!empty($examensDetails)): ?>
-                                                        <?php foreach ($examensDetails as $examen): ?>
-                                                            <tr>
-                                                                <td><?= $examen->date_examen ?></td>
-                                                                <td><?= $examen->heure ?></td>
-                                                                <td><?= $examen->module ?></td>
-                                                                <td><?= $examen->niveau ?></td>
-                                                                <td><?= $examen->salle ?></td>
-                                                            </tr>
-                                                        <?php endforeach; ?>
-                                                    <?php else: ?>
-                                                        <tr><td colspan="5" class="text-center">Aucun examen prévu</td></tr>
-                                                    <?php endif; ?>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- ✅ Cours programmés -->
-                        <div class="row col-12 mt-2">
-                            <div class="col-12">
-                                <div class="card">
-                                    <div class="card-header bg-primary text-white text-center"><h6 class="text-white">Cours programmés cette semaine</h6></div>
-                                    <div class="card-body">
-                                        <div class="table-responsive">
-                                            <table class="table table-hover text-center">
-                                                <thead class="table-light">
-                                                    <tr><th>Date</th><th>Matière</th><th>Niveau</th><th>Professeur</th><th>Salle</th><th>Statut</th></tr>
-                                                </thead>
-                                                <tbody>
-                                                    <?php if (!empty($coursProgrammesListe)): ?>
-                                                        <?php foreach ($coursProgrammesListe as $cours): ?>
-                                                            <tr>
-                                                                <td><?= $cours->date_cours ?></td>
-                                                                <td><?= $cours->module ?></td>
-                                                                <td><?= $cours->niveau ?></td>
-                                                                <td><?= $cours->professeurs ?></td>
-                                                                <td><?= $cours->salle ?></td>
-                                                                <td><span class="badge <?= $cours->statut === 'Confirmé' ? 'bg-success' : 'bg-warning' ?>"><?= $cours->statut ?></span></td>
-                                                            </tr>
-                                                        <?php endforeach; ?>
-                                                    <?php else: ?>
-                                                        <tr><td colspan="6">Aucun cours programmé</td></tr>
-                                                    <?php endif; ?>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
-                </section>
+
+                    <!-- Enseignants -->
+                    <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
+                        <div class="card card-animated-border-top1">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-muted mb-1">Enseignants</p>
+                                    <h4 class="text-success mb-0"><?= $enseignants->total ?></h4>
+                                    <small><?= $enseignants->permanents ?> permanents</small>
+                                </div>
+                                <div class="widget-icon bg-success text-white"><i class="fa-solid fa-chalkboard-user"></i></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filières -->
+                    <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
+                        <div class="card card-animated-border-top1">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-muted mb-1">Filières</p>
+                                    <h4 class="text-info mb-0"><?= $indicateurs->total_filieres ?></h4>
+                                </div>
+                                <div class="widget-icon bg-info text-white"><i class="fa-solid fa-graduation-cap"></i></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Examens -->
+                    <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
+                        <div class="card card-animated-border-top1">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-muted mb-1">Examens</p>
+                                    <h4 class="text-danger mb-0"><?= count($examens) ?></h4>
+                                    <small>30 prochains jours</small>
+                                </div>
+                                <div class="widget-icon bg-danger text-white"><i class="fa-solid fa-clipboard-list"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ✅ Tableau des étudiants -->
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-primary text-white">
+                                <i class="fa-solid fa-users me-2"></i> Répartition des étudiants
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Filière</th>
+                                                <th>Niveau</th>
+                                                <th>Année</th>
+                                                <th>Inscrits</th>
+                                                <th>Hommes</th>
+                                                <th>Femmes</th>
+                                                <th>Non-inscrits</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach ($etudiants as $e): ?>
+                                            <tr>
+                                                <td><?= $e->nom_filiere ?> (<?= $e->sigle_filiere ?>)</td>
+                                                <td><?= $e->niveau ?></td>
+                                                <td><?= $e->annee_universitaire ?></td>
+                                                <td><?= $e->inscrits ?></td>
+                                                <td><?= $e->hommes ?></td>
+                                                <td><?= $e->femmes ?></td>
+                                                <td><?= $e->non_inscrits ?></td>
+                                            </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ✅ Tableau des enseignants -->
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-secondary text-white">
+                                <i class="fa-solid fa-chalkboard-user me-2"></i> Répartition des enseignants
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Type</th>
+                                                <th>Nombre</th>
+                                                <th>Pourcentage</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Permanents</td>
+                                                <td><?= $enseignants->permanents ?></td>
+                                                <td><?= $enseignants->total > 0 ? round(($enseignants->permanents/$enseignants->total)*100, 1) : 0 ?>%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Non permanents</td>
+                                                <td><?= $enseignants->non_permanents ?></td>
+                                                <td><?= $enseignants->total > 0 ? round(($enseignants->non_permanents/$enseignants->total)*100, 1) : 0 ?>%</td>
+                                            </tr>
+                                        </tbody>
+                                        <tfoot>
+                                            <tr class="table-secondary">
+                                                <th>Total</th>
+                                                <th><?= $enseignants->total ?></th>
+                                                <th>100%</th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ✅ Prochains événements -->
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header bg-info text-white">
+                                <i class="fa-solid fa-calendar-check me-2"></i> Prochains cours
+                            </div>
+                            <div class="card-body">
+                                <?php if (!empty($cours)): ?>
+                                    <ul class="list-group">
+                                        <?php foreach ($cours as $c): ?>
+                                        <li class="list-group-item">
+                                            <strong><?= $c->date_cours ?></strong> - <?= $c->module ?>
+                                            <br><small><?= $c->professeurs ?> - <?= $c->salle ?></small>
+                                        </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                <?php else: ?>
+                                    <p class="text-muted">Aucun cours programmé</p>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header bg-warning text-dark">
+                                <i class="fa-solid fa-clipboard-list me-2"></i> Prochains examens
+                            </div>
+                            <div class="card-body">
+                                <?php if (!empty($examens)): ?>
+                                    <ul class="list-group">
+                                        <?php foreach ($examens as $ex): ?>
+                                        <li class="list-group-item">
+                                            <strong><?= $ex->date_examen ?></strong> - <?= $ex->module ?>
+                                            <br><small><?= $ex->niveau ?> - <?= $ex->salle ?></small>
+                                        </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                <?php else: ?>
+                                    <p class="text-muted">Aucun examen prévu</p>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
             <!-- ==================================== -->
             <!-- SECTION DIRECTEUR GENERAL ADJOINT (DGA) -->
             <!-- ==================================== -->  
@@ -786,8 +848,6 @@
         }
     });
 </script>
-
-
 <?php $this->view("Partials/foot") ?>
 <?php $this->view("Partials/footer") ?>
 </body>

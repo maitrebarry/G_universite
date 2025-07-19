@@ -27,11 +27,26 @@ class Homes extends Controller {
             case 'DG':
                 $this->dashboard_dg();
                 break;
+            case 'SupAdmin':
+                $this->dashboard_supadmin();
+                break;
+            case 'Scolarite':
+                $this->dashboard_scolarite();
+                break;
             default:
                 $this->redirect('Login');
         }
     }
+    public function dashboard_supadmin() {
+        if ($_SESSION['role'] !== 'SupAdmin') {
+            $this->redirect('Login');
+            return;
+        }
 
+        $homeModel = new Home();
+      
+        $this->view('Home');
+    }
     public function dashboard_enseignant() {
         if ($_SESSION['role'] !== 'Enseignant' || !isset($_SESSION['enseignant_id'])) {
             $this->redirect('Login');
@@ -51,104 +66,53 @@ class Homes extends Controller {
         ];
         $this->view('Home', $data);
     }
-
-    // public function dashboard_chef_dr() {
-    //         if (!isset($_SESSION['role'])) {
-    //             $this->redirect('Login');
-    //             return;
-    //         }
-
-    //     $homeModel = new Home();
-
-    //     // Récupération des données de base
-    //     $statsNiveaux = $homeModel->getStatsEtudiantsParNiveau() ?? (object)[
-    //         'l1' => 0, 'l2' => 0, 'l3' => 0, 'unregistered' => 0
-    //     ];
-
-    //     // Calcul du total des inscrits
-    //     $totalInscrits = $statsNiveaux->l1 + $statsNiveaux->l2 + $statsNiveaux->l3;
+    public function dashboard_chef_dr() {    
+        if ($_SESSION['role'] !== 'Chef DR') {
+            $this->redirect('Login');
+            return;
+        }
+        $homeModel = new Home();
+        $id_departement = $_SESSION['id_departement'];
+        $data = [
+            'role' => 'Chef DR',
+            'etudiants' => $homeModel->getStatsEtudiantsParFiliereNiveau($id_departement) ?? [],
+            'enseignants' => $homeModel->getStatsEnseignants($id_departement),
+            'indicateurs' => $homeModel->getIndicateursGeneraux($id_departement),
+            'examens' => $homeModel->getExamensAVenirDetails($id_departement) ?? [],
+            'cours' => $homeModel->getCoursProgrammes($id_departement) ?? []
+        ];
+        // Debug: vérifiez les données avant envoi à la vue
+        // var_dump($data); exit;
+        $this->view('Home', $data);
+    }
+    public function dashboard_scolarite() {
+        if ($_SESSION['role'] !== 'Scolarite') {
+            $this->redirect('Login');
+            return;
+        }
         
-    //     $data = [
-    //         'role' => 'Chef DR',
-    //         'statsNiveaux' => $statsNiveaux,
-    //         'statsGenre' => $homeModel->getStatsEtudiantsParGenre() ?? (object)['male' => 0, 'female' => 0],
-    //         'statsEnseignants' => $homeModel->getStatsEnseignants() ?? (object)['total' => 0, 'actifs' => 0],
-    //         'coursProgrammes' => $homeModel->getCoursProgrammes() ?? (object)['total' => 0, 'confirmes' => 0, 'heures_total' => 0],
-    //         'tauxReussite' => $homeModel->getTauxReussiteGlobal() ?? (object)['taux' => 0, 'reussis' => 0, 'total' => 0],
-    //         'examensAVenir' => $homeModel->getExamensAVenir() ?? 0,
-    //         'coursProgrammesListe' => $homeModel->getListeCoursProgrammes() ?? [],
-    //         'examensDetails' => $homeModel->getExamensAVenirDetails() ?? [],
-    //         'periodeActive' => $homeModel->getPeriodeActive(),
-    //         'totalInscrits' => $totalInscrits ,
-            
-    //     ];
-    //     //   var_dump($data);exit;
-    //     $this->view('Home', $data);
-    // }
-    public function dashboard_chef_dr()
-    {
-        if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Chef DR' || !isset($_SESSION['id_departement'])) {
+        $homeModel = new Home();
+
+        $data = [
+            'role' => 'Scolarite',
+            'etudiants' => $homeModel->getStatsEtudiantsParFiliereNiveau_scolarite() ?? [],
+            'indicateurs' => $homeModel->getIndicateursGeneraux_scolarite(),
+        ];
+
+        $this->view('Home', $data);
+    }
+    public function dashboard_secretaire() {
+        if ($_SESSION['role'] !== 'Sécretaire principale') {
             $this->redirect('Login');
             return;
         }
 
         $homeModel = new Home();
-        $id_departement = $_SESSION['id_departement']; // ✅ Filtrage par département
 
-        // Récupération des données par département
-        $statsNiveaux = $homeModel->getStatsEtudiantsParNiveau($id_departement) ?? (object)[
-            'l1' => 0, 'l2' => 0, 'l3' => 0, 'unregistered' => 0
-        ];
+       
 
-        $statsGenre = $homeModel->getStatsEtudiantsParGenre($id_departement) ?? (object)['male' => 0, 'female' => 0];
-        $statsEnseignants = $homeModel->getStatsEnseignants($id_departement) ?? (object)['total' => 0, 'actifs' => 0];
-        $examensDetails = $homeModel->getExamensAVenirDetails($id_departement) ?? [];
-        $examensAVenir = $homeModel->getExamensAVenir($id_departement) ?? 0;
-        $coursProgrammes = $homeModel->getCoursProgrammes($id_departement) ?? (object)['total' => 0, 'confirmes' => 0, 'heures_total' => 0];
-        $coursProgrammesListe = $homeModel->getListeCoursProgrammes($id_departement) ?? [];
-        $tauxReussite = $homeModel->getTauxReussiteGlobal($id_departement) ?? (object)['taux' => 0, 'reussis' => 0, 'total' => 0];
-
-        $totalInscrits = $statsNiveaux->l1 + $statsNiveaux->l2 + $statsNiveaux->l3;
-
-        // Données envoyées à la vue Home.php
-        $data = [
-            'role' => 'Chef DR',
-            'statsNiveaux' => $statsNiveaux,
-            'statsGenre' => $statsGenre,
-            'statsEnseignants' => $statsEnseignants,
-            'coursProgrammes' => $coursProgrammes,
-            'tauxReussite' => $tauxReussite,
-            'examensAVenir' => $examensAVenir,
-            'coursProgrammesListe' => $coursProgrammesListe,
-            'examensDetails' => $examensDetails,
-            'periodeActive' => $homeModel->getPeriodeActive(),
-            'totalInscrits' => $totalInscrits
-        ];
-
-        $this->view('Home', $data);
+        $this->view('Home');
     }
-
-
-    // public function dashboard_secretaire() {
-    //     if ($_SESSION['role'] !== 'Sécretaire principale') {
-    //         $this->redirect('Login');
-    //         return;
-    //     }
-
-    //     $homeModel = new Home();
-
-    //     $data = [
-    //         'role' => 'Sécretaire principale',
-    //         'totalEtudiants' => $homeModel->getTotalEtudiants(),
-    //         'nouveauxInscrits' => $homeModel->getNouveauxInscrits(),
-    //         'dossiersEnAttente' => $homeModel->getDossiersEnAttente(),
-    //         'periodeActive' => $homeModel->getPeriodeActive()
-    //         // Ajoutez d'autres données spécifiques au secrétariat
-    //     ];
-
-    //     $this->view('Home', $data);
-    // }
-
     // public function dashboard_dga() {
     //     if ($_SESSION['role'] !== 'DGA') {
     //         $this->redirect('Login');
@@ -168,7 +132,6 @@ class Homes extends Controller {
 
     //     $this->view('Home', $data);
     // }
-
     // public function dashboard_dg() {
     //     if ($_SESSION['role'] !== 'DG') {
     //         $this->redirect('Login');
