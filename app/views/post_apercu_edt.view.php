@@ -70,8 +70,19 @@ td {
                     <label class="form-label d-block text-center text-bold-600 mb-1" for="single-select">Salle de
                         Cours</label>
                     <div class="form-group">
-                        <h6 class="text-center text-bold-500 text-body">
-                            <?php echo strtoupper($infosEdt->edt->nom_salle) ?>
+                        <h6 class="text-center text-bold-500 text-body" style="font-family: 14px !important;">
+                            <?php if (trim(strtoupper($enseignants[0]->groupe)) == "GP" || trim(strtoupper($enseignants[0]->groupe)) == trim("GROUPE PRINCIPAL")): ?>
+
+                            <?php echo strtoupper($enseignants[0]->nom_salle) ?>
+                            <?php else : ?>
+                            <?php foreach ($enseignants as $enseignant): ?>
+
+                            <span class="mr-1">
+                                <?php echo  $enseignant->groupe . "(" . strtoupper($enseignant->nom_salle) . ")" ?>
+                            </span>
+                            <?php endforeach ?>
+
+                            <?php endif ?>
                         </h6>
                     </div>
                 </div>
@@ -126,56 +137,54 @@ td {
             <?php if (strlen($infosEdt->module->nom_module) >= 20): ?>
             <div class=" mt-1">
                 <h6>
-                    <span class=" text-bold-700"><?php echo  strtoupper($infosEdt->module->sigle_module) ?></span>
-                    <span> =
+                    <span class=" text-bold-700"
+                        style="font-size: 14px;"><?php echo  strtoupper($infosEdt->module->sigle_module) ?></span>
+                    <span style="font-size: 14px;"> =
                         <?php echo strtoupper($infosEdt->module->nom_module) ?></span>
                 </h6>
             </div>
             <?php endif ?>
-                <div>
-                    <h6 class="text-bold-200">
-                        <div class="d-flex justify-content-arround mb-1">
-                            <?php foreach ($enseignants as $enseignant): ?>
-                                <span class=" text-capitalize d-block mr-1">
-                                    
-                                    <?php echo $enseignant->enseignant_prenom . ' ' . $enseignant->enseignant_nom ?>
-                                    <?php if(!empty(trim($enseignant->groupe))): ?>
-                                    (
-                                    <b> <?php echo $enseignant->groupe ?></b>
-                                    )
-                                    <?php endif ?>
+            <div>
+                <h6 class="text-bold-200">
+                    <div class="d-flex justify-content-arround mb-1">
+                        <?php foreach ($enseignants as $enseignant): ?>
+                        <span class=" text-capitalize mr-1">
+
+                            <?php echo $enseignant->enseignant_prenom . ' ' . $enseignant->enseignant_nom ?>
+                            <?php if (!empty(trim($enseignant->groupe))): ?>
+                            (
+                            <b> <?php echo $enseignant->groupe ?></b>
+                            )
+                            <?php endif ?>
                             <?php endforeach ?>
-                        </div>
+                    </div>
+                </h6>
+            </div>
+            <div class=" text-right mr-2" style="min-width:100%">
+                <div class="d-flex justify-content-end " style="min-width:100%">
+                    <h6 class=" text-muted text-right" style="min-width:100%">Segou, le
+                        <?php echo date('d-m-Y') ?></h6>
+                </div>
+                <div class="" style="min-width:100%">
+                    <h6 class=" text-bold-600 text-center d-flex justify-content-end w-100" style="min-width:100%">
+                        Le
+                        Chef de DER
+                        <?php echo (isset($_SESSION['sigle_departement'])) ? strtoupper($_SESSION['sigle_departement']) : "" ?>
+                    </h6>
+                    <h6 class=" d-flex text-center justify-content-end w-100" style="min-width:100%">
+                        <img src="<?= ROOT ?><?= $_SESSION['signature'] ?>" alt="user image" class="d-block rounded  "
+                            style="width: 150px; max-height: 60px;" />
                     </h6>
                 </div>
-                <div class=" text-right mr-2" style="min-width:100%">
-                    <div class="d-flex justify-content-end " style="min-width:100%">
-                        <h6 class=" text-muted text-right" style="min-width:100%">Segou, le
-                            <?php echo date('d-m-Y') ?></h6>
-                    </div>
-                    <div class="" style="min-width:100%">
-                        <h6 class=" text-bold-600 text-center d-flex justify-content-end w-100"
-                            style="min-width:100%">
-                            Le
-                            Chef de DER
-                            <?php echo (isset($_SESSION['sigle_departement'])) ? strtoupper($_SESSION['sigle_departement']) : "" ?>
-                        </h6>
-                        <h6 class=" d-flex text-center justify-content-end w-100"
-                            style="min-width:100%">
-                            <img src="<?= ROOT ?><?= $_SESSION['signature'] ?>" alt="user image"
-                                class="d-block rounded  "
-                                style="width: 150px; max-height: 60px;" />
-                        </h6>
-                    </div>
-                    <div class=" d-flex justify-content-end" style="min-width:100%">
-                        <h6 class=" text-right" style="min-width:100%">Dr
-                            <?php echo (isset($_SESSION['nom_prenom'])) ? strtoupper($_SESSION['nom_prenom']) : "" ?>
-                            <br>
-                            <i style="font-size:11px"> 
-                                <?php echo (isset($_SESSION['nom_grade'])) ? strtoupper($_SESSION['nom_grade']) : "" ?>
-                            </i>
-                        </h6>
-                    </div>
+                <div class=" d-flex justify-content-end" style="min-width:100%">
+                    <h6 class=" text-right" style="min-width:100% ; font-size:14px !important;">Dr
+                        <?php echo (isset($_SESSION['nom_prenom'])) ? strtoupper($_SESSION['nom_prenom']) : "" ?>
+                        <br>
+                        <i style="font-size:11px">
+                            <?php echo (isset($_SESSION['nom_grade'])) ? strtoupper($_SESSION['nom_grade']) : "" ?>
+                        </i>
+                    </h6>
+                </div>
             </div>
         </div>
     </div>

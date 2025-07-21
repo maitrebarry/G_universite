@@ -22,8 +22,8 @@ class Emploi_du_temp  extends Model
             }
             $periode = $this->getCurrentPeriode();
             $this->e(extract($edt));
-            $requetteEdt = "INSERT INTO edt(date_creation, date_debut, date_Fin, statut, heure_total, id_filiere, id_promotion, id_semestre, id_module, id_salle, id_periode) 
-            VALUES (:dateCreation, :dateDebut, :dateFin, :statut, :heureTotal, :idFiliere, :idPromotion, :idSemestre, :idModule, :idSalle, :idPeriode)";
+            $requetteEdt = "INSERT INTO edt(date_creation, date_debut, date_Fin, statut, heure_total, id_filiere, id_promotion, id_semestre, id_module, id_periode) 
+            VALUES (:dateCreation, :dateDebut, :dateFin, :statut, :heureTotal, :idFiliere, :idPromotion, :idSemestre, :idModule, :idPeriode)";
             $dateFin = new DateTime($dateDebut);
             $dateFin->add(new DateInterval('P7D'));
             $param = [
@@ -36,23 +36,32 @@ class Emploi_du_temp  extends Model
                 "idPromotion" => $idPromotion,
                 "idSemestre" => $idSemestre,
                 "idModule" => $idModule,
-                "idSalle" => $idSalle,
                 "idPeriode" => $periode->id_periode,
 
             ];
             $reponse = $this->insertion_update_simples_insert_id($requetteEdt, $param);
             $idEdt = $reponse['lastInsertId'];
-
+            if ($enseignants == null || count($enseignants) < 1) {
+                throw new Exception("Aucun enseignant selectionné");
+            }
             foreach ($enseignants as $enseignant) {
-                $requetteEnseignant= "INSERT INTO enseignant_edt(id_edt, id_enseignant, groupe) 
-                VALUES (:idEdt, :idEnseignant, :groupe)";
+
+                $requetteEnseignant = "INSERT INTO enseignant_edt(id_edt, id_enseignant, groupe, nombre_heure, type_cours, id_salle) 
+                VALUES (:idEdt, :idEnseignant, :groupe, :nombreHeure, :typeCours, :salle)";
                 extract($enseignant);
+                if (empty(trim($salle))) {
+                    throw new Exception("Salle non selectionné");
+                }
+
                 $param = [
                     "idEdt" => $idEdt,
                     "idEnseignant" => $enseignant,
-                    "groupe" => $groupe
+                    "groupe" => $groupe,
+                    "nombreHeure" => $nombreHeure,
+                    "typeCours" => $typeCours,
+                    "salle" => $salle
                 ];
-                
+
                 $this->insertion_update_simples($requetteEnseignant, $param);
             }
             // la verification des horaires
@@ -125,10 +134,7 @@ class Emploi_du_temp  extends Model
             $connection->beginTransaction();
 
             // la recuperation de l'edt
-            $requetteEdt = "SELECT id_edt, date_creation, date_debut, date_fin, statut, id_module, id_promotion,   
-                edt.id_salle, nom_salle, capacite_salle FROM edt
-                
-                INNER JOIN salle ON edt.id_salle=salle.id_salle  WHERE id_edt=? ";
+            $requetteEdt = "SELECT id_edt, date_creation, date_debut, date_fin, statut, id_module, id_promotion FROM edt  WHERE id_edt=? ";
             $resultat = $this->select_data_table_join_where($requetteEdt, [$idEdt]);
             $edt = $resultat[0];
 
@@ -157,12 +163,22 @@ class Emploi_du_temp  extends Model
             $resultat = $this->select_data_table_join_where($requettePromotion, [$edt->id_promotion]);
             $promotion = $resultat[0];
 
+
+            // la recuperation des enseignant
+            $requetteEnseignant = "SELECT id_enseignant, groupe, type_cours, nombre_heure, salle.nom_salle, 
+            enseignant_prenom, enseignant_nom, enseignant_telephone FROM enseignant_edt
+            INNER JOIN enseignants ON enseignant_edt.id_enseignant=enseignants.enseignant_id 
+            INNER JOIN salle ON enseignant_edt.id_salle= salle.id_salle WHERE id_edt=? ";
+
+            $enseignants = $this->select_data_table_join_where($requetteEnseignant, [$idEdt]);
+
             // la fin de la transaction
             $connection->commit();
 
             $infoEdt = [
                 "module" => $module,
                 "promotion" => $promotion,
+                "enseignants" => $enseignants,
                 "edt" => $edt
             ];
             return (object) $infoEdt;
@@ -276,7 +292,7 @@ class Emploi_du_temp  extends Model
             }
             $periode = $this->getCurrentPeriode();
             $this->e(extract($edt));
-            $requetteEdt = "UPDATE  edt SET date_debut=:dateDebut, date_Fin=:dateFin, statut=:statut, heure_total=:heureTotal, id_filiere=:idFiliere, id_promotion=:idPromotion, id_module=:idModule, id_enseignant=:idEnseignant, id_salle=:idSalle, id_periode=:idPeriode
+            $requetteEdt = "UPDATE  edt SET date_debut=:dateDebut, date_Fin=:dateFin, statut=:statut, heure_total=:heureTotal, id_filiere=:idFiliere, id_promotion=:idPromotion, id_module=:idModule, id_enseignant=:idEnseignant id_periode=:idPeriode
             WHERE id_edt=:idEdt LIMIT 1";
             $dateFin = new DateTime($dateDebut);
             $dateFin->add(new DateInterval('P7D'));
@@ -289,7 +305,6 @@ class Emploi_du_temp  extends Model
                 "idPromotion" => $idPromotion,
                 "idModule" => $idModule,
                 "idEnseignant" => $idEnseignant,
-                "idSalle" => $idSalle,
                 "idPeriode" => $periode->id_periode,
                 "idEdt" => $idEdt,
             ];
