@@ -73,6 +73,7 @@ class Login extends Model
                     $_SESSION['nom_grade'] = $enseignant->nom_grade;
                 }
                 if (strtoupper(str_replace(" ", "", $enseignant->role)) == strtoupper('ChefDR')) {
+                     $_SESSION['id_departement'] = $enseignant->id_departement;
                     $_SESSION['nom_departement'] = $enseignant->nom_departement;
                     $_SESSION['sigle_departement'] = $enseignant->sigle_departement;
 

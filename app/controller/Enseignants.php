@@ -5,15 +5,42 @@ class Enseignants extends Controller
     {
         $this->lsite_enseignant();
     }
+    // public function lsite_enseignant()
+    // {
+
+    //     $commandeModel = new Enseignant();
+    //     $enseignat_enseignat_PERMANANT = $commandeModel->getEnseignantCDI();
+    //     $enseignat_NON_PERMANANT = $commandeModel->getEnseignantVCT();
+    //     //  var_dump($enseignat_enseignat_PERMANANT);
+    //     //  var_dump($enseignat_NON_PERMANANT);
+    //     //  exit;
+    //     $this->view(
+    //         'liste_enseignant',
+    //         [
+    //             'enseignat_CDI' => $enseignat_enseignat_PERMANANT,
+    //             'enseignat_VCT' => $enseignat_NON_PERMANANT
+    //         ]
+    //     );
+    // } 
     public function lsite_enseignant()
     {
-
         $commandeModel = new Enseignant();
-        $enseignat_enseignat_PERMANANT = $commandeModel->getEnseignantCDI();
-        $enseignat_NON_PERMANANT = $commandeModel->getEnseignantVCT();
-        //  var_dump($enseignat_enseignat_PERMANANT);
-        //  var_dump($enseignat_NON_PERMANANT);
-        //  exit;
+
+        // Par défaut, on ne filtre pas par département (SupAdmin, DG, etc.)
+        $id_departement = null;
+
+        // Si l'utilisateur est Chef DR ou un rôle lié à un département, on filtre
+        if (
+            isset($_SESSION['role']) &&
+            in_array($_SESSION['role'], ['Chef DR', 'Sécretaire principale', 'Scolarite'])
+            && isset($_SESSION['id_departement'])
+        ) {
+            $id_departement = $_SESSION['id_departement'];
+        }
+
+        $enseignat_enseignat_PERMANANT = $commandeModel->getEnseignantCDI($id_departement);
+        $enseignat_NON_PERMANANT = $commandeModel->getEnseignantVCT($id_departement);
+
         $this->view(
             'liste_enseignant',
             [
@@ -21,18 +48,37 @@ class Enseignants extends Controller
                 'enseignat_VCT' => $enseignat_NON_PERMANANT
             ]
         );
-    } 
+    }
     public function ajouter_enseignant()
     {
+         $enseignant = new Enseignant();
+         if (isset($_SESSION['id_departement'])) {
+                $_POST['id_departement'] = $_SESSION['id_departement'];
+            } else {
+                $_SESSION['errors'][] = "Votre identifiant de département est introuvable. Veuillez vous reconnecter.";
+               $enseignant->redirect("Enseignants/ajouter_enseignant"); 
+                exit;
+            }
+        // Vérifier que l'utilisateur est connecté et est chef DR
+        if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Chef DR') {
+            // Rediriger ou afficher une erreur
+            $_SESSION['errors'][] = "Accès refusé. Seuls les chefs de département peuvent ajouter des enseignants.";
+            $enseignant->redirect("ajouter_enseignant"); 
+            exit;
+        }
+
         $enseignant = new Enseignant();
         $filiere = $enseignant->SelectAllData("*", "grade");
 
         if (isset($_POST["envoyer"])) {
             $_POST = array_map('trim', $_POST);
             $_POST['administration'] = $_POST['administration'] ?? 0;
-            
-            // Passer $filiere comme troisième paramètre
+
+            // Injecter le département du chef DR connecté
+            $_POST['id_departement'] = $_SESSION['id_departement'];
+
             $enseignant->enregistrement($_FILES, $_POST, $filiere);
+
             if (!empty($enseignant->errors)) {
                 $_SESSION['input'] = $_POST;
                 $_SESSION['errors'] = $enseignant->errors;

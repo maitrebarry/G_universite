@@ -112,7 +112,7 @@ class Enseignant extends Model
         $diplome = $post['diplome'] ?? null;
         $code = $post['code'] ?? null;
         $administration = $post['administration'] ?? 0;
-    
+        $id_departement = $post['id_departement'] ?? null; 
         // Gérer les champs en fonction du statut (avec orthographe originale)
         if ($statut === "NON_PERMANANT") {
             $grade = null;
@@ -176,12 +176,12 @@ class Enseignant extends Model
         $sql = "INSERT INTO enseignants 
             (enseignant_statut, id_grade, enseignant_matricule, enseignant_nom, enseignant_prenom, 
             enseignant_date_naissance, enseignant_email, enseignant_telephone, enseignant_diplome, 
-            enseignant_cv, contrat, code_bancaire, administration) 
+            enseignant_cv, contrat, code_bancaire, administration,id_departement) 
             VALUES 
             (:enseignant_statut, :id_grade, :enseignant_matricule, :enseignant_nom, :enseignant_prenom, 
             :enseignant_date_naissance, :enseignant_email, :enseignant_telephone, :enseignant_diplome, 
-            :enseignant_cv, :contrat, :code_bancaire, :administration)";
-    
+            :enseignant_cv, :contrat, :code_bancaire, :administration, :id_departement)";
+
         $stmt = $bdd->prepare($sql);
     
         $success = $stmt->execute([
@@ -197,7 +197,8 @@ class Enseignant extends Model
             ":enseignant_cv" => $cv,
             ":contrat" => $contrat,
             ":code_bancaire" => $code,
-            ":administration" => $administration
+            ":administration" => $administration,
+            ":id_departement" => $id_departement
         ]);
     
         if ($success) {
@@ -208,8 +209,29 @@ class Enseignant extends Model
             $this->errors[] = "Échec de l'ajout de l'enseignant: " . $errorInfo[2];
         }
     }
-    // Sélectionner les enseignants CDI
-    public function getEnseignantCDI()
+        // Sélectionner les enseignants CDI
+    // public function getEnseignantCDI()
+    // {
+    //     $select = "
+    //         SELECT enseignants.*, grade.nom_grade 
+    //         FROM enseignants
+    //         JOIN grade ON grade.id_grade = enseignants.id_grade
+    //         WHERE enseignants.enseignant_statut = :statut
+    //     ";
+    //     $execute_data = ['statut' => 'PERMANANT',];
+    //     return $this->select_data_table_join_where($select, $execute_data);
+    // }
+         // Sélectionner les enseignants VCT
+    // public function getEnseignantVCT()
+    // {
+    //     $select = "*";
+    //     $fields = "enseignants";
+    //     $whereValue = "enseignant_statut = :statut";
+    //     $value = ['statut' => 'NON_PERMANANT'];
+    //     return $this->FetchSelectWhere2($select, $fields, $whereValue, $value);
+    // }
+    // Sélectionner les enseignants CDI par département (optionnel)
+    public function getEnseignantCDI($id_departement = null)
     {
         $select = "
             SELECT enseignants.*, grade.nom_grade 
@@ -217,17 +239,27 @@ class Enseignant extends Model
             JOIN grade ON grade.id_grade = enseignants.id_grade
             WHERE enseignants.enseignant_statut = :statut
         ";
-        $execute_data = ['statut' => 'PERMANANT',];
+        $execute_data = ['statut' => 'PERMANANT'];
+    
+        if ($id_departement !== null) {
+            $select .= " AND enseignants.id_departement = :id_departement";
+            $execute_data['id_departement'] = $id_departement;
+        }
+    
         return $this->select_data_table_join_where($select, $execute_data);
-    }
-    // Sélectionner les enseignants VCT
-    public function getEnseignantVCT()
+    } 
+    // Sélectionner les enseignants VCT par département (optionnel)
+    public function getEnseignantVCT($id_departement = null)
     {
-        $select = "*";
-        $fields = "enseignants";
-        $whereValue = "enseignant_statut = :statut";
+        $select = "SELECT * FROM enseignants WHERE enseignant_statut = :statut";
         $value = ['statut' => 'NON_PERMANANT'];
-        return $this->FetchSelectWhere2($select, $fields, $whereValue, $value);
+    
+        if ($id_departement !== null) {
+            $select .= " AND id_departement = :id_departement";
+            $value['id_departement'] = $id_departement;
+        }
+    
+        return $this->select_data_table_join_where($select, $value);
     }
     public function modification($data)
     {

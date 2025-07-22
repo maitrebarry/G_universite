@@ -174,7 +174,6 @@ class Model extends Database
         }
     }
 
-    // Sélectionne une seule donnée avec une jointure et une condition WHERE
     // Sélectionne plusieurs données avec une jointure et une condition WHERE
     public function select_data_table_join_where($select, $execute_data = [])
     {

@@ -418,6 +418,7 @@ if (isset($_POST['valider'])) {
                                                                 <option value="DG">DG</option>
                                                                 <option value="DGA">DGA</option>
                                                                 <option value="Sécretaire principale">SP</option>
+                                                                <option value="Scolarite">Scolarite</option>
                                                                 <option value="Chef DR"> Chef Dr</option>
                                                                 <option value="Enseignant">Enseignant</option>
                                                             </select>
@@ -438,14 +439,14 @@ if (isset($_POST['valider'])) {
 
 
                                                     </div>
-                                                    <div class=" row d-flex justify-content-between align-items-center" id="c_signature">
+                                                    <div class="row d-flex justify-content-between align-items-center" id="c_signature">
                                                         <div class="col-6">
-                                                            <label for="signature" class="form-label">Télécharger son signature :</label>
-                                                            <input type="file" id="image" name="signature" class="form-control" required />
+                                                            <label for="signature" class="form-label">Télécharger sa signature :</label>
+                                                            <input type="file" id="image" name="signature" class="form-control" />
                                                         </div>
-                                                        <div class="col-6  d-flex justify-content-end">
+                                                        <div class="col-6 d-flex justify-content-end">
                                                             <img src="<?= ROOT ?>/assets/images/upload.svg" alt="user image" id="imagePreview"
-                                                                class="d-block  " style="width: 150px;max-height:100px" />
+                                                                class="d-block" style="width: 150px;max-height:100px" />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -505,16 +506,16 @@ if (isset($_POST['valider'])) {
                 </option>
             <?php endforeach; ?>
         </select>
-    `;
-            } else {
-                // Masquer la section Permanent et Non Permanent
-                statutContainer.classList.remove('d-flex');
-                statutContainer.classList.add('d-none');
+        `;
+                } else {
+                    // Masquer la section Permanent et Non Permanent
+                    statutContainer.classList.remove('d-flex');
+                    statutContainer.classList.add('d-none');
 
-                // Remplacer par un champ texte pour un utilisateur simple
-                nomPrenomContainer.innerHTML = `
-        <input type="text" id="nom_prenom" class="form-control" name="nom_prenom" placeholder="Nom && prénom" required />
-    `;
+                    // Remplacer par un champ texte pour un utilisateur simple
+                    nomPrenomContainer.innerHTML = `
+            <input type="text" id="nom_prenom" class="form-control" name="nom_prenom" placeholder="Nom && prénom" required />
+        `;
                 // Réinitialiser les champs email et contact
                 document.getElementById('email_utilisateurs').value = '';
                 document.getElementById('contact_utilisateur').value = '';
@@ -563,7 +564,59 @@ if (isset($_POST['valider'])) {
         }
     </script>
     <script>
+        // $(document).ready(function() {
+        //     id_utilisateur = $('#ajouterutilisateur').data('id');
+        //     if (id_utilisateur !== null && id_utilisateur !== '') {
+        //         $('#ajouterutilisateur').click();
+        //         $('#nom_prenom').val(id_utilisateur);
+        //         updateEmailAndContact();
+        //     }
+
+        //     $('#role').change(function() {
+        //         if ($(this).val() == 'Chef DR') {
+        //             $("#departement").removeClass('d-none');
+
+        //         } else {
+        //             $("#departement").addClass('d-none');
+        //         }
+        //         if ($(this).val() == 'Enseignant') {
+
+        //             $("#c_signature").removeClass('d-flex');
+        //             $("#c_signature").addClass('d-none');
+
+        //         } else {
+        //             $("#c_signature").removeClass('d-none');
+        //             $("#c_signature").addClass('d-flex');
+        //         }
+        //     })
+        // })
+        // image = document.getElementById('image')
+        // imagePreview = document.getElementById('imagePreview')
+        // // Affichage d'une image lors de la seclection
+        // image.addEventListener("change", function() {
+        //     //recuperation du fichier choisi
+        //     const file = image.files[0];
+        //     if (file) {
+        //         const reader = new FileReader();
+        //         reader.onload = function(event) {
+        //             imagePreview.src = event.target.result;
+        //         };
+        //         //recuperation
+        //         reader.readAsDataURL(file);
+        //     }
+        // });
+        // $('#utilisateur').click(function() {
+        //     $("#c_signature").removeClass('d-flex');
+        //     $("#c_signature").addClass('d-none');
+
+        // })
+        // $('#enseignant').click(function() {
+        //     $("#c_signature").removeClass('d-none');
+        //     $("#c_signature").addClass('d-flex');
+
+        // })
         $(document).ready(function() {
+            // Initialisation
             id_utilisateur = $('#ajouterutilisateur').data('id');
             if (id_utilisateur !== null && id_utilisateur !== '') {
                 $('#ajouterutilisateur').click();
@@ -571,49 +624,74 @@ if (isset($_POST['valider'])) {
                 updateEmailAndContact();
             }
 
+            // Gestion dynamique du required pour la signature
+            function manageSignatureRequirement() {
+                const isEnseignantRole = $('#role').val() == 'Enseignant';
+                const isUtilisateurSimple = $('#utilisateur').is(':checked');
+                
+                if (isEnseignantRole || isUtilisateurSimple) {
+                    $("#image").removeAttr('required');
+                } else {
+                    $("#image").attr('required', 'required');
+                }
+            }
+
+            // Gestion du rôle
             $('#role').change(function() {
+                // Gestion du département
                 if ($(this).val() == 'Chef DR') {
                     $("#departement").removeClass('d-none');
-
                 } else {
                     $("#departement").addClass('d-none');
                 }
+                
+                // Gestion de la signature
                 if ($(this).val() == 'Enseignant') {
-
-                    $("#c_signature").removeClass('d-flex');
-                    $("#c_signature").addClass('d-none');
-
+                    $("#c_signature").removeClass('d-flex').addClass('d-none');
                 } else {
-                    $("#c_signature").removeClass('d-none');
-                    $("#c_signature").addClass('d-flex');
+                    $("#c_signature").removeClass('d-none').addClass('d-flex');
                 }
-            })
-        })
-        image = document.getElementById('image')
-        imagePreview = document.getElementById('imagePreview')
-        // Affichage d'une image lors de la seclection
-        image.addEventListener("change", function() {
-            //recuperation du fichier choisi
-            const file = image.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    imagePreview.src = event.target.result;
-                };
-                //recuperation
-                reader.readAsDataURL(file);
-            }
-        });
-        $('#utilisateur').click(function() {
-            $("#c_signature").removeClass('d-flex');
-            $("#c_signature").addClass('d-none');
+                
+                manageSignatureRequirement();
+            });
 
-        })
-        $('#enseignant').click(function() {
-            $("#c_signature").removeClass('d-none');
-            $("#c_signature").addClass('d-flex');
+            // Affichage de l'image de prévisualisation
+            const image = document.getElementById('image');
+            const imagePreview = document.getElementById('imagePreview');
+            image.addEventListener("change", function() {
+                const file = image.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        imagePreview.src = event.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
 
-        })
+            // Gestion du type d'utilisateur
+            $('#utilisateur').click(function() {
+                $("#c_signature").removeClass('d-flex').addClass('d-none');
+                manageSignatureRequirement();
+            });
+
+            $('#enseignant').click(function() {
+                $("#c_signature").removeClass('d-none').addClass('d-flex');
+                manageSignatureRequirement();
+            });
+
+            // Validation du formulaire
+            $('form').on('submit', function(e) {
+                if ($('#image').is(':visible') && $('#image').prop('required') && !$('#image').val()) {
+                    e.preventDefault();
+                    alert('Veuillez télécharger une signature');
+                    $('#image').focus();
+                }
+            });
+
+            // Initialiser l'état au chargement
+            manageSignatureRequirement();
+    });
     </script>
 
 </body>
