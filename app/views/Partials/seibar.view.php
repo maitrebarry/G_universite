@@ -162,77 +162,9 @@ $menus = [
                         </ul>
                         <?php endif; ?>
                     </li>
-<<<<<<< HEAD
-                    <li class="<?= ($current_page == 'liste_note') ? 'active' : '' ?>">
-                        <a href="<?= ROOT ?>/Notes/liste_note">
-                            <i class="bx bx-right-arrow-alt"></i>
-                            <span class="menu-item">Résultat Annuelles</span>
-                        </a>
-                    </li>
-                
-                </ul>
-            </li>
-            <li class="nav-item <?= (strpos($_SERVER['REQUEST_URI'], 'Emploi_du_temps') !== false) ?  : '' ?>">
-                <a class="nav-link" href="<?= ROOT ?>/Emploi_du_temps">
-                    <i class="bx bx-book"></i> 
-                    <span class="menu-title">Emploi du temps</span>
-                </a>
-                <ul class="menu-content">
-                    <li class="<?= ($current_page == 'Emploi_du_temps') ? 'active' : '' ?>">
-                        <a href="<?= ROOT ?>/Emploi_du_temps">
-                            <i class="bx bx-right-arrow-alt"></i>
-                            <span class="menu-item">EDT</span>
-                        </a>
-                    </li>
-                    <li class="<?= ($current_page == 'listeEDT_individuels_par_periode') ? 'active' : '' ?>">
-                        <a href="<?= ROOT ?>/Enseignants/listeEDT_individuels_par_periode">
-                            <i class="bx bx-right-arrow-alt"></i>
-                            <span class="menu-item">EDT INDIVIDUEL</span>
-                        </a>
-                    </li>
-                
-                </ul>
-            </li>
-            <!-- Étudiants (Sous-menus) -->
-            <li class="nav-item <?= (strpos($_SERVER['REQUEST_URI'], 'Etudiants') !== false) ?: '' ?>">
-                <a class="nav-link" href="#">
-                    <i class="bx bx-group"></i> <!-- Icône représentant les étudiants -->
-                    <span class="menu-title">Étudiants</span>
-                </a>
-                <ul class="menu-content">
-                    <li class="<?= ($current_page == 'Etudiants') ? 'active' : '' ?>">
-                        <a href="<?= ROOT ?>/Etudiants">
-                            <i class="bx bx-right-arrow-alt"></i>
-                            <span class="menu-item">Liste Etudiants</span>
-                        </a>
-                    </li>
-                    <li class="<?= ($current_page == 'EtudiantPargroupes') ? 'active' : '' ?>">
-                        <a href="<?= ROOT ?>/EtudiantPargroupes">
-                            <i class="bx bx-right-arrow-alt"></i>
-                            <span class="menu-item">Impoter une Liste</span>
-                        </a>
-                    </li>
-                    <li class="<?= ($current_page == 'Reinsciptions') ? 'active' : '' ?>">
-                        <a href="<?= ROOT ?>/Reinsciptions">
-                            <i class="bx bx-right-arrow-alt"></i>
-                            <span class="menu-item">Réinscription</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-            <!-- Configuration -->
-            <li class="nav-item <?= ($current_page == 'Modules/listeModule') ? 'active' : '' ?>">
-                <a class="nav-link" href="<?= ROOT ?>/Modules/listeModule">
-                    <i class="bx bx-cog"></i>
-                    <span class="menu-title">Configuration</span>
-                </a>
-            </li>
-=======
                 <?php endif; ?>
             <?php endforeach; ?>
         <?php endif; ?>
->>>>>>> db79c0513e54702bbef60ad1ad260a11f004e791
         </ul>
     </div>
 </div>
