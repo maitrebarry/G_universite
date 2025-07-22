@@ -1,164 +1,104 @@
-<!DOCTYPE html>
-<html class="loading" lang="en" data-textdirection="ltr">
-<!-- BEGIN: Head-->
 
+<!DOCTYPE html>
+<html lang="fr">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-    <meta name="description"
-        content="Frest admin is super flexible, powerful, clean &amp; modern responsive bootstrap 4 admin template with unlimited possibilities.">
-    <meta name="keywords"
-        content="admin template, Frest admin template, dashboard template, flat admin template, responsive admin template, web app">
-    <meta name="author" content="PIXINVENT">
-    <title>Login Page - Frest - Bootstrap HTML admin template</title>
-    <link rel="apple-touch-icon" href="<?= ROOT ?>/assets/images/ico/apple-icon-120.png">
+  <meta charset="UTF-8">
+  <title>Connexion - G-UNIVERSITE</title>
+ 
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/colors.css">
     <link rel="shortcut icon" type="image/x-icon" href="<?= ROOT ?>/assets/images/ico/favicon.ico">
     <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,600%7CIBM+Plex+Sans:300,400,500,600,700"
         rel="stylesheet">
-
-    <!-- BEGIN: Vendor CSS-->
-    <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/vendors/css/vendors.min.css">
-    <!-- END: Vendor CSS-->
-
-    <!-- BEGIN: Theme CSS-->
-    <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/bootstrap.css">
-    <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/bootstrap-extended.css">
-    <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/colors.css">
-    <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/components.css">
-    <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/themes/dark-layout.css">
-    <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/themes/semi-dark-layout.css">
-    <!-- END: Theme CSS-->
-
-    <!-- BEGIN: Page CSS-->
-    <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/core/menu/menu-types/vertical-menu.css">
-    <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/pages/authentication.css">
-    <!-- END: Page CSS-->
-
-    <!-- BEGIN: Custom CSS-->
-    <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets1//css/style.css">
-    <!-- END: Custom CSS-->
-
-</head>
-
-
-<!-- END: Head-->
-<style>
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <style>
     body {
-        margin: 0;
-        padding: 0;
-        background-image: url('http://localhost/G_universite/public/assets/images/login.jpeg') !important;
-        /* Chemin de l'image */
-        background-size: cover;
-        /* L'image couvre tout l'écran */
-        background-repeat: no-repeat;
-        /* Pas de répétition */
-        background-position: center;
-        /* L'image est centrée */
+        background-image: url('http://localhost/G_universite/public/assets/images/OIP (1).jpeg') !important;
+      background-size: cover;
+      font-family: 'Segoe UI', sans-serif;
     }
-</style>
-<!-- BEGIN: Body-->
 
-<body
-    class="vertical-layout vertical-menu-modern semi-dark-layout 1-column  navbar-sticky footer-static bg-full-screen-image  blank-page blank-page"
-    data-open="click" data-menu="vertical-menu-modern" data-col="1-column" data-layout="semi-dark-layout">
-    <!-- BEGIN: Content-->
-    <div class="app-content content">
-        <div class="content-overlay"></div>
-        <div class="content-wrapper">
-            <div class="content-header row">
-            </div>
-            <div class="content-body">
-                <!-- login page start -->
-                <section id="auth-login" class="row flexbox-container">
-                    <div class="col-xl-8 col-11">
-                        <div class="card bg-authentication mb-0">
-                            <div class="row m-0">
-                                <!-- left section-login -->
-                                <div class="col-md-6 col-12 px-0">
-                                    <div
-                                        class="card disable-rounded-right mb-0 p-2 h-100 d-flex justify-content-center">
-                                        <div class="card-header pb-1">
-                                            <div class="card-title">
-                                                <h4 class="text-center mb-2">Welcome Back</h4>
-                                            </div>
-                                        </div>
-                                        <div class="card-content">
-                                            <div class="card-body">
+    .overlay {
+      background-color: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(6px);
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+      max-width: 420px;
+      width: 100%;
+    }
 
-                                                <div class="divider">
-                                                    <div class="divider-text text-uppercase text-muted"><small>or login
-                                                            with
-                                                            email</small>
-                                                    </div>
-                                                </div>
-                                                <?php $this->view("set_flash"); ?>
-                                                <form method="post">
-                                                    <div class="form-group mb-50">
-                                                        <label class="text-bold-600" for="exampleInputEmail1">Email
-                                                            address</label>
-                                                        <input type="email" class="form-control"
-                                                            name="email_utilisateurs" placeholder="Email address">
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label class="text-bold-600"
-                                                            for="exampleInputPassword1">Password</label>
-                                                        <input type="password" class="form-control " name="mot_passe"
-                                                            placeholder="Password">
-                                                    </div>
-                                                    <div
-                                                        class="form-group d-flex flex-md-row flex-column justify-content-between align-items-center">
-                                                        <div class="text-left">
-                                                            <div class="checkbox checkbox-sm">
-                                                                <input type="checkbox" class="form-check-input"
-                                                                    id="exampleCheck1">
-                                                                <label class="checkboxsmall"
-                                                                    for="exampleCheck1"><small>Keep me logged
-                                                                        in</small></label>
-                                                            </div>
-                                                        </div>
-                                                        <div class="text-right"><a href="auth-forgot-password.html"
-                                                                class="card-link"><small>Forgot Password?</small></a>
-                                                        </div>
-                                                    </div>
-                                                    <button type="submit"
-                                                        class="btn btn-primary glow w-100 position-relative"
-                                                        name="submit">Login<i id="icon-arrow"
-                                                            class="bx bx-right-arrow-alt"></i></button>
+    .logo-msis {
+      width: 80px;
+      margin-bottom: 10px;
+    }
 
-                                                </form>
-                                                <hr>
-                                                <div class="text-center"><small class="mr-25">Don't have an
-                                                        account?</small><a href="auth-register.html"><small>Sign
-                                                            up</small></a></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- right section image -->
-                                <div class="col-md-6 d-md-block d-none text-center align-self-center p-3">
-                                    <div class="card-content">
-                                        <img class="img-fluid" src="<?= ROOT ?>/assets/images/pages/login.png"
-                                            alt="branding logo">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-                <!-- login page ends -->
+    .form-title {
+      font-weight: bold;
+      font-size: 1.6rem;
+      color: #003366;
+    }
 
+    .form-subtitle {
+      font-size: 0.95em;
+      color: #555;
+    }
+
+    .alert ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="overlay text-center">
+      <!-- Logo MSIS -->
+      <img src="<?= ROOT ?>/assets/images/logo1.png" alt="Logo de G-UNIVERSITER" class="logo-msis">
+
+      <!-- Titre -->
+      <h4 class="form-title">G-UNIVERSITE</h4>
+
+      <!-- Message d'erreur -->
+        <?php if (isset($_SESSION['notification']['message'])): ?>
+    <div class="container">
+        <div class="alert <?=$_SESSION['notification']['class']?> alert-dismissible mb-2" role="alert">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div class="d-flex align-items-center">
+                <i class="<?=$_SESSION['notification']['icon']?>"></i>
+                <span>
+                    <?=$_SESSION['notification']['message']?>
+                </span>
             </div>
         </div>
     </div>
-    <!-- END: Content-->
+    <?php $_SESSION['notification'] = []; ?>
+<?php endif; ?>
+ 
 
+      <!-- Formulaire -->
+      <form method="POST" class="row g-3 mt-3 text-start">
+        <div class="col-12 ">
+          <label class="form-label">E-mail utilisateur</label>
+          <input type="text" class="form-control" name="email_utilisateurs" >
+        </div>
+        <div class="col-12">
+          <label class="form-label">Mot de passe</label>
+          <input type="password" class="form-control" name="mot_passe">
+        </div>
+        <div class="col-12 mt-4 ">
+          <div class="d-grid">
+            <button type="submit" name="submit" class="btn btn-primary">Se Connecter</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
 
-    <?php $this->view("Partials/footer") ?>
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         sessionStorage.clear();
     </script>
 </body>
-<!-- END: Body-->
-
 </html>
