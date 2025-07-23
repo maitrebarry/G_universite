@@ -7,11 +7,12 @@ $menu_permissions = [
     'SupAdmin' => ['dashboard', 'filieres', 'enseignants', 'notes', 'emploi', 'etudiants', 'configuration'],
     'DG'       => ['dashboard', 'filieres', 'enseignants', 'notes', 'emploi', 'etudiants'],
     'DGA'      => ['dashboard', 'filieres', 'enseignants', 'notes', 'emploi', 'etudiants'],
-    'Chef DR'  => ['dashboard', 'filieres', 'enseignants', 'notes', 'emploi', 'etudiants'],
+    'Chef DR'  => ['dashboard', 'filieres', 'enseignants', 'notes', 'emploi', 'etudiants', 'configuration'], // ✅ ajouté
     'Enseignant' => ['dashboard', 'notes_simple', 'etudiant_simple'], 
     'Sécretaire principale' => ['dashboard', 'etudiants_sp'],
-    'Scolarite' => ['etudiants', 'notes']
+    'Scolarite' => ['dashboard','etudiants', 'notes']
 ];
+
 
 // ✅ Menus disponibles
 $menus = [

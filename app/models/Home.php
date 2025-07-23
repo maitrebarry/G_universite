@@ -181,8 +181,12 @@ class Home extends Model
                     ELSE 'Autre'
                 END AS niveau,
                 p.annee_universitaire,
-                COUNT(DISTINCT CASE WHEN e.total_frais > 0 THEN e.id_etudiant END) AS inscrits,
-                COUNT(DISTINCT CASE WHEN e.total_frais = 0 AND se.id_semestre IN (3,4,5,6) THEN e.id_etudiant END) AS non_inscrits,
+                COUNT(DISTINCT CASE 
+                    WHEN py.montant_paye > 0 AND DATE_FORMAT(py.date,'%Y') BETWEEN SUBSTRING(p.annee_universitaire,1,4) AND SUBSTRING(p.annee_universitaire,6,4)
+                    THEN e.id_etudiant END) AS inscrits,
+                COUNT(DISTINCT CASE 
+                    WHEN (py.idPayem IS NULL OR py.montant_paye = 0)
+                    THEN e.id_etudiant END) AS non_inscrits,
                 COUNT(DISTINCT CASE WHEN e.genre_etudiant = 'M' THEN e.id_etudiant END) AS hommes,
                 COUNT(DISTINCT CASE WHEN e.genre_etudiant = 'F' THEN e.id_etudiant END) AS femmes
             FROM filiere f
@@ -190,6 +194,7 @@ class Home extends Model
             LEFT JOIN parcours pa ON p.id_parcours = pa.id_parcours
             LEFT JOIN semestre se ON pa.id_semestre = se.id_semestre
             LEFT JOIN etudiant e ON p.id_promotion = e.id_promotion
+            LEFT JOIN payement py ON py.idEtudt = e.id_etudiant
             WHERE f.id_departement = :id_departement
             AND p.annee_universitaire = (
                 SELECT MAX(annee_universitaire) 
@@ -203,23 +208,35 @@ class Home extends Model
         
         return $this->select_data_table_join_where($query, ['id_departement' => $id_departement]);
     }
+
     public function getIndicateursGeneraux($id_departement) {
         $query = "
             SELECT
-                (SELECT COUNT(*) FROM etudiant e 
+                -- Total étudiants du département
+                (SELECT COUNT(*) 
+                FROM etudiant e
                 JOIN promotion p ON e.id_promotion = p.id_promotion
                 JOIN filiere f ON p.id_filiere = f.id_filiere
-                WHERE f.id_departement = :id_departement) AS total_etudiants,
-                
-                (SELECT COUNT(*) FROM etudiant e 
+                WHERE f.id_departement = :id_departement
+                ) AS total_etudiants,
+
+                -- Total inscrits (paiement effectué)
+                (SELECT COUNT(DISTINCT e.id_etudiant)
+                FROM etudiant e
                 JOIN promotion p ON e.id_promotion = p.id_promotion
                 JOIN filiere f ON p.id_filiere = f.id_filiere
-                WHERE f.id_departement = :id_departement AND e.total_frais > 0) AS total_inscrits,
-                
+                LEFT JOIN payement py ON py.idEtudt = e.id_etudiant
+                WHERE f.id_departement = :id_departement
+                AND py.montant_paye > 0 AND py.date IS NOT NULL
+                ) AS total_inscrits,
+
+                -- Total enseignants
                 (SELECT COUNT(*) FROM enseignants WHERE id_departement = :id_departement) AS total_enseignants,
-                
+
+                -- Total filières
                 (SELECT COUNT(*) FROM filiere WHERE id_departement = :id_departement) AS total_filieres
         ";
+
         return $this->select_data_table_join_where($query, ['id_departement' => $id_departement])[0] ?? (object)[
             'total_etudiants' => 0,
             'total_inscrits' => 0,
@@ -227,6 +244,7 @@ class Home extends Model
             'total_filieres' => 0
         ];
     }
+
     public function getCoursProgrammes($id_departement) {
         $query = "
             SELECT DISTINCT
@@ -285,7 +303,9 @@ class Home extends Model
             'id_departement' => $id_departement
         ]);
     }
-
+        /**
+     * tableau de bord pour la scolarité
+     */
     public function getStatsEtudiantsParFiliereNiveau_scolarite() {
         $query = "
             SELECT 
@@ -300,8 +320,12 @@ class Home extends Model
                     ELSE 'Autre'
                 END AS niveau,
                 p.annee_universitaire,
-                COUNT(DISTINCT CASE WHEN e.total_frais > 0 THEN e.id_etudiant END) AS inscrits,
-                COUNT(DISTINCT CASE WHEN e.total_frais = 0 AND se.id_semestre IN (3,4,5,6) THEN e.id_etudiant END) AS non_inscrits,
+                COUNT(DISTINCT CASE 
+                    WHEN py.montant_paye > 0 AND DATE_FORMAT(py.date,'%Y') BETWEEN SUBSTRING(p.annee_universitaire,1,4) AND SUBSTRING(p.annee_universitaire,6,4)
+                    THEN e.id_etudiant END) AS inscrits,
+                COUNT(DISTINCT CASE 
+                    WHEN (py.idPayem IS NULL OR py.montant_paye = 0)
+                    THEN e.id_etudiant END) AS non_inscrits,
                 COUNT(DISTINCT CASE WHEN e.genre_etudiant = 'M' THEN e.id_etudiant END) AS hommes,
                 COUNT(DISTINCT CASE WHEN e.genre_etudiant = 'F' THEN e.id_etudiant END) AS femmes,
                 COUNT(DISTINCT CASE WHEN ne.moyenne_module >= 10 THEN e.id_etudiant END) AS admis,
@@ -312,6 +336,7 @@ class Home extends Model
             LEFT JOIN parcours pa ON p.id_parcours = pa.id_parcours
             LEFT JOIN semestre se ON pa.id_semestre = se.id_semestre
             LEFT JOIN etudiant e ON p.id_promotion = e.id_promotion
+            LEFT JOIN payement py ON py.idEtudt = e.id_etudiant
             LEFT JOIN note_etudiant ne ON e.id_etudiant = ne.id_etudiant AND p.id_promotion = ne.id_promotion
             GROUP BY f.id_filiere, se.id_semestre, p.annee_universitaire
             HAVING niveau IS NOT NULL
@@ -320,27 +345,430 @@ class Home extends Model
         
         return $this->select_data_table_join_where($query, []);
     }
-
     public function getIndicateursGeneraux_scolarite() {
         $query = "
             SELECT
                 (SELECT COUNT(*) FROM etudiant) AS total_etudiants,
-                (SELECT COUNT(*) FROM etudiant WHERE total_frais > 0) AS total_inscrits,
+                (SELECT COUNT(DISTINCT idEtudt) FROM payement WHERE montant_paye > 0 AND date IS NOT NULL) AS total_inscrits,
+                (SELECT COUNT(DISTINCT idEtudt) FROM payement WHERE montant_paye > 0 AND date IS NOT NULL AND YEAR(date) BETWEEN YEAR(CURDATE())-2 AND YEAR(CURDATE())) AS total_inscrits_3_ans,
                 (SELECT COUNT(*) FROM enseignants) AS total_enseignants,
                 (SELECT COUNT(*) FROM filiere) AS total_filieres,
                 (SELECT COUNT(*) FROM departement) AS total_departements,
                 (SELECT COUNT(DISTINCT id_etudiant) FROM note_etudiant WHERE moyenne_module >= 10) AS total_admis,
                 (SELECT COUNT(DISTINCT id_etudiant) FROM note_etudiant WHERE moyenne_module < 10) AS total_ajournes
         ";
+        
         return $this->select_data_table_join_where($query, [])[0] ?? (object)[
             'total_etudiants' => 0,
             'total_inscrits' => 0,
+            'total_inscrits_3_ans' => 0,
             'total_enseignants' => 0,
             'total_filieres' => 0,
             'total_departements' => 0,
             'total_admis' => 0,
             'total_ajournes' => 0
         ];
+    }
+    public function getInscritsParAnnee() {
+        $query = "
+            SELECT 
+                annee,
+                COUNT(DISTINCT idEtudt) AS total
+            FROM payement
+            WHERE montant_paye > 0 
+            AND annee IS NOT NULL
+            AND annee != 0
+            GROUP BY annee
+            ORDER BY annee DESC
+            LIMIT 3
+        ";
+        return $this->select_data_table_join_where($query, []);
+    }
+
+     /**
+     * tableau de bord pour la secrétaire principale
+     */
+
+    public function getStatsSGP() {
+        $query = "
+            SELECT
+                (SELECT COUNT(*) FROM departement) AS total_departements,
+                (SELECT COUNT(*) FROM filiere) AS total_filieres,
+                (SELECT COUNT(*) FROM etudiant) AS total_etudiants,
+                (SELECT COUNT(*) FROM enseignants) AS total_enseignants
+        ";
+        return $this->select_data_table_join_where($query, [])[0] ?? (object)[
+            'total_departements' => 0,
+            'total_filieres' => 0,
+            'total_etudiants' => 0,
+            'total_enseignants' => 0
+        ];
+    }
+    public function getDernieresInscriptions($limit = 5) {
+        $limit = intval($limit);
+
+        $query = "
+            SELECT 
+                e.id_etudiant,
+                e.nom_prenom_etudiant,
+                f.nom_filiere,
+                f.sigle_filiere,
+                DATE_FORMAT(MAX(p.date), '%d/%m/%Y') AS date_inscription
+            FROM etudiant e
+            JOIN promotion pr ON e.id_promotion = pr.id_promotion
+            JOIN filiere f ON pr.id_filiere = f.id_filiere
+            JOIN payement p ON p.idEtudt = e.id_etudiant
+            WHERE p.montant_paye > 0 
+            AND p.date IS NOT NULL
+            GROUP BY e.id_etudiant, e.nom_prenom_etudiant, f.nom_filiere, f.sigle_filiere
+            ORDER BY MAX(p.date) DESC
+            LIMIT $limit
+        ";
+
+        return $this->select_data_table_join_where($query);
+    }
+
+
+    public function getProchainsEvenements($limit = 5) {
+        $limit = intval($limit);
+        $query = "
+            SELECT 
+                'Cours' AS type,
+                m.nom_module AS evenement,
+                DATE_FORMAT(e.date_debut, '%d/%m/%Y') AS date,
+                CONCAT(f.sigle_filiere, '-S', s.id_semestre) AS niveau
+            FROM edt e
+            JOIN module m ON e.id_module = m.id_module
+            JOIN filiere f ON e.id_filiere = f.id_filiere
+            JOIN semestre s ON e.id_semestre = s.id_semestre
+            WHERE e.date_debut >= CURDATE()
+            AND e.statut = 0
+            
+            UNION ALL
+            
+            SELECT 
+                'Examen' AS type,
+                m.nom_module AS evenement,
+                DATE_FORMAT(e.date_fin, '%d/%m/%Y') AS date,
+                CONCAT(f.sigle_filiere, '-S', s.id_semestre) AS niveau
+            FROM edt e
+            JOIN module m ON e.id_module = m.id_module
+            JOIN filiere f ON e.id_filiere = f.id_filiere
+            JOIN semestre s ON e.id_semestre = s.id_semestre
+            WHERE e.date_fin >= CURDATE()
+            
+            ORDER BY date ASC
+            LIMIT $limit
+        ";
+        return $this->select_data_table_join_where($query);
+    }
+    /**
+     * tableau de bord pour le DGA
+     */
+    
+    public function getStatsDGA()
+    {
+        $stats = [
+            'taux_reussite' => 0,
+            'evolution' => '+0%',
+            'best_dep' => ['nom' => '0', 'taux' => 0],
+            'worst_dep' => ['nom' => '0', 'taux' => 0],
+            'total_etudiants' => 0,
+            'total_inscrits' => 0,
+            'taux_inscription' => 0,
+            'taux_echec' => 0
+        ];
+
+        // ✅ 1. Total étudiants
+        $queryTotal = "SELECT COUNT(*) as total FROM etudiant";
+        $resTotal = $this->select_data_table_join_where($queryTotal);
+        $totalEtudiants = $resTotal[0]->total ?? 0;
+        $stats['total_etudiants'] = $totalEtudiants;
+
+        // ✅ 2. Total inscrits (paiement valide)
+        $queryInscrits = "
+            SELECT COUNT(DISTINCT e.id_etudiant) as total_inscrits
+            FROM etudiant e
+            JOIN payement p ON p.idEtudt = e.id_etudiant
+            WHERE p.montant_paye > 0 AND p.date IS NOT NULL
+        ";
+        $resInscrits = $this->select_data_table_join_where($queryInscrits);
+        $totalInscrits = $resInscrits[0]->total_inscrits ?? 0;
+        $stats['total_inscrits'] = $totalInscrits;
+
+        // ✅ 3. Taux d'inscription
+        $stats['taux_inscription'] = ($totalEtudiants > 0)
+            ? round(($totalInscrits / $totalEtudiants) * 100, 2)
+            : 0;
+
+        // ✅ 4. Étudiants admis (moyenne_module >= 10)
+        $queryAdmis = "
+            SELECT COUNT(DISTINCT n.id_etudiant) as total_admis
+            FROM note_etudiant n
+            JOIN etudiant e ON e.id_etudiant = n.id_etudiant
+            JOIN payement p ON p.idEtudt = e.id_etudiant
+            WHERE n.moyenne_module >= 10 AND p.montant_paye > 0 AND p.date IS NOT NULL
+        ";
+        $resAdmis = $this->select_data_table_join_where($queryAdmis);
+        $totalAdmis = $resAdmis[0]->total_admis ?? 0;
+
+        // ✅ 5. Taux de réussite & échec
+        if ($totalInscrits > 0) {
+            $tauxReussite = ($totalAdmis / $totalInscrits) * 100; // en %
+            $stats['taux_reussite'] = round($tauxReussite, 2);
+            $stats['taux_echec'] = round(100 - $tauxReussite, 2);
+        } else {
+            $stats['taux_reussite'] = 0;
+            $stats['taux_echec'] = 100;
+        }
+
+        // ✅ 6. Evolution (placeholder)
+        $stats['evolution'] = '+0.35%'; 
+
+        // ✅ 7. Meilleur et pire département avec tri intelligent
+        $queryDep = "
+            SELECT 
+                d.nom_departement,
+                COUNT(DISTINCT e.id_etudiant) AS total_etudiants,
+                COUNT(DISTINCT CASE WHEN n.moyenne_module >= 10 THEN e.id_etudiant END) AS admis,
+                ROUND(
+                    IF(COUNT(DISTINCT e.id_etudiant) > 0,
+                        (COUNT(DISTINCT CASE WHEN n.moyenne_module >= 10 THEN e.id_etudiant END) / COUNT(DISTINCT e.id_etudiant)) * 100,
+                        0
+                    ), 2
+                ) AS taux
+            FROM departement d
+            LEFT JOIN filiere f ON f.id_departement = d.id_departement
+            LEFT JOIN promotion pr ON pr.id_filiere = f.id_filiere
+            LEFT JOIN etudiant e ON e.id_promotion = pr.id_promotion
+            LEFT JOIN note_etudiant n ON n.id_etudiant = e.id_etudiant
+            LEFT JOIN payement p ON p.idEtudt = e.id_etudiant AND p.montant_paye > 0 AND p.date IS NOT NULL
+            GROUP BY d.id_departement
+            ORDER BY taux DESC, total_etudiants DESC
+        ";
+        $resDep = $this->select_data_table_join_where($queryDep);
+
+        if (!empty($resDep)) {
+            $stats['best_dep'] = [
+                'nom' => $resDep[0]->nom_departement,
+                'taux' => (float)$resDep[0]->taux
+            ];
+
+            $lastIndex = count($resDep) - 1;
+            $stats['worst_dep'] = [
+                'nom' => $resDep[$lastIndex]->nom_departement,
+                'taux' => (float)$resDep[$lastIndex]->taux
+            ];
+        }
+
+        return $stats;
+    }
+
+    public function getStatsDepartementsDetail()
+    {
+        $query = "
+        SELECT 
+            d.nom_departement AS departement,
+            COUNT(DISTINCT e.id_etudiant) AS total_etudiants,
+            COUNT(DISTINCT CASE WHEN ne.moyenne_module >= 10 THEN e.id_etudiant END) AS admis,
+            IF(COUNT(DISTINCT e.id_etudiant) > 0, 
+                ROUND(
+                    (COUNT(DISTINCT CASE WHEN ne.moyenne_module >= 10 THEN e.id_etudiant END) 
+                    / COUNT(DISTINCT e.id_etudiant)) * 100, 2
+                ), 0) AS taux_reussite
+        FROM departement d
+        LEFT JOIN filiere f ON f.id_departement = d.id_departement
+        LEFT JOIN parcours pa ON pa.id_filiere = f.id_filiere
+        LEFT JOIN promotion p ON p.id_parcours = pa.id_parcours
+        LEFT JOIN etudiant e ON e.id_promotion = p.id_promotion
+        LEFT JOIN note_etudiant ne ON ne.id_etudiant = e.id_etudiant
+        GROUP BY d.id_departement
+        ORDER BY taux_reussite DESC, total_etudiants DESC
+        ";
+
+        return $this->select_data_table_join_where($query, []);
+    }
+
+    /**
+     * tableau de bord pour le directeur général
+     */
+    public function getStatsAcademiques()
+    {
+        $stats = [
+            'taux_reussite' => 0,
+            'evolution' => '+0%',
+            'best_dep' => ['nom' => '0', 'taux' => 0],
+            'worst_dep' => ['nom' => '0', 'taux' => 0],
+            'total_etudiants' => 0,
+            'total_inscrits' => 0,
+            'taux_inscription' => 0,
+            'taux_echec' => 0
+        ];
+
+        // ✅ 1. Total étudiants
+        $queryTotal = "SELECT COUNT(*) as total FROM etudiant";
+        $resTotal = $this->select_data_table_join_where($queryTotal);
+        $totalEtudiants = $resTotal[0]->total ?? 0;
+        $stats['total_etudiants'] = $totalEtudiants;
+
+        // ✅ 2. Total inscrits (paiement valide)
+        $queryInscrits = "
+            SELECT COUNT(DISTINCT e.id_etudiant) as total_inscrits
+            FROM etudiant e
+            JOIN payement p ON p.idEtudt = e.id_etudiant
+            WHERE p.montant_paye > 0 AND p.date IS NOT NULL
+        ";
+        $resInscrits = $this->select_data_table_join_where($queryInscrits);
+        $totalInscrits = $resInscrits[0]->total_inscrits ?? 0;
+        $stats['total_inscrits'] = $totalInscrits;
+
+        // ✅ 3. Taux d'inscription
+        $stats['taux_inscription'] = ($totalEtudiants > 0)
+            ? round(($totalInscrits / $totalEtudiants) * 100, 2)
+            : 0;
+
+        // ✅ 4. Étudiants admis (moyenne_module >= 10)
+        $queryAdmis = "
+            SELECT COUNT(DISTINCT n.id_etudiant) as total_admis
+            FROM note_etudiant n
+            JOIN etudiant e ON e.id_etudiant = n.id_etudiant
+            JOIN payement p ON p.idEtudt = e.id_etudiant
+            WHERE n.moyenne_module >= 10 AND p.montant_paye > 0 AND p.date IS NOT NULL
+        ";
+        $resAdmis = $this->select_data_table_join_where($queryAdmis);
+        $totalAdmis = $resAdmis[0]->total_admis ?? 0;
+
+        // ✅ 5. Taux de réussite & échec
+        if ($totalInscrits > 0) {
+            $tauxReussite = ($totalAdmis / $totalInscrits) * 100;
+            $stats['taux_reussite'] = round($tauxReussite, 2);
+            $stats['taux_echec'] = round(100 - $tauxReussite, 2);
+        } else {
+            $stats['taux_reussite'] = 0;
+            $stats['taux_echec'] = 100;
+        }
+
+        // ✅ 6. Meilleur et pire département avec tri intelligent
+        $queryDep = "
+            SELECT 
+                d.nom_departement,
+                COUNT(DISTINCT e.id_etudiant) AS total_etudiants,
+                COUNT(DISTINCT CASE WHEN n.moyenne_module >= 10 THEN e.id_etudiant END) AS admis,
+                ROUND(
+                    IF(COUNT(DISTINCT e.id_etudiant) > 0,
+                        (COUNT(DISTINCT CASE WHEN n.moyenne_module >= 10 THEN e.id_etudiant END) / COUNT(DISTINCT e.id_etudiant)) * 100,
+                        0
+                    ), 2
+                ) AS taux
+            FROM departement d
+            LEFT JOIN filiere f ON f.id_departement = d.id_departement
+            LEFT JOIN promotion pr ON pr.id_filiere = f.id_filiere
+            LEFT JOIN etudiant e ON e.id_promotion = pr.id_promotion
+            LEFT JOIN note_etudiant n ON n.id_etudiant = e.id_etudiant
+            LEFT JOIN payement p ON p.idEtudt = e.id_etudiant AND p.montant_paye > 0 AND p.date IS NOT NULL
+            GROUP BY d.id_departement
+            ORDER BY taux DESC, total_etudiants DESC
+        ";
+        $resDep = $this->select_data_table_join_where($queryDep);
+
+        if (!empty($resDep)) {
+            $stats['best_dep'] = [
+                'nom' => $resDep[0]->nom_departement,
+                'taux' => (float)$resDep[0]->taux
+            ];
+
+            $lastIndex = count($resDep) - 1;
+            $stats['worst_dep'] = [
+                'nom' => $resDep[$lastIndex]->nom_departement,
+                'taux' => (float)$resDep[$lastIndex]->taux
+            ];
+        }
+
+        return $stats;
+    }
+
+    public function getStatsDG()
+    {
+        $stats = $this->getStatsAcademiques();
+
+        // ✅ Recettes totales
+        $queryFinance = "SELECT SUM(montant_paye) as total_recettes FROM payement WHERE montant_paye > 0";
+        $resFinance = $this->select_data_table_join_where($queryFinance);
+        $stats['total_recettes'] = $resFinance[0]->total_recettes ?? 0;
+
+        // ✅ Alertes
+        $queryAlerte = "
+            SELECT COUNT(DISTINCT e.id_etudiant) as alertes
+            FROM etudiant e
+            JOIN payement p ON p.idEtudt = e.id_etudiant AND p.montant_paye > 0
+            LEFT JOIN note_etudiant n ON n.id_etudiant = e.id_etudiant
+            WHERE n.id_etudiant IS NULL
+        ";
+        $resAlertes = $this->select_data_table_join_where($queryAlerte);
+        $stats['alertes'] = $resAlertes[0]->alertes ?? 0;
+
+        // ✅ Tableau par département (ajout recettes + inscrits)
+        $queryDep = "
+            SELECT 
+                d.nom_departement,
+                COUNT(DISTINCT e.id_etudiant) AS total_etudiants,
+                COUNT(DISTINCT CASE WHEN p.montant_paye > 0 THEN e.id_etudiant END) AS inscrits,
+                COUNT(DISTINCT CASE WHEN n.moyenne_module >= 10 THEN e.id_etudiant END) AS admis,
+                ROUND(
+                    IF(COUNT(DISTINCT CASE WHEN p.montant_paye > 0 THEN e.id_etudiant END) > 0,
+                        (COUNT(DISTINCT CASE WHEN n.moyenne_module >= 10 THEN e.id_etudiant END) / COUNT(DISTINCT CASE WHEN p.montant_paye > 0 THEN e.id_etudiant END)) * 100,
+                        0
+                    ), 2
+                ) AS taux_reussite,
+                IFNULL(SUM(p.montant_paye), 0) AS recettes
+            FROM departement d
+            LEFT JOIN filiere f ON f.id_departement = d.id_departement
+            LEFT JOIN promotion pr ON pr.id_filiere = f.id_filiere
+            LEFT JOIN etudiant e ON e.id_promotion = pr.id_promotion
+            LEFT JOIN payement p ON p.idEtudt = e.id_etudiant
+            LEFT JOIN note_etudiant n ON n.id_etudiant = e.id_etudiant
+            GROUP BY d.id_departement
+            ORDER BY taux_reussite DESC, total_etudiants DESC
+        ";
+        $departements = $this->select_data_table_join_where($queryDep);
+
+        // ✅ Ajouter critère
+        if (!empty($departements)) {
+            $departements[0]->critere = "Meilleur";
+            $departements[count($departements)-1]->critere = " à surveiller";
+            for ($i = 1; $i < count($departements)-1; $i++) {
+                $departements[$i]->critere = "-";
+            }
+        }
+
+        $stats['departements'] = $departements;
+        return $stats;
+    }
+
+    // ✅ Top 3 filières
+    public function getTopFilieres()
+    {
+        $query = "
+        SELECT 
+            f.nom_filiere AS filiere,
+            COUNT(DISTINCT e.id_etudiant) AS total_etudiants,
+            COUNT(DISTINCT CASE WHEN ne.moyenne_module >= 10 THEN e.id_etudiant END) AS admis,
+            IF(COUNT(DISTINCT e.id_etudiant) > 0, 
+                ROUND(
+                    (COUNT(DISTINCT CASE WHEN ne.moyenne_module >= 10 THEN e.id_etudiant END) 
+                    / COUNT(DISTINCT e.id_etudiant)) * 100, 2
+                ), 0) AS taux_reussite
+        FROM filiere f
+        JOIN parcours pa ON pa.id_filiere = f.id_filiere
+        JOIN promotion p ON p.id_parcours = pa.id_parcours
+        JOIN etudiant e ON e.id_promotion = p.id_promotion
+        LEFT JOIN note_etudiant ne ON ne.id_etudiant = e.id_etudiant
+        GROUP BY f.id_filiere
+        ORDER BY taux_reussite DESC, total_etudiants DESC
+        LIMIT 3
+        ";
+
+        return $this->select_data_table_join_where($query, []);
     }
 }
 ?>

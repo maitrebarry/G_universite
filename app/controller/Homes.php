@@ -97,10 +97,12 @@ class Homes extends Controller {
             'role' => 'Scolarite',
             'etudiants' => $homeModel->getStatsEtudiantsParFiliereNiveau_scolarite() ?? [],
             'indicateurs' => $homeModel->getIndicateursGeneraux_scolarite(),
+            'inscrits_par_annee' => $homeModel->getInscritsParAnnee(),
         ];
-
+        // var_dump($data);exit;
         $this->view('Home', $data);
     }
+    
     public function dashboard_secretaire() {
         if ($_SESSION['role'] !== 'Sécretaire principale') {
             $this->redirect('Login');
@@ -109,46 +111,74 @@ class Homes extends Controller {
 
         $homeModel = new Home();
 
-       
-
-        $this->view('Home');
+        $data = [
+            'role' => 'Sécretaire principale',
+            'stats' => $homeModel->getStatsSGP(),
+            'dernieres_inscriptions' => $homeModel->getDernieresInscriptions(),
+            'prochains_evenements' => $homeModel->getProchainsEvenements()
+        ];
+        // var_dump($data); exit;
+        $this->view('Home', $data);
     }
-    // public function dashboard_dga() {
-    //     if ($_SESSION['role'] !== 'DGA') {
-    //         $this->redirect('Login');
-    //         return;
-    //     }
+    public function dashboard_dga() {
+        if ($_SESSION['role'] !== 'DGA') {
+            $this->redirect('Login');
+            return;
+        }
 
-    //     $homeModel = new Home();
+        $homeModel = new Home();
 
-    //     $data = [
-    //         'role' => 'DGA',
-    //         'statsFormations' => $homeModel->getStatsFormations(),
-    //         'budgetGlobal' => $homeModel->getBudgetGlobal(),
-    //         'tauxOccupationSalles' => $homeModel->getTauxOccupationSalles(),
-    //         'periodeActive' => $homeModel->getPeriodeActive()
-    //         // Ajoutez d'autres données spécifiques au DGA
-    //     ];
+        $stats = $homeModel->getStatsDGA();
 
-    //     $this->view('Home', $data);
-    // }
-    // public function dashboard_dg() {
-    //     if ($_SESSION['role'] !== 'DG') {
-    //         $this->redirect('Login');
-    //         return;
-    //     }
+        // Récupération des stats départementales détaillées
+        $departements = $homeModel->getStatsDepartementsDetail();
 
-    //     $homeModel = new Home();
+        // Identifier meilleur et pire département
+        $bestDepartement = $departements[0] ?? null;
+        $worstDepartement = end($departements);
 
-    //     $data = [
-    //         'role' => 'DG',
-    //         'indicateursPerformance' => $homeModel->getIndicateursPerformance(),
-    //         'evolutionEffectifs' => $homeModel->getEvolutionEffectifs(),
-    //         'resultatsFinanciers' => $homeModel->getResultatsFinanciers(),
-    //         'periodeActive' => $homeModel->getPeriodeActive()
-    //         // Ajoutez d'autres données spécifiques au DG
-    //     ];
+        foreach ($departements as &$dep) {
+            if ($dep === $bestDepartement) {
+                $dep->critere = 'Meilleur';
+            } elseif ($dep === $worstDepartement) {
+                $dep->critere = 'à Suivre';
+            } else {
+                $dep->critere = '-';
+            }
+        }
+        reset($departements);
+        // var_dump($stats); 
+        // var_dump($departements);exit; 
+        
+        // Passer tout à la vue
+        $this->view('Home', [
+            'stats' => $stats,
+            'departements' => $departements
+        ]);
+    }
 
-    //     $this->view('Home', $data);
-    // }
+
+
+   public function dashboard_dg()
+{
+    if ($_SESSION['role'] !== 'DG') {
+        $this->redirect('Login');
+        return;
+    }
+
+    $homeModel = new Home();
+    $stats = $homeModel->getStatsDG();
+    $topFilieres = $homeModel->getTopFilieres();
+    // var_dump($stats);
+    // var_dump($topFilieres);exit; // Pour débogage, à supprimer en production
+    $this->view('Home', [
+        'role' => 'DG',
+        'stats' => $stats,
+        'departements' => $stats['departements'], // ✅ important
+        'topFilieres' => $topFilieres
+    ]);
+
+}
+
+
 }
