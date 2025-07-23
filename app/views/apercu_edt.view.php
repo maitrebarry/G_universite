@@ -7,16 +7,15 @@
 
 ?>
 <style>
+input {
+    padding: 8px;
+    font-size: 16px;
+    text-align: center;
+}
 
-    input {
-        padding: 8px;
-        font-size: 16px;
-        text-align: center;
-    }
-
-    td {
-        padding: 10px 5px !important;
-    }
+td {
+    padding: 10px 5px !important;
+}
 </style>
 <!-- inclusion du partie header -->
 <?php $this->view("Partials/header") ?>
@@ -141,7 +140,18 @@
                                                     for="single-select">Salle de Cours</label>
                                                 <div class="form-group">
                                                     <h6 class="text-center text-bold-500 text-body">
-                                                        <?php echo strtoupper($infosEdt->edt->nom_salle) ?>
+                                                        <?php if (trim(strtoupper($enseignants[0]->groupe)) == "GP" || trim(strtoupper($enseignants[0]->groupe)) == trim("GROUPE PRINCIPAL")): ?>
+
+                                                        <?php echo strtoupper($enseignants[0]->nom_salle) ?>
+                                                        <?php else : ?>
+                                                        <?php foreach ($enseignants as $enseignant): ?>
+
+                                                        <span class="mr-1">
+                                                            <?php echo  $enseignant->groupe . "(" . strtoupper($enseignant->nom_salle) . ")" ?>
+                                                        </span>
+                                                        <?php endforeach ?>
+
+                                                        <?php endif ?>
                                                     </h6>
                                                 </div>
                                             </div>
@@ -149,75 +159,77 @@
 
                                         <div class=" w-100">
                                             <table id="table-extended-chechbox"
-                                                class="table table-striped table-bordered table-responsive">
-                                                <thead>
+                                                class="table table-striped table-bordered table-responsive w-100">
+                                                <thead class="w-100">
                                                     <tr>
                                                         <th class="text-center">Horaire</th>
                                                         <?php foreach ($jours as $jour): ?>
-                                                            <th class="jour" data-id="<?php echo $jour->id_jour ?>">
-                                                                <?php echo strtoupper($jour->nom_jour) ?></th>
+                                                        <?php if (!empty(trim($jour->nom_jour))): ?>
+                                                        <th class="jour" data-id="<?php echo $jour->id_jour ?>">
+                                                            <?php echo strtoupper($jour->nom_jour) ?></th>
+                                                        <?php endif ?>
                                                         <?php endforeach ?>
 
                                                     </tr>
                                                 </thead>
-                                                <tbody>
+                                                <tbody class="w-100">
                                                     <?php foreach ($horairesEdt as $horaire): ?>
 
-                                                        <tr>
-                                                            <td style='min-width: 160px !important;'>
-                                                                <div class='row m-auto'>
-                                                                    <div class='col-sm-6'>
-                                                                        <h6><?php echo substr($horaire->heure_debut, 0, 5) ?>
-                                                                        </h6>
-                                                                    </div>
-                                                                    <div class='col-sm-6'>
-                                                                        <h6><?php echo substr($horaire->heure_fin, 0, 5) ?>
-                                                                        </h6>
-                                                                    </div>
+                                                    <tr>
+                                                        <td style='width:auto !important; min-width: 160px !important;'>
+                                                            <div class='row m-auto'>
+                                                                <div class='col-sm-6'>
+                                                                    <h6><?php echo substr($horaire->heure_debut, 0, 5) ?>
+                                                                    </h6>
                                                                 </div>
-                                                            </td>
-                                                            <?php foreach ($horaire->taches as $tache): ?>
-                                                                <td style="font-size:14px">
-                                                                    <?php if (strtoupper($tache->type_tache) != "X"): ?>
-                                                                        <span class=" text-center d-block text-bold-6 00">
-                                                                            <?php echo (strlen($infosEdt->module->nom_module) < 20) ? strtoupper($infosEdt->module->nom_module) : strtoupper($infosEdt->module->sigle_module) ?>
-                                                                        </span>
-                                                                        <span style="font-size: 11px;"
-                                                                            class=" text-muted text-body text-center text-italic d-block">
-                                                                            <?php echo strtoupper($tache->type_tache) ?>
-                                                                        </span>
-                                                                    <?php endif ?>
-                                                                </td>
-                                                            <?php endforeach ?>
-                                                        </tr>
+                                                                <div class='col-sm-6'>
+                                                                    <h6><?php echo substr($horaire->heure_fin, 0, 5) ?>
+                                                                    </h6>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <?php foreach ($horaire->taches as $tache): ?>
+                                                        <td style="font-size:14px">
+                                                            <?php if (strtoupper($tache->type_tache) != "X"): ?>
+                                                            <span class=" text-center d-block text-bold-6 00">
+                                                                <?php echo (strlen($infosEdt->module->nom_module) < 20) ? strtoupper($infosEdt->module->nom_module) : strtoupper($infosEdt->module->sigle_module) ?>
+                                                            </span>
+                                                            <span style="font-size: 11px;"
+                                                                class=" text-muted text-body text-center text-italic d-block">
+                                                                <?php echo strtoupper($tache->type_tache) ?>
+                                                            </span>
+                                                            <?php endif ?>
+                                                        </td>
+                                                        <?php endforeach ?>
+                                                    </tr>
                                                     <?php endforeach ?>
                                                 </tbody>
 
                                             </table>
                                         </div>
                                         <?php if (strlen($infosEdt->module->nom_module) >= 20): ?>
-                                            <div class=" mt-1">
-                                                <h6>
-                                                    <span
-                                                        class=" text-bold-700"><?php echo  strtoupper($infosEdt->module->sigle_module) ?></span>
-                                                    <span> =
-                                                        <?php echo strtoupper($infosEdt->module->nom_module) ?></span>
-                                                </h6>
-                                            </div>
+                                        <div class=" mt-1">
+                                            <h6>
+                                                <span class=" text-bold-700 "
+                                                    style="font-size: 14px;"><?php echo  strtoupper($infosEdt->module->sigle_module) ?></span>
+                                                <span style="font-size: 14px;"> =
+                                                    <?php echo strtoupper($infosEdt->module->nom_module) ?></span>
+                                            </h6>
+                                        </div>
                                         <?php endif ?>
                                         <div>
                                             <h6 class="text-bold-200">
                                                 <div class="d-flex justify-content-arround mb-1">
                                                     <?php foreach ($enseignants as $enseignant): ?>
-                                                        <span class=" text-capitalize d-block mr-1">
-                                                            
-                                                            <?php echo $enseignant->enseignant_prenom . ' ' . $enseignant->enseignant_nom ?>
-                                                            <?php if(!empty(trim($enseignant->groupe))): ?>
-                                                            (
-                                                            <b> <?php echo $enseignant->groupe ?></b>
-                                                            )
-                                                            <?php endif ?>
-                                                        </span>
+                                                    <span class=" text-capitalize d-block mr-1">
+
+                                                        <?php echo $enseignant->enseignant_prenom . ' ' . $enseignant->enseignant_nom ?>
+                                                        <?php if (!empty(trim($enseignant->groupe))): ?>
+                                                        (
+                                                        <b> <?php echo $enseignant->groupe ?></b>
+                                                        )
+                                                        <?php endif ?>
+                                                    </span>
                                                     <?php endforeach ?>
                                                 </div>
                                             </h6>
@@ -229,7 +241,7 @@
                                             </div>
                                             <div class="" style="min-width:100%">
                                                 <h6 class=" text-bold-600 text-center d-flex justify-content-end w-100"
-                                                    style="min-width:100%">
+                                                    style="min-width:100%; font-size: 14px !important">
                                                     Le
                                                     Chef de DER
                                                     <?php echo (isset($_SESSION['sigle_departement'])) ? strtoupper($_SESSION['sigle_departement']) : "" ?>
@@ -242,10 +254,11 @@
                                                 </h6>
                                             </div>
                                             <div class=" d-flex justify-content-end" style="min-width:100%">
-                                                <h6 class=" text-right" style="min-width:100%">Dr
+                                                <h6 class=" text-right"
+                                                    style="min-width:100%; font-size: 14px !important">Dr
                                                     <?php echo (isset($_SESSION['nom_prenom'])) ? strtoupper($_SESSION['nom_prenom']) : "" ?>
                                                     <br>
-                                                    <i style="font-size:11px"> 
+                                                    <i style="font-size:11px">
                                                         <?php echo (isset($_SESSION['nom_grade'])) ? strtoupper($_SESSION['nom_grade']) : "" ?>
                                                     </i>
                                                 </h6>
@@ -279,14 +292,14 @@
 <script src="<?= ROOT ?>/assets/mon_js/edt.js"></script>
 
 <script>
-    $('#print').click(function() {
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth",
-        });
-        const nomEdt = $(this).data('nom');
-        setTimeout(function() {
-            imprimer(nomEdt);
-        }, 500)
-    })
+$('#print').click(function() {
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+    });
+    const nomEdt = $(this).data('nom');
+    setTimeout(function() {
+        imprimer(nomEdt);
+    }, 500)
+})
 </script>

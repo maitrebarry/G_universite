@@ -129,7 +129,7 @@ class Filiere  extends Model
             $filiere = $this->FetchSelectWhere(" *", " filiere ", " id_filiere=?", [$idFiliere]);
 
             // la recuperation des semestres de la filière
-            $requetteSemestre = "SELECT id_parcours, parcours.id_semestre, nom_semestre, sigle_semestre 
+            $requetteSemestre = "SELECT DISTINCT id_parcours, parcours.id_semestre, nom_semestre, sigle_semestre 
             FROM parcours  INNER JOIN semestre ON 
             parcours.id_semestre=semestre.id_semestre WHERE id_filiere=?";
             $semestres = $this->select_data_table_join_where($requetteSemestre, [$idFiliere]);

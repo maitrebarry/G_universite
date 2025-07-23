@@ -224,9 +224,13 @@ td {
                                                     class="col-12 col-md-4 row d-flex justify-content-between align-items-center">
                                                     <div class=" col-12 m-0 d-flex align-items-end mt-2">
                                                         <!-- Bouton pour ajouter une nouvelle ligne -->
-                                                        <i class="bx bx-plus btn btn-secondary mr-1" id="add-row"></i>
+                                                        <i class="bx bx-plus btn btn-secondary mr-1  d-flex justify-content-center align-items-center"
+                                                            id="add-row"
+                                                            style="width: 15px !important; height:25px;"></i>
                                                         <!-- Bouton pour supprimer la dernière ligne -->
-                                                        <i class="bx bx-minus btn btn-danger" id="remove-row"></i>
+                                                        <i class="bx bx-minus btn btn-danger  d-flex justify-content-center align-items-center"
+                                                            id="remove-row"
+                                                            style="width: 15px !important; height:25px;"></i>
                                                     </div>
 
                                                 </div>
@@ -234,13 +238,7 @@ td {
                                                     <input type="hidden" id="vht" class="vht">
                                                     <!-- Boutton de Commande -->
                                                     <!-- Boutons de commande avec icônes uniquement -->
-                                                    <div class="col-4 d-flex justify-content-around align-items-end">
-                                                        <!-- Bouton Reset -->
-                                                        <button type="button" class="btn btn-outline-warning"
-                                                            title="Réinitialiser" id="renitialiser">
-                                                            <i class="bx bx-reset fs-4"></i>
-                                                        </button>
-
+                                                    <div class="col-2 d-flex justify-content-around align-items-end">
                                                         <!-- Bouton Recalculer -->
                                                         <button class="btn btn-outline-primary" title="Recalculer"
                                                             id="recalculer">
@@ -360,8 +358,9 @@ td {
                                                             <th class="text-center">Num</th>
                                                             <th class="text-center">Enseignant</th>
                                                             <th class="text-center">Groupe</th>
-                                                            <th>Type de Cours</th>
-                                                            <th>Nombre d'heure</th>
+                                                            <th>Cours</th>
+                                                            <th style="width: 60px !important;">Heure</th>
+                                                            <th id="thSalle" class="d-none">Salle</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody id="corpsEnseignant">
@@ -505,18 +504,52 @@ $("#recalculer").click(function(event) {
 
     $("#vht").val(heureCm + heureTp + heureTd);
 
-
-
     const heuresModule = calculerHeuresModuleEdt();
     const model = ($('#model-row').hasClass("border-primary")) ? $('#model-row').data('model') : $(
         '#model-column').data('model');
     const type = parseInt($('input[name="type"]:checked').val(), 10);
     genererEdt(heuresModule, model, type);
 
+    // Réinitialiser l'affichage
+    $("#corpsEnseignant").html("");
+    num = 0;
+    groupeIndex = 0;
+
+    // Optionnel : Réinitialise les heures si décoché
+    if (!this.checked) {
+        coursRestants = {
+            cm: ($(".cm").val() != "") ? parseInt($(".cm").val(), 10) : 0,
+            td: ($(".td").val() != "") ? parseInt($(".td").val(), 10) : 0,
+            tp: ($(".tp").val() != "") ? parseInt($(".tp").val(), 10) : 0
+        };
+    }
+
+    const id = $('#enseignants option:selected').data("id");
+    const enseignant = $('#enseignants option:selected').data("enseignant");
+    const isGroupe = $("#groupeSelect").is(":checked");
+
+    if (!id || !enseignant) return;
+
+    let isExist = false;
+    $("#corpsEnseignant tr").each(function() {
+        if ($(this).find('.id').attr("id") == id) {
+            isExist = true;
+        }
+    });
+
+    if (isExist) {
+        showNotificationToast("⚠️ Cet enseignant est déjà dans la liste", "warning");
+        return;
+    }
+
+    if (isGroupe) {
+        // Ajout automatique groupe (CM-TD-TP)
+        ajouterEnseignantAutoGroupe(id, enseignant);
+    } else {
+        // Ajout avec vérifications heures
+        ajouterLigneEnseignant(id, enseignant);
+    }
 })
-
-
-
 
 
 $("#anneeUniversitaire").change(async function() {
@@ -543,13 +576,18 @@ $("#promotions").change(async function() {
 // la recuperation des heures d'un module lors d'une selection de module
 $("#modules").change(function() {
     infoModule($(this).val(), infoFiliere);
-    getDefaultEnseignantAndSalleModule($("#promotions option:selected").data("filiere"), $(this).val());
-    coursRestants = {
-        cm: ($(".cm").val() != "") ? parseInt($(".cm").val(), 10) : 0,
-        td: ($(".td").val() != "") ? parseInt($(".td").val(), 10) : 0,
-        tp: ($(".tp").val() != "") ? parseInt($(".tp").val(), 10) : 0
-    };
 
+    coursRestants = {
+        cm: $(".cm").val() != "" ? parseInt($(".cm").val(), 10) : 0,
+        td: $(".td").val() != "" ? parseInt($(".td").val(), 10) : 0,
+        tp: $(".tp").val() != "" ? parseInt($(".tp").val(), 10) : 0,
+    };
+    console.log(coursRestants);
+
+    getDefaultEnseignantAndSalleModule($("#promotions option:selected").data("filiere"), $(this).val());
+
+    // Réinitialiser l'affichage des enseignants
+    $("#corpsEnseignant").html("");
 
 })
 
@@ -626,8 +664,11 @@ function getPremierTypeDisponible() {
     let totalCM = 0,
         totalTD = 0,
         totalTP = 0;
+    nombreEnseignant = 0;;
+
 
     document.querySelectorAll('#corpsEnseignant tr').forEach(row => {
+        nombreEnseignant++;
         let t = row.querySelector('.typeCours')?.value;
         let h = parseFloat(row.querySelector('#nombreHeure')?.value) || 0;
 
@@ -635,27 +676,83 @@ function getPremierTypeDisponible() {
         if (t === "td") totalTD += h;
         if (t === "tp") totalTP += h;
         if (t === "cm-td") {
-            totalCM += h / 2;
-            totalTD += h / 2;
+            totalCM += h - (parseInt($(".td").val(), 10));
+            totalTD += h - (parseInt($(".cm").val(), 10));
         }
         if (t === "cm-tp") {
-            totalCM += h / 2;
-            totalTP += h / 2;
+            totalCM += h - (parseInt($(".tp").val(), 10));
+            totalTP += h - parseInt($(".cm").val(), 10);
         }
         if (t === "td-tp") {
-            totalTD += h / 2;
-            totalTP += h / 2;
+            totalTD += h - parseInt($(".tp").val(), 10);
+            totalTP += h - parseInt($(".td").val(), 10);
+        }
+        if (t === "cm-td-tp") {
+            totalCM += h - parseInt($(".td").val(), 10) - parseInt($(".tp").val(), 10);
+            totalTD += h - parseInt($(".cm").val(), 10) - parseInt($(".tp").val(), 10);
+            totalTP += h - parseInt($(".cm").val(), 10) - parseInt($(".td").val(), 10);
         }
     });
 
+    if (nombreEnseignant == 0) {
+        if (coursRestants.cm != 0 && coursRestants.td != 0 && coursRestants.tp != 0) {
+            return "cm-td-tp";
+        } else if (coursRestants.cm != 0 && coursRestants.td != 0 && coursRestants.tp == 0) {
+            return "cm-td";
+        } else if (coursRestants.cm != 0 && coursRestants.td == 0 && coursRestants.tp != 0) {
+            return "cm-tp";
+        } else if (coursRestants.cm == 0 && coursRestants.td != 0 && coursRestants.tp != 0) {
+            return "td-tp";
+        } else {
+
+            return null;
+        }
+
+    }
     if (coursRestants.cm - totalCM > 0) return "cm";
     if (coursRestants.td - totalTD > 0) return "td";
     if (coursRestants.tp - totalTP > 0) return "tp";
     if (coursRestants.cm - totalCM > 0 && coursRestants.td - totalTD > 0) return "cm-td";
     if (coursRestants.cm - totalCM > 0 && coursRestants.tp - totalTP > 0) return "cm-tp";
     if (coursRestants.td - totalTD > 0 && coursRestants.tp - totalTP > 0) return "td-tp";
-
+    if (coursRestants.cm - totalCM > 0 && coursRestants.td - totalTD > 0 && coursRestants.tp - totalTP > 0)
+        return "cm-td-tp";
     return null;
+}
+
+function recalculerTousLesHeures() {
+    let totalCM = 0,
+        totalTD = 0,
+        totalTP = 0;
+
+    document.querySelectorAll('#corpsEnseignant tr').forEach(row => {
+        const type = row.querySelector('.typeCours')?.value;
+        const h = parseFloat(row.querySelector('#nombreHeure')?.value) || 0;
+
+        if (t === "cm") totalCM += h;
+        if (t === "td") totalTD += h;
+        if (t === "tp") totalTP += h;
+        if (t === "cm-td") {
+            totalCM += h - (parseInt($(".td").val(), 10));
+            totalTD += h - (parseInt($(".cm").val(), 10));
+        }
+        if (t === "cm-tp") {
+            totalCM += h - (parseInt($(".tp").val(), 10));
+            totalTP += h - parseInt($(".cm").val(), 10);
+        }
+        if (t === "td-tp") {
+            totalTD += h - parseInt($(".tp").val(), 10);
+            totalTP += h - parseInt($(".td").val(), 10);
+        }
+        if (t === "cm-td-tp") {
+            totalCM += h - parseInt($(".td").val(), 10) - parseInt($(".tp").val(), 10);
+            totalTD += h - parseInt($(".cm").val(), 10) - parseInt($(".tp").val(), 10);
+            totalTP += h - parseInt($(".cm").val(), 10) - parseInt($(".td").val(), 10);
+        }
+    });
+
+    console.log(`Total : CM=${totalCM} TD=${totalTD} TP=${totalTP}`);
+    // Vous pouvez aussi mettre à jour des affichages visuels ici si besoin
 }
 
 
@@ -699,26 +796,6 @@ function showNotificationToast(message, type = "info") {
     toastElement.show();
 }
 
-function getCoursDispo() {
-    const disponibles = [];
-    if (coursRestants.cm > 0) disponibles.push("cm");
-    if (coursRestants.td > 0) disponibles.push("td");
-    if (coursRestants.tp > 0) disponibles.push("tp");
-    return disponibles;
-}
-
-// function getPremierTypeDisponible() {
-//     const dispo = [];
-
-//     if (coursRestants.cm > 0) dispo.push("cm");
-//     if (coursRestants.td > 0) dispo.push("td");
-//     if (coursRestants.tp > 0) dispo.push("tp");
-//     if (coursRestants.cm > 0 && coursRestants.td > 0) dispo.push("cm-td");
-//     if (coursRestants.cm > 0 && coursRestants.tp > 0) dispo.push("cm-tp");
-//     if (coursRestants.td > 0 && coursRestants.tp > 0) dispo.push("td-tp");
-
-//     return dispo.length > 0 ? dispo[0] : null;
-// }
 
 function afficherAlerteBootstrap(message, type = "warning") {
     // Fonction d’alerte personnalisée (toast Bootstrap)
@@ -739,7 +816,7 @@ function ajouterLigneEnseignant(id, enseignant) {
     newRow.innerHTML = `
         <td class="id" id="${id}"><span>${num}</span></td>
         <td><span>${enseignant}</span></td>
-        <td><input type="text" class="form-control" id="groupe"></td>
+        <td><input type="text" class="form-control groupe" id="groupe" value="GP" readonly disabled></td>
         <td>
             <select class='select2 form-control typeCours'>
                 <option value="cm" ${typeParDefaut === "cm" ? "selected" : ""}>CM</option>
@@ -748,13 +825,16 @@ function ajouterLigneEnseignant(id, enseignant) {
                 <option value="cm-td" ${typeParDefaut === "cm-td" ? "selected" : ""}>CM + TD</option>
                 <option value="cm-tp" ${typeParDefaut === "cm-tp" ? "selected" : ""}>CM + TP</option>
                 <option value="td-tp" ${typeParDefaut === "td-tp" ? "selected" : ""}>TD + TP</option>
+                <option value="cm-td-tp" ${typeParDefaut === "cm-td-tp" ? "selected" : ""}>CM + TD + TP</option>
             </select>
         </td>
-        <td><input type="text" class="form-control" id="nombreHeure" value="" disabled></td>
-    `;
+
+        <td style="width:100px !important"><input type="text" class="form-control nombreHeure" id="nombreHeure" value="" readonly disabled></td>
+        `;
     document.querySelector("#corpsEnseignant").appendChild(newRow);
 
     const selectCours = newRow.querySelector('.typeCours');
+    const nombreHeures = newRow.querySelector('.nombreHeure');
     const inputHeure = newRow.querySelector('#nombreHeure');
     let previousType = typeParDefaut;
     let previousHeure = 0;
@@ -773,16 +853,21 @@ function ajouterLigneEnseignant(id, enseignant) {
             if (t === "td") totalTD += h;
             if (t === "tp") totalTP += h;
             if (t === "cm-td") {
-                totalCM += h / 2;
-                totalTD += h / 2;
+                totalCM += h - (parseInt($(".td").val(), 10));
+                totalTD += h - (parseInt($(".cm").val(), 10));
             }
             if (t === "cm-tp") {
-                totalCM += h / 2;
-                totalTP += h / 2;
+                totalCM += h - (parseInt($(".tp").val(), 10));
+                totalTP += h - parseInt($(".cm").val(), 10);
             }
             if (t === "td-tp") {
-                totalTD += h / 2;
-                totalTP += h / 2;
+                totalTD += h - parseInt($(".tp").val(), 10);
+                totalTP += h - parseInt($(".td").val(), 10);
+            }
+            if (t === "cm-td-tp") {
+                totalCM += h - parseInt($(".td").val(), 10) - parseInt($(".tp").val(), 10);
+                totalTD += h - parseInt($(".cm").val(), 10) - parseInt($(".tp").val(), 10);
+                totalTP += h - parseInt($(".cm").val(), 10) - parseInt($(".td").val(), 10);
             }
         });
 
@@ -804,9 +889,11 @@ function ajouterLigneEnseignant(id, enseignant) {
         if (type === "cm") heureMax = coursRestants.cm - totalCM;
         else if (type === "td") heureMax = coursRestants.td - totalTD;
         else if (type === "tp") heureMax = coursRestants.tp - totalTP;
-        else if (type === "cm-td") heureMax = Math.min(coursRestants.cm - totalCM, coursRestants.td - totalTD) * 2;
-        else if (type === "cm-tp") heureMax = Math.min(coursRestants.cm - totalCM, coursRestants.tp - totalTP) * 2;
-        else if (type === "td-tp") heureMax = Math.min(coursRestants.td - totalTD, coursRestants.tp - totalTP) * 2;
+        else if (type === "cm-td") heureMax = coursRestants.cm - totalCM + coursRestants.td - totalTD;
+        else if (type === "cm-tp") heureMax = coursRestants.cm - totalCM + coursRestants.tp - totalTP;
+        else if (type === "td-tp") heureMax = coursRestants.td - totalTD + coursRestants.tp - totalTP;
+        else if (type === "cm-td-tp") heureMax = coursRestants.cm - totalCM + coursRestants.td - totalTD +
+            coursRestants.tp - totalTP;
 
         return heureMax > 0 ? heureMax : 0;
     }
@@ -844,6 +931,29 @@ function ajouterLigneEnseignant(id, enseignant) {
         }
     });
 
+    // l'évenenment pour le changement de l'heure
+    inputHeure.addEventListener("input", function() {
+        const type = selectCours.value;
+        let heureSaisie = parseFloat(inputHeure.value) || 0;
+        const heureMax = updateNombreHeure(type);
+
+        if (heureSaisie > heureMax) {
+            afficherAlerteBootstrap(
+                `⚠️ Vous avez dépassé la limite pour ${type.toUpperCase()}. Max autorisé : ${heureMax}h`,
+                "danger");
+            heureSaisie = heureMax;
+            inputHeure.value = heureSaisie;
+        }
+
+        // Mettre à jour les totaux en recalculant pour toutes les lignes
+        recalculerTousLesHeures(); // Fonction que je vous fournis juste après
+    });
+
+
+    nombreHeures.addEventListener("change", function() {
+
+    });
+
     // Initialiser la valeur par défaut
     const heureInitiale = updateNombreHeure(typeParDefaut);
     inputHeure.disabled = false;
@@ -853,21 +963,32 @@ function ajouterLigneEnseignant(id, enseignant) {
 
 function ajouterEnseignantAutoGroupe(id, enseignant) {
     num++;
-    const nomGroupe = `Groupe ${intToRoman(num - 1)}`;
+    const nomGroupe = `Gr ${intToRoman(num - 1)}`;
 
     let newRow = `
         <tr>
             <td class="id" id="${id}"><span>${num}</span></td>
             <td><span>${enseignant}</span></td>
-            <td><input type="text" class="form-control" value="${nomGroupe}" readonly></td>
+            <td><input type="text" class="form-control" value="${nomGroupe}" readonly id="groupe"></td>
             <td>
                 <select class="form-control typeCours" disabled>
                     <option value="cm-td-tp" selected>CM-TD-TP</option>
                 </select>
             </td>
-            <td><input type="text" class="form-control" value="${coursRestants.cm+coursRestants.td+coursRestants.tp}" readonly></td>
+            <td><input type="text" class="form-control nombreHeure" value="${coursRestants.cm+coursRestants.td+coursRestants.tp}" readonly></td>
+            <td style="width:200px !important">
+                <select class=" select2 form-control salle" id="salle_${num}">
+                    <option value="" disabled selected>Salle
+                    </option>
+                    <?php foreach ($salles as $salle): ?>
+                        <option value="<?php echo $salle->id_salle ?>">
+                            <?php echo strtoupper($salle->nom_salle) . "(" . $salle->capacite_salle . ")" ?>
+                        </option>
+                    <?php endforeach ?>
+                </select>
+            </td>
         </tr>
-    `;
+        `;
     $("#corpsEnseignant").append(newRow);
 }
 
@@ -904,8 +1025,6 @@ $("#enseignants").change(function() {
 
 $("#groupeSelect").change(function() {
     // Toujours afficher la table
-    $('#listEnseignant').removeClass('d-none').addClass('d-block');
-
     // Réinitialiser l'affichage
     $("#corpsEnseignant").html("");
     num = 0;
@@ -918,9 +1037,40 @@ $("#groupeSelect").change(function() {
             td: ($(".td").val() != "") ? parseInt($(".td").val(), 10) : 0,
             tp: ($(".tp").val() != "") ? parseInt($(".tp").val(), 10) : 0
         };
+        $('#thSalle').addClass('d-none');
+
+    } else {
+        $('#thSalle').removeClass('d-none');
+
     }
 
     showNotificationToast(this.checked ? "✅ Mode groupe activé" : "ℹ️ Mode normal activé", "info");
+
+    const id = $('#enseignants option:selected').data("id");
+    const enseignant = $('#enseignants option:selected').data("enseignant");
+    const isGroupe = $("#groupeSelect").is(":checked");
+
+    if (!id || !enseignant) return;
+
+    let isExist = false;
+    $("#corpsEnseignant tr").each(function() {
+        if ($(this).find('.id').attr("id") == id) {
+            isExist = true;
+        }
+    });
+
+    if (isExist) {
+        showNotificationToast("⚠️ Cet enseignant est déjà dans la liste", "warning");
+        return;
+    }
+
+    if (isGroupe) {
+        // Ajout automatique groupe (CM-TD-TP)
+        ajouterEnseignantAutoGroupe(id, enseignant);
+    } else {
+        // Ajout avec vérifications heures
+        ajouterLigneEnseignant(id, enseignant);
+    }
 });
 
 
