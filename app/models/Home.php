@@ -253,20 +253,22 @@ class Home extends Model
                 m.sigle_module as sigle,
                 CONCAT(f.sigle_filiere, '-S', se.id_semestre) as niveau,
                 GROUP_CONCAT(DISTINCT CONCAT(en.enseignant_nom, ' ', en.enseignant_prenom) SEPARATOR ', ') AS professeurs,
-                s.nom_salle as salle,
+                COALESCE(ee_salle.nom_salle, s.nom_salle) as salle,
                 'À venir' as statut
             FROM edt e
-            JOIN module m ON e.id_module = m.id_module
+            JOIN ue_module um ON e.id_module = um.id_ue_module
+            JOIN module m ON um.id_module = m.id_module
             JOIN filiere f ON e.id_filiere = f.id_filiere
             JOIN promotion p ON e.id_promotion = p.id_promotion
             JOIN semestre se ON e.id_semestre = se.id_semestre
             LEFT JOIN enseignant_edt ee ON e.id_edt = ee.id_edt
             LEFT JOIN enseignants en ON ee.id_enseignant = en.enseignant_id
-            JOIN salle s ON e.id_salle = s.id_salle
+            LEFT JOIN salle s ON e.id_salle = s.id_salle
+            LEFT JOIN salle ee_salle ON ee.id_salle = ee_salle.id_salle
             WHERE e.date_debut >= DATE(NOW())
             AND e.statut = 0
             AND f.id_departement = :id_departement
-            GROUP BY e.id_edt
+            GROUP BY e.id_edt, date_cours, module, sigle, niveau, COALESCE(ee_salle.nom_salle, s.nom_salle), statut
             ORDER BY e.date_debut ASC
             LIMIT 5
         ";
@@ -285,15 +287,19 @@ class Home extends Model
                 CONCAT(TIME_FORMAT(e.date_debut, '%H:%i'), '-', TIME_FORMAT(e.date_fin, '%H:%i')) AS heure,
                 m.nom_module AS module,
                 CONCAT(f.sigle_filiere, '-S', se.id_semestre, ' (', p.annee_universitaire, ')') AS niveau,
-                s.nom_salle AS salle
+                COALESCE(ee_salle.nom_salle, s.nom_salle) AS salle
             FROM edt e
-            JOIN module m ON e.id_module = m.id_module
+            JOIN ue_module um ON e.id_module = um.id_ue_module
+            JOIN module m ON um.id_module = m.id_module
             JOIN filiere f ON e.id_filiere = f.id_filiere
             JOIN promotion p ON e.id_promotion = p.id_promotion
             JOIN semestre se ON e.id_semestre = se.id_semestre
-            JOIN salle s ON e.id_salle = s.id_salle
+            LEFT JOIN salle s ON e.id_salle = s.id_salle
+            LEFT JOIN enseignant_edt ee ON e.id_edt = ee.id_edt
+            LEFT JOIN salle ee_salle ON ee.id_salle = ee_salle.id_salle
             WHERE e.date_fin BETWEEN :start AND :end
             AND f.id_departement = :id_departement
+            GROUP BY e.id_edt, date_examen, heure, module, niveau, COALESCE(ee_salle.nom_salle, s.nom_salle)
             ORDER BY e.date_fin ASC
         ";
 

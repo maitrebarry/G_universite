@@ -40,7 +40,69 @@
     .alert-department {
         border-left: 4px solid #ff9f43;
     }
-    
+
+    /* ✅ Styles */
+    .bg-gradient-primary { background: linear-gradient(135deg, #1976d2, #42a5f5); }
+    .bg-gradient-secondary { background: linear-gradient(135deg, #6c757d, #adb5bd); }
+    .ai-status-loading { color: #ff9800; font-style: italic; text-align:center; }
+    .ai-status-error { color: #f44336; font-weight: bold; text-align:center; }
+
+    /* ✅ Chat ergonomique */
+    .chat-box {
+        flex: 1;
+        overflow-y: auto;
+        background: #fafafa;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+    .chat-message {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+    }
+    .chat-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #fff;
+        padding: 2px;
+    }
+    .chat-message div {
+        background: #f0f0f0;
+        padding: 10px 14px;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        max-width: 75%;
+    }
+    .user-message div {
+        background: #d1e7ff;
+    }
+    .chat-time {
+        font-size: 0.75rem;
+        color: #666;
+        display: block;
+        margin-top: 4px;
+    }
+    .chat-input-container input {
+        padding: 12px;
+        font-size: 1rem;
+        border-radius: 50px;
+        border: 1px solid #ccc;
+    }
+
+    /* ✅ Tableau élégant */
+    .ai-response table th {
+        background: #f8f9fa;
+        font-weight: 600;
+    }
+    .ai-response table td {
+        font-weight: 500;
+    }
+
 </style>
 
 <?php $this->view("Partials/header") ?>
@@ -693,6 +755,40 @@
                         </div>
                     </div>
                 </div>
+                  <!-- ✅ Section IA : Prévision + Chat -->
+                <div class="row mt-4 g-4">
+                    <!-- 📊 Prévision IA -->
+                    <div class="col-lg-6">
+                        <div class="card shadow-lg border-0 rounded-4 h-100">
+                            <div class="card-header bg-gradient-primary text-white text-center fw-bold fs-5">
+                                📊 Prévision IA
+                            </div>
+                            <div class="card-body" id="ai-forecast" style="min-height: 350px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                <p class="text-muted text-center mb-3">Cliquez pour générer une prévision détaillée.</p>
+                                <button id="btn-refresh-ai" class="btn btn-primary w-75 rounded-pill shadow-sm">
+                                    🔄 Générer la prévision
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 🤖 Chat IA -->
+                    <div class="col-lg-6">
+                        <div class="card shadow-lg border-0 rounded-4 h-100">
+                            <div class="card-header bg-gradient-secondary text-white text-center fw-bold fs-5">
+                                🤖 Chat IA
+                            </div>
+                            <div class="card-body d-flex flex-column" style="height: 400px;">
+                                <!-- Zone Chat -->
+                                <div id="chat-box" class="chat-box mb-3"></div>
+                                <!-- Zone Input -->
+                                <div class="chat-input-container">
+                                    <input type="text" id="chat-input" class="form-control rounded-pill shadow-sm" placeholder="Posez votre question et appuyez sur Entrée...">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </section>
             <!-- ==================================== -->
             <!-- SECTION DIRECTEUR GENERAL ADJOINT (DGA) -->
@@ -794,183 +890,246 @@
 
                 </div>
                 <div class="row">
-                    <div class="col-12">
+                <div class="col-12">
                     <div class="card mt-4">
-                <div class="card-header bg-primary text-white text-center">
-                    Statistiques détaillées par département
+                        <div class="card-header bg-primary text-white text-center">
+                            Statistiques détaillées par département
+                        </div>
+                        <div class="card-body">
+                            <!-- Ici ton tableau ou contenu -->
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Département</th>
+                                        <th>Taux réussite (%)</th>
+                                        <th>Effectif</th>
+                                        <th>Critère de sélection</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach($departements as $dep): ?>
+                                        <tr>
+                                            <td><?= htmlspecialchars($dep->departement) ?></td>
+                                            <td><?= number_format($dep->taux_reussite, 2) ?></td>
+                                            <td><?= (int)$dep->total_etudiants ?></td>
+                                            <td><?= htmlspecialchars($dep->critere) ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <!-- Ici ton tableau ou contenu -->
-                    <table class="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th>Département</th>
-                                <th>Taux réussite (%)</th>
-                                <th>Effectif</th>
-                                <th>Critère de sélection</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach($departements as $dep): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($dep->departement) ?></td>
-                                    <td><?= number_format($dep->taux_reussite, 2) ?></td>
-                                    <td><?= (int)$dep->total_etudiants ?></td>
-                                    <td><?= htmlspecialchars($dep->critere) ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-                </div>
+                    <!-- ✅ Section IA : Prévision + Chat -->
+                <div class="row mt-4 g-4">
+                    <!-- 📊 Prévision IA -->
+                    <div class="col-lg-6">
+                        <div class="card shadow-lg border-0 rounded-4 h-100">
+                            <div class="card-header bg-gradient-primary text-white text-center fw-bold fs-5">
+                                📊 Prévision IA
+                            </div>
+                            <div class="card-body" id="ai-forecast" style="min-height: 350px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                <p class="text-muted text-center mb-3">Cliquez pour générer une prévision détaillée.</p>
+                                <button id="btn-refresh-ai" class="btn btn-primary w-75 rounded-pill shadow-sm">
+                                    🔄 Générer la prévision
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 
+                    <!-- 🤖 Chat IA -->
+                    <div class="col-lg-6">
+                        <div class="card shadow-lg border-0 rounded-4 h-100">
+                            <div class="card-header bg-gradient-secondary text-white text-center fw-bold fs-5">
+                                🤖 Chat IA
+                            </div>
+                            <div class="card-body d-flex flex-column" style="height: 400px;">
+                                <!-- Zone Chat -->
+                                <div id="chat-box" class="chat-box mb-3"></div>
+                                <!-- Zone Input -->
+                                <div class="chat-input-container">
+                                    <input type="text" id="chat-input" class="form-control rounded-pill shadow-sm" placeholder="Posez votre question et appuyez sur Entrée...">
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    </div>
+                </div>
             </section>
             <!-- ==================================== -->
             <!-- SECTION DIRECTEUR GENERAL (DG) -->
             <!-- ==================================== -->
             <?php elseif ($_SESSION['role'] === 'DG'): ?>
-         <section id="dashboard-dg" class="role-specific">
-    <div class="row mt-3">
+            <section id="dashboard-dg" class="role-specific">
+                <div class="row mt-3">
 
-        <!-- KPI DG -->
-        <div class="row col-12 mt-2">
-            <!-- Taux réussite -->
-            <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
-                <div class="card card-animated-border-top1">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="me-3 p-2 bg-primary text-white rounded-circle">
-                            <i class="fa-solid fa-chart-line fa-2x"></i>
+                    <!-- KPI DG -->
+                    <div class="row col-12 mt-2">
+                        <!-- Taux réussite -->
+                        <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
+                            <div class="card card-animated-border-top1">
+                                <div class="card-body d-flex align-items-center">
+                                    <div class="me-3 p-2 bg-primary text-white rounded-circle">
+                                        <i class="fa-solid fa-chart-line fa-2x"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-muted mb-1">Taux de réussite global</p>
+                                        <h4 class="mb-0"><?= $stats['taux_reussite'] ?>%</h4>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <p class="text-muted mb-1">Taux de réussite global</p>
-                            <h4 class="mb-0"><?= $stats['taux_reussite'] ?>%</h4>
+
+                        <!-- Taux d'échec -->
+                        <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
+                            <div class="card card-animated-border-top1">
+                                <div class="card-body d-flex align-items-center">
+                                    <div class="me-3 p-2 bg-danger text-white rounded-circle">
+                                        <i class="fa-solid fa-times-circle fa-2x"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-muted mb-1">Taux d'échec</p>
+                                        <h4 class="mb-0"><?= $stats['taux_echec'] ?>%</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Taux inscription -->
+                        <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
+                            <div class="card card-animated-border-top1">
+                                <div class="card-body d-flex align-items-center">
+                                    <div class="me-3 p-2 bg-info text-white rounded-circle">
+                                        <i class="fa-solid fa-user-check fa-2x"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-muted mb-1">Taux d'inscription</p>
+                                        <h4 class="mb-0"><?= $stats['taux_inscription'] ?>%</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Total étudiants -->
+                        <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
+                            <div class="card card-animated-border-top1">
+                                <div class="card-body d-flex align-items-center">
+                                    <div class="me-3 p-2 bg-secondary text-white rounded-circle">
+                                        <i class="fa-solid fa-users fa-2x"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-muted mb-1">Total étudiants</p>
+                                        <h4 class="mb-0"><?= $stats['total_etudiants'] ?></h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                <div class="col-12 mt-4">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white text-center">
+                                Statistiques détaillées par département
+                            </div>
+                            <div class="card-body table-responsive p-0">
+                                <table class="table table-striped table-bordered table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Département</th>
+                                            <th>Effectif</th>
+                                            <th>Admis</th>
+                                            <th>Taux réussite</th>
+                                            <th>Critère</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php if (!empty($departements)): ?>
+                                            <?php foreach ($departements as $dep): ?>
+                                                <tr>
+                                                    <td><?= htmlspecialchars($dep->nom_departement) ?></td>
+                                                    <td><?= $dep->total_etudiants ?></td>
+                                                    <td><?= $dep->admis ?></td>
+                                                    <td><?= $dep->taux_reussite ?>%</td>
+                                                    <td><?= $dep->critere ?></td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <tr>
+                                                <td colspan="5" class="text-center text-muted">Aucune donnée disponible</td>
+                                            </tr>
+                                        <?php endif; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Top 3 filières -->
+                    <div class="col-12 mt-4">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white text-center">
+                                Top 3 filières avec meilleur taux de réussite
+                            </div>
+                            <div class="card-body table-responsive p-0">
+                            <table class="table table-striped table-bordered table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Filière</th>
+                                            <th>Effectif</th>
+                                            <th>Admis</th>
+                                            <th>Taux réussite</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($topFilieres as $filiere): ?>
+                                            <tr>
+                                                <td><?= htmlspecialchars($filiere->filiere) ?></td>
+                                                <td><?= $filiere->total_etudiants ?></td>
+                                                <td><?= $filiere->admis ?></td>
+                                                <td><?= $filiere->taux_reussite ?>%</td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                      <!-- ✅ Section IA : Prévision + Chat -->
+                <div class="row mt-4 g-4">
+                    <!-- 📊 Prévision IA -->
+                    <div class="col-lg-6">
+                        <div class="card shadow-lg border-0 rounded-4 h-100">
+                            <div class="card-header bg-gradient-primary text-white text-center fw-bold fs-5">
+                                📊 Prévision IA
+                            </div>
+                            <div class="card-body" id="ai-forecast" style="min-height: 350px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                <p class="text-muted text-center mb-3">Cliquez pour générer une prévision détaillée.</p>
+                                <button id="btn-refresh-ai" class="btn btn-primary w-75 rounded-pill shadow-sm">
+                                    🔄 Générer la prévision
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 🤖 Chat IA -->
+                    <div class="col-lg-6">
+                        <div class="card shadow-lg border-0 rounded-4 h-100">
+                            <div class="card-header bg-gradient-secondary text-white text-center fw-bold fs-5">
+                                🤖 Chat IA
+                            </div>
+                            <div class="card-body d-flex flex-column" style="height: 400px;">
+                                <!-- Zone Chat -->
+                                <div id="chat-box" class="chat-box mb-3"></div>
+                                <!-- Zone Input -->
+                                <div class="chat-input-container">
+                                    <input type="text" id="chat-input" class="form-control rounded-pill shadow-sm" placeholder="Posez votre question et appuyez sur Entrée...">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Taux d'échec -->
-            <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
-                <div class="card card-animated-border-top1">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="me-3 p-2 bg-danger text-white rounded-circle">
-                            <i class="fa-solid fa-times-circle fa-2x"></i>
-                        </div>
-                        <div>
-                            <p class="text-muted mb-1">Taux d'échec</p>
-                            <h4 class="mb-0"><?= $stats['taux_echec'] ?>%</h4>
-                        </div>
-                    </div>
                 </div>
-            </div>
-
-            <!-- Taux inscription -->
-            <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
-                <div class="card card-animated-border-top1">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="me-3 p-2 bg-info text-white rounded-circle">
-                            <i class="fa-solid fa-user-check fa-2x"></i>
-                        </div>
-                        <div>
-                            <p class="text-muted mb-1">Taux d'inscription</p>
-                            <h4 class="mb-0"><?= $stats['taux_inscription'] ?>%</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Total étudiants -->
-            <div class="col-lg-3 col-md-6 col-sm-12 mb-2">
-                <div class="card card-animated-border-top1">
-                    <div class="card-body d-flex align-items-center">
-                        <div class="me-3 p-2 bg-secondary text-white rounded-circle">
-                            <i class="fa-solid fa-users fa-2x"></i>
-                        </div>
-                        <div>
-                            <p class="text-muted mb-1">Total étudiants</p>
-                            <h4 class="mb-0"><?= $stats['total_etudiants'] ?></h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-       <div class="col-12 mt-4">
-            <div class="card">
-                <div class="card-header bg-primary text-white text-center">
-                    Statistiques détaillées par département
-                </div>
-                <div class="card-body table-responsive p-0">
-                    <table class="table table-striped table-bordered table-hover mb-0">
-                        <thead>
-                            <tr>
-                                <th>Département</th>
-                                <th>Effectif</th>
-                                <th>Admis</th>
-                                <th>Taux réussite</th>
-                                <th>Critère</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php if (!empty($departements)): ?>
-                                <?php foreach ($departements as $dep): ?>
-                                    <tr>
-                                        <td><?= htmlspecialchars($dep->nom_departement) ?></td>
-                                        <td><?= $dep->total_etudiants ?></td>
-                                        <td><?= $dep->admis ?></td>
-                                        <td><?= $dep->taux_reussite ?>%</td>
-                                        <td><?= $dep->critere ?></td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <tr>
-                                    <td colspan="5" class="text-center text-muted">Aucune donnée disponible</td>
-                                </tr>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-
-        <!-- Top 3 filières -->
-        <div class="col-12 mt-4">
-            <div class="card">
-                <div class="card-header bg-primary text-white text-center">
-                    Top 3 filières avec meilleur taux de réussite
-                </div>
-                <div class="card-body table-responsive p-0">
-                   <table class="table table-striped table-bordered table-hover mb-0">
-                        <thead>
-                            <tr>
-                                <th>Filière</th>
-                                <th>Effectif</th>
-                                <th>Admis</th>
-                                <th>Taux réussite</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($topFilieres as $filiere): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($filiere->filiere) ?></td>
-                                    <td><?= $filiere->total_etudiants ?></td>
-                                    <td><?= $filiere->admis ?></td>
-                                    <td><?= $filiere->taux_reussite ?>%</td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-    </div>
-</section>
-
-
+            </section>
                 </div>
                 <?php else: ?>
                 <p>Rôle non reconnu.</p>
@@ -1063,6 +1222,136 @@
             }
         }
     });
+</script>
+<!-- //IA prevision et cht bot -->
+<script>
+    const AIMessages = {
+        loading: "⏳ Analyse en cours...",
+        error: "⚠️ Service indisponible",
+        emptyResponse: "Pas de réponse de l'IA"
+    };
+
+    function fetchWithTimeout(url, options, timeout = 15000) {
+        return Promise.race([
+            fetch(url, options),
+            new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), timeout))
+        ]);
+    }
+
+    // ✅ Rafraîchir Prévision IA
+    document.addEventListener('click', function(e) {
+        if (e.target && e.target.id === 'btn-refresh-ai') {
+            refreshAI();
+        }
+    });
+
+    async function refreshAI() {
+        const forecast = document.getElementById('ai-forecast');
+        forecast.innerHTML = `<p class="ai-status-loading">${AIMessages.loading}</p>`;
+
+        try {
+            const response = await fetchWithTimeout("<?= ROOT ?>/Homes/refreshAI", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"}
+            });
+
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+            const data = await response.json();
+
+            // ✅ Affichage sous forme de tableau
+            forecast.innerHTML = `
+                <div class="ai-response">
+                    <h5 class="mb-3 text-center fw-bold">📊 Résultat IA</h5>
+                    <table class="table table-hover table-bordered text-center align-middle">
+                        <tbody>
+                            <tr><th>🔮 Prédiction</th><td>${data.prediction}%</td></tr>
+                            <tr><th>✅ Taux de réussite</th><td>${data.stats.taux_reussite}%</td></tr>
+                            <tr><th>📈 Taux d'inscription</th><td>${data.stats.taux_inscription}%</td></tr>
+                            <tr><th>❌ Taux d'échec</th><td>${data.stats.taux_echec}%</td></tr>
+                            <tr><th>🏆 Meilleur département</th><td>${data.stats.best_dep.nom} (${data.stats.best_dep.taux}%)</td></tr>
+                            <tr><th>📉 Département à améliorer</th><td>${data.stats.worst_dep.nom} (${data.stats.worst_dep.taux}%)</td></tr>
+                        </tbody>
+                    </table>
+                    <h6 class="text-center mt-3 fw-bold">📌 Répartition par département</h6>
+                    <table class="table table-sm table-striped mt-2">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Département</th>
+                                <th>Étudiants</th>
+                                <th>Admis</th>
+                                <th>Taux</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.departements.map(dep => `
+                                <tr>
+                                    <td>${dep.departement}</td>
+                                    <td>${dep.total_etudiants}</td>
+                                    <td>${dep.admis}</td>
+                                    <td>${dep.taux_reussite}%</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                <button id="btn-refresh-ai" class="btn btn-primary w-100 mt-3 rounded-pill">🔄 Rafraîchir</button>
+            `;
+        } catch (error) {
+            forecast.innerHTML = `<p class="ai-status-error">${AIMessages.error}</p>`;
+            console.error("Erreur Prévision IA:", error);
+        }
+    }
+
+    // ✅ Chat IA avec avatars et heure
+    document.getElementById('chat-input').addEventListener('keypress', e => {
+        if (e.key === 'Enter') sendChat();
+    });
+
+    async function sendChat() {
+        const input = document.getElementById('chat-input');
+        const question = input.value.trim();
+        if (!question) return;
+
+        const chatBox = document.getElementById('chat-box');
+        const id = Date.now();
+        const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+        // ✅ Ajout du message utilisateur
+        chatBox.innerHTML += `
+            <div class="chat-message user-message">
+                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="chat-avatar">
+                <div><b>Vous :</b> ${question} <br><span class="chat-time">${time}</span></div>
+            </div>
+            <div id="ai-${id}" class="chat-message ai-message">
+                <img src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png" class="chat-avatar">
+                <div><b>IA :</b> <em>${AIMessages.loading}</em><br><span class="chat-time">${time}</span></div>
+            </div>
+        `;
+        input.value = '';
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        try {
+            const response = await fetchWithTimeout("<?= ROOT ?>/Homes/chatAI", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({ question })
+            }, 20000);
+
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+            const data = await response.json();
+            updateAIMessage(id, data.response || AIMessages.emptyResponse);
+        } catch (error) {
+            console.error("Erreur Chat IA:", error);
+            updateAIMessage(id, AIMessages.error);
+        }
+    }
+
+    function updateAIMessage(id, content) {
+        const element = document.querySelector(`#ai-${id} div`);
+        if (element) element.innerHTML = `<b>IA :</b> ${content} <br><span class="chat-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>`;
+    }
 </script>
 <?php $this->view("Partials/foot") ?>
 <?php $this->view("Partials/footer") ?>
