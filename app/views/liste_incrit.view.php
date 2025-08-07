@@ -131,34 +131,36 @@
                                             <div class="table-responsive">
                                                 <!-- Affichage des étudiants -->
                                                 <div id="liste_etudiants" class="mt-4">
-                                                    <div class="mb-3">
-                                                    <input type="text" id="customSearch" class="form-control" placeholder="Rechercher un étudiant...">
-                                                </div>
-                                                            <table class="table zze">
-                                                            <thead class="text-center">
-                                                                <tr>
-                                                                    <th class="text-center">
-                                                                        Tout<br>
-                                                                        <input type="checkbox" id="select-all"
-                                                                            title="Sélectionner tout"
-                                                                            style="margin-top: 5px;">
-                                                                    </th>
-                                                                    <th>Nom & Prénom</th>
-                                                                    <th>Matricule</th>
-                                                                    <th>Status</th>
-                                                                    <th>Filière</th>
-                                                                    <th>Diplôme</th>
-                                                                    <th>Action</th>
-                                                                </tr>
-                                                            </thead>
+                                                    <div class="mb-3 d-flex justify-content-between align-items-center">
+                                                        <input type="text" id="customSearch" class="form-control" placeholder="Rechercher un étudiant..." style="max-width: 300px;">
+                                                        <a href="<?= ROOT ?>/Etudiants/export_liste" class="btn btn-success ml-2" target="_blank">
+                                                            <i class="bx bx-download"></i> Exporter la liste
+                                                        </a>
+                                                    </div>
+                                                    <table class="table zze">
+                                                        <thead class="text-center">
+                                                            <tr>
+                                                                <th class="text-center">
+                                                                    Tout<br>
+                                                                    <input type="checkbox" id="select-all"
+                                                                        title="Sélectionner tout"
+                                                                        style="margin-top: 5px;">
+                                                                </th>
+                                                                <th>Nom & Prénom</th>
+                                                                <th>Matricule</th>
+                                                                <th>Status</th>
+                                                                <th>Filière</th>
+                                                                <th>Diplôme</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                        </thead>
                                                         <tbody id="table_etudiant" class="text-center">
                                                             <!-- Les données AJAX seront insérées ici -->
                                                         </tbody>
                                                     </table>
                                                 </div>
 
-                                                <button type="submit" class="btn btn-primary">Paiement en
-                                                    Groupe</button>
+                                                <button type="submit" class="btn btn-primary">Paiement en Groupe</button>
                                             </div>
                                         </form>
                                     </div>

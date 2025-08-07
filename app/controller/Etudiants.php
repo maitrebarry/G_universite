@@ -177,6 +177,74 @@ public function paiement_groupe() {
         'paiements' => $paiements
     ]);
 }
+    public function export_liste(){
+        $etudiant = new Etudiant();
+        // Utilise trie_liste_etudiant si tu veux filtrer, sinon récupère tous
+        // Ici, on suppose que tu veux tout exporter
+        $query = "SELECT e.*, f.sigle_filiere 
+              FROM etudiant e
+              INNER JOIN promotion p ON e.id_promotion = p.id_promotion
+              INNER JOIN filiere f ON p.id_filiere = f.id_filiere";
+
+        $stmt = $etudiant->bdd()->prepare($query);
+        $stmt->execute();
+        $liste_etudiants = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+        // En-têtes pour Excel
+        header("Content-Type: application/vnd.ms-excel");
+        header("Content-Disposition: attachment; filename=liste_etudiants.xls");
+        header("Pragma: no-cache");
+        header("Expires: 0");
+
+        // Entête professionnel
+        echo "<table border='0' style='width:100%; margin-bottom:20px;'>";
+        echo "<tr>";
+        echo "<td style='text-align:center;'>
+                 <h2 style='margin:0;'>Universite DE SEGOU</h2>
+                <div style='font-size:14px;'>INSTITUT UNIVERSITAIRE DE FORMATION PROFESSIONNEL(IUFP)</div>
+                <div style='font-size:12px;'>Liste des etudiants</div>
+              </td>";
+        echo "<td style='width:80px;'></td>";
+        echo "</tr>";
+        echo "</table>";
+
+        // Colonnes du tableau
+        $colonnes = [
+           'Nom',
+            'Prenom',
+            'Matricule',
+            'Filiere',
+            "Emargement"
+        ];
+
+        echo "<table border='1' cellpadding='5' cellspacing='0' style='border-collapse:collapse; width:100%; font-family:Arial, sans-serif; font-size:13px;'>";
+        echo "<thead style='background:#f2f2f2;'>";
+        echo "<tr>";
+        foreach ($colonnes as $colonne) {
+            echo "<th style='padding:8px;'>" . htmlspecialchars($colonne) . "</th>";
+        }
+        echo "</tr>";
+        echo "</thead>";
+        echo "<tbody>";
+
+        // Affichage des étudiants
+        if (!empty($liste_etudiants)) {
+            foreach ($liste_etudiants as $etudiant) {
+                echo "<tr>";
+                echo "<td style='padding:6px;'>" . htmlspecialchars($etudiant->nom_prenom_etudiant) . "</td>";
+                echo "<td style='padding:6px;'>" . htmlspecialchars($etudiant->prenom) . "</td>";
+                echo "<td style='padding:6px;'>" . htmlspecialchars($etudiant->matricule_etudiant) . "</td>";
+                echo "<td style='padding:6px;'>" . htmlspecialchars($etudiant->sigle_filiere) . "</td>";
+                echo "<td style='padding:6px;'></td>"; // Emargement vide pour signature
+                echo "</tr>";
+            }
+        } else {
+            echo "<tr><td colspan='" . count($colonnes) . "' style='text-align:center;'>Aucun étudiant trouvé.</td></tr>";
+        }
+        echo "</tbody>";
+        echo "</table>";
+        exit;
+    }
 
  public function liste_inscription_groupe(){
    
