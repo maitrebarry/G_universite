@@ -45,7 +45,7 @@
                                     <div class="card-body">
                                         <form action="">
                                             <div class="row w-100 m-auto">
-                                                <div class="col-sm-2">
+                                                <div class="col-sm-3">
                                                     <label class="form-label">Année Universitaire</label>
                                                     <select class="select2 form-control disabled"
                                                         id="anneeUniversitaire" name="anneeUniversitaire">

@@ -8,14 +8,13 @@ class Reinsciptions extends Controller
 
     public function get_etudiants()
     {
-        if (isset($_POST["annee_universitaire"], $_POST["id_filiere"], $_POST["id_semestre"])) {
-            $etudiant = new Etudiant();
-            $liste_etudiant = $etudiant->trie_liste_etudiant(
+        if (isset($_POST["annee_universitaire"], $_POST["id_promotion"])) {
+            $reinscription = new Reinscription();
+            $liste_etudiant = $reinscription->trie_liste_etudiant(
                 $_POST["annee_universitaire"],
-                $_POST["id_filiere"],
-                $_POST["id_semestre"]
-            );
+                $_POST["id_promotion"],
 
+            );
             $this->view('post_reinscription', [
                 'liste_etudiant' => $liste_etudiant
             ]);

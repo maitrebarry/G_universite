@@ -210,8 +210,7 @@ async function infosFiliere(idFiliere, source = null) {
   var infoFiliere;
 }
 
-// recuperer les classes d'une annnée universitaire
-async function classesAnneeUniversitaire(anneeUniversitaire) {
+function classesAnneeUniversitaire(anneeUniversitaire) {
   $.ajax({
     method: "POST",
     url: ROOT + "/get_classe_annee",
@@ -219,39 +218,32 @@ async function classesAnneeUniversitaire(anneeUniversitaire) {
 
     data: {
       anneeUniversitaire: anneeUniversitaire,
+      action: "liste_note",
     },
     success: function (response) {
+      console.log(response);
+
       const promotionContainer = $("#promotions");
+      const newPromotionContainer = $("#newPromotions");
       promotionContainer.empty();
       promotionContainer.append(
         `<option value="" >Selectionner une Classe</option>`
       );
-
-      idPromotionSelected = sessionStorage.getItem("classe");
-      idParcoursSelected = sessionStorage.getItem("semestre");
-      //sessionStorage.setItem("semestre", idParcoursSelected);
+      newPromotionContainer.empty();
+      newPromotionContainer.append(
+        `<option value="" >Selectionner une Classe</option>`
+      );
       const promotions = response;
       promotions.forEach((promotion) => {
-        const option = `<option value='${
-          promotion.id_promotion
-        }' class='text-center' 
-        data-filiere='${promotion.id_filiere}'
-        data-semestre='${promotion.id_parcours}'
-        ${
-          promotion.id_promotion == idPromotionSelected &&
-          promotion.id_parcours == idParcoursSelected
-            ? "selected"
-            : ""
-        }
-        > 
+        const option = `<option value='${promotion.id_promotion}' class='text-center' data-filiere='${promotion.id_filiere}' data-semestre='${promotion.id_parcours}'> 
         ${promotion.classe}</option>`;
         promotionContainer.append(option);
+        newPromotionContainer.append(option);
       });
     },
     error: function () {},
   });
 }
-
 // recuperer les modules d'une promotion à travers l'id du semestre
 function modulesSemestre(idSemestre, infoFiliere, idModule = "") {
   const mouduleContainer = $("#modules");

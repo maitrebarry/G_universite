@@ -260,16 +260,17 @@ class Notes extends Controller
                         "id_parcours" => $promotion->id_parcours
                     ];
                 }
-
-                foreach ($semestres as $semestre) {
-                    $classes[] = (object) [
-                        "id_filiere" => $promotion->id_filiere,
-                        "id_promotion" => $promotion->id_promotion,
-                        "classe" => strtoupper(
-                            $promotion->sigle_filiere . '-' . $niveau . '-' . $semestre->sigle_semestre . '-' . $promotion->annee_universitaire . ''
-                        ),
-                        "id_parcours" => $semestre->id_parcours
-                    ];
+                if (!isset($_POST['list'])) {
+                    foreach ($semestres as $semestre) {
+                        $classes[] = (object) [
+                            "id_filiere" => $promotion->id_filiere,
+                            "id_promotion" => $promotion->id_promotion,
+                            "classe" => strtoupper(
+                                $promotion->sigle_filiere . '-' . $niveau . '-' . $semestre->sigle_semestre . '-' . $promotion->annee_universitaire . ''
+                            ),
+                            "id_parcours" => $semestre->id_parcours
+                        ];
+                    }
                 }
             }
             header("Content-Type:application/json");

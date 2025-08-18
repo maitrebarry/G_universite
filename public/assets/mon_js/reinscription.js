@@ -23,7 +23,7 @@ async function infosFiliere(idFiliere, source = null) {
 }
 
 // recuperer les classes d'une annnée universitaire
-async function classesAnneeUniversitaire(anneeUniversitaire) {
+function classesAnneeUniversitaire(anneeUniversitaire) {
   $.ajax({
     method: "POST",
     url: ROOT + "/get_classe_annee",
@@ -31,36 +31,24 @@ async function classesAnneeUniversitaire(anneeUniversitaire) {
 
     data: {
       anneeUniversitaire: anneeUniversitaire,
+      action: "liste_note",
+      list: "liste_etudiant",
     },
     success: function (response) {
       const promotionContainer = $("#promotions");
+      promotionContainer.empty();
+      promotionContainer.append(
+        `<option value="" >Selectionner une Classe</option>`
+      );
       const newPromotionContainer = $("#newPromotions");
       newPromotionContainer.empty();
       newPromotionContainer.append(
         `<option value="" >Selectionner une Classe</option>`
       );
-      promotionContainer.empty();
-      promotionContainer.append(
-        `<option value="" >Selectionner une Classe</option>`
-      );
 
-      idPromotionSelected = sessionStorage.getItem("classe");
-      idParcoursSelected = sessionStorage.getItem("semestre");
-      //sessionStorage.setItem("semestre", idParcoursSelected);
       const promotions = response;
       promotions.forEach((promotion) => {
-        const option = `<option value='${
-          promotion.id_promotion
-        }' class='text-center' 
-        data-filiere='${promotion.id_filiere}'
-        data-semestre='${promotion.id_parcours}'
-        ${
-          promotion.id_promotion == idPromotionSelected &&
-          promotion.id_parcours == idParcoursSelected
-            ? "selected"
-            : ""
-        }
-        > 
+        const option = `<option value='${promotion.id_promotion}' class='text-center' data-filiere='${promotion.id_filiere}' data-semestre='${promotion.id_parcours}'> 
         ${promotion.classe}</option>`;
         promotionContainer.append(option);
         newPromotionContainer.append(option);
@@ -72,17 +60,7 @@ async function classesAnneeUniversitaire(anneeUniversitaire) {
 
 function getEtudiants() {
   anneeUniversitaire = $("#anneeUniversitaire option:selected").val();
-
-  idSemestre = $("#promotions option:selected").data("semestre");
-  idFiliere = $("#promotions option:selected").data("filiere");
-  console.log(
-    "annee : " +
-      anneeUniversitaire +
-      " semestre : " +
-      idSemestre +
-      " fliere : " +
-      idFiliere
-  );
+  idPromotion = $("#promotions option:selected").val();
 
   $.ajax({
     method: "POST",
@@ -90,8 +68,7 @@ function getEtudiants() {
 
     data: {
       annee_universitaire: anneeUniversitaire,
-      id_semestre: idSemestre,
-      id_filiere: idFiliere,
+      id_promotion: idPromotion,
     },
     success: function (response) {
       console.log(response);
