@@ -1,14 +1,16 @@
 <?php
-class Etudiant  extends Model{
-    public function __construct() {
+class Etudiant  extends Model
+{
+    public function __construct()
+    {
         $this->pdo = $this->bdd(); // Utilisez bdd() pour obtenir la connexion PDO
     }
     public $errors = [];
 
     public function upload_cv($file)
     {
-        $default_image = '/profile/guem.png'; 
-        $taillemax = 2067152; 
+        $default_image = '/profile/guem.png';
+        $taillemax = 2067152;
         $extensions_valides = ['gif', 'png', 'jpg', 'jpeg'];
         // Vérifiez si le fichier est passé et n'a pas d'erreurs
         if (isset($file['name']) && $file['error'] == 0) {
@@ -51,10 +53,11 @@ class Etudiant  extends Model{
         return $default_image; // Retourne le fichier par défaut en cas d'erreur
     }
 
-    public function enregistrementEtudiantAvecPaiement($post, $file) {
+    public function enregistrementEtudiantAvecPaiement($post, $file)
+    {
         $errors = [];
         extract($post);
-    
+
         // Validation des champs obligatoires
         if (empty($nom_prenom_etudiant)) {
             $errors[] = "Le nom et prénom de l'étudiant est requis.";
@@ -65,21 +68,21 @@ class Etudiant  extends Model{
         if (!filter_var($contact_etudiant, FILTER_VALIDATE_INT)) {
             $errors[] = "Le numéro de contact est invalide.";
         }
-    
+
         // Upload du CV
         $profilname = $this->upload_cv($file);
         if (!$profilname) {
             $errors[] = "Erreur lors de l'upload du CV.";
         }
-    
+
         if (!empty($errors)) {
             $this->set_flash(implode('<br>', $errors), 'danger');
             return false;
         }
-    
+
         // Début de la transaction pour garantir atomicité
         $this->pdo->beginTransaction();
-    
+
         try {
             // Insertion des données de l'étudiant
             $insertionEtudiant = $this->insertion_update_simples(
@@ -111,74 +114,74 @@ class Etudiant  extends Model{
                     ':total_frais' => $total_frais
                 ]
             );
-        
+
             if (!$insertionEtudiant) {
                 throw new Exception('Erreur lors de l\'ajout de l\'étudiant.');
             }
-        
+
             if ($insertionEtudiant) {
                 $idEtudt = $this->pdo->lastInsertId();
-               
-           
-            
-            // Si le formulaire de paiement est soumis
-            if (isset($_POST['montant_paye'])) {
-                $montantPaye = $_POST['montant_paye'];
-        
-                // Validation du montant
-                if (!is_numeric($montantPaye) || $montantPaye <= 0) {
-                    throw new Exception('Le montant payé doit être valide et supérieur à zéro.');
-                }
-        
-                // Récupérer les frais totaux de l'étudiant
-                $requeteFrais = $this->pdo->prepare('SELECT total_frais FROM etudiant WHERE id_etudiant = :idEtudt');
-                $requeteFrais->execute([':idEtudt' => $idEtudt]);
-                $etudiant = $requeteFrais->fetch();
-        
-                if (!$etudiant) {
-                    throw new Exception('Étudiant introuvable.');
-                }
-        
-                $totalFrais = $etudiant['total_frais'];
-        
-                if ($montantPaye > $totalFrais) {
-                    throw new Exception('Le montant payé ne peut pas dépasser les frais totaux.');
-                }
-        
-                // Vérification si un paiement existe déjà
-                $requetePaiement = $this->pdo->prepare('SELECT montant_paye FROM payement WHERE idEtudt = :idEtudt');
-                $requetePaiement->execute([':idEtudt' => $idEtudt]);
-                $paiement = $requetePaiement->fetch();
-        
-                if ($paiement) {
-                    // Mise à jour du montant payé
-                    $nouveauMontant = $paiement['montant_paye'] + $montantPaye;
-                    $this->insertion_update_simples(
-                        'UPDATE payement SET montant_paye = :montant_paye, date = :date WHERE idEtudt = :idEtudt',
-                        [
-                            ':montant_paye' => $nouveauMontant,
-                            ':date' => date('Y-m-d'),
-                            ':idEtudt' => $idEtudt
-                        ]
-                    );
-                } else {
-                    // Insertion d'un nouveau paiement
-                    $this->insertion_update_simples(
-                        'INSERT INTO payement(montant_paye, idEtudt, annee, date) 
-                        VALUES(:montant_paye, :idEtudt, :annee, :date)',
-                        [
-                            ':montant_paye' => $montantPaye,
-                            ':idEtudt' => $idEtudt,
-                            ':annee' => date('Y'),
-                            ':date' => date('Y-m-d H:i:s')
 
-                        ]
-                    );
+
+
+                // Si le formulaire de paiement est soumis
+                if (isset($_POST['montant_paye'])) {
+                    $montantPaye = $_POST['montant_paye'];
+
+                    // Validation du montant
+                    if (!is_numeric($montantPaye) || $montantPaye <= 0) {
+                        throw new Exception('Le montant payé doit être valide et supérieur à zéro.');
+                    }
+
+                    // Récupérer les frais totaux de l'étudiant
+                    $requeteFrais = $this->pdo->prepare('SELECT total_frais FROM etudiant WHERE id_etudiant = :idEtudt');
+                    $requeteFrais->execute([':idEtudt' => $idEtudt]);
+                    $etudiant = $requeteFrais->fetch();
+
+                    if (!$etudiant) {
+                        throw new Exception('Étudiant introuvable.');
+                    }
+
+                    $totalFrais = $etudiant['total_frais'];
+
+                    if ($montantPaye > $totalFrais) {
+                        throw new Exception('Le montant payé ne peut pas dépasser les frais totaux.');
+                    }
+
+                    // Vérification si un paiement existe déjà
+                    $requetePaiement = $this->pdo->prepare('SELECT montant_paye FROM payement WHERE idEtudt = :idEtudt');
+                    $requetePaiement->execute([':idEtudt' => $idEtudt]);
+                    $paiement = $requetePaiement->fetch();
+
+                    if ($paiement) {
+                        // Mise à jour du montant payé
+                        $nouveauMontant = $paiement['montant_paye'] + $montantPaye;
+                        $this->insertion_update_simples(
+                            'UPDATE payement SET montant_paye = :montant_paye, date = :date WHERE idEtudt = :idEtudt',
+                            [
+                                ':montant_paye' => $nouveauMontant,
+                                ':date' => date('Y-m-d'),
+                                ':idEtudt' => $idEtudt
+                            ]
+                        );
+                    } else {
+                        // Insertion d'un nouveau paiement
+                        $this->insertion_update_simples(
+                            'INSERT INTO payement(montant_paye, idEtudt, annee, date) 
+                        VALUES(:montant_paye, :idEtudt, :annee, :date)',
+                            [
+                                ':montant_paye' => $montantPaye,
+                                ':idEtudt' => $idEtudt,
+                                ':annee' => date('Y'),
+                                ':date' => date('Y-m-d H:i:s')
+
+                            ]
+                        );
+                    }
+
+                    echo 'Paiement enregistré avec succès.';
                 }
-        
-                echo 'Paiement enregistré avec succès.';
             }
-        }
             // Validation de la transaction
             $this->pdo->commit();
             $this->set_flash('Étudiant et paiement ajoutés avec succès.', 'primary');
@@ -189,54 +192,52 @@ class Etudiant  extends Model{
             $this->set_flash($e->getMessage(), 'danger');
             return false;
         }
-        
-        
-        
     }
-     public function enregistrementPaiement($post) {
+    public function enregistrementPaiement($post)
+    {
         $errors = [];
         extract($post);
 
-    
+
         if (!empty($errors)) {
             $this->set_flash(implode('<br>', $errors), 'danger');
             return false;
         }
-    
+
         // Début de la transaction pour garantir atomicité
         $this->pdo->beginTransaction();
-    
+
         try {
-           
-           // Si le formulaire de paiement est soumis
+
+            // Si le formulaire de paiement est soumis
             if (isset($_POST['montant_paye'])) {
                 $montantPaye = $_POST['montant_paye'];
-        
+
                 // Validation du montant
                 if (!is_numeric($montantPaye) || $montantPaye <= 0) {
                     throw new Exception('Le montant payé doit être valide et supérieur à zéro.');
                 }
-        
+
                 // Récupérer les frais totaux de l'étudiant
                 $requeteFrais = $this->pdo->prepare('SELECT total_frais FROM etudiant WHERE id_etudiant = :idEtudt');
                 $requeteFrais->execute([':idEtudt' => $idEtudt]);
                 $etudiant = $requeteFrais->fetch();
-        
+
                 if (!$etudiant) {
                     throw new Exception('Étudiant introuvable.');
                 }
-        
+
                 $totalFrais = $etudiant['total_frais'];
-        
+
                 if ($montantPaye > $totalFrais) {
                     throw new Exception('Le montant payé ne peut pas dépasser les frais totaux.');
                 }
-        
+
                 // Vérification si un paiement existe déjà
                 $requetePaiement = $this->pdo->prepare('SELECT montant_paye FROM payement WHERE idEtudt = :idEtudt');
                 $requetePaiement->execute([':idEtudt' => $idEtudt]);
                 $paiement = $requetePaiement->fetch();
-        
+
                 if ($paiement) {
                     // Mise à jour du montant payé
                     $nouveauMontant = $paiement['montant_paye'] + $montantPaye;
@@ -262,10 +263,10 @@ class Etudiant  extends Model{
                         ]
                     );
                 }
-        
+
                 echo 'Paiement enregistré avec succès.';
             }
-        
+
             // Validation de la transaction
             $this->pdo->commit();
             $this->set_flash('Étudiant et paiement ajoutés avec succès.', 'primary');
@@ -276,14 +277,13 @@ class Etudiant  extends Model{
             $this->set_flash($e->getMessage(), 'danger');
             return false;
         }
-        
-        
-        
     }
-  public function trie_liste_etudiant($annee_universitaire, $id_filiere, $id_semestre) {
-    $query = "SELECT * 
+    public function trie_liste_etudiant($annee_universitaire, $id_filiere, $id_semestre)
+    {
+        $query = "SELECT * 
               FROM etudiant
-              INNER JOIN promotion ON etudiant.id_promotion = promotion.id_promotion
+              INNER JOIN etudiant_promotion ON etudiant.id_etudiant = etudiant_promotion.id_etudiants
+              INNER JOIN promotion ON etudiant_promotion.id_promotion = promotion.id_promotion
               INNER JOIN filiere ON promotion.id_filiere = filiere.id_filiere
               INNER JOIN parcours ON promotion.id_parcours = parcours.id_parcours
               INNER JOIN semestre ON parcours.id_semestre = semestre.id_semestre
@@ -291,142 +291,148 @@ class Etudiant  extends Model{
                 AND filiere.id_filiere = :id_filiere
                 AND semestre.id_semestre = :id_semestre";
 
-    $stmt = $this->bdd()->prepare($query);
-    $stmt->bindParam(':annee_universitaire', $annee_universitaire);
-    $stmt->bindParam(':id_filiere', $id_filiere, PDO::PARAM_INT);
-    $stmt->bindParam(':id_semestre', $id_semestre, PDO::PARAM_INT);
-    $stmt->execute();
+        $stmt = $this->bdd()->prepare($query);
+        $stmt->bindParam(':annee_universitaire', $annee_universitaire);
+        $stmt->bindParam(':id_filiere', $id_filiere, PDO::PARAM_INT);
+        $stmt->bindParam(':id_semestre', $id_semestre, PDO::PARAM_INT);
+        $stmt->execute();
 
-    return $stmt->fetchAll(PDO::FETCH_OBJ);
-}
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
 
 
-        // Récupérer les informations d'un étudiant par ID
-        public function getById($id)
-        {
-            $stmt = $this->pdo->prepare("SELECT * FROM etudiant WHERE id_etudiant = :id");
-            $stmt->execute([':id' => $id]);
-            return $stmt->fetch();
-        }
-    public function id() {
+    // Récupérer les informations d'un étudiant par ID
+    public function getById($id)
+    {
+        $stmt = $this->pdo->prepare("SELECT * FROM etudiant WHERE id_etudiant = :id");
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetch();
+    }
+    public function id()
+    {
         $sql = "SELECT id_etudiant FROM etudiant ORDER BY id_etudiant DESC LIMIT 1";
-$stmt = $this->pdo->query($sql);
-$id_etudiant = $stmt->fetchColumn();
+        $stmt = $this->pdo->query($sql);
+        $id_etudiant = $stmt->fetchColumn();
 
-if (!$id_etudiant) {
-    $id_etudiant = 1000; // Valeur par défaut si aucun étudiant trouvé
-}
-
-echo "Dernier ID étudiant : " . $id_etudiant;
-
-    }
-        // Récupérer l'historique des paiements pour un étudiant donné
-        public function getPaymentsByStudentId($id)
-        {
-            $stmt = $this->pdo->prepare("SELECT * FROM payement WHERE idEtudt = :id ORDER BY date DESC");
-            $stmt->execute([':id' => $id]);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (!$id_etudiant) {
+            $id_etudiant = 1000; // Valeur par défaut si aucun étudiant trouvé
         }
+
+        echo "Dernier ID étudiant : " . $id_etudiant;
+    }
+    // Récupérer l'historique des paiements pour un étudiant donné
+    public function getPaymentsByStudentId($id)
+    {
+        $stmt = $this->pdo->prepare("SELECT * FROM payement WHERE idEtudt = :id ORDER BY date DESC");
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
     // Méthode pour ajouter un paiement
-// Méthode pour ajouter un paiement
-public function ajouterPaiement() {
-    // Vérifiez si le formulaire est soumis
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        // Récupération des valeurs du formulaire
-        $id_etudiant = $_POST['id_etudiant'] ?? null;
-        $montant_paye = $_POST['montant_paye'] ?? null;
+    // Méthode pour ajouter un paiement
+    public function ajouterPaiement()
+    {
+        // Vérifiez si le formulaire est soumis
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Récupération des valeurs du formulaire
+            $id_etudiant = $_POST['id_etudiant'] ?? null;
+            $montant_paye = $_POST['montant_paye'] ?? null;
 
-        // Valider que les champs ne sont pas vides
-        if (empty($id_etudiant) || empty($montant_paye)) {
-            $this->set_flash('Tous les champs sont obligatoires.', 'danger');
-            return;
+            // Valider que les champs ne sont pas vides
+            if (empty($id_etudiant) || empty($montant_paye)) {
+                $this->set_flash('Tous les champs sont obligatoires.', 'danger');
+                return;
+            }
+
+            // Valider que le montant est un nombre positif
+            if (!is_numeric($montant_paye) || $montant_paye <= 0) {
+                $this->set_flash('Le montant doit être un nombre positif.', 'danger');
+                return;
+            }
+
+            // Vérifier si l'étudiant existe
+            $etudiant = $this->getById($id_etudiant);
+            if (!$etudiant) {
+                $this->set_flash('Étudiant non trouvé.', 'danger');
+                return;
+            }
+
+            // Récupération du total payé existant
+            $totalPayéActuel = $this->getTotalPayé($id_etudiant);
+
+            // Mise à jour du paiement dans la table `payement`
+            $this->updatePaiement($id_etudiant, $montant_paye);
+
+            // Message de succès
+            $this->set_flash('Paiement ajouté avec succès.', 'success');
         }
-
-        // Valider que le montant est un nombre positif
-        if (!is_numeric($montant_paye) || $montant_paye <= 0) {
-            $this->set_flash('Le montant doit être un nombre positif.', 'danger');
-            return;
-        }
-
-        // Vérifier si l'étudiant existe
-        $etudiant = $this->getById($id_etudiant);
-        if (!$etudiant) {
-            $this->set_flash('Étudiant non trouvé.', 'danger');
-            return;
-        }
-
-        // Récupération du total payé existant
-        $totalPayéActuel = $this->getTotalPayé($id_etudiant);
-
-        // Mise à jour du paiement dans la table `payement`
-        $this->updatePaiement($id_etudiant, $montant_paye);
-
-        // Message de succès
-        $this->set_flash('Paiement ajouté avec succès.', 'success');
     }
-}
 
 
-// Fonction pour récupérer le total payé existant pour un étudiant
-public function getTotalPayé($id_etudiant) {
-    // Effectuer la requête pour obtenir le total des paiements pour cet étudiant
-    $stmt = $this->pdo->prepare("SELECT SUM(montant_paye) as total_payé FROM payement WHERE idEtudt = ?");
-    $stmt->execute([$id_etudiant]);
-    $result = $stmt->fetch();
-    return $result['total_payé'] ? $result['total_payé'] : 0;
-}
-// Fonction pour mettre à jour la table `payement` avec le paiement ajouté
-private function updatePaiement($id_etudiant, $montant_paye) {
-    if ($montant_paye <= 0) {
-        throw new InvalidArgumentException('Le montant payé doit être supérieur à zéro.');
+    // Fonction pour récupérer le total payé existant pour un étudiant
+    public function getTotalPayé($id_etudiant)
+    {
+        // Effectuer la requête pour obtenir le total des paiements pour cet étudiant
+        $stmt = $this->pdo->prepare("SELECT SUM(montant_paye) as total_payé FROM payement WHERE idEtudt = ?");
+        $stmt->execute([$id_etudiant]);
+        $result = $stmt->fetch();
+        return $result['total_payé'] ? $result['total_payé'] : 0;
     }
-    $stmt = $this->pdo->prepare("INSERT INTO payement (idEtudt, montant_paye, date) VALUES (?, ?, NOW())");
-    $stmt->execute([$id_etudiant, $montant_paye]);
-}
-    public function addPayment($data) {
+    // Fonction pour mettre à jour la table `payement` avec le paiement ajouté
+    private function updatePaiement($id_etudiant, $montant_paye)
+    {
+        if ($montant_paye <= 0) {
+            throw new InvalidArgumentException('Le montant payé doit être supérieur à zéro.');
+        }
+        $stmt = $this->pdo->prepare("INSERT INTO payement (idEtudt, montant_paye, date) VALUES (?, ?, NOW())");
+        $stmt->execute([$id_etudiant, $montant_paye]);
+    }
+    public function addPayment($data)
+    {
         $db = $this->pdo;
         $query = "INSERT INTO payement (idEtudt, montant_paye, date) VALUES (:idEtudt, :montant_paye, :date)";
         $stmt = $db->prepare($query);
         return $stmt->execute($data);
-}
-public function getEtudiantsByIds($ids) {
-    $placeholders = implode(',', array_fill(0, count($ids), '?'));
-    $query = "SELECT * FROM etudiant WHERE id_etudiant IN ($placeholders)";
-    $stmt = $this->pdo->prepare($query);
-    $stmt->execute($ids);
-    return $stmt->fetchAll(PDO::FETCH_OBJ);
-}
-public function getPaiements($etudiant_ids) {
-    if (empty($etudiant_ids)) {
-        return [];
     }
+    public function getEtudiantsByIds($ids)
+    {
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+        $query = "SELECT * FROM etudiant WHERE id_etudiant IN ($placeholders)";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute($ids);
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+    public function getPaiements($etudiant_ids)
+    {
+        if (empty($etudiant_ids)) {
+            return [];
+        }
 
-    // Convertir les IDs en une chaîne pour la requête SQL
-    $placeholders = implode(',', array_fill(0, count($etudiant_ids), '?'));
-    $sql = "SELECT * FROM payement WHERE idEtudt IN ($placeholders)";
+        // Convertir les IDs en une chaîne pour la requête SQL
+        $placeholders = implode(',', array_fill(0, count($etudiant_ids), '?'));
+        $sql = "SELECT * FROM payement WHERE idEtudt IN ($placeholders)";
 
-    $stmt = $this->pdo->prepare($sql);
-    $stmt->execute($etudiant_ids);
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($etudiant_ids);
 
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
-public function getTotauxPayesParEtudiants($etudiant_ids) {
-    $placeholders = implode(',', array_fill(0, count($etudiant_ids), '?'));
-    $sql = "SELECT idEtudt, SUM(montant_paye) as total_paye 
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    public function getTotauxPayesParEtudiants($etudiant_ids)
+    {
+        $placeholders = implode(',', array_fill(0, count($etudiant_ids), '?'));
+        $sql = "SELECT idEtudt, SUM(montant_paye) as total_paye 
             FROM payement 
             WHERE idEtudt IN ($placeholders) 
             GROUP BY idEtudt";
-    $stmt = $this->pdo->prepare($sql);
-    $stmt->execute($etudiant_ids);
-    return $stmt->fetchAll(PDO::FETCH_ASSOC); // Retourne un tableau associatif
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($etudiant_ids);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC); // Retourne un tableau associatif
+    }
+    //Recuperation du montant total
+    public function getTotalPaye($id_etudiant)
+    {
+        $stmt = $this->pdo->prepare("SELECT SUM(montant_paye) AS total_payé FROM payement WHERE idEtudt = ?");
+        $stmt->execute([$id_etudiant]);
+        $result = $stmt->fetch();
+        return $result['total_payé'] ? $result['total_payé'] : 0; // Renvoie 0 si aucun paiement effectué
+    }
 }
-//Recuperation du montant total
-public function getTotalPaye($id_etudiant) {
-    $stmt = $this->pdo->prepare("SELECT SUM(montant_paye) AS total_payé FROM payement WHERE idEtudt = ?");
-    $stmt->execute([$id_etudiant]);
-    $result = $stmt->fetch();
-    return $result['total_payé'] ? $result['total_payé'] : 0; // Renvoie 0 si aucun paiement effectué
-}
-
-}
-    
