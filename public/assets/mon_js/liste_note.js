@@ -186,3 +186,37 @@ function moduleUe(idUe, infoFiliere) {
     }
   });
 }
+
+// Imprimer pour faire une impression
+function imprimer(nom, html = null) {
+  $("#loader").removeClass("d-none");
+  $("#loader").addClass("d-flex");
+  if (html == null) {
+    html = document.getElementById("edt");
+  } else {
+    nom = nom
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join("-");
+  }
+
+  html2pdf()
+    .from(html)
+    .set({
+      margin: 0,
+      filename: nom,
+      html2canvas: {
+        scale: 2,
+      },
+      jsPDF: {
+        unit: "mm",
+        format: "a4",
+        orientation: "landscape",
+      },
+    })
+    .save()
+    .then(() => {
+      $("#loader").removeClass("d-flex");
+      $("#loader").addClass("d-none");
+    });
+}

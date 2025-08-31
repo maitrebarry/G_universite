@@ -6,12 +6,14 @@ class Note extends Model
     {
 
         $query = "SELECT * 
-                    FROM etudiant
-                    INNER JOIN promotion ON etudiant.id_promotion = promotion.id_promotion
-                    INNER JOIN filiere ON promotion.id_filiere = filiere.id_filiere
-                    INNER JOIN parcours ON promotion.id_parcours = parcours.id_parcours
-                    INNER JOIN semestre ON parcours.id_semestre = semestre.id_semestre
-                    WHERE etudiant.id_promotion = :id_promotion";
+              FROM etudiant
+              INNER JOIN etudiant_promotion ON etudiant.id_etudiant = etudiant_promotion.id_etudiants
+              INNER JOIN promotion ON etudiant_promotion.id_promotion = promotion.id_promotion
+              INNER JOIN filiere ON promotion.id_filiere = filiere.id_filiere
+              INNER JOIN parcours ON promotion.id_parcours = parcours.id_parcours
+              INNER JOIN semestre ON parcours.id_semestre = semestre.id_semestre
+              WHERE promotion.id_promotion = :id_promotion";
+
         $bdd = $this->bdd();
         $stmt = $bdd->prepare($query);
         $stmt->bindParam(':id_promotion', $id_promotion, PDO::PARAM_INT);
@@ -112,6 +114,8 @@ class Note extends Model
                     note_etudiant.id_promotion, note_etudiant.id_module, nom_prenom_etudiant, prenom, matricule_etudiant,
                     genre_etudiant
                     FROM  note_etudiant INNER JOIN etudiant ON note_etudiant.id_etudiant= etudiant.id_etudiant
+                    INNER JOIN promotion ON note_etudiant.id_promotion = promotion.id_promotion
+
                     WHERE note_etudiant.id_promotion = ? AND note_etudiant.id_parcours = ? AND note_etudiant.id_module=?";
 
             $notes_etudiant = $this->select_data_table_join_where($query, [$idPromotion, $idSemestre, $idModule]);

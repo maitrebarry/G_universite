@@ -1,101 +1,130 @@
-<link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/vendors/css/tables/datatable/datatables.min.css">
-
 <?php
+function tronquerTexte($texte, $limite = 8)
+{
+    return (strlen($texte) > $limite) ? substr($texte, 0, $limite) . "…" : $texte;
+}
+?>
+<link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/vendors/css/tables/datatable/datatables.min.css">
+<style>
+.vertical-header {
+    writing-mode: vertical-rl;
+    /* Texte vertical */
+    transform: rotate(180deg);
+    /* Redresse le texte */
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+    /* Pas de retour à la ligne */
+    overflow: hidden;
+    /* Cache le surplus */
+    text-overflow: ellipsis;
+    /* Ajoute ... */
+    max-height: 120px;
+    /* Hauteur max (ajuste selon besoin) */
+    font-size: 12px;
+    padding: 5px;
+}
 
+.etudiantInfo {
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px;
+    min-width: 120px;
+
+}
+</style>
+<?php
+// Calcul du total des crédits (si nécessaire)
 $creditTotal = 0;
 foreach ($infosSemestre as $ue) {
     foreach ($ue as $module) {
         $creditTotal += $module->coeficient;
     }
 }
+print_r($infosSemestre);
 ?>
 
-<div class="d-flex justify-content-around align-items-center row">
-
-    <div class="col-6 col-md-3 mb-1 mb-md-0">
-        <h6 class=" text-center text-uppercase">Semestre</h6>
-        <h6 class=" text-center text-bold-600" id="nomSemestre"> </h6>
-    </div>
-
-    <div class="col-6 col-md-3 mb-1 mb-md-0">
-        <h6 class=" text-center ">Moyenne General</h6>
-        <h6 class=" text-center text-bold-600" id="moyenneTotalSemestre"> </h6>
-    </div>
-
-    <div class="col-6 col-md-3">
-        <h6 class=" text-center ">Taux de reussite</h6>
-        <h6 class=" text-center text-bold-600">
-            <span class=" badge text-bold-600" id="tauxReussite"></span>
-        </h6>
-    </div>
-
-    <div class="col-6 col-md-3">
-        <h6 class=" text-center ">Credit Total</h6>
-        <h6 class=" text-center  text-bold-600" id="creditTotal"><?= $creditTotal ?></h6>
-    </div>
-
+<!-- ==================== EN-TÊTE ==================== -->
+<div class="text-center mb-3">
+    <h5>Institut Universitaire de Formation Professionnelle (IUFP)</h5>
+    <h6>Année Universitaire 2022-2023</h6>
+    <h6><strong>Résultats provisoires du troisième semestre (S3)</strong></h6>
+    <h6>Mention : Génie Informatique</h6>
+    <small>ECUE à reprendre (X) et moyenne par UE</small>
 </div>
+
+<!-- ==================== TABLEAU ==================== -->
 <div class="table-responsive">
-    <table class="table table-striped table-bordered zero-configuration  w-100" id="notesTable">
+    <table class="table table-bordered table-striped w-100" id="notesTable">
         <thead>
             <tr>
-                <th class="text-center d-lg-none">Etudiant</th>
-                <th class="text-center d-none d-lg-table-cell">Matricule</th>
-                <th class="text-center d-none d-lg-table-cell">Nom & Prenom</th>
-                <th class="text-center  genre d-none d-lg-table-cell">Genre</th>
+                <th class="text-center">N°</th>
+                <th class="text-center etudiantInfo">Prénoms</th>
+                <th class="text-center etudiantInfo">Nom</th>
+                <th class="text-center etudiantInfo">Date de Naissance</th>
+                <th class="text-center etudiantInfo">Lieu de Naissance</th>
                 <?php foreach ($infosSemestre as $ue): ?>
-                    <th class="text-center moyenne  noteContainer ">
-                        <?= $ue[0]->nom_ue ?>
-                    </th>
+                <th class="vertical-header"><?= tronquerTexte($ue[0]->nom_ue, 8) ?></th>
                 <?php endforeach ?>
-                <th class="text-center moyenne noteContainer">M/S</th>
-                <th class="text-center moyenne noteContainer">Observation</th>
+
+                <th class="text-center vertical-header">Moy. Gén.</th>
+                <th class="text-center vertical-header">Observation</th>
             </tr>
         </thead>
-        <tbody id="tableBody">
-            <!-- Affichage dynamique via PHP -->
-            <?php for ($i = 0; $i < count($moyennesSemestre); $i++) : ?>
-                <?php $etudiant = $moyennesSemestre[$i]['etudiant'];
-                $note = $moyennesSemestre[$i]['moyenne'] ?>
-                <tr>
-                    <td class="text-bold-500 text-center d-lg-none etudiant" style="font-size: 14px;">
-                        <div><?= strtoupper($etudiant->nom_prenom_etudiant) ?></div>
-                        <div><a href=""><?= $etudiant->matricule_etudiant ?></a></div>
-                    </td>
-                    <td class="text-bold-500 text-left d-none d-lg-table-cell" style="font-size: 14px;">
-                        <a href=""><?= $etudiant->matricule_etudiant ?></a>
-                    </td>
-                    <td class="text-bold-500 text-left d-none d-lg-table-cell" style="font-size: 14px;">
-                        <?= strtoupper($etudiant->nom_prenom_etudiant) ?>
-                    </td>
-                    <td class="genre d-none d-lg-table-cell" style="font-size: 14px;">
-                        <?= ($etudiant->genre_etudiant == "Féminin") ? 'F' : "M" ?>
-                    </td>
+        <tbody>
+            <?php for ($i = 0; $i < count($moyennesSemestre); $i++): ?>
+            <?php
+                $etudiant = $moyennesSemestre[$i]['etudiant'];
+                $note = $moyennesSemestre[$i]['moyenne'];
+                $ues = $moyennesUe[$i]['ues'];
+                ?>
+            <tr>
+                <td class="text-center"><?= $i + 1 ?></td>
+                <td class="text-center" style="font-size: 14px;">
+                    <?= ucfirst(strtolower($etudiant->nom_prenom_etudiant)) ?>
+                </td>
+                <td class="text-center" style="font-size: 14px;"><?= strtoupper($etudiant->nom_prenom_etudiant) ?></td>
+                <td class="text-center" style="font-size: 14px;"><?= $etudiant->date_naissance_etudiant ?></td>
+                <td class="text-center" style="font-size: 14px;"><?= $etudiant->lieu_naissance_etudiant ?></td>
 
-                    <?php $ues = $moyennesUe[$i]['ues']; ?>
-                    <?php foreach ($ues as $ue): ?>
-                        <td class=" noteContainer">
-                            <input type="number" class="form-control moyenneUe note text-bold-600 text-center" step="0.1"
-                                disabled value="<?php echo $ue['moyenne'] ?>">
-                        </td>
-                    <?php endforeach ?>
-                    <td class="noteContainer">
-                        <!-- Moyenne affichée dans un input readonly -->
-                        <input type="number" class="form-control moyenneSemestre note text-bold-600 text-center" disabled
-                            value="<?php echo $note ?>">
-                    </td>
+                <!-- Notes des UE -->
+                <?php foreach ($ues as $ue): ?>
+                <td class="text-center">
+                    <?= ($ue['moyenne'] == 0) ? "X" : number_format($ue['moyenne'], 2) ?>
+                </td>
+                <?php endforeach ?>
 
-                    <td>
-                        <span class=" badge etatSemestre text-bold-600 text-center"></span>
-                    </td>
+                <!-- Moyenne Semestre -->
+                <td class="text-center text-bold-600 moyenneSemestre"><?= number_format($note, 2) ?></td>
 
-                </tr>
+                <!-- Observation -->
+                <td class="text-center">
+                    <span class="badge etatSemestre text-bold-600"></span>
+                </td>
+            </tr>
             <?php endfor ?>
         </tbody>
     </table>
 </div>
 
-<!-- BEGIN Vendor JS-->
+<!-- ==================== STATISTIQUES ==================== -->
+<div class="mt-3">
+    <p><strong>Admis :</strong> <span id="nbAdmis"></span></p>
+    <p><strong>Ajourné :</strong> <span id="nbAjournes"></span></p>
+    <p><strong>Taux de réussite :</strong> <span id="tauxReussite"></span></p>
+</div>
+
+<!-- ==================== SIGNATURE ==================== -->
+<div class="text-right mt-5 mr-5">
+    <p>Ségou, le <?= date("d F Y") ?></p>
+    <p>P/Le Directeur P.O</p>
+    <p><strong>Le Directeur Adjoint</strong></p>
+    <p>Dr Mahamet KOÏTA<br><small>Maître Assistant</small></p>
+</div>
+
+<!-- ==================== JS ==================== -->
 <script src="<?= ROOT ?>/assets/vendors/js/tables/datatable/datatables.min.js"></script>
 <script src="<?= ROOT ?>/assets/vendors/js/tables/datatable/dataTables.bootstrap4.min.js"></script>
 <script src="<?= ROOT ?>/assets/vendors/js/tables/datatable/dataTables.buttons.min.js"></script>
@@ -103,66 +132,38 @@ foreach ($infosSemestre as $ue) {
 <script src="<?= ROOT ?>/assets/js/scripts/datatables/datatable.js"></script>
 
 <script>
-    var moyennes = <?php echo json_encode($moyennesSemestre); ?>;
-    var nombreUe = 0;
+$(document).ready(function() {
     var nbrEtudiant = 0;
-    var moyenneTotalSemestre = 0;
     var nbrValide = 0;
-    var tauxReussite = 0;
 
-    $("#notesTable").DataTable({
-        "pageLength": 100
-    })
-
-    $.each(moyennes, function(index) {
-        nombreUe++;
-        const ue = $(this);
-        const infosUe = ue[0].infosUe;
-        const moyennesUe = ue[0].moyennesUe;
-
-        $.each(moyennesUe, function(index2) {
-            const idMoyenne =
-                '#e_' + $(this)[0].id_etudiant + "_u_" + infosUe[0].id_ue;
-
-            $(idMoyenne).val(parseFloat($(this)[0].moyenne_ue).toFixed(2))
-        });
-    });
-
-    $("#notesTable tbody tr").each(function(index) {
+    $("#notesTable tbody tr").each(function() {
         nbrEtudiant++;
-        var moyenneSemestre = 0;
-        const row = $(this);
+        var row = $(this);
+        var moyenneSemestre = parseFloat(row.find(".moyenneSemestre").text());
 
-
-        moyenneSemestre = parseInt(row.find(".moyenneSemestre").val(), 10);
         if (moyenneSemestre < 10) {
-            row.find('.etatSemestre').text("Ajourné");
-            row.find('.etatSemestre').addClass('badge-light-danger');
-            row.find(".moyenneSemestre").addClass('bg-rgba-danger')
-
+            row.find('.etatSemestre').text("Ajourné").addClass('badge-light-danger');
         } else {
-            row.find('.etatSemestre').text("Admis");
-            row.find('.etatSemestre').addClass('badge-light-success');
-            row.find(".moyenneSemestre").addClass('bg-rgba-success')
+            row.find('.etatSemestre').text("Admis").addClass('badge-light-success');
             nbrValide++;
         }
-        // row.find(".moyenneSemestre").val(moyenneSemestre.toFixed(2));
-
-        moyenneTotalSemestre += moyenneSemestre;
     });
-    moyenneTotalSemestre = (moyenneTotalSemestre / nbrEtudiant).toFixed(2);
-    $('#moyenneTotalSemestre').text(moyenneTotalSemestre);
-    if (moyenneTotalSemestre < 10) {
-        $('#moyenneTotalSemestre').addClass('text-danger');
-    } else {
-        $('#moyenneTotalSemestre').addClass('text-success');
-    }
 
-    tauxReussite = ((nbrValide * 100) / nbrEtudiant).toFixed(2);
-    $('#tauxReussite').text(tauxReussite + "%");
-    if (tauxReussite < 50) {
-        $('#tauxReussite').addClass('badge-light-danger');
-    } else {
-        $('#tauxReussite').addClass('badge-light-success');
-    }
+    // Statistiques
+    var nbAj = nbrEtudiant - nbrValide;
+    var taux = ((nbrValide * 100) / nbrEtudiant).toFixed(2);
+
+    $("#nbAdmis").text(nbrValide);
+    $("#nbAjournes").text(nbAj);
+    $("#tauxReussite").text(taux + "%");
+});
 </script>
+
+<!-- Impression en paysage
+<style>
+    @media print {
+        @page {
+            size: A4 landscape;
+        }
+    }
+</style> -->

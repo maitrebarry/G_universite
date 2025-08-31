@@ -1,6 +1,12 @@
 <?php
 $this->view("Partials/header") ?>
 <style>
+    /* @media print {
+        @page {
+            size: A4 landscape;
+        }
+    } */
+
     /* Style pour le texte défilant */
     .scrolling-text {
         background-color: #007bff;
@@ -166,8 +172,32 @@ $this->view("Partials/header") ?>
                         <div id="message" class="col-12"></div>
                         <div class="col-md-12">
                             <div class="card card-animated-border-top">
-                                <div class="card-header">
+                                <div class="card-header d-flex justify-content-around align-items-center">
                                     <h4 class="card-title text-center">Liste des notes</h4>
+                                    <div class="d-none" id="printSection">
+                                        <!-- Bouton Impression -->
+                                        <button id="print" class="btn d-flex align-items-center" style="
+                                            background: linear-gradient(135deg, #0d6efd, #0a58ca);
+                                            color: white;
+                                            font-weight: 600;
+                                            border: none;
+                                            border-radius: 50px;
+                                            padding: 12px 24px;
+                                            box-shadow: 0px 4px 12px rgba(0,0,0,0.25);
+                                            transition: all 0.3s ease;
+                                        " onmouseover="this.style.background='linear-gradient(135deg, #0a58ca, #0d6efd)'"
+                                            onmouseout="this.style.background='linear-gradient(135deg, #0d6efd, #0a58ca)'">
+                                            <i class="bi bi-printer-fill"
+                                                style="font-size: 1.4rem; margin-right: 10px;"></i>
+                                            Imprimer
+                                        </button>
+
+                                        <!-- Bootstrap Icons -->
+                                        <link rel="stylesheet"
+                                            href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+
+                                    </div>
                                 </div>
 
                                 <div class="card-content">
@@ -289,6 +319,8 @@ $this->view("Partials/header") ?>
         $('#ues').val("");
         moduleUe($("#ues option:selected").data("id"), infoFiliere)
 
+        $("#printSection").removeClass("d-block");
+        $("#printSection").addClass("d-none");
         $("#table_section").html(
             "<h6 class='text-center text-bold-600 text-warning'>" +
             "Selectionner l'ue et les notes vont apparaître &#x1F603</h6>"
@@ -301,12 +333,23 @@ $this->view("Partials/header") ?>
         idSemestre = $("#promotions option:selected").data("semestre");
         ueSemestre(idSemestre, infoFiliere);
         moduleUe($("#ues option:selected").data("id"), infoFiliere)
+        $("#printSection").removeClass("d-none");
+        $("#printSection").addClass("d-block");
+        // if (isNaN($("#promotions option:selected").val())) {
+        //     alert('hihihihihihi');
+
+
+        // } else {
+        //     alert('hahahahah');
+        // }
+
         if (!$("#promotions option:selected").text().includes("S")) {
             loadEtudiants(ROOT + "/get_moyenne_licence_etudiant");
             $("#ues").empty();
             $("#ues").append(
                 `<option value="" >Selectionner ue</option>`
             );
+
 
         } else
             loadEtudiants();
@@ -316,6 +359,9 @@ $this->view("Partials/header") ?>
     $("#ues").change(function() {
         moduleUe($("#ues option:selected").data("id"), infoFiliere)
         loadEtudiants();
+        $("#printSection").removeClass("d-none");
+        $("#printSection").addClass("d-block");
+
 
         //sessionStorage.setItem("ue", $("#ues option:selected").data("id"));
 
@@ -323,9 +369,16 @@ $this->view("Partials/header") ?>
 
     $("#modules").change(function() {
         loadEtudiants();
-
-
-
-
+        $("#printSection").removeClass("d-none");
+        $("#printSection").addClass("d-block");
     })
+
+    // l'action pour imprimer
+    $("#print").click(function() {
+        alert('Nous sommes des hommes');
+
+        nom = "Liste des notes " + $("#promotions option:selected").text();
+        html = document.getElementById("table_section").innerHTML;
+        imprimer(nom, html); // Appel de la fonction
+    });
 </script>

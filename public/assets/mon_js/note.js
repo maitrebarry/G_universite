@@ -218,7 +218,6 @@ function classesAnneeUniversitaire(anneeUniversitaire) {
 
     data: {
       anneeUniversitaire: anneeUniversitaire,
-      action: "liste_note",
     },
     success: function (response) {
       console.log(response);

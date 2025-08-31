@@ -13,9 +13,10 @@ class Notes extends Controller
         $listeSemestres = $semestreModel->SelectAllData("*", "semestre");
         $this->view('ajouter_notes', ['filieres' => $filieres, 'semestres' => $listeSemestres]);
     }
+
     //Function pour obtenir toutes les notes
     public function get_note_etudiant()
-    {       //Etpa 1: Vérification de la des idPromoton et idModule pour voir leur validité
+    {
         if (
             isset(
                 $_POST['idPromotion'],
@@ -32,6 +33,7 @@ class Notes extends Controller
 
             //Etape 3: instantiation de la classe Note
             $noteModel = new Note();
+
             //Etape 4: La récupération de toutes les notes selon idPromotion et l'idModule
             $note_des_etudiants = $noteModel->getAllNotesEtudiant($idPromotion, $idSemestre, $idModule);
             //Les informations du module sélectionner
@@ -93,6 +95,7 @@ class Notes extends Controller
         $listeSemestres = $semestreModel->SelectAllData("*", "semestre");
         $this->view('liste_notes', ['filieres' => $filieres, 'semestres' => $listeSemestres]);
     }
+
     public function get_moyenne_etudiant()
     {
         //Etpa 1: Vérification de la des idPromoton et idModule pour voir leur validité
