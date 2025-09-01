@@ -80,12 +80,38 @@ $this->view("Partials/header") ?>
 
     }
 
+    /* Style général des entêtes */
     #notesTable th {
-        background-color: rgb(96, 103, 105);
-        /* Couleur d'entête */
-        color: white;
-        width: auto;
+        background-color: #dad7cd;
+        /* dégradé élégant */
+        color: #000;
+        /* texte blanc */
+        font-weight: 600;
+        /* texte plus gras */
+        text-align: center;
+        /* centré */
+        border: 1px solid #000;
+        /* fine bordure */
+        padding: 1px;
+        font-size: 12px;
     }
+
+    /* Entêtes verticaux */
+    #notesTable th.vertical-header {
+        height: 150px;
+        /* hauteur adaptée */
+        width: 30px;
+        /* largeur contrôlée */
+        padding: 0;
+    }
+
+    @media print {
+        .vertical-header>div {
+            overflow: visible !important;
+            max-width: none !important;
+        }
+    }
+
 
     /* Cadre des boutons */
     .button-container {
@@ -375,9 +401,7 @@ $this->view("Partials/header") ?>
 
     // l'action pour imprimer
     $("#print").click(function() {
-        alert('Nous sommes des hommes');
-
-        nom = "Liste des notes " + $("#promotions option:selected").text();
+        nom = "RES " + $("#promotions option:selected").text() + " PROV";
         html = document.getElementById("table_section").innerHTML;
         imprimer(nom, html); // Appel de la fonction
     });

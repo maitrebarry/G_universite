@@ -51,7 +51,7 @@ class Note extends Model
         ue_module.coeficient, ue_module.id_ue_module FROM  ue_module 
         INNER JOIN module ON  module.id_module =ue_module.id_module
         INNER JOIN ue ON  ue_module.id_ue =ue.id_ue 
-        WHERE ue_module.id_ue=?";
+        WHERE ue_module.id_ue=? ORDER BY id_ue_module DESC";
 
         $data = [$idUe];
         $infosUe = $this->select_data_table_join_where($query, $data);
@@ -242,12 +242,34 @@ class Note extends Model
                 foreach ($infosSemestre as $ue) {
 
                     $moyenneUe = $this->isValidateUe($etudiant->id_etudiant, $ue[0]->id_ue);
-                    $ues[] = ['nom_ue' => $ue[0]->nom_ue, 'moyenne' => $moyenneUe['moyenne']];
+                    $idUe = $ue[0]->id_ue;
+
+
+                    $modules = [];
+
+                    $infoUe = $this->getInfosUe($idUe);
+
+                    foreach ($infoUe as $module) {
+                        $query = "SELECT moyenne_module FROM  note_etudiant 
+                        WHERE note_etudiant.id_etudiant = ? AND note_etudiant.id_module=?  AND note_etudiant.id_ue=? ORDER BY id_module DESC LIMIT 1";
+
+                        $note = $this->select_data_table_join_where($query, [$etudiant->id_etudiant, $module->id_ue_module, $idUe]);
+
+                        $modules[] = (!empty($note)) ? $note[0] : (object) ['moyenne_module' => 0];
+                    }
+
+                    $ues[] = ['nom_ue' => $ue[0]->nom_ue, 'moyenne' => $moyenneUe['moyenne'], 'modules' => $modules];
                 }
 
                 $moyennesUe[] = ['etudiant' => $etudiant, 'ues' => $ues];
             }
 
+
+            $query = "SELECT annee_universitaire, filiere.sigle_filiere, filiere.nom_filiere  FROM promotion   INNER JOIN filiere ON promotion.id_filiere=filiere.id_filiere WHERE id_promotion=? LIMIT 1";
+            $promotion = $this->select_data_table_join_where($query, [$idPromotion]);
+
+            $query = "SELECT semestre.nom_semestre, semestre.sigle_semestre  FROM parcours   INNER JOIN semestre ON parcours.id_semestre=semestre.id_semestre WHERE id_parcours=? LIMIT 1";
+            $semestre = $this->select_data_table_join_where($query, [$idSemestre]);
             // la fin de la transaction
             $connection->commit();
         } catch (Exception $e) {
@@ -258,7 +280,9 @@ class Note extends Model
         return [
             "infosSemestre" => $infosSemestre,
             "moyennesSemestre" => $moyenneSemestre,
-            "moyennesUe" => $moyennesUe
+            "moyennesUe" => $moyennesUe,
+            "promotion" => $promotion[0],
+            "semestre" => $semestre[0]
         ];
     }
 

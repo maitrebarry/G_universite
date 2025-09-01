@@ -1,38 +1,70 @@
 <?php
-function tronquerTexte($texte, $limite = 8)
+function tronquerTexte($texte, $limite = 20)
 {
     return (strlen($texte) > $limite) ? substr($texte, 0, $limite) . "…" : $texte;
 }
+
 ?>
 <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/vendors/css/tables/datatable/datatables.min.css">
 <style>
-    .vertical-header {
-        writing-mode: vertical-rl;
-        /* Texte vertical */
-        transform: rotate(180deg);
-        /* Redresse le texte */
+    .note_ue {
+        background-color: #dad7cd;
+        /* gris clair comme dans le PDF */
+        color: #000;
+        /* texte noir */
+        font-weight: 600;
         text-align: center;
-        vertical-align: middle;
-        white-space: nowrap;
-        /* Pas de retour à la ligne */
-        overflow: hidden;
-        /* Cache le surplus */
-        text-overflow: ellipsis;
-        /* Ajoute ... */
-        max-height: 120px;
-        /* Hauteur max (ajuste selon besoin) */
-        font-size: 12px;
-        padding: 5px;
+        border: 1px solid #999;
+        /* fine bordure grise */
     }
+
+    .vertical-header {
+        height: 150px;
+        /* hauteur de la cellule */
+        text-align: center;
+        padding: 0;
+        white-space: wrap;
+        /* pas de retour à la ligne */
+    }
+
+    .vertical-header>div {
+        display: inline-block;
+        transform: rotate(-90deg);
+        /* rotation du texte */
+        transform-origin: center center;
+        font-size: 12px;
+        font-weight: 600;
+        overflow: hidden;
+
+        width: clamp(40px, 40px, 100px);
+
+    }
+
 
     .etudiantInfo {
         font-size: 14px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 120px;
-        min-width: 120px;
+        max-width: 100px;
+        min-width: 100px;
+    }
 
+    /* Empêcher la coupure d'une ligne du tableau */
+    table,
+    tr,
+    td,
+    th {
+        page-break-inside: avoid !important;
+    }
+
+    /* Pour éviter que des blocs comme le pied de page ou signature soient séparés */
+    .no-break {
+        page-break-inside: avoid !important;
+
+        page-break-inside: avoid !important;
+        page-break-before: auto;
+        page-break-after: auto;
     }
 </style>
 <?php
@@ -48,9 +80,10 @@ foreach ($infosSemestre as $ue) {
 <!-- ==================== EN-TÊTE ==================== -->
 <div class="text-center mb-3">
     <h5>Institut Universitaire de Formation Professionnelle (IUFP)</h5>
-    <h6>Année Universitaire 2022-2023</h6>
-    <h6><strong>Résultats provisoires du troisième semestre (S3)</strong></h6>
-    <h6>Mention : Génie Informatique</h6>
+    <h6>Année Universitaire <?= $promotion->annee_universitaire ?>
+    </h6>
+    <h6><strong>Résultats provisoires du troisième semestre (<?= strtoupper($semestre->sigle_semestre) ?>)</strong></h6>
+    <h6>Mention : <?= $promotion->nom_filiere ?></h6>
     <small>ECUE à reprendre (X) et moyenne par UE</small>
 </div>
 
@@ -58,18 +91,34 @@ foreach ($infosSemestre as $ue) {
 <div class="table-responsive">
     <table class="table table-bordered table-striped w-100" id="notesTable">
         <thead>
-            <tr>
+            <tr class="no-break">
                 <th class="text-center">N°</th>
                 <th class="text-center etudiantInfo">Prénoms</th>
                 <th class="text-center etudiantInfo">Nom</th>
                 <th class="text-center etudiantInfo">Date de Naissance</th>
                 <th class="text-center etudiantInfo">Lieu de Naissance</th>
                 <?php foreach ($infosSemestre as $ue): ?>
-                    <th class="vertical-header"><?= tronquerTexte($ue[0]->nom_ue, 8) ?></th>
+
+                    <?php foreach ($ue as $module): ?>
+                        <th class="vertical-header">
+                            <div title="<?= $module->nom_module ?>">
+                                <?php echo (strlen($module->nom_module) < 10) ? strtoupper($module->nom_module) : strtoupper($module->sigle_module) ?>
+
+                        </th>
+                    <?php endforeach ?>
+
+                    <th class="vertical-header">
+                        <div><?= tronquerTexte($ue[0]->nom_ue, 8) ?></div>
+                    </th>
+
                 <?php endforeach ?>
 
-                <th class="text-center vertical-header">Moy. Gén.</th>
-                <th class="text-center vertical-header">Observation</th>
+                <th class="text-center vertical-header">
+                    <div>Moy. Gén.</div>
+                </th>
+                <th class="text-center vertical-header">
+                    <div>Observation</div>
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -90,7 +139,17 @@ foreach ($infosSemestre as $ue) {
 
                     <!-- Notes des UE -->
                     <?php foreach ($ues as $ue): ?>
-                        <td class="text-center">
+
+                        <?php $modules = $ue['modules']; ?>
+                        <?php $number = 0 ?>
+
+                        <?php foreach ($modules as $module): ?>
+                            <td>
+                                <?= ($module->moyenne_module == 0) ? "X" : number_format($module->moyenne_module, 2) ?>
+                            </td>
+                        <?php endforeach ?>
+
+                        <td class="text-center note_ue">
                             <?= ($ue['moyenne'] == 0) ? "X" : number_format($ue['moyenne'], 2) ?>
                         </td>
                     <?php endforeach ?>
@@ -100,7 +159,7 @@ foreach ($infosSemestre as $ue) {
 
                     <!-- Observation -->
                     <td class="text-center">
-                        <span class="badge etatSemestre text-bold-600"></span>
+                        <h6 class=" etatSemestre text-bold-600 fw-bold"></h6>
                     </td>
                 </tr>
             <?php endfor ?>
@@ -109,15 +168,21 @@ foreach ($infosSemestre as $ue) {
 </div>
 
 <!-- ==================== STATISTIQUES ==================== -->
-<div class="mt-3">
+<div class="mt-3 no-break">
     <p><strong>Admis :</strong> <span id="nbAdmis"></span></p>
     <p><strong>Ajourné :</strong> <span id="nbAjournes"></span></p>
     <p><strong>Taux de réussite :</strong> <span id="tauxReussite"></span></p>
 </div>
 
 <!-- ==================== SIGNATURE ==================== -->
-<div class="text-right mt-5 mr-5">
-    <p>Ségou, le <?= date("d F Y") ?></p>
+<div class="text-right mt-5 mr-5 no-break">
+    <p>
+        <?php
+        date_default_timezone_set("Africa/Bamako"); // ou Africa/Abidjan, qui est aussi UTC+0
+
+        echo "Ségou, le " . date("d F Y");
+        ?>
+    </p>
     <p>P/Le Directeur P.O</p>
     <p><strong>Le Directeur Adjoint</strong></p>
     <p>Dr Mahamet KOÏTA<br><small>Maître Assistant</small></p>
@@ -158,11 +223,7 @@ foreach ($infosSemestre as $ue) {
     });
 </script>
 
-<!-- Impression en paysage
+<!-- Impression en paysage -->
 <style>
-    @media print {
-        @page {
-            size: A4 landscape;
-        }
-    }
-</style> -->
+
+</style>

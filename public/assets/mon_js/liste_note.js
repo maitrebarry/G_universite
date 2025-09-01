@@ -210,7 +210,7 @@ function imprimer(nom, html = null) {
       },
       jsPDF: {
         unit: "mm",
-        format: "a4",
+        format: "a3",
         orientation: "landscape",
       },
     })

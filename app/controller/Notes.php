@@ -164,6 +164,8 @@ class Notes extends Controller
                             'moyennesSemestre' => $moyennesSemestre,
                             'moyennesUe' => $resultat["moyennesUe"],
                             "infosSemestre" => $infosSemestre,
+                            "promotion" => $resultat["promotion"],
+                            "semestre" => $resultat["semestre"]
                         ]
                     );
                     return;
