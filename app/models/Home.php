@@ -193,7 +193,11 @@ class Home extends Model
             LEFT JOIN promotion p ON f.id_filiere = p.id_filiere
             LEFT JOIN parcours pa ON p.id_parcours = pa.id_parcours
             LEFT JOIN semestre se ON pa.id_semestre = se.id_semestre
-            LEFT JOIN etudiant e ON p.id_promotion = e.id_promotion
+           LEFT JOIN etudiant_promotion ep 
+             ON ep.id_promotion = p.id_promotion AND ep.etat = 1
+            LEFT JOIN etudiant e 
+                ON e.id_etudiant = ep.id_etudiants
+
             LEFT JOIN payement py ON py.idEtudt = e.id_etudiant
             WHERE f.id_departement = :id_departement
             AND p.annee_universitaire = (
@@ -210,32 +214,41 @@ class Home extends Model
     }
 
     public function getIndicateursGeneraux($id_departement) {
-        $query = "
-            SELECT
-                -- Total étudiants du département
-                (SELECT COUNT(*) 
-                FROM etudiant e
-                JOIN promotion p ON e.id_promotion = p.id_promotion
-                JOIN filiere f ON p.id_filiere = f.id_filiere
-                WHERE f.id_departement = :id_departement
-                ) AS total_etudiants,
+      $query = "
+    SELECT
+        -- Total étudiants du département
+        (SELECT COUNT(*) 
+         FROM etudiant e
+         JOIN etudiant_promotion ep ON ep.id_etudiants = e.id_etudiant AND ep.etat = 1
+         JOIN promotion p ON ep.id_promotion = p.id_promotion
+         JOIN filiere f ON p.id_filiere = f.id_filiere
+         WHERE f.id_departement = :id_departement
+        ) AS total_etudiants,
 
-                -- Total inscrits (paiement effectué)
-                (SELECT COUNT(DISTINCT e.id_etudiant)
-                FROM etudiant e
-                JOIN promotion p ON e.id_promotion = p.id_promotion
-                JOIN filiere f ON p.id_filiere = f.id_filiere
-                LEFT JOIN payement py ON py.idEtudt = e.id_etudiant
-                WHERE f.id_departement = :id_departement
-                AND py.montant_paye > 0 AND py.date IS NOT NULL
-                ) AS total_inscrits,
+        -- Total inscrits (paiement effectué)
+        (SELECT COUNT(DISTINCT e.id_etudiant)
+         FROM etudiant e
+         JOIN etudiant_promotion ep ON ep.id_etudiants = e.id_etudiant AND ep.etat = 1
+         JOIN promotion p ON ep.id_promotion = p.id_promotion
+         JOIN filiere f ON p.id_filiere = f.id_filiere
+         LEFT JOIN payement py ON py.idEtudt = e.id_etudiant
+         WHERE f.id_departement = :id_departement
+         AND py.montant_paye > 0 AND py.date IS NOT NULL
+        ) AS total_inscrits,
 
-                -- Total enseignants
-                (SELECT COUNT(*) FROM enseignants WHERE id_departement = :id_departement) AS total_enseignants,
+        -- Total enseignants
+        (SELECT COUNT(*) 
+         FROM enseignants 
+         WHERE id_departement = :id_departement
+        ) AS total_enseignants,
 
-                -- Total filières
-                (SELECT COUNT(*) FROM filiere WHERE id_departement = :id_departement) AS total_filieres
-        ";
+        -- Total filières
+        (SELECT COUNT(*) 
+         FROM filiere 
+         WHERE id_departement = :id_departement
+        ) AS total_filieres
+";
+
 
         return $this->select_data_table_join_where($query, ['id_departement' => $id_departement])[0] ?? (object)[
             'total_etudiants' => 0,
