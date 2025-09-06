@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Relevé de notes - Université de Ségou</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: "Times New Roman", serif;
+      font-size: 14px;
+      color: #000;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .table th, .table td {
+      font-size: 13px;
+      text-align: center;
+      vertical-align: middle;
+    }
+    .infos-etudiant h6 {
+      margin: 0;
+      font-size: 14px;
+    }
+    .signature {
+      margin-top: 40px;
+      text-align: right;
+    }
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container mt-4">
+
+    <!-- En-tête -->
+    <div class="header  d-flex justify-content-around align-items-center text-success">
+      <div class="d-flex"> 
+<img src="" alt="">
+             <h5 class="fw-bold">Université de Ségou</h5>
+</div>
+      <h6 class="fw-bold">Relevé de notes</h6>
+      <h6 class="fw-bold">Institut Universitaire de Formation Professionnelle</h6>
+    </div>
+
+    <!-- Infos générales -->
+    <div class="row mb-3 infos-etudiant">
+      <div class="col-md-6">
+        <h6><strong>Année universitaire :</strong> 2017-2018</h6>
+        <h6><strong>Semestre :</strong> S1</h6>
+        <h6><strong>Mention :</strong> Génie Informatique</h6>
+      </div>
+      <div class="col-md-6">
+        <h6><strong>Nom :</strong> BALLO</h6>
+        <h6><strong>Prénoms :</strong> Harouna B.</h6>
+        <h6><strong>Date de naissance :</strong> 29/10/1992</h6>
+        <h6><strong>Lieu de naissance :</strong> Ségou</h6>
+      </div>
+    </div>
+
+    <!-- Tableau -->
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped">
+        <thead class="table-secondary">
+          <tr>
+            <th>UE</th>
+            <th>ECUE</th>
+            <th>Crédits</th>
+            <th>Session</th>
+            <th>Moyenne</th>
+            <th>PJ ECUE</th>
+            <th>Moyenne UE</th>
+            <th>PJ UE</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>DRT111</td>
+            <td>Introduction au droit</td>
+            <td>3</td>
+            <td>1</td>
+            <td>12,50</td>
+            <td></td>
+            <td>12,50</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>MAT111</td>
+            <td>Statistiques descriptives</td>
+            <td>3</td>
+            <td>1</td>
+            <td>4,33</td>
+            <td></td>
+            <td>4,33</td>
+            <td></td>
+          </tr>
+          <!-- Ajoutez d'autres lignes comme dans votre fichier -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Résultats -->
+    <div class="row mt-3">
+      <div class="col-md-6">
+        <h6><strong>Moyenne du semestre :</strong> 12,23</h6>
+        <h6><strong>Point Jury :</strong> </h6>
+        <h6><strong>Validation du semestre :</strong> Admis</h6>
+      </div>
+    </div>
+
+    <!-- Signature -->
+    <div class="signature">
+      <p>Ségou, le 30 septembre 2022</p>
+      <p><strong>Le Directeur Général Adjoint</strong></p>
+      <br><br>
+      <p><strong>Dr Daouda TRAORE</strong><br>
+      Maître de Conférences</p>
+    </div>
+
+  </div>
+
+</body>
+</html>

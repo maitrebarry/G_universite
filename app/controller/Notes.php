@@ -282,4 +282,44 @@ class Notes extends Controller
             echo json_encode($classes);
         }
     }
+
+    public function get_releves_notes()
+    {
+
+        if (
+            isset(
+                $_POST['idPromotion'],
+                $_POST['idSemestre']
+            ) && !empty($_POST['idPromotion'])
+            && !empty($_POST['idSemestre'])
+        ) {
+
+
+            $idPromotion = htmlspecialchars(trim($_POST['idPromotion']));
+            $idSemestre = htmlspecialchars(trim($_POST['idSemestre']));
+            $noteModel = new Note();
+
+            $resultat = $noteModel->getAllMoyenneSemestreEtudiants($idPromotion, $idSemestre);
+            $moyennesSemestre = $resultat["moyennesSemestre"];
+            $infosSemestre = $resultat['infosSemestre'];
+
+            if (!empty($moyennesSemestre)) {
+
+                $this->view(
+                    'post_releve_etudiant',
+                    [
+                        'moyennesSemestre' => $moyennesSemestre,
+                        'moyennesUe' => $resultat["moyennesUe"],
+                        "infosSemestre" => $infosSemestre,
+                        "promotion" => $resultat["promotion"],
+                        "semestre" => $resultat["semestre"]
+                    ]
+                );
+                return;
+            } else {
+                echo "notfound";
+                exit;
+            }
+        }
+    }
 }

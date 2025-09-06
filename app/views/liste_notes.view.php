@@ -200,9 +200,9 @@ $this->view("Partials/header") ?>
                             <div class="card card-animated-border-top">
                                 <div class="card-header d-flex justify-content-around align-items-center">
                                     <h4 class="card-title text-center">Liste des notes</h4>
-                                    <div class="d-none" id="printSection">
+                                    <div class="d-none aligns-items-center justify-content-arround" id="printSection">
                                         <!-- Bouton Impression -->
-                                        <button id="print" class="btn d-flex align-items-center" style="
+                                        <button id="print" class="btn d-flex align-items-center mr-1" style="
                                             background: linear-gradient(135deg, #0d6efd, #0a58ca);
                                             color: white;
                                             font-weight: 600;
@@ -216,6 +216,23 @@ $this->view("Partials/header") ?>
                                             <i class="bi bi-printer-fill"
                                                 style="font-size: 1.4rem; margin-right: 10px;"></i>
                                             Imprimer
+                                        </button>
+
+                                        <!-- Bouton Impression -->
+                                        <button id="printReleve" class="btn d-flex align-items-center" style="
+                                            background: linear-gradient(135deg, #0d6efd, #0a58ca);
+                                            color: white;
+                                            font-weight: 600;
+                                            border: none;
+                                            border-radius: 50px;
+                                            padding: 12px 24px;
+                                            box-shadow: 0px 4px 12px rgba(0,0,0,0.25);
+                                            transition: all 0.3s ease;
+                                        " onmouseover="this.style.background='linear-gradient(135deg, #0a58ca, #0d6efd)'"
+                                            onmouseout="this.style.background='linear-gradient(135deg, #0d6efd, #0a58ca)'">
+                                            <i class="bi bi-printer-fill"
+                                                style="font-size: 1.4rem; margin-right: 10px;"></i>
+                                            Relevés de Note
                                         </button>
 
                                         <!-- Bootstrap Icons -->
@@ -345,7 +362,7 @@ $this->view("Partials/header") ?>
         $('#ues').val("");
         moduleUe($("#ues option:selected").data("id"), infoFiliere)
 
-        $("#printSection").removeClass("d-block");
+        $("#printSection").removeClass("d-flex");
         $("#printSection").addClass("d-none");
         $("#table_section").html(
             "<h6 class='text-center text-bold-600 text-warning'>" +
@@ -360,7 +377,7 @@ $this->view("Partials/header") ?>
         ueSemestre(idSemestre, infoFiliere);
         moduleUe($("#ues option:selected").data("id"), infoFiliere)
         $("#printSection").removeClass("d-none");
-        $("#printSection").addClass("d-block");
+        $("#printSection").addClass("d-flex");
         // if (isNaN($("#promotions option:selected").val())) {
         //     alert('hihihihihihi');
 
@@ -404,5 +421,9 @@ $this->view("Partials/header") ?>
         nom = "RES " + $("#promotions option:selected").text() + " PROV";
         html = document.getElementById("table_section").innerHTML;
         imprimer(nom, html); // Appel de la fonction
+    });
+    $("#printReleve").click(function() {
+
+        imprimerReleve(); // Appel de la fonction
     });
 </script>

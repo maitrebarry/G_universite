@@ -250,8 +250,9 @@ class Note extends Model
                     $infoUe = $this->getInfosUe($idUe);
 
                     foreach ($infoUe as $module) {
-                        $query = "SELECT moyenne_module FROM  note_etudiant 
-                        WHERE note_etudiant.id_etudiant = ? AND note_etudiant.id_module=?  AND note_etudiant.id_ue=? ORDER BY id_module DESC LIMIT 1";
+                        $query = "SELECT moyenne_module, note_session, ue_module.coeficient FROM  note_etudiant 
+                        INNER JOIN ue_module ON note_etudiant.id_module=ue_module.id_ue_module
+                        WHERE note_etudiant.id_etudiant = ? AND note_etudiant.id_module=?  AND note_etudiant.id_ue=?  LIMIT 1";
 
                         $note = $this->select_data_table_join_where($query, [$etudiant->id_etudiant, $module->id_ue_module, $idUe]);
 

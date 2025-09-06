@@ -188,7 +188,7 @@ function moduleUe(idUe, infoFiliere) {
 }
 
 // Imprimer pour faire une impression
-function imprimer(nom, html = null) {
+function imprimer(nom, html, format = "a3", margin = 0) {
   $("#loader").removeClass("d-none");
   $("#loader").addClass("d-flex");
   if (html == null) {
@@ -203,14 +203,14 @@ function imprimer(nom, html = null) {
   html2pdf()
     .from(html)
     .set({
-      margin: 0,
+      margin: margin,
       filename: nom,
       html2canvas: {
         scale: 2,
       },
       jsPDF: {
         unit: "mm",
-        format: "a3",
+        format: format,
         orientation: "landscape",
       },
     })
@@ -219,4 +219,35 @@ function imprimer(nom, html = null) {
       $("#loader").removeClass("d-flex");
       $("#loader").addClass("d-none");
     });
+}
+
+// Fonction pour imprimer les relevés de notes
+function imprimerReleve() {
+  url = ROOT + "/get_releves_notes";
+  let promotionId = $("#promotions option:selected").val();
+  let semestreId = $("#promotions option:selected").data("semestre");
+
+  $.ajax({
+    url: url,
+    type: "POST",
+    data: {
+      idPromotion: promotionId,
+      idSemestre: semestreId,
+    },
+    success: function (response) {
+      imprimer(
+        "releve-note-" + $("#promotions option:selected").text(),
+        response,
+        "a4",
+        10
+      );
+    },
+    error: function (xhr, status, error) {
+      $("#loadingSpinner").hide();
+      console.error("Erreur AJAX : ", status, error);
+      alert(
+        "Une erreur s'est produite lors du chargement des données. Veuillez réessayer."
+      );
+    },
+  });
 }
