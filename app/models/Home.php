@@ -339,27 +339,51 @@ class Home extends Model
                     ELSE 'Autre'
                 END AS niveau,
                 p.annee_universitaire,
+
+                -- Étudiants inscrits (paiement effectué dans l’année universitaire)
                 COUNT(DISTINCT CASE 
-                    WHEN py.montant_paye > 0 AND DATE_FORMAT(py.date,'%Y') BETWEEN SUBSTRING(p.annee_universitaire,1,4) AND SUBSTRING(p.annee_universitaire,6,4)
-                    THEN e.id_etudiant END) AS inscrits,
+                    WHEN py.montant_paye > 0 
+                        AND YEAR(py.date) BETWEEN LEFT(p.annee_universitaire,4) AND RIGHT(p.annee_universitaire,4)
+                    THEN e.id_etudiant END
+                ) AS inscrits,
+
+                -- Étudiants non inscrits (aucun paiement ou paiement = 0)
                 COUNT(DISTINCT CASE 
                     WHEN (py.idPayem IS NULL OR py.montant_paye = 0)
-                    THEN e.id_etudiant END) AS non_inscrits,
+                    THEN e.id_etudiant END
+                ) AS non_inscrits,
+
+                -- Répartition hommes / femmes
                 COUNT(DISTINCT CASE WHEN e.genre_etudiant = 'M' THEN e.id_etudiant END) AS hommes,
                 COUNT(DISTINCT CASE WHEN e.genre_etudiant = 'F' THEN e.id_etudiant END) AS femmes,
+
+                -- Résultats académiques
                 COUNT(DISTINCT CASE WHEN ne.moyenne_module >= 10 THEN e.id_etudiant END) AS admis,
                 COUNT(DISTINCT CASE WHEN ne.moyenne_module < 10 THEN e.id_etudiant END) AS ajournes
+
             FROM filiere f
             JOIN departement d ON f.id_departement = d.id_departement
             LEFT JOIN promotion p ON f.id_filiere = p.id_filiere
             LEFT JOIN parcours pa ON p.id_parcours = pa.id_parcours
             LEFT JOIN semestre se ON pa.id_semestre = se.id_semestre
-            LEFT JOIN etudiant e ON p.id_promotion = e.id_promotion
+
+            -- 🔹 Nouvelle jointure correcte via inscription
+              LEFT JOIN etudiant_promotion i ON i.id_promotion = p.id_promotion
+            LEFT JOIN etudiant e ON i.id_etudiants = e.id_etudiant
+
+            -- Paiement relié à l'étudiant
             LEFT JOIN payement py ON py.idEtudt = e.id_etudiant
-            LEFT JOIN note_etudiant ne ON e.id_etudiant = ne.id_etudiant AND p.id_promotion = ne.id_promotion
+
+            -- Notes reliées à étudiant + promotion
+            LEFT JOIN (
+                SELECT ne1.id_etudiant, ne1.id_promotion, MAX(ne1.moyenne_module) AS moyenne_module
+                FROM note_etudiant ne1
+                GROUP BY ne1.id_etudiant, ne1.id_promotion
+            ) ne ON e.id_etudiant = ne.id_etudiant AND i.id_promotion = ne.id_promotion
+
             GROUP BY f.id_filiere, se.id_semestre, p.annee_universitaire
-            HAVING niveau IS NOT NULL
-            ORDER BY d.nom_departement, f.nom_filiere, se.id_semestre, p.annee_universitaire DESC
+            ORDER BY d.nom_departement, f.nom_filiere, se.id_semestre, p.annee_universitaire DESC;
+
         ";
         
         return $this->select_data_table_join_where($query, []);
@@ -367,14 +391,36 @@ class Home extends Model
     public function getIndicateursGeneraux_scolarite() {
         $query = "
             SELECT
-                (SELECT COUNT(*) FROM etudiant) AS total_etudiants,
-                (SELECT COUNT(DISTINCT idEtudt) FROM payement WHERE montant_paye > 0 AND date IS NOT NULL) AS total_inscrits,
-                (SELECT COUNT(DISTINCT idEtudt) FROM payement WHERE montant_paye > 0 AND date IS NOT NULL AND YEAR(date) BETWEEN YEAR(CURDATE())-2 AND YEAR(CURDATE())) AS total_inscrits_3_ans,
-                (SELECT COUNT(*) FROM enseignants) AS total_enseignants,
-                (SELECT COUNT(*) FROM filiere) AS total_filieres,
-                (SELECT COUNT(*) FROM departement) AS total_departements,
-                (SELECT COUNT(DISTINCT id_etudiant) FROM note_etudiant WHERE moyenne_module >= 10) AS total_admis,
-                (SELECT COUNT(DISTINCT id_etudiant) FROM note_etudiant WHERE moyenne_module < 10) AS total_ajournes
+            (SELECT COUNT(DISTINCT e.id_etudiant)
+            FROM etudiant e
+            JOIN etudiant_promotion ep ON ep.id_etudiants = e.id_etudiant AND ep.etat = 1
+            ) AS total_etudiants,
+
+            (SELECT COUNT(DISTINCT idEtudt)
+            FROM payement
+            WHERE montant_paye > 0 AND date IS NOT NULL
+            ) AS total_inscrits,
+
+            (SELECT COUNT(DISTINCT idEtudt)
+            FROM payement
+            WHERE montant_paye > 0 AND date IS NOT NULL 
+            AND YEAR(date) BETWEEN YEAR(CURDATE())-2 AND YEAR(CURDATE())
+            ) AS total_inscrits_3_ans,
+
+            (SELECT COUNT(*) FROM enseignants) AS total_enseignants,
+            (SELECT COUNT(*) FROM filiere) AS total_filieres,
+            (SELECT COUNT(*) FROM departement) AS total_departements,
+
+            (SELECT COUNT(DISTINCT ne.id_etudiant)
+            FROM note_etudiant ne
+            WHERE ne.moyenne_module >= 10
+            ) AS total_admis,
+
+            (SELECT COUNT(DISTINCT ne.id_etudiant)
+            FROM note_etudiant ne
+            WHERE ne.moyenne_module < 10
+            ) AS total_ajournes;
+
         ";
         
         return $this->select_data_table_join_where($query, [])[0] ?? (object)[
@@ -557,13 +603,23 @@ class Home extends Model
                     ), 2
                 ) AS taux
             FROM departement d
-            LEFT JOIN filiere f ON f.id_departement = d.id_departement
-            LEFT JOIN promotion pr ON pr.id_filiere = f.id_filiere
-            LEFT JOIN etudiant e ON e.id_promotion = pr.id_promotion
-            LEFT JOIN note_etudiant n ON n.id_etudiant = e.id_etudiant
-            LEFT JOIN payement p ON p.idEtudt = e.id_etudiant AND p.montant_paye > 0 AND p.date IS NOT NULL
+            LEFT JOIN filiere f 
+                ON f.id_departement = d.id_departement
+            LEFT JOIN promotion pr 
+                ON pr.id_filiere = f.id_filiere
+            LEFT JOIN etudiant_promotion ep 
+                ON ep.id_promotion = pr.id_promotion AND ep.etat = 1
+            LEFT JOIN etudiant e 
+                ON e.id_etudiant = ep.id_etudiants
+            LEFT JOIN note_etudiant n 
+                ON n.id_etudiant = e.id_etudiant
+            LEFT JOIN payement p 
+                ON p.idEtudt = e.id_etudiant 
+                AND p.montant_paye > 0 
+                AND p.date IS NOT NULL
             GROUP BY d.id_departement
-            ORDER BY taux DESC, total_etudiants DESC
+            ORDER BY taux DESC, total_etudiants DESC;
+
         ";
         $resDep = $this->select_data_table_join_where($queryDep);
 
@@ -586,23 +642,32 @@ class Home extends Model
     public function getStatsDepartementsDetail()
     {
         $query = "
-        SELECT 
-            d.nom_departement AS departement,
-            COUNT(DISTINCT e.id_etudiant) AS total_etudiants,
-            COUNT(DISTINCT CASE WHEN ne.moyenne_module >= 10 THEN e.id_etudiant END) AS admis,
-            IF(COUNT(DISTINCT e.id_etudiant) > 0, 
-                ROUND(
-                    (COUNT(DISTINCT CASE WHEN ne.moyenne_module >= 10 THEN e.id_etudiant END) 
-                    / COUNT(DISTINCT e.id_etudiant)) * 100, 2
-                ), 0) AS taux_reussite
-        FROM departement d
-        LEFT JOIN filiere f ON f.id_departement = d.id_departement
-        LEFT JOIN parcours pa ON pa.id_filiere = f.id_filiere
-        LEFT JOIN promotion p ON p.id_parcours = pa.id_parcours
-        LEFT JOIN etudiant e ON e.id_promotion = p.id_promotion
-        LEFT JOIN note_etudiant ne ON ne.id_etudiant = e.id_etudiant
-        GROUP BY d.id_departement
-        ORDER BY taux_reussite DESC, total_etudiants DESC
+                SELECT 
+                d.nom_departement AS departement,
+                COUNT(DISTINCT e.id_etudiant) AS total_etudiants,
+                COUNT(DISTINCT CASE WHEN ne.moyenne_module >= 10 THEN e.id_etudiant END) AS admis,
+                IF(COUNT(DISTINCT e.id_etudiant) > 0, 
+                    ROUND(
+                        (COUNT(DISTINCT CASE WHEN ne.moyenne_module >= 10 THEN e.id_etudiant END) 
+                        / COUNT(DISTINCT e.id_etudiant)) * 100, 2
+                    ), 0
+                ) AS taux_reussite
+            FROM departement d
+            LEFT JOIN filiere f 
+                ON f.id_departement = d.id_departement
+            LEFT JOIN parcours pa 
+                ON pa.id_filiere = f.id_filiere
+            LEFT JOIN promotion p 
+                ON p.id_parcours = pa.id_parcours
+            LEFT JOIN etudiant_promotion ep 
+                ON ep.id_promotion = p.id_promotion AND ep.etat = 1
+            LEFT JOIN etudiant e 
+                ON e.id_etudiant = ep.id_etudiants
+            LEFT JOIN note_etudiant ne 
+                ON ne.id_etudiant = e.id_etudiant
+            GROUP BY d.id_departement
+            ORDER BY taux_reussite DESC, total_etudiants DESC;
+
         ";
 
         return $this->select_data_table_join_where($query, []);
