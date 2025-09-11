@@ -1,32 +1,32 @@
 <!-- inclusion du partie header -->
 <?php $this->view("Partials/header") ?>
 <style>
-.table-paiement th {
-    cursor: default;
-    /* Empêche le clic */
-    user-select: none;
-    /* Désactive la sélection de texte */
-    background-color: #343a40;
-    color: white;
-    text-align: center;
-    vertical-align: middle;
-}
+    .table-paiement th {
+        cursor: default;
+        /* Empêche le clic */
+        user-select: none;
+        /* Désactive la sélection de texte */
+        background-color: #343a40;
+        color: white;
+        text-align: center;
+        vertical-align: middle;
+    }
 
-th.text-center {
-    text-align: center;
-    /* Centrer le texte */
-    vertical-align: middle;
-    /* Aligner verticalement */
-    padding: 10px;
-    /* Ajoutez un peu d'espace intérieur */
-}
+    th.text-center {
+        text-align: center;
+        /* Centrer le texte */
+        vertical-align: middle;
+        /* Aligner verticalement */
+        padding: 10px;
+        /* Ajoutez un peu d'espace intérieur */
+    }
 
-th.text-center input[type="checkbox"] {
-    margin-top: 5px;
-    /* Espacer la case à cocher du texte */
-    cursor: pointer;
-    /* Ajouter un curseur pour indiquer que c'est cliquable */
-}
+    th.text-center input[type="checkbox"] {
+        margin-top: 5px;
+        /* Espacer la case à cocher du texte */
+        cursor: pointer;
+        /* Ajouter un curseur pour indiquer que c'est cliquable */
+    }
 </style>
 
 <body
@@ -83,8 +83,8 @@ th.text-center input[type="checkbox"] {
                                                         required>
                                                         <option value="">-- Sélectionner l'année --</option>
                                                         <?php foreach ($listeParAnnee as $annee => $promos): ?>
-                                                        <option value="<?= htmlspecialchars($annee) ?>">
-                                                            <?= htmlspecialchars($annee) ?></option>
+                                                            <option value="<?= htmlspecialchars($annee) ?>">
+                                                                <?= htmlspecialchars($annee) ?></option>
                                                         <?php endforeach; ?>
                                                     </select>
                                                 </div>
@@ -131,7 +131,13 @@ th.text-center input[type="checkbox"] {
                                             <div class="table-responsive">
                                                 <!-- Affichage des étudiants -->
                                                 <div id="liste_etudiants" class="mt-4">
-                                                    <table class="table zero-configuration">
+                                                    <div class="mb-3 d-flex justify-content-between align-items-center">
+                                                        <input type="text" id="customSearch" class="form-control" placeholder="Rechercher un étudiant..." style="max-width: 300px;">
+                                                        <a href="<?= ROOT ?>/Etudiants/export_liste" class="btn btn-success ml-2" target="_blank">
+                                                            <i class="bx bx-download"></i> Exporter la liste
+                                                        </a>
+                                                    </div>
+                                                    <table class="table zze">
                                                         <thead class="text-center">
                                                             <tr>
                                                                 <th class="text-center">
@@ -154,8 +160,7 @@ th.text-center input[type="checkbox"] {
                                                     </table>
                                                 </div>
 
-                                                <button type="submit" class="btn btn-primary">Paiement en
-                                                    Groupe</button>
+                                                <button type="submit" class="btn btn-primary">Paiement en Groupe</button>
                                             </div>
                                         </form>
                                     </div>
@@ -185,112 +190,122 @@ th.text-center input[type="checkbox"] {
     <?php $this->view("Partials/footer") ?>
     <!-- inclusion du partie footer fin-->
 
+<script>
+    document.getElementById('customSearch').addEventListener('input', function() {
+    let filter = this.value.toLowerCase();
+    let rows = document.querySelectorAll('#table_etudiant tr');
+    rows.forEach(row => {
+        let text = row.innerText.toLowerCase();
+        row.style.display = text.includes(filter) ? '' : 'none';
+    });
+});
+</script>
     <script>
-    $('.zero-configuration').DataTable({
-        ordering: false
-    });
-    //pour eviter de clicker sur les th
-    document.getElementById('select-all').addEventListener('click', function(event) {
-        event.stopPropagation();
-    });
-    document.getElementById('select-all').addEventListener('change', function() {
-        const checkboxes = document.querySelectorAll('input[name="paie[]"]');
-        checkboxes.forEach(checkbox => checkbox.checked = this.checked);
-    });
-
-    $(document).ready(function() {
-        $('.select2').select2({
-            width: '100%'
+        $('.zero-configuration').DataTable({
+            ordering: false
+        });
+        //pour eviter de clicker sur les th
+        document.getElementById('select-all').addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+        document.getElementById('select-all').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('input[name="paie[]"]');
+            checkboxes.forEach(checkbox => checkbox.checked = this.checked);
         });
 
-        const dataParAnnee = <?= json_encode($listeParAnnee) ?>;
+        $(document).ready(function() {
+            $('.select2').select2({
+                width: '100%'
+            });
 
-        // Quand une année est sélectionnée
-        $('#annee_universitaire').on('change', function() {
-            const annee = $(this).val();
-            const $filiere = $('#id_filiere');
-            const $semestre = $('#id_semestre');
+            const dataParAnnee = <?= json_encode($listeParAnnee) ?>;
 
-            $filiere.empty().append('<option value="">-- Sélectionner la filière --</option>');
-            $semestre.empty().append('<option value="">-- Sélectionner le semestre --</option>');
+            // Quand une année est sélectionnée
+            $('#annee_universitaire').on('change', function() {
+                const annee = $(this).val();
+                const $filiere = $('#id_filiere');
+                const $semestre = $('#id_semestre');
 
-            if (dataParAnnee[annee]) {
-                const promos = dataParAnnee[annee];
+                $filiere.empty().append('<option value="">-- Sélectionner la filière --</option>');
+                $semestre.empty().append('<option value="">-- Sélectionner le semestre --</option>');
 
-                const filieres = {};
+                if (dataParAnnee[annee]) {
+                    const promos = dataParAnnee[annee];
 
-                promos.forEach(promo => {
-                    filieres[promo.id_filiere] = promo.sigle_filiere;
-                });
+                    const filieres = {};
 
-                for (const id in filieres) {
-                    $filiere.append(new Option(filieres[id], id));
+                    promos.forEach(promo => {
+                        filieres[promo.id_filiere] = promo.sigle_filiere;
+                    });
+
+                    for (const id in filieres) {
+                        $filiere.append(new Option(filieres[id], id));
+                    }
                 }
-            }
 
-            $filiere.trigger('change.select2');
+                $filiere.trigger('change.select2');
+            });
+
+            // Quand une filière est sélectionnée
+            $('#id_filiere').on('change', function() {
+                const annee = $('#annee_universitaire').val();
+                const id_filiere = $(this).val();
+                const $semestre = $('#id_semestre');
+
+                $semestre.empty().append('<option value="">-- Sélectionner le semestre --</option>');
+
+                if (dataParAnnee[annee]) {
+                    const promos = dataParAnnee[annee];
+
+                    const semestres = [];
+
+                    promos.forEach(promo => {
+                        if (promo.id_filiere == id_filiere) {
+                            semestres.push({
+                                id: promo.id_semestre,
+                                sigle: promo.sigle_semestre
+                            });
+                        }
+                    });
+
+                    // Éviter les doublons
+                    const unique = {};
+                    semestres.forEach(s => {
+                        if (!unique[s.id]) {
+                            unique[s.id] = true;
+                            $semestre.append(new Option(s.sigle, s.id));
+                        }
+                    });
+                }
+
+                $semestre.trigger('change.select2');
+            });
+
+            // Quand un semestre est sélectionné => charger la liste des étudiants
+            $('#id_semestre').on('change', function() {
+                const annee = $('#annee_universitaire').val();
+                const id_filiere = $('#id_filiere').val();
+                const id_semestre = $(this).val();
+
+                if (annee && id_filiere && id_semestre) {
+                    $.ajax({
+                        url: '<?= ROOT ?>/Etudiants/trier_liste_etudiant',
+                        type: 'POST',
+                        data: {
+                            annee_universitaire: annee,
+                            id_filiere: id_filiere,
+                            id_semestre: id_semestre
+                        },
+                        success: function(response) {
+                            $('#table_etudiant').html(response);
+                        },
+                        error: function(xhr) {
+                            alert("Erreur AJAX : " + xhr.responseText);
+                        }
+                    });
+                }
+            });
         });
-
-        // Quand une filière est sélectionnée
-        $('#id_filiere').on('change', function() {
-            const annee = $('#annee_universitaire').val();
-            const id_filiere = $(this).val();
-            const $semestre = $('#id_semestre');
-
-            $semestre.empty().append('<option value="">-- Sélectionner le semestre --</option>');
-
-            if (dataParAnnee[annee]) {
-                const promos = dataParAnnee[annee];
-
-                const semestres = [];
-
-                promos.forEach(promo => {
-                    if (promo.id_filiere == id_filiere) {
-                        semestres.push({
-                            id: promo.id_semestre,
-                            sigle: promo.sigle_semestre
-                        });
-                    }
-                });
-
-                // Éviter les doublons
-                const unique = {};
-                semestres.forEach(s => {
-                    if (!unique[s.id]) {
-                        unique[s.id] = true;
-                        $semestre.append(new Option(s.sigle, s.id));
-                    }
-                });
-            }
-
-            $semestre.trigger('change.select2');
-        });
-
-        // Quand un semestre est sélectionné => charger la liste des étudiants
-        $('#id_semestre').on('change', function() {
-            const annee = $('#annee_universitaire').val();
-            const id_filiere = $('#id_filiere').val();
-            const id_semestre = $(this).val();
-
-            if (annee && id_filiere && id_semestre) {
-                $.ajax({
-                    url: '<?= ROOT ?>/Etudiants/trier_liste_etudiant',
-                    type: 'POST',
-                    data: {
-                        annee_universitaire: annee,
-                        id_filiere: id_filiere,
-                        id_semestre: id_semestre
-                    },
-                    success: function(response) {
-                        $('#table_etudiant').html(response);
-                    },
-                    error: function(xhr) {
-                        alert("Erreur AJAX : " + xhr.responseText);
-                    }
-                });
-            }
-        });
-    });
     </script>
 
     <!-- Select2 CSS -->

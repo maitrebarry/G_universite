@@ -48,7 +48,7 @@
                         </div>
                         <div class="col-12">
                             <div class="card card-animated-border-top">
-                                <form id="form_assoc" action="<?= ROOT ?>/EtudiantPargroupes/importerEnChunks"
+                                <form  id="form_assoc" action="<?= ROOT ?>/EtudiantPargroupes/importerEnChunks"
                                     method="post" enctype="multipart/form-data">
                                     <div class="card-content">
                                         <div class="card-body">
@@ -80,6 +80,7 @@
                                                                 <h5 class="mt-4 mb-3">Associer les colonnes du fichier
                                                                     aux champs de la base</h5>
                                                                 <div class="table-responsive">
+                                                                   
                                                                     <table class="table table-bordered align-middle">
                                                                         <thead class="table-light">
                                                                             <tr>
@@ -91,6 +92,7 @@
                                                                             <!-- Remplissage dynamique via JS -->
                                                                         </tbody>
                                                                     </table>
+                                                                
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -111,8 +113,8 @@
                                                                     <label for="annee_universitaire"
                                                                         class="form-label d-block">Année universitaire <span
                                                                             class="text-danger">*</span></label>
-                                                                    <select class="form-control" id="annee_universitaire"
-                                                                        required>
+                                                                   <select name="annee_universitaire" class="form-control" id="annee_universitaire" required>
+
                                                                         <option value="">-- Sélectionner l'année --
                                                                         </option>
                                                                         <?php foreach ($listeParAnnee as $annee => $promos): ?>
@@ -135,10 +137,9 @@
                                                             </div>
                                                             <!-- Bouton Valider -->
                                                             <div class="text-end">
-                                                                <button type="submit"
-                                                                    class="btn bg-success text-white ">
-                                                                    <i class="fas fa-check-circle me-1"></i> Valider
-                                                                </button>
+        <button type="submit" class="btn bg-success text-white">
+            <i class="fas fa-check-circle me-1"></i> Valider
+        </button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -170,6 +171,22 @@
     <!-- inclusion du partie footer-->
     <?php $this->view("Partials/footer") ?>
     <!-- inclusion du partie footer fin-->
+   <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('form_assoc');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                console.log("submit déclenché");
+                if (!confirm("Es-tu sûr de vouloir valider ?")) {
+                    e.preventDefault();
+                    console.log("Soumission annulée !");
+                }
+            });
+        }
+    });
+    </script>
+
+
     <script>
     const promotionsParAnnee = <?= json_encode($listeParAnnee) ?>;
 
@@ -339,6 +356,8 @@
                 opt.value = value;
                 opt.textContent = label;
                 select.appendChild(opt);
+                select.addEventListener('change', updateAllSelectOptions);
+
             });
 
                 colBdd.appendChild(select);
@@ -347,6 +366,37 @@
 
                 tableBody.appendChild(row);
             });
+            // Fonction pour mettre à jour toutes les listes déroulantes
+function updateAllSelectOptions() {
+    const allSelects = document.querySelectorAll('select[name^="correspondances"]');
+
+    // Récupérer tous les champs déjà sélectionnés
+    const selectedValues = Array.from(allSelects)
+        .map(select => select.value)
+        .filter(val => val !== '');
+
+    allSelects.forEach(currentSelect => {
+        const currentValue = currentSelect.value;
+
+        // Vider toutes les options sauf "-- Ne pas associer --"
+        const defaultOption = currentSelect.querySelector('option[value=""]');
+        currentSelect.innerHTML = '';
+        currentSelect.appendChild(defaultOption.cloneNode(true));
+
+        // Re-générer les options en excluant les déjà sélectionnées
+        Object.entries(champsBdd).forEach(([value, label]) => {
+            if (value === currentValue || !selectedValues.includes(value)) {
+                const opt = document.createElement('option');
+                opt.value = value;
+                opt.textContent = label;
+                // Remettre l'option sélectionnée
+                if (value === currentValue) opt.selected = true;
+                currentSelect.appendChild(opt);
+            }
+        });
+    });
+}
+
         };
 
         reader.readAsArrayBuffer(file);
