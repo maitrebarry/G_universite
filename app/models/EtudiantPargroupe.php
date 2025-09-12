@@ -1,36 +1,69 @@
 <?php
 class EtudiantPargroupe extends Model
-{public function insertEtudiant($data)
+{
+public function insertEtudiant($data)
 {
     try {
-        // Étape 2 : Insertion si pas de doublon
+        // 1. Insertion dans etudiant et récupération du last ID
         $query = 'INSERT INTO etudiant (
             nom_prenom_etudiant, prenom, date_naissance_etudiant, lieu_naissance_etudiant,
             genre_etudiant, matricule_etudiant, contact_etudiant, diplome,
-            id_statut, id_promotion, total_frais
+            id_statut, total_frais
         ) VALUES (
             :nom_prenom_etudiant, :prenom, :date_naissance_etudiant, :lieu_naissance_etudiant,
             :genre_etudiant, :matricule_etudiant, :contact_etudiant, :diplome,
-            :id_statut, :id_promotion, :total_frais
+            :id_statut, :total_frais
         )';
 
-        $insert = $this->insertion_update_simples($query, [
-            ':nom_prenom_etudiant' => $data['nom_prenom_etudiant'] ?? '',
-            ':prenom' => $data['prenom'] ?? '',
-            ':date_naissance_etudiant' => $data['date_naissance_etudiant'] ?? '',
-            ':lieu_naissance_etudiant' => $data['lieu_naissance_etudiant'] ?? '',
-            ':genre_etudiant' => $data['genre_etudiant'] ?? '',
-            ':matricule_etudiant' => $data['matricule_etudiant'] ?? '',
-            ':contact_etudiant' => $data['contact_etudiant'] ?? '',
-            ':diplome' => $data['diplome'] ?? '',
-            ':id_statut' => $data['id_statut'] ?? '',
-            ':id_promotion' => $data['id_promotion'] ?? '',
-            ':total_frais' => $data['total_frais'] ?? 0 // Ajout ici
-        ]);
+
+        $result = $this->insertion_update_simples_insert_id($query, [
+    ':nom_prenom_etudiant' => $data['nom_prenom_etudiant'] ?? '',
+    ':prenom'               => $data['prenom'] ?? '',
+    ':date_naissance_etudiant' => $data['date_naissance_etudiant'] ?? '',
+    ':lieu_naissance_etudiant' => $data['lieu_naissance_etudiant'] ?? '',
+    ':genre_etudiant'      => $data['genre_etudiant'] ?? '',
+    ':matricule_etudiant'  => $data['matricule_etudiant'] ?? '',
+    ':contact_etudiant'    => $data['contact_etudiant'] ?? '',
+    ':diplome'             => $data['diplome'] ?? '',
+    ':id_statut'           => $data['id_statut'] ?? '',
+    ':total_frais'         => $data['total_frais'] ?? 0
+]);
+
+$idEtudiant = $result['lastInsertId'] ?? 0;
+
+
+        if (!$idEtudiant) {
+            return [
+                'success' => false,
+                'message' => 'Échec de l\'insertion de l\'étudiant.'
+            ];
+        }
+
+
+        // 2. Vérifier que la promotion est fournie
+        if (empty($data['id_promotion'])) {
+            return [
+                'success' => false,
+                'message' => 'ID de promotion manquant, impossible de lier l\'étudiant.'
+            ];
+        }
+
+        // 3. Insertion dans etudiant_promotion
+       
+
+        $queryPromo = 'INSERT INTO etudiant_promotion (id_etudiants, id_promotion, etat)
+               VALUES (:id_etudiants, :id_promotion, :etat)';
+
+$insertPromo = $this->insertion_update_simples($queryPromo, [
+    ':id_etudiants' => $idEtudiant,
+    ':id_promotion' => $data['id_promotion'],
+    ':etat'         => $data['etat'] ?? 'actif'
+]);
+
 
         return [
-            'success' => $insert ? true : false,
-            'message' => $insert ? 'Insertion réussie.' : 'Échec de l\'insertion.'
+            'success' => $insertPromo ? true : false,
+            'message' => $insertPromo ? 'Insertion réussie avec promotion.' : 'Échec de l\'insertion dans etudiant_promotion.'
         ];
 
     } catch (PDOException $e) {
@@ -41,7 +74,6 @@ class EtudiantPargroupe extends Model
         ];
     }
 }
-
 
 
 
