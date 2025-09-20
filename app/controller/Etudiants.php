@@ -77,9 +77,6 @@ public function trier_liste_etudiant() {
         ]);
     }
 }
-
-
-  
         // Afficher la page de paiement pour un étudiant spécifique
         public function paiement_etudiant($id)
         {
@@ -187,8 +184,6 @@ public function paiement_groupe() {
           INNER JOIN promotion p ON ep.id_promotion = p.id_promotion
           INNER JOIN filiere f ON p.id_filiere = f.id_filiere";
 
-
-
         $stmt = $etudiant->bdd()->prepare($query);
         $stmt->execute();
         $liste_etudiants = $stmt->fetchAll(PDO::FETCH_OBJ);
@@ -252,6 +247,125 @@ public function paiement_groupe() {
    
     $this->view('liste_inscription_groupe');
 }
+public function modifier($id_etudiant) {
+    $etudiants = new Etudiant();
+    $filiere   = new Filiere();
+
+    // 🔹 Récupérer les infos de l'étudiant
+    $modif = $etudiants->FetchSelectWhere(
+        "*", 
+        "etudiant", 
+        "id_etudiant=:id", 
+        ["id" => $id_etudiant]
+    );
+
+    // 🔹 Récupérer les filières + promotions liées à l’étudiant
+    $filieres = $filiere->SelectAllData(
+        "p.id_promotion, p.annee_universitaire, 
+         f.id_filiere, f.sigle_filiere, f.nom_filiere,
+         pa.id_parcours, pa.nom_parcours, 
+         s.id_semestre, s.nom_semestre",
+        "etudiant_promotion ep
+         INNER JOIN promotion p ON ep.id_promotion = p.id_promotion
+         INNER JOIN filiere f ON p.id_filiere = f.id_filiere
+         INNER JOIN parcours pa ON p.id_parcours = pa.id_parcours
+         INNER JOIN semestre s ON pa.id_semestre = s.id_semestre
+         WHERE ep.id_etudiants = $id_etudiant"
+    );
+
+    // 🔹 Si formulaire soumis → modification
+    if (isset($_POST['modifier'])) {
+        $etudiants->modification([ 
+            "id"                   => $id_etudiant,
+            "nom_prenom_etudiant"  => $_POST['nom_prenom_etudiant'],
+            "prenom"  => $_POST['prenom'],
+            "date_naissance_etudiant" => $_POST['date_naissance_etudiant'],
+            "lieu_naissance_etudiant" => $_POST['lieu_naissance_etudiant'],
+            "genre_etudiant"       => $_POST['genre_etudiant'],
+            "matricule_etudiant"   => $_POST['matricule_etudiant'],
+            "contact_etudiant"     => $_POST['contact_etudiant'],
+            "diplome"              => $_POST['diplome'],
+            "id_statut"            => $_POST['id_statut'],
+            "id_filiere"           => $_POST['id_filiere'],
+            "numetudiant"          => $_POST['numetudiant'],
+            "prenompere"           => $_POST['prenompere'],
+            "prenomnommere"        => $_POST['prenomnommere'],
+            "cercleNais"           => $_POST['cercleNais'],
+            "commNais"             => $_POST['commNais'],
+            "nationnalite"         => $_POST['nationnalite'],
+            "anneediplome"         => $_POST['anneediplome'],
+            "serie"                => $_POST['serie'],
+            "pays"                 => $_POST['pays'],
+            "academie"             => $_POST['academie'],
+            "lieuresidenceparents" => $_POST['lieuresidenceparents'],
+            "adresseactuel"        => $_POST['adresseactuel'],
+            "numplace"             => $_POST['numplace'],
+            "profilname"           => $_POST['profilname']
+        ]);
+
+        // 🔹 Mise à jour de la promotion (table de liaison etudiant_promotion)
+        if (!empty($_POST['id_promotion'])) {
+            $promotionId = $_POST['id_promotion'];
+
+            // supprimer l'ancien lien
+            $etudiants->insertion_update_simples(
+                "DELETE FROM etudiant_promotion WHERE id_etudiants = :id",
+                [":id" => $id_etudiant]
+            );
+
+            // insérer le nouveau lien
+            $etudiants->insertion_update_simples(
+                "INSERT INTO etudiant_promotion (id_etudiants, id_promotion) VALUES (:id_etudiant, :id_promotion)",
+                [
+                    ":id_etudiant" => $id_etudiant,
+                    ":id_promotion" => $promotionId
+                ]
+            );
+        }
+    }
+
+    // 🔹 Passage des données à la vue
+    $this->view("modifier_Etudiant", [
+        'modif'      => $modif,
+        'filieres'   => $filieres,
+      
+    ]);
+}
+
+public function apercu_etudiant($idEtudiant) {
+    $etudiants = new Etudiant();
+    $filiere   = new Filiere();
+
+    // Récupérer les filières
+   // Récupérer les infos de l'étudiant
+$etudiant = $etudiants->getEtudiantById($idEtudiant);
+
+// Récupérer les infos des filières, promotions, parcours, semestres liés à l'étudiant
+$filieres = $filiere->SelectAllData(
+    "*",
+    "etudiant_promotion
+     INNER JOIN promotion ON etudiant_promotion.id_promotion = promotion.id_promotion
+     INNER JOIN filiere ON promotion.id_filiere = filiere.id_filiere
+     INNER JOIN parcours ON promotion.id_parcours = parcours.id_parcours
+     INNER JOIN semestre ON parcours.id_semestre = semestre.id_semestre
+     INNER JOIN etudiant ON etudiant.id_etudiant = etudiant_promotion.id_etudiants
+     WHERE etudiant.id_etudiant = $idEtudiant"
+);
+
+    if ($etudiant) {
+        // On passe aussi la liste des filières à la vue
+        $this->view("apercu_etudiant", [
+            'etudiant' => $etudiant,
+            'filieres' => $filieres
+        ]);
+    } else {
+        $this->set_flash('Étudiant non trouvé', 'danger');
+        $this->view("apercu_etudiant", [
+            'filieres' => $filieres
+        ]);
+    }
+}
+
  public function filtrer_etudiants(){
    
     $this->view('liste_inscription_groupe');

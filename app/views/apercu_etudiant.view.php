@@ -49,7 +49,7 @@
                                                     <label class="form-label" for="nom_prenom_etudiant">Nom et Prénom de l'étudiant</label>
                                                     <!-- Affichage des données dans le champ input -->
                                                     <?php if ($etudiant): ?>
-                                                        <input type="text" class="form-control" id="nom_prenom_etudiant" name="nom_prenom_etudiant" value="<?= htmlspecialchars($etudiant['nom_prenom_etudiant']); ?>" disabled>
+                                                        <input type="text" class="form-control" id="nom_prenom_etudiant" name="nom_prenom_etudiant" value="<?= htmlspecialchars($etudiant['nom_prenom_etudiant']); ?> <?= htmlspecialchars($etudiant['prenom']); ?>" disabled>
                                                     <?php else: ?>
                                                         <p>Aucun étudiant trouvé.</p>
                                                     <?php endif; ?>
@@ -61,7 +61,7 @@
                                                     <label class="form-label" for="date_naissance_etudiant">Date de naissance</label>
                                                     <!-- Affichage des données dans le champ input -->
                                                     <?php if ($etudiant): ?>
-                                                        <input type="date" class="form-control" id="date_naissance_etudiant" name="date_naissance_etudiant" value="<?= htmlspecialchars($etudiant['date_naissance_etudiant']); ?>" disabled>
+                                                        <input type="text" class="form-control" id="date_naissance_etudiant" name="date_naissance_etudiant" value="<?= htmlspecialchars($etudiant['date_naissance_etudiant']); ?>" disabled>
                                                     <?php endif; ?>
                                                 </div>
                                             </div>
@@ -87,9 +87,7 @@
                                                 <div class="col-md-4">
                                                     <div class="form-group">
                                                         <label class="form-label" for="single-select ">Genre d'etudiant</label>
-                                                        <select name="" id="" class="form-control">
-                                                            <option value=""></option>
-                                                            <option value=""></option>
+                                                         <input type="text" class="form-control" id="" name="" value="<?= htmlspecialchars($etudiant['genre_etudiant']); ?>" disabled>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -118,7 +116,7 @@
                                                     <div class="form-group">
                                                         <label class="form-label" for="single-select ">Numero d'etudiant</label>
                                                         <?php if ($etudiant): ?>
-                                                        <input type="text" class="form-control" name="nom_prenom_etudiant"
+                                                        <input type="text" class="form-control" name=""
                                                         value="<?= htmlspecialchars($etudiant['numetudiant']); ?>" disabled>
                                                         <?php endif; ?>
                                                     </div>
@@ -153,14 +151,14 @@
                                                     <div class="form-group">
                                                         <label class="form-label" for="single-select ">Annee du diplome</label>
                                                         
-                                                        <input type="text" class="form-control">
+                                                        <input type="text" class="form-control" value="<?= htmlspecialchars($etudiant['anneediplome']); ?>" disabled>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4">
                                                     <div class="form-group">
                                                         <label class="form-label" for="single-select ">Serie</label>
                                                         <?php if ($etudiant): ?>
-                                                        <input type="number" class="form-control" value="<?= htmlspecialchars($etudiant['serie']); ?>" disabled>
+                                                        <input type="text" class="form-control" value="<?= htmlspecialchars($etudiant['serie']); ?>" disabled>
                                                         <?php endif; ?>
                                                     </div>
                                                 </div>
@@ -186,7 +184,7 @@
                                                     <div class="form-group">
                                                         <label class="form-label" for="single-select ">Adresse</label>
                                                         <?php if ($etudiant): ?>
-                                                        <input type="number" class="form-control" value="<?= htmlspecialchars($etudiant['adresseactuel']); ?>" disabled>
+                                                        <input type="text" class="form-control" value="<?= htmlspecialchars($etudiant['adresseactuel']); ?>" disabled>
                                                         <?php endif; ?>
                                                     </div>
                                                 </div>
@@ -194,7 +192,7 @@
                                                     <div class="form-group">
                                                         <label class="form-label" for="single-select ">Numero de place</label>
                                                         <?php if ($etudiant): ?>
-                                                        <input type="number" class="form-control" value="<?= htmlspecialchars($etudiant['numplace']); ?>" disabled>
+                                                        <input type="text" class="form-control" value="<?= htmlspecialchars($etudiant['numplace']); ?>" disabled>
                                                         <?php endif; ?>
                                                     </div>
                                                 </div>
@@ -227,7 +225,7 @@
                                                     <div class="form-group">
                                                         <label class="form-label" for="single-select ">Statut</label>
                                                         <?php if ($etudiant): ?>
-                                                        <input type="text" class="form-control" value="<?= htmlspecialchars($etudiant['numplace']); ?>" disabled>
+                                                        <input type="text" class="form-control" value="<?= htmlspecialchars($etudiant['id_statut']); ?>" disabled>
                                                         <?php endif; ?>
                                                     </div>
                                                 </div>
@@ -235,8 +233,8 @@
                                                     <div class="form-group">
                                                     <?php if ($etudiant): ?>
                                                         <label class="form-label" for="single-select">Filière</label>
-                                                        <select name="id_filiere" id="filiere_select" class="form-control">
-                                                            <option value="">Sélectionner une filière</option>                
+                                                        <input type="text" class="form-control" value="<?= htmlspecialchars($etudiant['sigle_filiere']); ?>" disabled>
+            
 
                                                         </select>
                                                     <?php endif; ?>
@@ -246,7 +244,11 @@
                                                 <div class="col-md-12">
                                                     <div class="form-group">
                                                         <label class="form-label" for="single-select ">Promotion</label>
-                                                        <input type="text" class="form-control">
+                                                            <?php foreach ($filieres as $Promotion): ?>  
+                                                        <input type="text" class="form-control"  value="<?= htmlspecialchars($Promotion->sigle_filiere."-".$Promotion->nom_semestre ."(".$Promotion->annee_universitaire.")"); ?>" disabled>
+                                                                              
+                                                          <?php endforeach; ?>
+
                                                     </div>
                                                 </div>
                                             </div>

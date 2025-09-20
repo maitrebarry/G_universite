@@ -111,13 +111,19 @@
                                                         <fieldset>
                                                             <div class="row">
                                                                 
-                                                                <div class="col-sm-4">
+                                                                <div class="col-sm-3">
                                                                     <div class="form-group">
-                                                                        <label>Nom && Prénom<span class="text-danger">*</span></label>
-                                                                        <input type="text" class="form-control required"  id="nomPrenom" placeholder="Nom && Prénom" name="nom_prenom_etudiant" >
+                                                                        <label>Nom<span class="text-danger">*</span></label>
+                                                                        <input type="text" class="form-control required"  id="nomPrenom" placeholder="Nom" name="nom_prenom_etudiant" >
                                                                     </div>
-                                                                </div>
-                                                                <div class="col-sm-4">
+                                                                    </div>
+                                                                     <div class="col-sm-3">
+                                                                        <div class="form-group">
+                                                                            <label>Prenom<span class="text-danger">*</span></label>
+                                                                            <input type="text" class="form-control required"  id="prenom" placeholder="Prénom" name="prenom" >
+                                                                        </div>
+                                                                     </div>
+                                                                <div class="col-sm-3">
                                                                     <div class="form-group">
                                                                         <label>Genre<span class="text-danger">*</span></label>
                                                                         <select class="form-select form-control" id="genre" name="genre_etudiant">
@@ -127,7 +133,7 @@
                                                                         </select>
                                                                     </div>
                                                                 </div>
-                                                                <div class="col-sm-4">
+                                                                <div class="col-sm-3">
                                                                     <div class="form-group">
                                                                         <label>Date de naissance<span class="text-danger">*</span></label>
                                                                         <input type="date" class="form-control" placeholder="Date de naissance" name="date_naissance_etudiant">

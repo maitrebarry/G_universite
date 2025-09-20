@@ -19,6 +19,12 @@
                             <a class="dropdown-item edit-btn"
                                 href="<?= ROOT ?>/Etudiants/paiement_etudiant/<?=$etudiant->id_etudiant?>"><i
                                     class="bx bx-money mr-1"></i> Paiement</a>
+                                    <a class="dropdown-item edit-btn"
+                                        href="<?= ROOT ?>/Etudiants/apercu_etudiant/<?=$etudiant->id_etudiant?>">
+                                        <i class="bx bx-show mr-1"></i> Aperçu</a>
+                                    <a class="dropdown-item edit-btn"
+                                        href="<?= ROOT ?>/Etudiants/modifier/<?=$etudiant->id_etudiant?>">
+                                        <i class="bx bx-info-circle mr-1"></i> Modifier</a>
                             <a class="dropdown-item" href=""><i class="bx bx-trash mr-1"></i> Supprimer</a>
                         </div>
                     </div>

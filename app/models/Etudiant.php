@@ -52,7 +52,39 @@ class Etudiant  extends Model
 
         return $default_image; // Retourne le fichier par défaut en cas d'erreur
     }
-
+ public function format_phone_number($phone_number) {
+        // Retirer tous les caractères non numériques
+        $phone_number = preg_replace('/\D/', '', $phone_number);
+    
+        // Ajouter un espace tous les 2 chiffres
+        $formatted_number = '';
+        for ($i = 0; $i < strlen($phone_number); $i += 2) {
+            $formatted_number .= substr($phone_number, $i, 2) . ' ';
+        }
+    
+        // Enlever l'espace à la fin (si présent)
+        return rtrim($formatted_number);
+    }
+     public function email_verification($email) {
+        $messages = [];
+    
+        // Vérification du format de l'email
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $messages[] = "L'email fourni n'est pas valide.";
+        }
+    
+        // Vérification de la longueur de l'email
+        if (strlen($email) > 255) {
+            $messages[] = "L'email ne doit pas dépasser 255 caractères.";
+        }
+    
+        // Vérification de l'unicité de l'email
+        if (!$this->is_email_unique($email)) {
+            $messages[] = "Cet email est déjà utilisé.";
+        }
+    
+        return $messages; 
+    }
         public function enregistrementEtudiantAvecPaiement($post, $file) {
         $errors = [];
         extract($post);
@@ -87,13 +119,13 @@ class Etudiant  extends Model
     // 1. Insertion de l'étudiant et récupération du dernier ID
     $result = $this->insertion_update_simples_insert_id(
         'INSERT INTO etudiant(
-            nom_prenom_etudiant, date_naissance_etudiant, lieu_naissance_etudiant,
+            nom_prenom_etudiant, prenom, date_naissance_etudiant, lieu_naissance_etudiant,
             genre_etudiant, matricule_etudiant, contact_etudiant, diplome, id_statut,
             numetudiant, prenompere, prenomnommere, cercleNais, commNais, nationnalite,
             anneediplome, serie, pays, academie, lieuresidenceparents, numplace, profilname,
             total_frais
         ) VALUES(
-            :nom_prenom_etudiant, :date_naissance_etudiant, :lieu_naissance_etudiant,
+            :nom_prenom_etudiant, :prenom, :date_naissance_etudiant, :lieu_naissance_etudiant,
             :genre_etudiant, :matricule_etudiant, :contact_etudiant, :diplome, :id_statut,
             :numetudiant, :prenompere, :prenomnommere, :cercleNais, :commNais, :nationnalite,
             :anneediplome, :serie, :pays, :academie, :lieuresidenceparents, :numplace, :profilname,
@@ -101,6 +133,7 @@ class Etudiant  extends Model
         )',
         [
             ':nom_prenom_etudiant' => $nom_prenom_etudiant,
+            ':prenom' => $prenom,
             ':date_naissance_etudiant' => $date_naissance_etudiant,
             ':lieu_naissance_etudiant' => $lieu_naissance_etudiant,
             ':genre_etudiant' => $genre_etudiant,
@@ -201,6 +234,85 @@ class Etudiant  extends Model
       
         
 }
+public function getEtudiantById($id) {
+    $sql = "SELECT e.*, f.sigle_filiere 
+          FROM etudiant e
+          INNER JOIN etudiant_promotion ep ON e.id_etudiant = ep.id_etudiants
+          INNER JOIN promotion p ON ep.id_promotion = p.id_promotion
+          INNER JOIN filiere f ON p.id_filiere = f.id_filiere
+            WHERE e.id_etudiant = ?";
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute([$id]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+  public function modification($data)
+    {
+        $modifier = "UPDATE etudiant SET nom_prenom_etudiant =:nom_prenom_etudiant,
+                prenom =:prenom,
+                date_naissance_etudiant =:date_naissance_etudiant,
+                lieu_naissance_etudiant =:lieu_naissance_etudiant,
+                genre_etudiant =:genre_etudiant,
+                matricule_etudiant =:matricule_etudiant,
+                contact_etudiant =:contact_etudiant,
+                diplome =:diplome,
+                id_statut =:id_statut,
+                id_filiere =:id_filiere,
+                numetudiant =:numetudiant,
+                prenompere =:prenompere,
+                prenomnommere =:prenomnommere,
+                cercleNais =:cercleNais,
+                commNais =:commNais, 
+                nationnalite =:nationnalite,
+                anneediplome =:anneediplome,
+                serie =:serie,
+                pays =:pays,
+                academie =:academie,
+                lieuresidenceparents=:lieuresidenceparents,
+                adresseactuel=:adresseactuel,
+                numplace =:numplace,
+                profilname =:profilname WHERE id_etudiant=:id";
+        $modiEtudiant = [
+                ':nom_prenom_etudiant' => $data['nom_prenom_etudiant'],
+                ':prenom' => $data['prenom'],
+                ':date_naissance_etudiant' => $data['date_naissance_etudiant'],
+                ':lieu_naissance_etudiant' => $data['lieu_naissance_etudiant'],
+                ':genre_etudiant' => $data['genre_etudiant'],
+                ':matricule_etudiant' => $data['matricule_etudiant'],
+                ':contact_etudiant' => $data['contact_etudiant'],
+                ':diplome' => $data['diplome'],
+                ':id_statut' => $data['id_statut'],
+                ':id_filiere' => $data['id_filiere'],
+                ':numetudiant' => $data['numetudiant'],
+                ':prenompere' => $data['prenompere'],
+                ':prenomnommere' => $data['prenomnommere'],
+                ':cercleNais' => $data['cercleNais'],
+                ':commNais' => $data['commNais'], 
+                ':nationnalite' => $data['nationnalite'],
+                ':anneediplome' => $data['anneediplome'],
+                ':serie' => $data['serie'],
+                ':pays' => $data['pays'],
+                ':academie' => $data['academie'],
+                ':lieuresidenceparents'=>$data['lieuresidenceparents'],
+                ':adresseactuel'=>$data['adresseactuel'],
+                ':numplace' => $data['numplace'],
+                ':profilname' => $data['profilname'],
+            ':id' => $data['id']
+        ];
+        $modifi = $this->insertion_update_simples($modifier, $modiEtudiant);
+        if ($modifi) {
+            //le set flash de modification
+            $this->set_flash("Modification faite avec succès","success");
+            //la redirection 
+            $this->redirect("Etudiants/tableEtudiant");
+        }
+    }
+
+
+
+
+
+    
     public function enregistrementPaiement($post)
     {
         $errors = [];
