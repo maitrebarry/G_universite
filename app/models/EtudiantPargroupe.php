@@ -7,11 +7,11 @@ public function insertEtudiant($data)
         // 1. Insertion dans etudiant et récupération du last ID
         $query = 'INSERT INTO etudiant (
             nom_prenom_etudiant, prenom, date_naissance_etudiant, lieu_naissance_etudiant,
-            genre_etudiant, matricule_etudiant, contact_etudiant, diplome,
+            genre_etudiant, matricule_etudiant, contact_etudiant, diplome, nationnalite, numetudiant,
             id_statut, total_frais
         ) VALUES (
             :nom_prenom_etudiant, :prenom, :date_naissance_etudiant, :lieu_naissance_etudiant,
-            :genre_etudiant, :matricule_etudiant, :contact_etudiant, :diplome,
+            :genre_etudiant, :matricule_etudiant, :contact_etudiant, :diplome,:nationnalite, :numetudiant,
             :id_statut, :total_frais
         )';
 
@@ -25,6 +25,8 @@ public function insertEtudiant($data)
     ':matricule_etudiant'  => $data['matricule_etudiant'] ?? '',
     ':contact_etudiant'    => $data['contact_etudiant'] ?? '',
     ':diplome'             => $data['diplome'] ?? '',
+    ':nationnalite'             => $data['nationnalite'] ?? '',
+    ':numetudiant'             => $data['numetudiant'] ?? '',
     ':id_statut'           => $data['id_statut'] ?? '',
     ':total_frais'         => $data['total_frais'] ?? 0
 ]);

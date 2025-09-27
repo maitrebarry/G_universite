@@ -86,10 +86,11 @@ $champsBdd = [
     'genre_etudiant' => 'Sexe',
     'matricule_etudiant' => 'N° Etudiant',
     'diplome' => 'Diplôme',
+    'nationnalite' => 'Nationnalite',
+    'numetudiant' => 'Matricule Cenou',
     'id_statut' => 'Statut',
     'lieu_naissance_etudiant' => 'Lieu de Naissance',
-    'contact_etudiant' => 'Contact',
-    'numetudiant' => 'Matricule Cenou'
+    'contact_etudiant' => 'Contact'
 ];
 
     // Entêtes Excel si présentes
@@ -146,7 +147,7 @@ public function uploadExcel()
         $_SESSION['excel_file_path'] = $destination;
         $_SESSION['entetes'] = $entetes;
 
-$champsBdd = ['nom_prenom_etudiant','prenom', 'date_naissance_etudiant', 'genre_etudiant','matricule_etudiant','diplome','id_statut','lieu_naissance_etudiant','contact_etudiant','numetudiant'];
+$champsBdd = ['nom_prenom_etudiant','prenom', 'date_naissance_etudiant', 'genre_etudiant','matricule_etudiant','diplome','nationnalite','numetudiant','id_statut','lieu_naissance_etudiant','contact_etudiant'];
 
         $this->view('liste_inscription_groupe', [
             'entetesExcel' => $entetes,
