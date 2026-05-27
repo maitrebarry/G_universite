@@ -755,40 +755,7 @@
                         </div>
                     </div>
                 </div>
-                  <!-- ✅ Section IA : Prévision + Chat -->
-                <div class="row mt-4 g-4">
-                    <!-- 📊 Prévision IA -->
-                    <div class="col-lg-6">
-                        <div class="card shadow-lg border-0 rounded-4 h-100">
-                            <div class="card-header bg-gradient-primary text-white text-center fw-bold fs-5">
-                                📊 Prévision IA
-                            </div>
-                            <div class="card-body" id="ai-forecast" style="min-height: 350px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                                <p class="text-muted text-center mb-3">Cliquez pour générer une prévision détaillée.</p>
-                                <button id="btn-refresh-ai" class="btn btn-primary w-75 rounded-pill shadow-sm">
-                                    🔄 Générer la prévision
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 🤖 Chat IA -->
-                    <div class="col-lg-6">
-                        <div class="card shadow-lg border-0 rounded-4 h-100">
-                            <div class="card-header bg-gradient-secondary text-white text-center fw-bold fs-5">
-                                🤖 Chat IA
-                            </div>
-                            <div class="card-body d-flex flex-column" style="height: 400px;">
-                                <!-- Zone Chat -->
-                                <div id="chat-box" class="chat-box mb-3"></div>
-                                <!-- Zone Input -->
-                                <div class="chat-input-container">
-                                    <input type="text" id="chat-input" class="form-control rounded-pill shadow-sm" placeholder="Posez votre question et appuyez sur Entrée...">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+               
             </section>
             <!-- ==================================== -->
             <!-- SECTION DIRECTEUR GENERAL ADJOINT (DGA) -->
@@ -920,40 +887,7 @@
                         </div>
                     </div>
                 </div>
-                    <!-- ✅ Section IA : Prévision + Chat -->
-                <div class="row mt-4 g-4">
-                    <!-- 📊 Prévision IA -->
-                    <div class="col-lg-6">
-                        <div class="card shadow-lg border-0 rounded-4 h-100">
-                            <div class="card-header bg-gradient-primary text-white text-center fw-bold fs-5">
-                                📊 Prévision IA
-                            </div>
-                            <div class="card-body" id="ai-forecast" style="min-height: 350px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                                <p class="text-muted text-center mb-3">Cliquez pour générer une prévision détaillée.</p>
-                                <button id="btn-refresh-ai" class="btn btn-primary w-75 rounded-pill shadow-sm">
-                                    🔄 Générer la prévision
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 🤖 Chat IA -->
-                    <div class="col-lg-6">
-                        <div class="card shadow-lg border-0 rounded-4 h-100">
-                            <div class="card-header bg-gradient-secondary text-white text-center fw-bold fs-5">
-                                🤖 Chat IA
-                            </div>
-                            <div class="card-body d-flex flex-column" style="height: 400px;">
-                                <!-- Zone Chat -->
-                                <div id="chat-box" class="chat-box mb-3"></div>
-                                <!-- Zone Input -->
-                                <div class="chat-input-container">
-                                    <input type="text" id="chat-input" class="form-control rounded-pill shadow-sm" placeholder="Posez votre question et appuyez sur Entrée...">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+               
             </section>
             <!-- ==================================== -->
             <!-- SECTION DIRECTEUR GENERAL (DG) -->
@@ -1094,41 +1028,6 @@
                             </div>
                         </div>
                     </div>
-                      <!-- ✅ Section IA : Prévision + Chat -->
-                <div class="row mt-4 g-4">
-                    <!-- 📊 Prévision IA -->
-                    <div class="col-lg-6">
-                        <div class="card shadow-lg border-0 rounded-4 h-100">
-                            <div class="card-header bg-gradient-primary text-white text-center fw-bold fs-5">
-                                📊 Prévision IA
-                            </div>
-                            <div class="card-body" id="ai-forecast" style="min-height: 350px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                                <p class="text-muted text-center mb-3">Cliquez pour générer une prévision détaillée.</p>
-                                <button id="btn-refresh-ai" class="btn btn-primary w-75 rounded-pill shadow-sm">
-                                    🔄 Générer la prévision
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 🤖 Chat IA -->
-                    <div class="col-lg-6">
-                        <div class="card shadow-lg border-0 rounded-4 h-100">
-                            <div class="card-header bg-gradient-secondary text-white text-center fw-bold fs-5">
-                                🤖 Chat IA
-                            </div>
-                            <div class="card-body d-flex flex-column" style="height: 400px;">
-                                <!-- Zone Chat -->
-                                <div id="chat-box" class="chat-box mb-3"></div>
-                                <!-- Zone Input -->
-                                <div class="chat-input-container">
-                                    <input type="text" id="chat-input" class="form-control rounded-pill shadow-sm" placeholder="Posez votre question et appuyez sur Entrée...">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                </div>
             </section>
                 </div>
                 <?php else: ?>
@@ -1142,217 +1041,11 @@
 
 <!-- Scripts pour les graphiques et gestion des rôles -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    const levelChart = new Chart(document.getElementById('levelChart'), {
-        type: 'doughnut',
-        data: {
-            labels: ['L1', 'L2', 'L3'],
-            datasets: [{
-                data: [<?= $statsNiveaux->l1 ?>, <?= $statsNiveaux->l2 ?>, <?= $statsNiveaux->l3 ?>],
-                backgroundColor: ['#007bff', '#28a745', '#17a2b8']
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { position: 'bottom' },
-                tooltip: {
-                    callbacks: {
-                        label: function (context) {
-                            let total = <?= $statsNiveaux->l1 + $statsNiveaux->l2 + $statsNiveaux->l3 ?>;
-                            let value = context.parsed;
-                            let percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
-                            return `${context.label}: ${value} (${percentage}%)`;
-                        }
-                    }
-                }
-            }
-        }
-    });
 
-    const genderChart = new Chart(document.getElementById('genderChart'), {
-        type: 'pie',
-        data: {
-            labels: ['Hommes', 'Femmes'],
-            datasets: [{
-                data: [<?= $statsGenre->male ?>, <?= $statsGenre->female ?>],
-                backgroundColor: ['#6c757d', '#e83e8c']
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { position: 'bottom' },
-                tooltip: {
-                    callbacks: {
-                        label: function (context) {
-                            let total = <?= $statsGenre->male + $statsGenre->female ?>;
-                            let value = context.parsed;
-                            let percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
-                            return `${context.label}: ${value} (${percentage}%)`;
-                        }
-                    }
-                }
-            }
-        }
-    });
-</script>
 
-<script>
-    const ctx = document.getElementById('chartInscriptions').getContext('2d');
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: [<?php foreach($inscrits_par_annee as $a) echo "'".$a->annee."',"; ?>],
-            datasets: [{
-                label: 'Étudiants inscrits',
-                data: [<?php foreach($inscrits_par_annee as $a) echo $a->total.","; ?>],
-                backgroundColor: ['#007bff','#17a2b8','#28a745'],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { display: false },
-                title: { display: true, text: 'Inscriptions sur les 3 dernières années' }
-            },
-            scales: {
-                y: { beginAtZero: true }
-            }
-        }
-    });
-</script>
-<!-- //IA prevision et cht bot -->
-<script>
-    const AIMessages = {
-        loading: "⏳ Analyse en cours...",
-        error: "⚠️ Service indisponible",
-        emptyResponse: "Pas de réponse de l'IA"
-    };
 
-    function fetchWithTimeout(url, options, timeout = 15000) {
-        return Promise.race([
-            fetch(url, options),
-            new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), timeout))
-        ]);
-    }
 
-    // ✅ Rafraîchir Prévision IA
-    document.addEventListener('click', function(e) {
-        if (e.target && e.target.id === 'btn-refresh-ai') {
-            refreshAI();
-        }
-    });
 
-    async function refreshAI() {
-        const forecast = document.getElementById('ai-forecast');
-        forecast.innerHTML = `<p class="ai-status-loading">${AIMessages.loading}</p>`;
-
-        try {
-            const response = await fetchWithTimeout("<?= ROOT ?>/Homes/refreshAI", {
-                method: "POST",
-                headers: {"Content-Type": "application/json"}
-            });
-
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-            const data = await response.json();
-
-            // ✅ Affichage sous forme de tableau
-            forecast.innerHTML = `
-                <div class="ai-response">
-                    <h5 class="mb-3 text-center fw-bold">📊 Résultat IA</h5>
-                    <table class="table table-hover table-bordered text-center align-middle">
-                        <tbody>
-                            <tr><th>🔮 Prédiction</th><td>${data.prediction}%</td></tr>
-                            <tr><th>✅ Taux de réussite</th><td>${data.stats.taux_reussite}%</td></tr>
-                            <tr><th>📈 Taux d'inscription</th><td>${data.stats.taux_inscription}%</td></tr>
-                            <tr><th>❌ Taux d'échec</th><td>${data.stats.taux_echec}%</td></tr>
-                            <tr><th>🏆 Meilleur département</th><td>${data.stats.best_dep.nom} (${data.stats.best_dep.taux}%)</td></tr>
-                            <tr><th>📉 Département à améliorer</th><td>${data.stats.worst_dep.nom} (${data.stats.worst_dep.taux}%)</td></tr>
-                        </tbody>
-                    </table>
-                    <h6 class="text-center mt-3 fw-bold">📌 Répartition par département</h6>
-                    <table class="table table-sm table-striped mt-2">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Département</th>
-                                <th>Étudiants</th>
-                                <th>Admis</th>
-                                <th>Taux</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${data.departements.map(dep => `
-                                <tr>
-                                    <td>${dep.departement}</td>
-                                    <td>${dep.total_etudiants}</td>
-                                    <td>${dep.admis}</td>
-                                    <td>${dep.taux_reussite}%</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-                <button id="btn-refresh-ai" class="btn btn-primary w-100 mt-3 rounded-pill">🔄 Rafraîchir</button>
-            `;
-        } catch (error) {
-            forecast.innerHTML = `<p class="ai-status-error">${AIMessages.error}</p>`;
-            console.error("Erreur Prévision IA:", error);
-        }
-    }
-
-    // ✅ Chat IA avec avatars et heure
-    document.getElementById('chat-input').addEventListener('keypress', e => {
-        if (e.key === 'Enter') sendChat();
-    });
-
-    async function sendChat() {
-        const input = document.getElementById('chat-input');
-        const question = input.value.trim();
-        if (!question) return;
-
-        const chatBox = document.getElementById('chat-box');
-        const id = Date.now();
-        const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-
-        // ✅ Ajout du message utilisateur
-        chatBox.innerHTML += `
-            <div class="chat-message user-message">
-                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="chat-avatar">
-                <div><b>Vous :</b> ${question} <br><span class="chat-time">${time}</span></div>
-            </div>
-            <div id="ai-${id}" class="chat-message ai-message">
-                <img src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png" class="chat-avatar">
-                <div><b>IA :</b> <em>${AIMessages.loading}</em><br><span class="chat-time">${time}</span></div>
-            </div>
-        `;
-        input.value = '';
-        chatBox.scrollTop = chatBox.scrollHeight;
-
-        try {
-            const response = await fetchWithTimeout("<?= ROOT ?>/Homes/chatAI", {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({ question })
-            }, 20000);
-
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-            const data = await response.json();
-            updateAIMessage(id, data.response || AIMessages.emptyResponse);
-        } catch (error) {
-            console.error("Erreur Chat IA:", error);
-            updateAIMessage(id, AIMessages.error);
-        }
-    }
-
-    function updateAIMessage(id, content) {
-        const element = document.querySelector(`#ai-${id} div`);
-        if (element) element.innerHTML = `<b>IA :</b> ${content} <br><span class="chat-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>`;
-    }
-</script>
 <?php $this->view("Partials/foot") ?>
 <?php $this->view("Partials/footer") ?>
 </body>

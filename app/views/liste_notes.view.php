@@ -387,7 +387,7 @@ $this->view("Partials/header") ?>
         // }
 
         if (!$("#promotions option:selected").text().includes("S")) {
-            loadEtudiants(ROOT + "/get_moyenne_licence_etudiant");
+            loadEtudiants(window.APP_ROUTE("Notes/get_moyenne_licence_etudiant"));
             $("#ues").empty();
             $("#ues").append(
                 `<option value="" >Selectionner ue</option>`

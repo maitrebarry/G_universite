@@ -1,5 +1,6 @@
 let semestreCount = 0;
-const ROOT_FILIERE = "HTTP://localhost/G_universite/public/Filieres";
+// const ROOT_FILIERE = "http://localhost:8080/G_universite/public/Filieres";
+const ROOT_FILIERE = ROOT + "/Filieres";
 // Fonction pour ajouter un semestre dès qu'il est sélectionné
 function addSemestre() {
   const semestre = document.getElementById("idSemestre");
@@ -19,6 +20,7 @@ function addSemestre() {
   $.ajax({
     method: "POST",
     url: ROOT_FILIERE + "/post_ajouter_Filiere",
+    
     data: {
       action: "semestre",
       semestreId: semestreId,

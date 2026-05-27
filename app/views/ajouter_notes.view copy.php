@@ -313,7 +313,7 @@
         /////////////////////////////////////////////////////////////////////////////////////////////////
         $(document).ready(function() {
             $("#promotions").change(function() {
-                const ROOT = "HTTP://localhost/G_universite/public/Notes";
+                const ROOT = window.APP_ROUTE("Notes");
                 var promotionId = $(this).val();
 
                 if (promotionId) {
@@ -357,7 +357,7 @@
 
         $(document).ready(function() {
             $("#promotions").change(function() {
-                const ROOT = "HTTP://localhost/G_universite/public/Notes";
+                const ROOT = window.APP_ROUTE("Notes");
                 var promotionId = $(this).val(); // Récupérer l'ID de la promotion sélectionnée
 
                 if (promotionId) {

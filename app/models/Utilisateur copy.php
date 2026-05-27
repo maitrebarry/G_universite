@@ -4,7 +4,7 @@ class Utilisateur extends Model
   public $errors = [];
   public function upload_cv($file)
   {
-      $upload_dir = 'C:/xampp/htdocs/G_universite/public/signature/'; // Dossier de destination
+      $upload_dir = PUBLIC_PATH . '/signature/'; // Dossier de destination
       $taillemax = 2067152; // 2 Mo
       $extensions_valides = ['gif', 'png', 'jpg', 'jpeg'];
       $mime_types_valides = ['image/gif', 'image/png', 'image/jpeg']; // Vérification par MIME type

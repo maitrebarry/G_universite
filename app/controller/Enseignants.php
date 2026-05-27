@@ -124,12 +124,12 @@ class Enseignants extends Controller
 
             // Upload CV
             if (isset($_FILES['enseignant_cv']) && $_FILES['enseignant_cv']['error'] === UPLOAD_ERR_OK) {
-                $uploadDir = 'C:/xampp/htdocs/G_universite/public/cv_enseignant/';
+                $uploadDir = PUBLIC_PATH . '/cv_enseignant/';
                 $cvFileName = uniqid() . '_' . basename($_FILES['enseignant_cv']['name']);
                 $cvFilePath = $uploadDir . $cvFileName;
 
-                if (!empty($enseignantData->enseignant_cv) && file_exists('C:/xampp/htdocs/G_universite/public/' . $enseignantData->enseignant_cv)) {
-                    unlink('C:/xampp/htdocs/G_universite/public/' . $enseignantData->enseignant_cv);
+                if (!empty($enseignantData->enseignant_cv) && file_exists(PUBLIC_PATH . '/' . ltrim($enseignantData->enseignant_cv, '/'))) {
+                    unlink(PUBLIC_PATH . '/' . ltrim($enseignantData->enseignant_cv, '/'));
                 }
 
                 if (move_uploaded_file($_FILES['enseignant_cv']['tmp_name'], $cvFilePath)) {
@@ -143,12 +143,12 @@ class Enseignants extends Controller
 
             // Upload Contrat
             if (isset($_FILES['contrat']) && $_FILES['contrat']['error'] === UPLOAD_ERR_OK) {
-                $uploadContratDir = 'C:/xampp/htdocs/G_universite/public/contrat_enseignant/';
+                $uploadContratDir = PUBLIC_PATH . '/contrat_enseignant/';
                 $contratFileName = uniqid() . '_' . basename($_FILES['contrat']['name']);
                 $contratFilePath = $uploadContratDir . $contratFileName;
 
-                if (!empty($enseignantData->contrat) && file_exists('C:/xampp/htdocs/G_universite/public/' . $enseignantData->contrat)) {
-                    unlink('C:/xampp/htdocs/G_universite/public/' . $enseignantData->contrat);
+                if (!empty($enseignantData->contrat) && file_exists(PUBLIC_PATH . '/' . ltrim($enseignantData->contrat, '/'))) {
+                    unlink(PUBLIC_PATH . '/' . ltrim($enseignantData->contrat, '/'));
                 }
 
                 if (move_uploaded_file($_FILES['contrat']['tmp_name'], $contratFilePath)) {
@@ -815,5 +815,4 @@ class Enseignants extends Controller
         ]);
     }
 }
-
 

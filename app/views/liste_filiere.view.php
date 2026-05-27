@@ -284,6 +284,9 @@
     <!-- inclusion du partie footer-->
     <?php $this->view("Partials/footer") ?>
     <!-- inclusion du partie footer fin-->
+     <script>const ROOT = "<?= ROOT ?>";</script>
+
+
     <script src="<?= ROOT ?>/assets/mon_js/filiere.js"></script>
     <script src="<?= ROOT ?>/assets/mon_js/edt.js"></script>
 

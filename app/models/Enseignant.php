@@ -18,7 +18,7 @@ class Enseignant extends Model
 
             if ($file_size <= $taillemax) {
                 if (in_array($file_extension, $extensions_valides)) {
-                    $destination = 'C:/xampp/htdocs/G_universite/public/cv_enseignant/' . $file_name;
+                    $destination = PUBLIC_PATH . '/cv_enseignant/' . $file_name;
                     if (move_uploaded_file($file_tmp, $destination)) {
                         return '/cv_enseignant/' . $file_name; // Chemin relatif enregistré dans la base
                     } else {
@@ -64,7 +64,7 @@ class Enseignant extends Model
     
             if ($file_size <= $taillemax) {
                 if (in_array($file_extension, $extensions_valides)) {
-                    $destination = 'C:/xampp/htdocs/G_universite/public/contrat_enseignant/' . $file_name;
+                    $destination = PUBLIC_PATH . '/contrat_enseignant/' . $file_name;
                     if (move_uploaded_file($file_tmp, $destination)) {
                         return '/contrat_enseignant/' . $file_name; // Chemin relatif enregistré dans la base
                     } else {
@@ -96,12 +96,124 @@ class Enseignant extends Model
         return $default_image; // Retourne le fichier par défaut en cas d'erreur
     }
 
+    // public function enregistrement($files = [], $post, $allGrades = [])
+    // {
+    //     // Initialisation de $files si null
+    //     $files = $files ?? [];
+        
+    //     $statut = $post['statut'] ?? null; // Note: vérifiez si c'est 'statut' ou 'statut' dans $_POST
+    //     $grade = $post['grade'] ?? null;
+    //     $matricule = $post['matricule'] ?? null;
+    //     $nom = $post['nom'] ?? null;
+    //     $prenom = $post['prenom'] ?? null;
+    //     $date_naissance = $post['date_naissance'] ?? null;
+    //     $email = $post['email'] ?? null;
+    //     $telephone = $post['telephone'] ?? null;
+    //     $diplome = $post['diplome'] ?? null;
+    //     $code = $post['code'] ?? null;
+    //     $administration = $post['administration'] ?? 0;
+    //     $id_departement = $post['id_departement'] ?? null; 
+    //     // Gérer les champs en fonction du statut (avec orthographe originale)
+    //     if ($statut === "NON_PERMANANT") {
+    //         $grade = null;
+    //     } else {
+    //         $code = null;
+    //         // Initialiser correctement les fichiers
+    //         $files['cv'] = $files['cv'] ?? null;
+    //         $files['contrat'] = $files['contrat'] ?? null;
+    
+    //         // Validation supplémentaire pour les permanents
+    //         if (!empty($grade)) {
+    //             $selectedGrade = null;
+    //             foreach ($allGrades as $g) {
+    //                 if ($g->id_grade == $grade) {
+    //                     $selectedGrade = $g;
+    //                     break;
+    //                 }
+    //             }
+    
+    //             if ($selectedGrade) {
+    //                 $isAdminGrade = strpos($selectedGrade->nom_grade, '_admin') !== false;
+    //                 if ($administration == 1 && !$isAdminGrade) {
+    //                     $this->errors[] = "Le grade sélectionné n'est pas un grade administratif";
+    //                 } elseif ($administration == 0 && $isAdminGrade) {
+    //                     $this->errors[] = "Vous avez sélectionné un grade administratif mais le statut administration est 'Non'";
+    //                 }
+    //             }
+    //         }
+    //     }
+    
+    //     // Upload des fichiers seulement si nécessaires
+    //     $cv = null;
+    //     $contrat = null;
+        
+    //     if ($statut === "NON_PERMANANT") {
+    //         $cv = $this->upload_cv($files['cv'] ?? null);
+    //         $contrat = $this->upload_contrat($files['contrat'] ?? null);
+    //     }
+    
+    //     // Validation commune
+    //     if (empty($nom)) $this->errors[] = "Le nom est obligatoire";
+    //     if (empty($prenom)) $this->errors[] = "Le prénom est obligatoire";
+    //     if (empty($date_naissance)) $this->errors[] = "La date de naissance est obligatoire";
+    //     if (empty($email)) $this->errors[] = "L'email est obligatoire";
+    //     if (empty($telephone)) $this->errors[] = "Le téléphone est obligatoire";
+    //     if (empty($diplome)) $this->errors[] = "Le diplôme est obligatoire";
+    //     if (empty($matricule)) $this->errors[] = "Le matricule est obligatoire";
+    
+    //     if ($statut === "NON_PERMANANT") {
+    //         if (empty($cv)) $this->errors[] = "Le CV est obligatoire";
+    //         if (empty($contrat)) $this->errors[] = "Le contrat est obligatoire";
+    //         if (empty($code)) $this->errors[] = "Le code bancaire est obligatoire";
+    //     } else {
+    //         if (empty($grade)) $this->errors[] = "Le grade est obligatoire pour un permanent";
+    //     }
+    
+    //     if (!empty($this->errors)) return false;
+    
+    //     $bdd = $this->connect();
+        
+    //     $sql = "INSERT INTO enseignants 
+    //         (enseignant_statut, id_grade, enseignant_matricule, enseignant_nom, enseignant_prenom, 
+    //         enseignant_date_naissance, enseignant_email, enseignant_telephone, enseignant_diplome, 
+    //         enseignant_cv, contrat, code_bancaire, administration,id_departement) 
+    //         VALUES 
+    //         (:enseignant_statut, :id_grade, :enseignant_matricule, :enseignant_nom, :enseignant_prenom, 
+    //         :enseignant_date_naissance, :enseignant_email, :enseignant_telephone, :enseignant_diplome, 
+    //         :enseignant_cv, :contrat, :code_bancaire, :administration, :id_departement)";
+
+    //     $stmt = $bdd->prepare($sql);
+    
+    //     $success = $stmt->execute([
+    //         ":enseignant_statut" => $statut, // On conserve l'orthographe originale
+    //         ":id_grade" => $grade,
+    //         ":enseignant_matricule" => $matricule,
+    //         ":enseignant_nom" => $nom,
+    //         ":enseignant_prenom" => $prenom,
+    //         ":enseignant_date_naissance" => $date_naissance,
+    //         ":enseignant_email" => $email,
+    //         ":enseignant_telephone" => $telephone,
+    //         ":enseignant_diplome" => $diplome,
+    //         ":enseignant_cv" => $cv,
+    //         ":contrat" => $contrat,
+    //         ":code_bancaire" => $code,
+    //         ":administration" => $administration,
+    //         ":id_departement" => $id_departement
+    //     ]);
+    
+    //     if ($success) {
+    //         $this->set_flash("Enseignant ajouté avec succès", 'primary');
+    //         $this->redirect("Enseignants/liste_enseignant");
+    //     } else {
+    //         $errorInfo = $stmt->errorInfo();
+    //         $this->errors[] = "Échec de l'ajout de l'enseignant: " . $errorInfo[2];
+    //     }
+    // }
     public function enregistrement($files = [], $post, $allGrades = [])
     {
-        // Initialisation de $files si null
         $files = $files ?? [];
-        
-        $statut = $post['statut'] ?? null; // Note: vérifiez si c'est 'statut' ou 'statut' dans $_POST
+
+        $statut = $post['statut'] ?? null;
         $grade = $post['grade'] ?? null;
         $matricule = $post['matricule'] ?? null;
         $nom = $post['nom'] ?? null;
@@ -112,46 +224,8 @@ class Enseignant extends Model
         $diplome = $post['diplome'] ?? null;
         $code = $post['code'] ?? null;
         $administration = $post['administration'] ?? 0;
-        $id_departement = $post['id_departement'] ?? null; 
-        // Gérer les champs en fonction du statut (avec orthographe originale)
-        if ($statut === "NON_PERMANANT") {
-            $grade = null;
-        } else {
-            $code = null;
-            // Initialiser correctement les fichiers
-            $files['cv'] = $files['cv'] ?? null;
-            $files['contrat'] = $files['contrat'] ?? null;
-    
-            // Validation supplémentaire pour les permanents
-            if (!empty($grade)) {
-                $selectedGrade = null;
-                foreach ($allGrades as $g) {
-                    if ($g->id_grade == $grade) {
-                        $selectedGrade = $g;
-                        break;
-                    }
-                }
-    
-                if ($selectedGrade) {
-                    $isAdminGrade = strpos($selectedGrade->nom_grade, '_admin') !== false;
-                    if ($administration == 1 && !$isAdminGrade) {
-                        $this->errors[] = "Le grade sélectionné n'est pas un grade administratif";
-                    } elseif ($administration == 0 && $isAdminGrade) {
-                        $this->errors[] = "Vous avez sélectionné un grade administratif mais le statut administration est 'Non'";
-                    }
-                }
-            }
-        }
-    
-        // Upload des fichiers seulement si nécessaires
-        $cv = null;
-        $contrat = null;
-        
-        if ($statut === "NON_PERMANANT") {
-            $cv = $this->upload_cv($files['cv'] ?? null);
-            $contrat = $this->upload_contrat($files['contrat'] ?? null);
-        }
-    
+        $id_departement = $post['id_departement'] ?? null;
+
         // Validation commune
         if (empty($nom)) $this->errors[] = "Le nom est obligatoire";
         if (empty($prenom)) $this->errors[] = "Le prénom est obligatoire";
@@ -160,32 +234,51 @@ class Enseignant extends Model
         if (empty($telephone)) $this->errors[] = "Le téléphone est obligatoire";
         if (empty($diplome)) $this->errors[] = "Le diplôme est obligatoire";
         if (empty($matricule)) $this->errors[] = "Le matricule est obligatoire";
-    
+
+        // Validation fichiers et code bancaire
         if ($statut === "NON_PERMANANT") {
+            $cv = $this->upload_cv($files['cv'] ?? null);
+            $contrat = $this->upload_contrat($files['contrat'] ?? null);
             if (empty($cv)) $this->errors[] = "Le CV est obligatoire";
             if (empty($contrat)) $this->errors[] = "Le contrat est obligatoire";
             if (empty($code)) $this->errors[] = "Le code bancaire est obligatoire";
         } else {
             if (empty($grade)) $this->errors[] = "Le grade est obligatoire pour un permanent";
         }
-    
+
         if (!empty($this->errors)) return false;
-    
+
         $bdd = $this->connect();
-        
+
+        // Vérification unicité matricule + nom + prenom
+        $checkSql = "SELECT COUNT(*) FROM enseignants WHERE enseignant_matricule = :matricule AND enseignant_nom = :nom AND enseignant_prenom = :prenom";
+        $checkStmt = $bdd->prepare($checkSql);
+        $checkStmt->execute([
+            ":matricule" => $matricule,
+            ":nom" => $nom,
+            ":prenom" => $prenom
+        ]);
+        $exists = $checkStmt->fetchColumn();
+
+        if ($exists) {
+            $this->errors[] = "Un enseignant avec ce matricule, nom et prénom existe déjà.";
+            return false;
+        }
+
+        // Insertion
         $sql = "INSERT INTO enseignants 
             (enseignant_statut, id_grade, enseignant_matricule, enseignant_nom, enseignant_prenom, 
             enseignant_date_naissance, enseignant_email, enseignant_telephone, enseignant_diplome, 
-            enseignant_cv, contrat, code_bancaire, administration,id_departement) 
+            enseignant_cv, contrat, code_bancaire, administration, id_departement) 
             VALUES 
             (:enseignant_statut, :id_grade, :enseignant_matricule, :enseignant_nom, :enseignant_prenom, 
             :enseignant_date_naissance, :enseignant_email, :enseignant_telephone, :enseignant_diplome, 
             :enseignant_cv, :contrat, :code_bancaire, :administration, :id_departement)";
 
         $stmt = $bdd->prepare($sql);
-    
+
         $success = $stmt->execute([
-            ":enseignant_statut" => $statut, // On conserve l'orthographe originale
+            ":enseignant_statut" => $statut,
             ":id_grade" => $grade,
             ":enseignant_matricule" => $matricule,
             ":enseignant_nom" => $nom,
@@ -194,13 +287,13 @@ class Enseignant extends Model
             ":enseignant_email" => $email,
             ":enseignant_telephone" => $telephone,
             ":enseignant_diplome" => $diplome,
-            ":enseignant_cv" => $cv,
-            ":contrat" => $contrat,
+            ":enseignant_cv" => $cv ?? null,
+            ":contrat" => $contrat ?? null,
             ":code_bancaire" => $code,
             ":administration" => $administration,
             ":id_departement" => $id_departement
         ]);
-    
+
         if ($success) {
             $this->set_flash("Enseignant ajouté avec succès", 'primary');
             $this->redirect("Enseignants/liste_enseignant");
@@ -209,6 +302,7 @@ class Enseignant extends Model
             $this->errors[] = "Échec de l'ajout de l'enseignant: " . $errorInfo[2];
         }
     }
+
         // Sélectionner les enseignants CDI
     // public function getEnseignantCDI()
     // {

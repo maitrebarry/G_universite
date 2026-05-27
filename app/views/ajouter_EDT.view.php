@@ -468,6 +468,10 @@ td {
 <!-- END: Body-->
 
 </html>
+ <script>
+    const ROOT = "<?= ROOT ?>";
+    const ROOT_EDT = ROOT + "/Emploi_du_temps";
+</script>
 <script src="<?= ROOT ?>/assets/mon_js/edt.js"></script>
 <script src="<?= ROOT ?>/assets/mon_js/contrainte_date_edt.js"></script>
 

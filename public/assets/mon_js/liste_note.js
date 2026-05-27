@@ -1,5 +1,6 @@
 // Fonction pour afficher/masquer les champs de session
-const ROOT = "http://localhost/G_universite/public/Notes";
+var ROOT_NOTES = window.APP_ROUTE ? window.APP_ROUTE("Notes") : window.APP_ROOT + "/Notes";
+var ROOT_EDT = window.APP_ROUTE ? window.APP_ROUTE("Emploi_du_temps") : window.APP_ROOT + "/Emploi_du_temps";
 
 function toggleSessionFields(show, hideNotes) {
   const sessionInfo = document.getElementById("session_info");
@@ -13,7 +14,7 @@ function toggleSessionFields(show, hideNotes) {
   });
 }
 
-function loadEtudiants(url = ROOT + "/get_moyenne_etudiant") {
+function loadEtudiants(url = ROOT_NOTES + "/get_moyenne_etudiant") {
   let filiere_id = $("#promotions option:selected").data("filiere");
   let promotion_id = $("#promotions option:selected").val();
   let licence = $("#licences option:selected").data("semestre");
@@ -60,9 +61,8 @@ function loadEtudiants(url = ROOT + "/get_moyenne_etudiant") {
 }
 
 function saveNoteEtudiant(noteDevoir, noteEvaluation, noteSession, idNote) {
-  const ROOT = "http://localhost/G_universite/public/Notes";
   $.ajax({
-    url: ROOT + "/save_note_etudiant",
+    url: ROOT_NOTES + "/save_note_etudiant",
     type: "POST",
     data: {
       idNote: idNote,
@@ -101,7 +101,7 @@ async function infosFiliere(idFiliere, source = null) {
   try {
     response = await $.ajax({
       method: "POST",
-      url: "http://localhost/G_universite/public/Emploi_du_temps/filiere_info",
+      url: ROOT_EDT + "/filiere_info",
       dataType: "json",
 
       data: {
@@ -121,7 +121,7 @@ async function infosFiliere(idFiliere, source = null) {
 function classesAnneeUniversitaire(anneeUniversitaire) {
   $.ajax({
     method: "POST",
-    url: ROOT + "/get_classe_annee",
+    url: ROOT_NOTES + "/get_classe_annee",
     dataType: "json",
 
     data: {
@@ -223,7 +223,7 @@ function imprimer(nom, html, format = "a3", margin = 0) {
 
 // Fonction pour imprimer les relevés de notes
 function imprimerReleve() {
-  url = ROOT + "/get_releves_notes";
+  url = ROOT_NOTES + "/get_releves_notes";
   let promotionId = $("#promotions option:selected").val();
   let semestreId = $("#promotions option:selected").data("semestre");
 

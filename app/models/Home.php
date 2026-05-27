@@ -175,9 +175,9 @@ class Home extends Model
                 f.nom_filiere,
                 f.sigle_filiere,
                 CASE 
-                    WHEN se.id_semestre IN (1, 2) THEN 'L1'
-                    WHEN se.id_semestre IN (3, 4) THEN 'L2'
-                    WHEN se.id_semestre IN (5, 6) THEN 'L3'
+                    WHEN MIN(se.id_semestre) IN (1, 2) THEN 'L1'
+                    WHEN MIN(se.id_semestre) IN (3, 4) THEN 'L2'
+                    WHEN MIN(se.id_semestre) IN (5, 6) THEN 'L3'
                     ELSE 'Autre'
                 END AS niveau,
                 p.annee_universitaire,
@@ -193,11 +193,8 @@ class Home extends Model
             LEFT JOIN promotion p ON f.id_filiere = p.id_filiere
             LEFT JOIN parcours pa ON p.id_parcours = pa.id_parcours
             LEFT JOIN semestre se ON pa.id_semestre = se.id_semestre
-           LEFT JOIN etudiant_promotion ep 
-             ON ep.id_promotion = p.id_promotion AND ep.etat = 1
-            LEFT JOIN etudiant e 
-                ON e.id_etudiant = ep.id_etudiants
-
+            LEFT JOIN etudiant_promotion ep ON ep.id_promotion = p.id_promotion AND ep.etat = 1
+            LEFT JOIN etudiant e ON e.id_etudiant = ep.id_etudiants
             LEFT JOIN payement py ON py.idEtudt = e.id_etudiant
             WHERE f.id_departement = :id_departement
             AND p.annee_universitaire = (
@@ -205,11 +202,10 @@ class Home extends Model
                 FROM promotion 
                 WHERE id_filiere = f.id_filiere
             )
-            GROUP BY f.id_filiere, se.id_semestre
+                       GROUP BY f.id_filiere, p.annee_universitaire
             HAVING niveau IS NOT NULL
-            ORDER BY f.nom_filiere, se.id_semestre
+            ORDER BY f.nom_filiere, niveau
         ";
-        
         return $this->select_data_table_join_where($query, ['id_departement' => $id_departement]);
     }
 

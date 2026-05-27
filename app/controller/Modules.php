@@ -11,7 +11,7 @@ class Modules extends Controller{
         }
         //appel du method de recuperation 
         $liste= $module->SelectAllData('*',"module");
-        $this->view('liste_Module',['liste'=>$liste]); 
+        $this->view('liste_module',['liste'=>$liste]); 
     } 
     
     // fonction pour la modification des filiere
@@ -27,7 +27,7 @@ class Modules extends Controller{
          $modules->editModule(['id_module'=>$id_module, 'nom_module'=>$nom_module, 'sigle_module'=>$sigle_module]); 
         }
 
-        $this->view('liste_Module'); 
+        $this->view('liste_module'); 
        
     }
 

@@ -1,12 +1,13 @@
 // Fonction pour afficher/masquer les champs de session
-const ROOT = "http://localhost/G_universite/public/Notes";
-const ROOT2 = "http://localhost/G_universite/public/Reinsciptions";
+var ROOT_NOTES = window.APP_ROUTE ? window.APP_ROUTE("Notes") : window.APP_ROOT + "/Notes";
+var ROOT_REINSCRIPTIONS = window.APP_ROUTE ? window.APP_ROUTE("Reinsciptions") : window.APP_ROOT + "/Reinsciptions";
+var ROOT_EDT = window.APP_ROUTE ? window.APP_ROUTE("Emploi_du_temps") : window.APP_ROOT + "/Emploi_du_temps";
 
 async function infosFiliere(idFiliere, source = null) {
   try {
     response = await $.ajax({
       method: "POST",
-      url: "http://localhost/G_universite/public/Emploi_du_temps/filiere_info",
+      url: ROOT_EDT + "/filiere_info",
       dataType: "json",
 
       data: {
@@ -26,7 +27,7 @@ async function infosFiliere(idFiliere, source = null) {
 function classesAnneeUniversitaire(anneeUniversitaire) {
   $.ajax({
     method: "POST",
-    url: ROOT + "/get_classe_annee",
+    url: ROOT_NOTES + "/get_classe_annee",
     dataType: "json",
 
     data: {
@@ -64,7 +65,7 @@ function getEtudiants() {
 
   $.ajax({
     method: "POST",
-    url: ROOT2 + "/get_etudiants",
+    url: ROOT_REINSCRIPTIONS + "/get_etudiants",
 
     data: {
       annee_universitaire: anneeUniversitaire,

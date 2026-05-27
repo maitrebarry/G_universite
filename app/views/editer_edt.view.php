@@ -404,7 +404,7 @@
 
         $('#edtForm').submit(function(event) {
             event.preventDefault();
-            ajouterEdt("http://localhost/G_universite/public/Emploi_du_temps/editer_edt", "editer_edt");
+            ajouterEdt(window.APP_ROUTE("Emploi_du_temps/editer_edt"), "editer_edt");
         })
 
         // la recupeation des promotions de la filière selectionner après le rechargement

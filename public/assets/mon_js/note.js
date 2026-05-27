@@ -1,5 +1,6 @@
 // Fonction pour afficher/masquer les champs de session
-const ROOT = "http://localhost/G_universite/public/Notes";
+var ROOT_NOTES = window.APP_ROUTE ? window.APP_ROUTE("Notes") : window.APP_ROOT + "/Notes";
+var ROOT_EDT = window.APP_ROUTE ? window.APP_ROUTE("Emploi_du_temps") : window.APP_ROOT + "/Emploi_du_temps";
 function toggleSessionFields(show, hideNotes) {
   const sessionInfo = document.getElementById("session_info");
   const tableSection = document.getElementById("table_section");
@@ -31,7 +32,7 @@ function loadEtudiants(save = false) {
   $("#loadingSpinner").show();
 
   $.ajax({
-    url: ROOT + "/get_note_etudiant",
+    url: ROOT_NOTES + "/get_note_etudiant",
     type: "POST",
     data: {
       idPromotion: promotion_id,
@@ -150,9 +151,8 @@ function saveNoteEtudiant(
   moyenneModule,
   idNote
 ) {
-  const ROOT = "http://localhost/G_universite/public/Notes";
   $.ajax({
-    url: ROOT + "/save_note_etudiant",
+    url: ROOT_NOTES + "/save_note_etudiant",
     type: "POST",
     data: {
       idNote: idNote,
@@ -195,7 +195,7 @@ async function infosFiliere(idFiliere, source = null) {
   try {
     response = await $.ajax({
       method: "POST",
-      url: "http://localhost/G_universite/public/Emploi_du_temps/filiere_info",
+      url: ROOT_EDT + "/filiere_info",
       dataType: "json",
 
       data: {
@@ -213,7 +213,7 @@ async function infosFiliere(idFiliere, source = null) {
 function classesAnneeUniversitaire(anneeUniversitaire) {
   $.ajax({
     method: "POST",
-    url: ROOT + "/get_classe_annee",
+    url: ROOT_NOTES + "/get_classe_annee",
     dataType: "json",
 
     data: {

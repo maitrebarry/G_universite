@@ -21,7 +21,7 @@ class Etudiant  extends Model
 
             if ($file_size <= $taillemax) {
                 if (in_array($file_extension, $extensions_valides)) {
-                    $destination = 'C:/xampp/htdocs/G_universite/public/profile/' . $file_name;
+                    $destination = PUBLIC_PATH . '/profile/' . $file_name;
                     if (move_uploaded_file($file_tmp, $destination)) {
                         return '/profile/' . $file_name; // Chemin relatif enregistré dans la base
                     } else {

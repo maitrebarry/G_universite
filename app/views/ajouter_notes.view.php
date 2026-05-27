@@ -260,102 +260,109 @@
     <!-- END: Body-->
 
     </html>
+     <!-- <script>
+        // Injection de la constante ROOT définie en PHP dans ton JS
+        const ROOT = "<?= ROOT ?>";
+        const ROOT_NOTES = ROOT + "/Notes";
+        const ROOT_EDT = ROOT + "/Emploi_du_temps";
+	    </script> -->
     <script src="<?= ROOT ?>/assets/mon_js/note.js"></script>
 
+
     <script>
-    var infoFiliere = [];
-    $(document).ready(async function() {
-        let anneeSaved = sessionStorage.getItem('annee');
+        var infoFiliere = [];
+        $(document).ready(async function() {
+            let anneeSaved = sessionStorage.getItem('annee');
 
-        const debut = 2012;
-        const today = new Date();
-        let annee_actuelle = today.getFullYear();
-        let mois = today.getMonth() + 1; // janvier = 0, donc on ajoute 1
+            const debut = 2012;
+            const today = new Date();
+            let annee_actuelle = today.getFullYear();
+            let mois = today.getMonth() + 1; // janvier = 0, donc on ajoute 1
 
-        // Si on est avant septembre (mois 9), l'année universitaire commence l'année précédente
-        if (mois <= 8) {
-            annee_actuelle -= 1;
-        }
-
-        const annee_en_cours = annee_actuelle + '-' + (annee_actuelle + 1);
-
-        for (let annee = debut; annee <= annee_actuelle; annee++) {
-            let annee_suivante = annee + 1;
-            let valeur = annee + '-' + annee_suivante;
-            let selected = (valeur === anneeSaved) ? 'selected' : '';
-            $('#anneeUniversitaire').append(`<option value="${valeur}" ${selected}>${valeur}</option>`);
-        }
-
-        await classesAnneeUniversitaire(anneeSaved);
-        infoFiliere = JSON.parse(sessionStorage.getItem('infoFiliere'));
-        idSemestre = sessionStorage.getItem('semestre');
-        if (infoFiliere) {
-            modulesSemestre(idSemestre, infoFiliere);
-            if ($("#modules option:selected").val() != "" && $("#modules option:selected").val() != null) {
-                loadEtudiants(true);
-
+            // Si on est avant septembre (mois 9), l'année universitaire commence l'année précédente
+            if (mois <= 8) {
+                annee_actuelle -= 1;
             }
-        }
+
+            const annee_en_cours = annee_actuelle + '-' + (annee_actuelle + 1);
+
+            for (let annee = debut; annee <= annee_actuelle; annee++) {
+                let annee_suivante = annee + 1;
+                let valeur = annee + '-' + annee_suivante;
+                let selected = (valeur === anneeSaved) ? 'selected' : '';
+                $('#anneeUniversitaire').append(`<option value="${valeur}" ${selected}>${valeur}</option>`);
+            }
+
+            await classesAnneeUniversitaire(anneeSaved);
+            infoFiliere = JSON.parse(sessionStorage.getItem('infoFiliere'));
+            idSemestre = sessionStorage.getItem('semestre');
+            if (infoFiliere) {
+                modulesSemestre(idSemestre, infoFiliere);
+                if ($("#modules option:selected").val() != "" && $("#modules option:selected").val() != null) {
+                    loadEtudiants(true);
+
+                }
+            }
 
 
-    })
+        })
 
-    $("#anneeUniversitaire").change(async function() {
+        $("#anneeUniversitaire").change(async function() {
 
-        classesAnneeUniversitaire($("#anneeUniversitaire option:selected").val());
-
-
-        idSemestre = $("#promotions option:selected").data("semestre");
-        $("#table_section").html(
-            "<h6 class='text-center text-bold-600 text-warning'>" +
-            "Veuillez selectionner un module &#x1F603</h6>"
-        );
-
-        $("#modules").empty();
-        $("#modules").append(`<option value="" >Selectionner un Module</option>`);
-
-        sessionStorage.setItem("annee", $("#anneeUniversitaire option:selected").val());
-
-        sessionStorage.setItem("module", $("#modules option:selected").val());
-        console.log('A : ')
+            classesAnneeUniversitaire($("#anneeUniversitaire option:selected").val());
 
 
-    })
-
-    $("#promotions").change(async function() {
-
-        sessionStorage.setItem("classe", $("#promotions option:selected").val());
-        sessionStorage.setItem("semestre", $("#promotions option:selected").data('semestre'));
-        sessionStorage.setItem("filiere", $("#promotions option:selected").data('filiere'));
-
-
-        infoFiliere = await infosFiliere($("#promotions option:selected").data("filiere"), "all");
-        idSemestre = $("#promotions option:selected").data("semestre");
-        sessionStorage.setItem("infoFiliere", JSON.stringify(infoFiliere));
-        modulesSemestre(idSemestre, infoFiliere);
-        $("#table_section").html(
-            "<h6 class='text-center text-bold-600 text-warning'>" +
-            "Veuillez selectionner un module &#x1F603</h6>"
-        );
-
-        sessionStorage.setItem("module", $("#modules option:selected").val());
-
-    })
-
-    $("#modules").change(function() {
-
-        if ($("#modules option:selected").val() != "" && $("#modules option:selected").val() != null) {
-            loadEtudiants(); //Foncton pour chargér les étudiant et leur note lorsque le module est selectionnée
-        } else {
+            idSemestre = $("#promotions option:selected").data("semestre");
             $("#table_section").html(
                 "<h6 class='text-center text-bold-600 text-warning'>" +
                 "Veuillez selectionner un module &#x1F603</h6>"
             );
-        }
 
-        sessionStorage.setItem("module", $("#modules option:selected").val());
-    })
+            $("#modules").empty();
+            $("#modules").append(`<option value="" >Selectionner un Module</option>`);
+
+            sessionStorage.setItem("annee", $("#anneeUniversitaire option:selected").val());
+
+            sessionStorage.setItem("module", $("#modules option:selected").val());
+            console.log('A : ')
 
 
-    // }) //KONE
+        })
+
+        $("#promotions").change(async function() {
+
+            sessionStorage.setItem("classe", $("#promotions option:selected").val());
+            sessionStorage.setItem("semestre", $("#promotions option:selected").data('semestre'));
+            sessionStorage.setItem("filiere", $("#promotions option:selected").data('filiere'));
+
+
+            infoFiliere = await infosFiliere($("#promotions option:selected").data("filiere"), "all");
+            idSemestre = $("#promotions option:selected").data("semestre");
+            sessionStorage.setItem("infoFiliere", JSON.stringify(infoFiliere));
+            modulesSemestre(idSemestre, infoFiliere);
+            $("#table_section").html(
+                "<h6 class='text-center text-bold-600 text-warning'>" +
+                "Veuillez selectionner un module &#x1F603</h6>"
+            );
+
+            sessionStorage.setItem("module", $("#modules option:selected").val());
+
+        })
+
+        $("#modules").change(function() {
+
+            if ($("#modules option:selected").val() != "" && $("#modules option:selected").val() != null) {
+                loadEtudiants(); //Foncton pour chargér les étudiant et leur note lorsque le module est selectionnée
+            } else {
+                $("#table_section").html(
+                    "<h6 class='text-center text-bold-600 text-warning'>" +
+                    "Veuillez selectionner un module &#x1F603</h6>"
+                );
+            }
+
+            sessionStorage.setItem("module", $("#modules option:selected").val());
+        })
+
+
+        // }) //KONE
     </script>

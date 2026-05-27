@@ -177,7 +177,7 @@ $('#validateBtn').on('click', function() {
     });
 
     $.ajax({
-        url: 'EtudiantPargroupes',
+        url: window.APP_ROUTE ? window.APP_ROUTE('EtudiantPargroupes') : 'EtudiantPargroupes',
         type: 'POST',
         data: {
             data: JSON.stringify(

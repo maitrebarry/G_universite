@@ -156,6 +156,13 @@
     <!-- inclusion du partie footer fin-->
 </body>
 <!-- END: Body-->
+ <script>
+    const ROOT = "<?= ROOT ?>";
+    const ROOT_EDT = ROOT + "/Emploi_du_temps";
+</script>
+
+
+
 <script src="<?= ROOT ?>/assets/mon_js/edt.js"></script>
 <script>
     var infoFiliere = [];

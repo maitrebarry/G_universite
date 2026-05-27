@@ -15,7 +15,7 @@
   <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
   <style>
     body {
-        background-image: url('http://localhost/G_universite/public/assets/images/OIP (1).jpeg') !important;
+        background-image: url('<?= ROOT ?>/assets/images/OIP (1).jpeg') !important;
       background-size: cover;
       font-family: 'Segoe UI', sans-serif;
     }

@@ -228,7 +228,7 @@ function formatAcademicYear(event) {
   }
 }
 
-const ROOT = "HTTP://localhost/G_universite/public/Emploi_du_temps";
+const ROOT = window.APP_ROUTE ? window.APP_ROUTE("Emploi_du_temps") : window.APP_ROOT + "/Emploi_du_temps";
 async function infosFiliere(idFiliere) {
   try {
     response = await $.ajax({

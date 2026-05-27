@@ -13,14 +13,7 @@
                             <div class="dropdown-menu" aria-labelledby="dropdown-flag"><a class="dropdown-item" href="#" data-language="en"><i class="flag-icon flag-icon-us mr-50"></i> English</a><a class="dropdown-item" href="#" data-language="fr"><i class="flag-icon flag-icon-fr mr-50"></i> French</a><a class="dropdown-item" href="#" data-language="de"><i class="flag-icon flag-icon-de mr-50"></i> German</a><a class="dropdown-item" href="#" data-language="pt"><i class="flag-icon flag-icon-pt mr-50"></i> Portuguese</a></div>
                         </li>
                         <li class="nav-item d-none d-lg-block"><a class="nav-link nav-link-expand"><i class="ficon bx bx-fullscreen"></i></a></li>
-                        <li class="nav-item nav-search"><a class="nav-link nav-link-search"><i class="ficon bx bx-search"></i></a>
-                            <div class="search-input">
-                                <div class="search-input-icon"><i class="bx bx-search primary"></i></div>
-                                <input class="input" type="text" placeholder="Explore Frest..." tabindex="-1" data-search="template-search">
-                                <div class="search-input-close"><i class="bx bx-x"></i></div>
-                                <ul class="search-list"></ul>
-                            </div>
-                        </li>
+                        <!-- Icône de recherche supprimée -->
                        <li class="dropdown dropdown-notification nav-item">
                             <a class="nav-link nav-link-label" href="#" data-toggle="dropdown">
                                 <i class="ficon bx bx-bell bx-tada bx-flip-horizontal"></i>
@@ -78,8 +71,10 @@
                                 <div class="user-nav d-sm-flex d-none"><span class="user-name"><?= $_SESSION['nom_prenom']; ?></span><span class="user-status text-muted"><?= $_SESSION['role']; ?>
                                 </span></div><span><img class="round" src="<?=ROOT?>/assets/images/portrait/small/avatar-s-11.jpg" alt="avatar" height="40" width="40"></span>
                             </a>
-                            <div class="dropdown-menu dropdown-menu-right pb-0"><a class="dropdown-item" href="page-user-profile.html"><i class="bx bx-user mr-50"></i> Edit Profile</a><a class="dropdown-item" href="app-email.html"><i class="bx bx-envelope mr-50"></i> My Inbox</a><a class="dropdown-item" href="app-todo.html"><i class="bx bx-check-square mr-50"></i> Task</a><a class="dropdown-item" href="app-chat.html"><i class="bx bx-message mr-50"></i> Chats</a>
-                                <div class="dropdown-divider mb-0"></div><a class="dropdown-item" href="<?= ROOT ?>/Deconnections/deconnexion"><i class="bx bx-power-off mr-50"></i> Logout</a>
+                            <div class="dropdown-menu dropdown-menu-right pb-0">
+                                <a class="dropdown-item" href="<?= ROOT ?>/Utilisateurs/profil"><i class="bx bx-user mr-50"></i> Profil</a>
+                                <div class="dropdown-divider mb-0"></div>
+                                <a class="dropdown-item" href="<?= ROOT ?>/Deconnections/deconnexion"><i class="bx bx-power-off mr-50"></i> Déconnexion</a>
                             </div>
   
                     </ul>

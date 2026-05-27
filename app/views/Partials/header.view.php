@@ -52,10 +52,20 @@ if (!isset($_SESSION['id_utilisateur'])) {
     <!-- END: Page CSS-->
     <!-- BEGIN: Custom CSS-->
     <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/style.css">
+    <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/g-universite-chatbot.css">
     <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/bsStepper.min1.css">
     <!-- <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/custom-bsStepper.css"> -->
     <!-- END: Custom CSS-->
 
+    <script>
+        window.APP_ROOT = <?= json_encode(ROOT) ?>;
+        window.ROOT = window.APP_ROOT;
+        window.APP_ROUTE = function (path) {
+            return window.APP_ROOT + "/" + String(path || "").replace(/^\/+/, "");
+        };
+        window.ROOT_NOTES = window.APP_ROUTE("Notes");
+        window.ROOT_EDT = window.APP_ROUTE("Emploi_du_temps");
+    </script>
 
 </head>
 <style>

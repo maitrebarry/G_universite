@@ -83,7 +83,7 @@ $(document).ready(function () {
           heuresDues = 6000;
           break;
         case "cl":
-          heuresDues = ;
+          heuresDues = 0;
           break;
         case "proffesionnel prive":
           heuresDues = 112;
@@ -103,7 +103,7 @@ $(document).ready(function () {
   
     function updateCumulHeuresProgrammees(idEnseignant) {
       $.ajax({
-        url: "Enseignants/cumul_heures_programmees",
+        url: window.APP_ROUTE ? window.APP_ROUTE("Enseignants/cumul_heures_programmees") : "Enseignants/cumul_heures_programmees",
         method: "GET",
         data: { id_enseignant: idEnseignant },
         success: function (data) {
@@ -154,7 +154,7 @@ $(document).ready(function () {
       const formData = new FormData(this);
   
       $.ajax({
-        url: "Enseignants/liste_emargement",
+        url: window.APP_ROUTE ? window.APP_ROUTE("Enseignants/liste_emargement") : "Enseignants/liste_emargement",
         method: "POST",
         data: formData,
         contentType: false,

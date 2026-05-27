@@ -46,9 +46,7 @@ function imprimerEdt(id, nomEdt = "edtIndividuel") {
   // Envoi de la requête AJAX
   $.ajax({
     method: "POST",
-    url:
-      "http://localhost/G_universite/public/Enseignants/listeEDT_individuel/" +
-      id,
+    url: (window.APP_ROUTE ? window.APP_ROUTE("Enseignants/listeEDT_individuel/") : window.APP_ROOT + "/Enseignants/listeEDT_individuel/") + id,
     data: {
       action: "print",
       id: id, // Convertir le tableau en chaîne JSON
