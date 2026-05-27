@@ -139,4 +139,38 @@ if (!isset($_SESSION['id_utilisateur'])) {
         border-image-source: linear-gradient(to right, #ff416c, #ff4b2b);
         animation: border-shift 3s linear infinite;
     }
+
+    /* Fixed footer centered at bottom */
+    .footer.footer-fixed {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        text-align: center;
+        z-index: 1050;
+        background: #ffffff;
+        padding: 8px 12px;
+        box-shadow: 0 -1px 6px rgba(0,0,0,0.08);
+    }
+
+    .footer.footer-fixed .footer-content {
+        margin: 0;
+        display: inline-block;
+        text-align: center;
+    }
+
+    /* Ensure float utilities don't break centering */
+    .footer.footer-fixed .float-left,
+    .footer.footer-fixed .float-right {
+        float: none !important;
+        display: inline-block;
+    }
+
+    /* Position the scroll-top button to the right inside the fixed footer */
+    .footer.footer-fixed .scroll-top {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
 </style>
