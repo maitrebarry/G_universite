@@ -465,6 +465,45 @@ class Home extends Model
             'total_enseignants' => 0
         ];
     }
+
+    /**
+     * Tableau de bord SupAdmin : compteurs + taux de réussite académique
+     * (indépendant des paiements) + recettes + top filières + inscrits/année + départements.
+     */
+    public function getStatsSupAdmin()
+    {
+        $sgp = $this->getStatsSGP();
+        $promos = $this->select_data_table_join_where("SELECT COUNT(*) AS total FROM promotion");
+
+        // Taux de réussite académique : % d'étudiants ayant au moins une moyenne >= 10 parmi les évalués.
+        $r = $this->select_data_table_join_where(
+            "SELECT COUNT(DISTINCT id_etudiant) AS total,
+                    COUNT(DISTINCT CASE WHEN moyenne_module >= 10 THEN id_etudiant END) AS admis
+             FROM note_etudiant WHERE moyenne_module IS NOT NULL"
+        );
+        $totalNotes = (int) ($r[0]->total ?? 0);
+        $admis = (int) ($r[0]->admis ?? 0);
+
+        $rec = $this->select_data_table_join_where("SELECT IFNULL(SUM(montant_paye), 0) AS total FROM payement WHERE montant_paye > 0");
+
+        $dep = [];
+        try { $dg = $this->getStatsDG(); $dep = $dg['departements'] ?? []; } catch (Exception $e) {}
+
+        return [
+            'total_etudiants'    => (int) ($sgp->total_etudiants ?? 0),
+            'total_filieres'     => (int) ($sgp->total_filieres ?? 0),
+            'total_enseignants'  => (int) ($sgp->total_enseignants ?? 0),
+            'total_departements' => (int) ($sgp->total_departements ?? 0),
+            'total_promotions'   => (int) ($promos[0]->total ?? 0),
+            'taux_reussite'      => $totalNotes > 0 ? round($admis * 100 / $totalNotes, 1) : 0,
+            'nb_admis'           => $admis,
+            'nb_evalues'         => $totalNotes,
+            'recettes'           => (int) ($rec[0]->total ?? 0),
+            'top_filieres'       => $this->getTopFilieres(),
+            'inscrits_par_annee' => $this->getInscritsParAnnee(),
+            'departements'       => $dep,
+        ];
+    }
     public function getDernieresInscriptions($limit = 5) {
         $limit = intval($limit);
 

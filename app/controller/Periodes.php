@@ -38,7 +38,7 @@ class Periodes extends Controller
             $date_fin = $_POST['date_fin'];
             $Periodes->modification(['id_periode' => $id_periode,'date_debut' => $date_debut, 'date_fin' => $date_fin]);
         }
-        $this->view('liste_periode');
+        $this->redirect('Periodes/Liste');
     }
     public function supprimer($id_periode)
     {

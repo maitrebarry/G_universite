@@ -179,28 +179,31 @@ class Utilisateur extends Model
 
     public function edit_utilisateur($data)
     {
-        $req = "UPDATE utilisateur 
-             SET nom_prenom =:nom_prenom, 
-                  contact_utilisateur=:contact_utilisateur,
-                  email_utilisateurs=:email_utilisateurs,
-                  mot_passe=:mot_passe,
-                  role=:role
-                  WHERE id_utilisateur=:id_utilisateur";
+        // Champs toujours mis à jour
+        $set = "nom_prenom = :nom_prenom,
+                contact_utilisateur = :contact_utilisateur,
+                email_utilisateurs = :email_utilisateurs,
+                role = :role";
 
         $params = [
             ":nom_prenom" => $data['nom_prenom'],
             ":contact_utilisateur" => $data['contact_utilisateur'],
             ":email_utilisateurs" => $data['email_utilisateurs'],
-            ":mot_passe" => $data['mot_passe'],
             ":role" => $data['role'],
             ':id_utilisateur' => $data['id_utilisateur'],
         ];
 
-        $modification = $this->insertion_update_simples($req, $params);
-
-        if ($modification == true) {
-            $this->set_flash("modification faite avec succes", "sucess");
-            $this->redirect("Utilisateurs/liste_utilisateur");
+        // Le mot de passe n'est mis à jour QUE s'il est renseigné — et il est haché
+        // (correction : l'ancienne version le stockait en clair, ce qui cassait la connexion).
+        if (!empty($data['mot_passe'])) {
+            $set .= ", mot_passe = :mot_passe";
+            $params[":mot_passe"] = password_hash($data['mot_passe'], PASSWORD_DEFAULT);
         }
+
+        $req = "UPDATE utilisateur SET $set WHERE id_utilisateur = :id_utilisateur";
+
+        $this->insertion_update_simples($req, $params);
+        $this->set_flash("Modification effectuée avec succès.", "success");
+        $this->redirect("Utilisateurs/liste_utilisateur");
     }
 }

@@ -39,20 +39,12 @@ function classesAnneeUniversitaire(anneeUniversitaire) {
       const promotionContainer = $("#promotions");
       promotionContainer.empty();
       promotionContainer.append(
-        `<option value="" >Selectionner une Classe</option>`
+        `<option value="" disabled selected>Sélectionner une classe</option>`
       );
-      const newPromotionContainer = $("#newPromotions");
-      newPromotionContainer.empty();
-      newPromotionContainer.append(
-        `<option value="" >Selectionner une Classe</option>`
-      );
-
-      const promotions = response;
-      promotions.forEach((promotion) => {
-        const option = `<option value='${promotion.id_promotion}' class='text-center' data-filiere='${promotion.id_filiere}' data-semestre='${promotion.id_parcours}'> 
-        ${promotion.classe}</option>`;
-        promotionContainer.append(option);
-        newPromotionContainer.append(option);
+      (response || []).forEach((promotion) => {
+        promotionContainer.append(
+          `<option value='${promotion.id_promotion}' data-filiere='${promotion.id_filiere}' data-semestre='${promotion.id_parcours}'>${promotion.classe}</option>`
+        );
       });
     },
     error: function () {},

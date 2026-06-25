@@ -4,105 +4,80 @@
     <meta charset="UTF-8">
     <title>Tableau Récapitulatif des EDT</title>
     <style>
-        body { font-family: Arial, sans-serif; font-size: 12px; }
-        h1 { text-align: center; border-bottom: 2px solid black; padding-bottom: 10px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; table-layout: fixed; }
-        th, td { border: 1px solid black; padding: 6px; text-align: center; word-wrap: break-word; }
-        th { background-color: #f4f4f4; font-weight: bold; }
-        td { font-size: 11px; }
-        .footer {
-            margin-top: 30px;
-            font-size: 12px;
-        }
-        .signature {
-            text-align: right;
-            margin-top: 40px;
-        }
+        body { font-family: Arial, sans-serif; font-size: 12px; color: #111; margin: 0; }
+        .band { background-color: #14346b; color: #ffffff; padding: 12px 16px; text-align: center; }
+        .band h1 { margin: 0; font-size: 15px; }
+        .wrap { padding: 16px 20px; }
+        h2 { font-size: 13px; color: #14346b; border-bottom: 2px solid #14346b; padding-bottom: 4px; margin: 18px 0 8px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 16px; table-layout: fixed; }
+        th, td { border: 1px solid #9aa3b2; padding: 6px; text-align: center; word-wrap: break-word; font-size: 11px; }
+        th { background-color: #14346b; color: #ffffff; }
+        tbody tr:nth-child(even) { background-color: #f6f8fc; }
+        td.mat { text-align: left; }
+        .name { text-align: left; font-weight: bold; }
+        .footer { padding: 0 20px; }
+        .sign { float: right; text-align: right; }
     </style>
 </head>
 <body>
-    <h1>Tableau Récapitulatif des EDT Individuels</h1>
-    <h2>Enseignants Permanents</h2>
-    <table>
-        <tr>
-            <th style="width:12%;">Prénom</th>
-            <th style="width:12%;">Nom</th>
-            <th style="width:10%;">Matricule</th>
-            <th style="width:10%;">Grade</th>
-            <th style="width:25%;">Matières</th>
-            <th style="width:10%;">Vol. Hor. Effectué</th>
-            <th style="width:10%;">Vol. Hor. Dû</th>
-            <th style="width:10%;">Vol. Hor. Sup</th>
-        </tr>
-            <?php foreach ($permanents as $enseignant): ?>
-                <tr>
-                    <td><?= $enseignant->enseignant_prenom ?></td>
-                    <td><?= $enseignant->enseignant_nom ?></td>
-                    <td><?= !empty($enseignant->enseignant_matricule) ? $enseignant->enseignant_matricule : "Matricule inconnu" ?></td>
-                    <td><?= $enseignant->nom_grade?></td>
-                    <td>
-                        <?php
-                            $matieres = array_unique($enseignant->emplois_du_temps);
-                            echo implode("<br>- ", array_map(fn($m) => $m . ',', $matieres));
-                        ?>
-                    </td>
+    <div class="band"><h1>INSTITUT UNIVERSITAIRE DE LA FORMATION PROFESSIONNELLE (IUFP) — Récapitulatif des EDT</h1></div>
 
-                    <td><?= $enseignant->heures_effectuees ?? '-' ?></td>
-                    <td><?= $enseignant->heures_dues ?? '-' ?></td>
-                    <td><?= $enseignant->heures_supp ?? '-' ?></td>
-                </tr>
-            <?php endforeach; ?>
-     </table>
-
-     <h2>Enseignants Non Permanents</h2>
-    <table>
-        <tr>
-            <th style="width:15%;">Prénom</th>
-            <th style="width:15%;">Nom</th>
-            <th style="width:15%;">Matricule/Nais.</th>
-            <th style="width:20%;">Grade/Diplôme</th>
-            <th style="width:25%;">Matières</th>
-            <th style="width:10%;">Vol. Hor. Sup</th>
-        </tr>
-        <?php foreach ($non_permanents as $enseignant): ?>
+    <div class="wrap">
+        <h2>Enseignants permanents</h2>
+        <table>
             <tr>
-                <td><?= $enseignant->enseignant_prenom ?></td>
-                <td><?= $enseignant->enseignant_nom ?></td>
-                <td>
-                    <?= !empty($enseignant->enseignant_matricule) 
-                        ? htmlspecialchars($enseignant->enseignant_matricule) 
-                        : date('d-m-Y', strtotime($enseignant->enseignant_date_naissance)) ?>
-                </td>
-                <td><?= $enseignant->nom_grade . " / " . $enseignant->enseignant_diplome ?></td>
-                <td>
-                    <?php
-                        $matieres = array_unique($enseignant->emplois_du_temps);
-                        echo implode("<br>- ", array_map(fn($m) => $m . ',', $matieres));
-                    ?>
-                </td>
-                <td><?= $enseignant->heures_supp ?? '-' ?></td>
+                <th style="width:24%;">Enseignant</th>
+                <th style="width:11%;">Matricule</th>
+                <th style="width:13%;">Grade</th>
+                <th style="width:28%;">Matières</th>
+                <th style="width:8%;">VH effectué</th>
+                <th style="width:8%;">VH dû</th>
+                <th style="width:8%;">VH supp.</th>
             </tr>
-        <?php endforeach; ?>
-    </table>
+            <?php if (empty($permanents)): ?>
+                <tr><td colspan="7" style="color:#888;">Aucun enseignant permanent.</td></tr>
+            <?php else: foreach ($permanents as $e): ?>
+                <tr>
+                    <td class="name"><?= htmlspecialchars(($e->enseignant_prenom ?? '') . ' ' . ($e->enseignant_nom ?? '')) ?></td>
+                    <td><?= !empty($e->enseignant_matricule) ? htmlspecialchars($e->enseignant_matricule) : '—' ?></td>
+                    <td><?= htmlspecialchars($e->nom_grade ?? '—') ?></td>
+                    <td class="mat"><?= implode('<br>', array_map(fn($m) => '· ' . htmlspecialchars($m), array_unique($e->emplois_du_temps ?? []))) ?></td>
+                    <td><?= (int) ($e->heures_effectuees ?? 0) ?> h</td>
+                    <td><?= (int) ($e->heures_dues ?? 0) ?> h</td>
+                    <td><strong><?= (int) ($e->heures_supp ?? 0) ?> h</strong></td>
+                </tr>
+            <?php endforeach; endif; ?>
+        </table>
+
+        <h2>Enseignants non permanents (vacataires)</h2>
+        <table>
+            <tr>
+                <th style="width:26%;">Enseignant</th>
+                <th style="width:16%;">Matricule / Naiss.</th>
+                <th style="width:22%;">Grade / Diplôme</th>
+                <th style="width:26%;">Matières</th>
+                <th style="width:10%;">VH effectué</th>
+            </tr>
+            <?php if (empty($non_permanents)): ?>
+                <tr><td colspan="5" style="color:#888;">Aucun enseignant vacataire.</td></tr>
+            <?php else: foreach ($non_permanents as $e): ?>
+                <tr>
+                    <td class="name"><?= htmlspecialchars(($e->enseignant_prenom ?? '') . ' ' . ($e->enseignant_nom ?? '')) ?></td>
+                    <td><?= !empty($e->enseignant_matricule) ? htmlspecialchars($e->enseignant_matricule) : (!empty($e->enseignant_date_naissance) ? date('d-m-Y', strtotime($e->enseignant_date_naissance)) : '—') ?></td>
+                    <td><?= htmlspecialchars(($e->nom_grade ?? '—') . ' / ' . ($e->enseignant_diplome ?? '')) ?></td>
+                    <td class="mat"><?= implode('<br>', array_map(fn($m) => '· ' . htmlspecialchars($m), array_unique($e->emplois_du_temps ?? []))) ?></td>
+                    <td><strong><?= (int) ($e->heures_supp ?? 0) ?> h</strong></td>
+                </tr>
+            <?php endforeach; endif; ?>
+        </table>
+    </div>
+
     <div class="footer">
-        <div style="float:left;">
-            <strong>Segou, le <?= date('d-m-Y') ?></strong>
-        </div>
-        <div class="signature">
-            <div>
-                <strong>Le Chef de DER</strong>
-                <br>
-                <?= isset($_SESSION['sigle_departement']) ? strtoupper($_SESSION['sigle_departement']) : "" ?>
-            </div>
-            <div>
-                <?php if (!empty($_SESSION['signature'])): ?>
-                    <img src="<?= ROOT . $_SESSION['signature'] ?>" alt="Signature" style="width: 120px; max-height: 50px;">
-                <?php endif; ?>
-            </div>
-            <div>
-                Dr <?= isset($_SESSION['nom_prenom']) ? strtoupper($_SESSION['nom_prenom']) : "" ?><br>
-                <?= isset($_SESSION['nom_grade']) ? strtoupper($_SESSION['nom_grade']) : "" ?>
-            </div>
+        <div style="float:left;"><strong>Ségou, le <?= date('d-m-Y') ?></strong></div>
+        <div class="sign">
+            <div><strong>Le Chef de Département <?= isset($_SESSION['sigle_departement']) ? strtoupper(htmlspecialchars($_SESSION['sigle_departement'])) : '' ?></strong></div>
+            <?php if (!empty($_SESSION['signature'])): ?><div><img src="<?= ROOT . htmlspecialchars($_SESSION['signature']) ?>" alt="Signature" style="width:120px;max-height:50px;"></div><?php endif; ?>
+            <div>Dr <?= isset($_SESSION['nom_prenom']) ? strtoupper(htmlspecialchars($_SESSION['nom_prenom'])) : '' ?></div>
         </div>
     </div>
 </body>

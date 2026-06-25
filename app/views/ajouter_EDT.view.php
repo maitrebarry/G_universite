@@ -1,95 +1,30 @@
 <style>
-.toast {
-    min-width: 300px;
-    border-radius: 12px;
-    font-family: 'Segoe UI', sans-serif;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-    animation: slideInRight 0.5s ease, fadeOut 0.5s ease 4.5s;
-}
+    /* Création EDT — aligné au design system (tokens), styles scopés au formulaire */
+    #edtForm .gu-section-title { margin-bottom: 14px; }
+    #edtForm label.form-label { font-size: var(--fs-sm); font-weight: var(--fw-medium); color: var(--text-secondary); margin-bottom: 4px; }
+    #table-extended-chechbox th,
+    #table-extended-chechbox td { text-align: center; vertical-align: middle; }
+    #table-extended-chechbox input,
+    #corpsEnseignant input { text-align: center; }
 
-@keyframes slideInRight {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
+    /* Interrupteur "Partager en groupe" */
+    .gu-switch { display: inline-flex; align-items: center; gap: 12px; cursor: pointer; font-weight: var(--fw-medium); user-select: none; }
+    .gu-switch input { display: none; }
+    .gu-switch .track { width: 46px; height: 24px; border-radius: var(--radius-pill); background: var(--border-strong); position: relative; transition: var(--transition); flex-shrink: 0; }
+    .gu-switch .track::after { content: ""; position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: var(--transition); box-shadow: var(--shadow-sm); }
+    .gu-switch input:checked + .track { background: var(--brand-600); }
+    .gu-switch input:checked + .track::after { transform: translateX(22px); }
 
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
+    /* Vignettes "Modèle EDT" */
+    #model-row, #model-column { cursor: pointer; border: 2px solid var(--border) !important; border-radius: var(--radius-md); transition: var(--transition); }
+    #model-row.border-primary, #model-column.border-primary { border-color: var(--brand-600) !important; box-shadow: var(--shadow-sm); }
 
-@keyframes fadeOut {
-    to {
-        opacity: 0;
-        transform: translateX(100%);
-    }
-}
-
-.toast .toast-body i {
-    margin-right: 10px;
-}
-
-body {
-    font-size: 14px !important;
-}
-
-input {
-
-    padding: 8px;
-    font-size: 16px;
-    text-align: center;
-}
-
-td {
-    padding: 8px 5px !important;
-}
-
-.custom-checkbox {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 0.8rem;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.custom-checkbox input[type="checkbox"] {
-    display: none;
-}
-
-.checkmark {
-    width: 20px;
-    height: 20px;
-    border-radius: 6px;
-    background-color: #e0e0e0;
-    position: relative;
-    transition: background-color 0.3s;
-    border: 2px solid #aaa;
-}
-
-.custom-checkbox input:checked+.checkmark {
-    background-color: rgb(0, 36, 241);
-    border-color: rgb(47, 0, 255);
-}
-
-.checkmark::after {
-    content: "";
-    position: absolute;
-    left: 4px;
-    top: 2px;
-    width: 8px;
-    height: 12px;
-    border: solid white;
-    border-width: 0 4px 4px 0;
-    transform: rotate(45deg);
-    opacity: 0;
-    transition: opacity 0.2s ease-in-out;
-}
-
-.custom-checkbox input:checked+.checkmark::after {
-    opacity: 1;
-}
+    /* Toasts */
+    #notificationZone .toast { min-width: 300px; border-radius: var(--radius-md); box-shadow: var(--shadow-lg);
+        animation: slideInRight .4s ease, fadeOut .4s ease 4.5s; }
+    #notificationZone .toast .toast-body i { margin-right: 10px; }
+    @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes fadeOut { to { opacity: 0; transform: translateX(100%); } }
 </style>
 <!-- inclusion du partie header -->
 <?php $this->view("Partials/header") ?>
@@ -151,226 +86,155 @@ td {
                     <div class="row">
                         <div id="message" class="col-12 d-flex justify-content-start"></div>
                         <div class="col-md-12">
-                            <div class="card card-animated-border-top">
-                                <div class="card-header">
-                                    <h4 class="card-title text-center">Création d'emploi du temps</h4>
-                                </div>
+                            <div class="card">
                                 <div class="card-content">
                                     <div class="card-body">
-                                        <form method="POST" class="form-horizontal" novalidate id="edtForm">
-                                            <div class="row d-flex justify-content-around align-items-center">
+                                        <div class="gu-section-title lg"><span class="gu-ico-chip"><i class="bx bx-calendar-plus"></i></span> Création d'emploi du temps</div>
+                                        <form method="POST" novalidate id="edtForm">
+                                            <div class="row" style="row-gap:14px;">
                                                 <div class="col-6 col-lg-3">
-                                                    <label class="form-label" for="single-select">Année
-                                                        universitaire</label>
-                                                    <div class="form-group">
-                                                        <select class="select2 form-control disabled"
-                                                            id="anneeUniversitaire" name="anneeUniversitaire">
-                                                            <?php
-                                                            $annee_debut = 2012;
-                                                            $annee_actuelle = date('Y');
-                                                            $mois_actuel = date('n');
-
-                                                            // Si on est avant septembre, l'année universitaire en cours commence l'année précédente
-                                                            if ($mois_actuel <= 8) {
-                                                                $annee_actuelle--;
-                                                            }
-
-                                                            $annee_universitaire_courante = $annee_actuelle . '-' . ($annee_actuelle + 1);
-
-                                                            for ($annee = $annee_debut; $annee <= $annee_actuelle; $annee++) {
-                                                                $annee_suivante = $annee + 1;
-                                                                $valeur = $annee . '-' . $annee_suivante;
-
-                                                                // Si cette valeur correspond à l'année universitaire en cours, on ajoute "selected"
-                                                                $selected = ($valeur == $annee_universitaire_courante) ? 'selected' : '';
-                                                                echo "<option value=\"$valeur\" $selected>$valeur</option>";
-                                                            }
-                                                            ?>
-                                                        </select>
-                                                    </div>
+                                                    <label class="form-label" for="anneeUniversitaire">Année universitaire</label>
+                                                    <select class="form-select" id="anneeUniversitaire" name="anneeUniversitaire">
+                                                        <?php
+                                                        $annee_debut = 2012;
+                                                        $annee_actuelle = date('Y');
+                                                        $mois_actuel = date('n');
+                                                        if ($mois_actuel <= 8) {
+                                                            $annee_actuelle--;
+                                                        }
+                                                        $annee_universitaire_courante = $annee_actuelle . '-' . ($annee_actuelle + 1);
+                                                        for ($annee = $annee_debut; $annee <= $annee_actuelle; $annee++) {
+                                                            $annee_suivante = $annee + 1;
+                                                            $valeur = $annee . '-' . $annee_suivante;
+                                                            $selected = ($valeur == $annee_universitaire_courante) ? 'selected' : '';
+                                                            echo "<option value=\"$valeur\" $selected>$valeur</option>";
+                                                        }
+                                                        ?>
+                                                    </select>
                                                 </div>
                                                 <div class="col-6 col-lg-3">
-                                                    <label class="form-label" for="single-select">Classe</label>
-                                                    <div class="form-group">
-                                                        <select class="select2 form-control" id="promotions"
-                                                            data-id="<?php echo $idPromotion ?>">
-                                                            <option value="" disabled>Selectioner une Classe
-                                                            </option>
-
-                                                        </select>
-                                                    </div>
+                                                    <label class="form-label" for="promotions">Classe</label>
+                                                    <select class="form-select" id="promotions" data-id="<?php echo $idPromotion ?>">
+                                                        <option value="" disabled>Sélectionner une classe</option>
+                                                    </select>
                                                 </div>
                                                 <div class="col-6 col-lg-3">
-                                                    <label class="form-label" for="single-select">Modules</label>
-                                                    <div class="form-group">
-                                                        <select class="select2 form-control champ" id="modules"
-                                                            name="modules">
-                                                            <option value="" disabled selected>Selectioner un Module
-                                                            </option>
-
-                                                        </select>
-                                                    </div>
+                                                    <label class="form-label" for="modules">Module</label>
+                                                    <select class="form-select champ" id="modules" name="modules">
+                                                        <option value="" disabled selected>Sélectionner un module</option>
+                                                    </select>
                                                 </div>
-                                                <div class="col-6 col-lg-3">
-                                                    <button type="button" class="btn btn-primary" data-toggle="modal"
-                                                        data-target="#menuConfig"><i class="bx bxs-cog"></i>
-                                                        Modèle Edt</button>
+                                                <div class="col-6 col-lg-3 d-flex align-items-end">
+                                                    <button type="button" class="btn btn-soft-primary w-100" data-toggle="modal" data-target="#menuConfig"><i class="bx bxs-cog"></i> Modèle EDT</button>
                                                 </div>
                                             </div>
 
-                                            <div
-                                                class="row d-flex justify-content-between align-items-center mb-1 w-100 m-auto">
-                                                <div
-                                                    class="col-12 col-md-4 row d-flex justify-content-between align-items-center">
-                                                    <div class=" col-12 m-0 d-flex align-items-end mt-2">
-                                                        <!-- Bouton pour ajouter une nouvelle ligne -->
-                                                        <i class="bx bx-plus btn btn-secondary mr-1  d-flex justify-content-center align-items-center"
-                                                            id="add-row"
-                                                            style="width: 15px !important; height:25px;"></i>
-                                                        <!-- Bouton pour supprimer la dernière ligne -->
-                                                        <i class="bx bx-minus btn btn-danger  d-flex justify-content-center align-items-center"
-                                                            id="remove-row"
-                                                            style="width: 15px !important; height:25px;"></i>
-                                                    </div>
-
-                                                </div>
-                                                <div class=" col-12 col-md-8 row d-none " id="infoModule">
-                                                    <input type="hidden" id="vht" class="vht">
-                                                    <!-- Boutton de Commande -->
-                                                    <!-- Boutons de commande avec icônes uniquement -->
-                                                    <div class="col-2 d-flex justify-content-around align-items-end">
-                                                        <!-- Bouton Recalculer -->
-                                                        <button class="btn btn-outline-primary" title="Recalculer"
-                                                            id="recalculer">
-                                                            <i class="fas fa-redo-alt"></i> </button>
-                                                    </div>
-
-                                                    <!-- CM -->
-                                                    <div class='col-2' style="max-width:100px !important;">
-                                                        <label class="d-block text-center">CM</label>
-                                                        <input type='number' class='heure form-control text-center cm'>
-                                                    </div>
-                                                    <!-- TD -->
-                                                    <div class='col-2' style="max-width:100px !important;">
-                                                        <label class="d-block text-center">TD</label>
-                                                        <input type='number' class='heure form-control text-center td'>
-                                                    </div>
-                                                    <!-- TP -->
-                                                    <div class='col-2' style="max-width:100px !important;">
-                                                        <label class="d-block text-center">TP</label>
-                                                        <input type='number' class='heure form-control text-center tp'>
-                                                    </div>
-                                                    <!-- TPE -->
-                                                    <div class='col-2' style="max-width: 100px !important;">
-                                                        <label class="d-block text-center">TPE</label>
-                                                        <input type='number' class='heure form-control text-center tpe'>
-                                                    </div>
+                                            <hr style="border:0;border-top:1px solid var(--border);margin:18px 0 14px;">
+                                            <div class="d-flex align-items-center flex-wrap justify-content-between mb-2" style="gap:10px;">
+                                                <div class="gu-section-title" style="margin:0;"><span class="gu-ico-chip success"><i class="bx bx-time-five"></i></span> Volume horaire &amp; grille</div>
+                                                <div class="d-flex align-items-center" style="gap:8px;">
+                                                    <button type="button" class="btn btn-soft-primary btn-sm" id="add-row" title="Ajouter une ligne"><i class="bx bx-plus"></i> Ligne</button>
+                                                    <button type="button" class="btn btn-soft-danger btn-sm" id="remove-row" title="Supprimer la dernière ligne"><i class="bx bx-minus"></i> Ligne</button>
                                                 </div>
                                             </div>
+                                            <div class="d-none align-items-end flex-wrap mb-2" id="infoModule" style="gap:12px;">
+                                                <input type="hidden" id="vht" class="vht">
+                                                <div style="width:88px;">
+                                                    <label class="form-label text-center d-block">CM</label>
+                                                    <input type="number" class="heure form-control text-center cm">
+                                                </div>
+                                                <div style="width:88px;">
+                                                    <label class="form-label text-center d-block">TD</label>
+                                                    <input type="number" class="heure form-control text-center td">
+                                                </div>
+                                                <div style="width:88px;">
+                                                    <label class="form-label text-center d-block">TP</label>
+                                                    <input type="number" class="heure form-control text-center tp">
+                                                </div>
+                                                <div style="width:88px;">
+                                                    <label class="form-label text-center d-block">TPE</label>
+                                                    <input type="number" class="heure form-control text-center tpe">
+                                                </div>
+                                                <button type="button" class="btn btn-outline-primary" title="Recalculer la grille" id="recalculer"><i class="bx bx-revision"></i> Recalculer</button>
+                                            </div>
 
-                                            <div class="table-responsive mt-1">
-                                                <table id="table-extended-chechbox"
-                                                    class="table table-striped table-bordered" style="width:100%">
+                                            <div class="gu-table-wrap">
+                                                <table id="table-extended-chechbox" class="gu-table" style="width:100%">
                                                     <thead>
                                                         <tr>
                                                             <th class="text-center">Horaire</th>
                                                             <?php foreach ($jours as $jour): ?>
-                                                            <th class="jour" data-id="<?php echo $jour->id_jour ?>">
-                                                                <?php echo strtoupper($jour->nom_jour) ?></th>
+                                                                <th class="jour text-center" data-id="<?php echo $jour->id_jour ?>"><?php echo strtoupper($jour->nom_jour) ?></th>
                                                             <?php endforeach ?>
-
                                                         </tr>
                                                     </thead>
-                                                    <tbody class="corpsEdt" id="corpsEdt">
-
-                                                    </tbody>
+                                                    <tbody class="corpsEdt" id="corpsEdt"></tbody>
                                                 </table>
                                             </div>
-                                            <div class="row d-flex justify-content-between">
+                                            <hr style="border:0;border-top:1px solid var(--border);margin:18px 0 14px;">
+                                            <div class="gu-section-title"><span class="gu-ico-chip warning"><i class="bx bx-user-voice"></i></span> Enseignants &amp; affectation</div>
+                                            <div class="row" style="row-gap:14px;">
                                                 <div class="col-12 col-sm-4">
-                                                    <label class="form-label" for="enseignants">ENSEIGNANT :</label>
-                                                    <div class="form-group">
-                                                        <select class=" form-control champ" id="enseignants"
-                                                            name="enseignants">
-                                                            <option value="" disabled>
-                                                                Sélectionner un
-                                                                enseignant</option>
-                                                            <?php foreach ($enseignants as $enseignant): ?>
-                                                            <option value="<?php echo $enseignant->enseignant_id ?>"
-                                                                class=" text-capitalize"
+                                                    <label class="form-label" for="enseignants">Enseignant</label>
+                                                    <select class="form-select champ" id="enseignants" name="enseignants" data-smart>
+                                                        <option value="" disabled>Sélectionner un enseignant</option>
+                                                        <?php foreach ($enseignants as $enseignant): ?>
+                                                            <option value="<?php echo $enseignant->enseignant_id ?>" class="text-capitalize"
                                                                 data-enseignant="<?php echo $enseignant->enseignant_nom . " " . $enseignant->enseignant_prenom ?>"
                                                                 data-id="<?php echo $enseignant->enseignant_id ?>">
-                                                                <?php echo
-                                                                    $enseignant->enseignant_nom . " "
-                                                                        . $enseignant->enseignant_prenom
-
-                                                                    ?>
+                                                                <?php echo $enseignant->enseignant_nom . " " . $enseignant->enseignant_prenom ?>
                                                             </option>
-                                                            <?php endforeach ?>
-                                                            <!-- Ajoutez ici les options des enseignants -->
-                                                        </select>
-                                                    </div>
+                                                        <?php endforeach ?>
+                                                    </select>
                                                 </div>
                                                 <div class="col-12 col-sm-4">
-                                                    <label class="form-label" for="single-select">SALE DE COURS</label>
-                                                    <div class="form-group">
-                                                        <select class="form-control champ" name="salles" id="salles">
-                                                            <option value="" disabled selected>Selectionner une Salle
-                                                            </option>
-                                                            <?php foreach ($salles as $salle): ?>
-                                                            <option value="<?php echo $salle->id_salle ?>">
-                                                                <?php echo strtoupper($salle->nom_salle) . "(" . $salle->capacite_salle . ")" ?>
-                                                            </option>
-                                                            <?php endforeach ?>
-                                                        </select>
-                                                    </div>
+                                                    <label class="form-label" for="salles">Salle de cours</label>
+                                                    <select class="form-select champ" name="salles" id="salles" data-smart>
+                                                        <option value="" disabled selected>Sélectionner une salle</option>
+                                                        <?php foreach ($salles as $salle): ?>
+                                                            <option value="<?php echo $salle->id_salle ?>"><?php echo strtoupper($salle->nom_salle) . " (" . $salle->capacite_salle . ")" ?></option>
+                                                        <?php endforeach ?>
+                                                    </select>
                                                 </div>
-                                                <div class="col-12 col-sm-4 ">
-                                                    <label class="form-label" for="dateDebut champ">Date de Debut
-                                                        :</label>
-                                                    <div class="form-group w-100 d-flex justify-content-end ">
-                                                        <input type="date" class="form-control" name="dateDebut"
-                                                            id="dateDebut" value="<?php echo date("d/m/Y") ?>">
-                                                    </div>
+                                                <div class="col-12 col-sm-4">
+                                                    <label class="form-label" for="dateDebut">Date de début</label>
+                                                    <input type="date" class="form-control" name="dateDebut" id="dateDebut" value="<?= date('Y-m-d') ?>">
                                                 </div>
-
                                             </div>
 
-                                            <div class="col d-flex justify-content-center align-items-center mt-2">
-                                                <label class="custom-checkbox">
+                                            <div class="d-flex justify-content-center my-3">
+                                                <label class="gu-switch">
                                                     <input type="checkbox" id="groupeSelect">
-                                                    <span class="checkmark"></span>
-                                                    Partager en Groupe
+                                                    <span class="track"></span>
+                                                    Partager en groupe
                                                 </label>
                                             </div>
 
-                                            <div class="table-responsive m-auto" id="listEnseignant"
-                                                style="width: 900px;">
-                                                <div class=" col-12 m-0  d-flex justify-content-end mb-1">
-                                                    <!-- Bouton pour supprimer la dernière ligne -->
-                                                    <i class="bx bx-minus btn btn-danger d-flex justify-content-center align-items-center"
-                                                        id="removeEnseignant"
-                                                        style="width: 20px !important; height:20px;"></i>
+                                            <div id="listEnseignant">
+                                                <div class="d-flex justify-content-end mb-1">
+                                                    <button type="button" class="btn btn-soft-danger btn-sm" id="removeEnseignant" title="Retirer le dernier enseignant"><i class="bx bx-minus"></i> Retirer</button>
                                                 </div>
-                                                <table id="" class="table table-striped table-bordered m-auto ">
-                                                    <thead>
-                                                        <tr>
-                                                            <th class="text-center">Num</th>
-                                                            <th class="text-center">Enseignant</th>
-                                                            <th class="text-center">Groupe</th>
-                                                            <th>Cours</th>
-                                                            <th style="width: 60px !important;">Heure</th>
-                                                            <th id="thSalle" class="d-none">Salle</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody id="corpsEnseignant">
-
-                                                    </tbody>
-                                                </table>
+                                                <div class="gu-table-wrap">
+                                                    <table class="gu-table" style="width:100%;">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="text-center">N°</th>
+                                                                <th>Enseignant</th>
+                                                                <th class="text-center">Groupe</th>
+                                                                <th>Cours</th>
+                                                                <th style="width:90px;">Heures</th>
+                                                                <th id="thSalle" class="d-none">Salle</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="corpsEnseignant"></tbody>
+                                                    </table>
+                                                </div>
                                             </div>
 
-                                            <button type="submit" style="float: right;" class="btn btn-primary mt-1"
-                                                id="valider">Enregistrer</button><br>
+                                            <div class="gu-edt-actions">
+                                                <div id="conflitsBox" class="gu-edt-actions__msg"></div>
+                                                <button type="submit" class="btn btn-gradient" id="valider"><i class="bx bx-save"></i> Enregistrer l'emploi du temps</button>
+                                            </div>
                                         </form>
                                     </div>
                                 </div>
@@ -382,69 +246,36 @@ td {
             </div>
         </div>
 
-        <div class="modal-primary mr-1 mb-1 d-inline-block ">
-            <div class=" modal fade text-left" id="menuConfig" tabindex="-1" role="dialog"
-                aria-labelledby="myModalLabel160" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
-                    <div class="modal-content">
-                        <div class="modal-body">
-                            <div class=" row">
-                                <div class=" col-12 row mb-1">
-                                    <h6 class=" col-12 text-center">Models Edt</h6>
-                                    <div class="col-12 border p-2 d-flex justify-content-center ">
-
-                                        <div style="width: 300px" class="cursor-pointer ">
-                                            <span class=" text-center">Horizontal</span>
-                                            <img class="img img-thumbnail d-block border border-primary"
-                                                src="<?= ROOT ?>/assets/images/model-row.png" alt="model-row"
-                                                id="model-row" style="border-width: 2px !important;"
-                                                data-model="edt-row">
-                                        </div>
-
-                                        <div style=" width:300px; " class="ml-2 cursor-pointer">
-                                            <span class=" text-center">Vertical</span>
-                                            <img class="img img-thumbnail d-block border"
-                                                src="<?= ROOT ?>/assets/images/model-column.png" alt="model-column"
-                                                id="model-column" style="border-width: 2px !important;"
-                                                data-model="edt-column">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class=" col-12 row">
-                                    <h6 class=" col-12 text-center">Type de Cours</h6>
-                                    <div class="col-12 border d-flex justify-content-center p-2">
-
-                                        <div class=" radio radio-primary mr-4"> <input type="radio" name="type" id="cm"
-                                                class="type" value="0">
-                                            <label for="cm">CM</label>
-                                        </div>
-
-                                        <div class="radio radio-primary mr-4"> <input type="radio" name="type" id="td"
-                                                class="type" value="1">
-                                            <label for="td">TD</label>
-                                        </div>
-
-                                        <div class="radio radio-primary form-group mr-4"> <input type="radio"
-                                                name="type" id="tp" class="type" value="2">
-                                            <label for="tp">TP</label>
-                                        </div>
-
-                                        <div class="radio radio-primary form-group mr-4"> <input type="radio"
-                                                name="type" id="all" class="type" value="3" checked>
-                                            <label for="all">Mixe</label>
-                                        </div>
-
-                                    </div>
-                                </div>
+        <div class="modal fade text-left" id="menuConfig" tabindex="-1" role="dialog"
+            aria-labelledby="myModalLabel160" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" style="margin:0;"><i class="bx bxs-cog"></i> Modèle d'emploi du temps</h5>
+                        <button type="button" class="btn btn-ghost btn-sm" data-dismiss="modal" aria-label="Fermer"><i class="bx bx-x"></i></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="gu-section-title">Disposition de la grille</div>
+                        <div class="row mb-3" style="row-gap:12px;">
+                            <div class="col-6 text-center">
+                                <div class="mb-1" style="font-size:var(--fs-sm);color:var(--text-secondary);">Horizontal</div>
+                                <img class="img-thumbnail d-block border-primary" src="<?= ROOT ?>/assets/images/model-row.png" alt="model-row" id="model-row" data-model="edt-row">
+                            </div>
+                            <div class="col-6 text-center">
+                                <div class="mb-1" style="font-size:var(--fs-sm);color:var(--text-secondary);">Vertical</div>
+                                <img class="img-thumbnail d-block" src="<?= ROOT ?>/assets/images/model-column.png" alt="model-column" id="model-column" data-model="edt-column">
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn  btn-link" data-dismiss="modal">
-                                <i class="bx bx-x d-block d-sm-none"></i>
-                                <span class="d-none d-sm-block">Fermer</span>
-                            </button>
+                        <div class="gu-section-title">Type de cours</div>
+                        <div class="d-flex flex-wrap justify-content-center" style="gap:20px;">
+                            <div class="radio radio-primary"><input type="radio" name="type" id="cm" class="type" value="0"><label for="cm">CM</label></div>
+                            <div class="radio radio-primary"><input type="radio" name="type" id="td" class="type" value="1"><label for="td">TD</label></div>
+                            <div class="radio radio-primary"><input type="radio" name="type" id="tp" class="type" value="2"><label for="tp">TP</label></div>
+                            <div class="radio radio-primary"><input type="radio" name="type" id="all" class="type" value="3" checked><label for="all">Mixte</label></div>
                         </div>
-
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-ghost" data-dismiss="modal">Fermer</button>
                     </div>
                 </div>
             </div>
@@ -474,6 +305,7 @@ td {
 </script>
 <script src="<?= ROOT ?>/assets/mon_js/edt.js"></script>
 <script src="<?= ROOT ?>/assets/mon_js/contrainte_date_edt.js"></script>
+<script src="<?= ROOT ?>/assets/mon_js/gu-smart-select.js"></script>
 
 <script>
 // la recuperation des liste de promotion d'une filière lors d'une selection de fiilière
@@ -563,7 +395,7 @@ $("#anneeUniversitaire").change(async function() {
     infoFiliere = await infosFiliere($("#promotions option:selected").data("filiere"), "all");
     idSemestre = $("#promotions option:selected").data("semestre");
     modulesSemestre(idSemestre, infoFiliere);
-    infoModule($("#infoModule").val(), infoFiliere);
+    infoModule($("#modules").val(), infoFiliere);
 
 })
 
@@ -571,7 +403,7 @@ $("#promotions").change(async function() {
     infoFiliere = await infosFiliere($("#promotions option:selected").data("filiere"), "all");
     idSemestre = $("#promotions option:selected").data("semestre");
     modulesSemestre(idSemestre, infoFiliere);
-    infoModule($("#infoModule").val(), infoFiliere);
+    infoModule($("#modules").val(), infoFiliere);
 
 
 
@@ -600,12 +432,35 @@ $(document).ready(async function() {
 
     $('#edtForm').submit(function(event) {
         event.preventDefault();
-        ajouterEdt();
-
+        var data = collecterConflits();
+        // Rien à vérifier côté disponibilités -> le serveur validera le reste.
+        if (!data.cells.length || (!data.salles.length && !data.enseignants.length)) { doSubmit(false); return; }
+        $.ajax({
+            method: "POST", url: ROOT_EDT + "/conflits", dataType: "json",
+            data: { cells: data.cells, salles: data.salles, enseignants: data.enseignants, excludeEdtId: $("#valider").data("id") || "" },
+            success: function(res) {
+                res = res || {};
+                var salle = res.salle || [], ens = res.enseignant || [];
+                if (ens.length) { // enseignant = bloquant
+                    conflitModal({ confirm: false, title: "Conflit d'enseignant", items: ens, message: "Un enseignant ne peut pas être à deux endroits au même moment. Modifiez l'horaire ou l'enseignant concerné." });
+                    return;
+                }
+                if (salle.length) { // salle = confirmation
+                    conflitModal({ confirm: true, title: "Salle déjà occupée", items: salle, message: "Cette salle est déjà utilisée sur ce créneau. Voulez-vous créer l'emploi du temps malgré ce conflit ?" })
+                        .then(function(ok) { if (ok) doSubmit(true); });
+                    return;
+                }
+                doSubmit(false);
+            },
+            error: function() { doSubmit(false); } // pré-vérif indisponible -> on laisse le serveur trancher
+        });
     })
 
     // la recupeation des promotions de la filière selectionner après le rechargement
     classesAnneeUniversitaire($("#anneeUniversitaire option:selected").val());
+
+    // Selects intelligents (recherche) sur Enseignant et Salle
+    if (window.guSmartSelectAll) guSmartSelectAll();
 })
 
 
@@ -730,7 +585,7 @@ function recalculerTousLesHeures() {
         totalTP = 0;
 
     document.querySelectorAll('#corpsEnseignant tr').forEach(row => {
-        const type = row.querySelector('.typeCours')?.value;
+        const t = row.querySelector('.typeCours')?.value;
         const h = parseFloat(row.querySelector('#nombreHeure')?.value) || 0;
 
         if (t === "cm") totalCM += h;
@@ -822,7 +677,7 @@ function ajouterLigneEnseignant(id, enseignant) {
         <td><span>${enseignant}</span></td>
         <td><input type="text" class="form-control groupe" id="groupe" value="GP" readonly disabled></td>
         <td>
-            <select class='select2 form-control typeCours'>
+            <select class='form-select typeCours'>
                 <option value="cm" ${typeParDefaut === "cm" ? "selected" : ""}>CM</option>
                 <option value="td" ${typeParDefaut === "td" ? "selected" : ""}>TD</option>
                 <option value="tp" ${typeParDefaut === "tp" ? "selected" : ""}>TP</option>
@@ -975,13 +830,13 @@ function ajouterEnseignantAutoGroupe(id, enseignant) {
             <td><span>${enseignant}</span></td>
             <td><input type="text" class="form-control" value="${nomGroupe}" readonly id="groupe"></td>
             <td>
-                <select class="form-control typeCours" disabled>
+                <select class="form-select typeCours" disabled>
                     <option value="cm-td-tp" selected>CM-TD-TP</option>
                 </select>
             </td>
             <td><input type="text" class="form-control nombreHeure" value="${coursRestants.cm+coursRestants.td+coursRestants.tp}" readonly></td>
             <td style="width:200px !important">
-                <select class=" select2 form-control salle" id="salle_${num}">
+                <select class="form-select salle" id="salle_${num}">
                     <option value="" disabled selected>Salle
                     </option>
                     <?php foreach ($salles as $salle): ?>
@@ -1089,4 +944,96 @@ $("#removeEnseignant").click(function() {
         num--;
     }
 });
+
+// ============ Vérification des conflits EN DIRECT (salle / enseignant) ============
+var _conflitTimer = null;
+function collecterConflits() {
+    var cells = [];
+    $("#corpsEdt tr").each(function() {
+        var d = $(this).find(".horaireDebut").val();
+        var f = $(this).find(".horaireFin").val();
+        if (!d || !f) return;
+        $(this).find("td").each(function(index) {
+            if (index === 0) return;
+            var t = ($(this).find(".tache").val() || "").toLowerCase();
+            if (!t || t === "x") return;
+            var idJour = $("#table-extended-chechbox thead th").eq(index).data("id");
+            if (idJour) cells.push({ jour: idJour, debut: d, fin: f });
+        });
+    });
+    var enseignants = [], salles = [], isGroupe = $("#groupeSelect").is(":checked");
+    $("#corpsEnseignant tr").each(function() {
+        var id = $(this).find(".id").attr("id");
+        if (id) enseignants.push(id);
+        if (isGroupe) { var s = $(this).find(".salle").val(); if (s) salles.push(s); }
+    });
+    if (!isGroupe) { var s = $("#salles").val(); if (s) salles.push(s); }
+    return { cells: cells, salles: salles, enseignants: enseignants };
+}
+function conflitListe(items) {
+    return '<ul style="margin:.35rem 0 0;padding-left:1.1rem;">' +
+        items.map(function(x) { return '<li>' + String(x).replace(/</g, "&lt;") + '</li>'; }).join('') + '</ul>';
+}
+function renderConflits(box, res) {
+    res = res || {};
+    var salle = res.salle || [], ens = res.enseignant || [], html = '';
+    if (ens.length) {
+        html += '<div class="alert alert-soft-danger"><b><i class="bx bx-error-circle"></i> ' + ens.length +
+            ' conflit(s) d\'enseignant — bloquant</b>' + conflitListe(ens) + '</div>';
+    }
+    if (salle.length) {
+        html += '<div class="alert alert-soft-warning"><b><i class="bx bx-error"></i> ' + salle.length +
+            ' conflit(s) de salle — confirmation à l\'enregistrement</b>' + conflitListe(salle) + '</div>';
+    }
+    if (!html) {
+        html = '<div class="alert alert-soft-success d-flex align-items-center gap-2"><i class="bx bx-check-circle"></i> Aucun conflit sur ces créneaux.</div>';
+    }
+    box.innerHTML = html;
+}
+function verifierConflits() {
+    var box = document.getElementById("conflitsBox");
+    if (!box) return;
+    var data = collecterConflits();
+    if (!data.cells.length || (!data.salles.length && !data.enseignants.length)) { box.innerHTML = ""; return; }
+    box.innerHTML = '<div class="alert alert-soft-info d-flex align-items-center gap-2"><i class="bx bx-loader-alt bx-spin"></i> Vérification des disponibilités…</div>';
+    $.ajax({
+        method: "POST", url: ROOT_EDT + "/conflits", dataType: "json",
+        data: { cells: data.cells, salles: data.salles, enseignants: data.enseignants, excludeEdtId: $("#valider").data("id") || "" },
+        success: function(res) { renderConflits(box, res); },
+        error: function() { box.innerHTML = ""; }
+    });
+}
+function planifierVerifConflits() { clearTimeout(_conflitTimer); _conflitTimer = setTimeout(verifierConflits, 450); }
+
+// Modale de conflit (SweetAlert2 si dispo) — renvoie une Promise<boolean> (true = confirmé)
+function conflitModal(opts) {
+    var liste = '<ul style="text-align:left;margin:.4rem 0;padding-left:1.2rem;">' +
+        opts.items.map(function(x) { return '<li>' + String(x).replace(/</g, "&lt;") + '</li>'; }).join('') + '</ul>';
+    var html = liste + '<p style="margin-top:.6rem;">' + opts.message + '</p>';
+    if (window.Swal) {
+        return Swal.fire({
+            icon: opts.confirm ? 'warning' : 'error',
+            title: opts.title,
+            html: html,
+            showCancelButton: !!opts.confirm,
+            confirmButtonText: opts.confirm ? 'Créer quand même' : 'Compris',
+            cancelButtonText: 'Annuler',
+            confirmButtonColor: opts.confirm ? '#d97706' : '#1f4f9c',
+            cancelButtonColor: '#64748b',
+            reverseButtons: true
+        }).then(function(r) { return !!(r && (r.isConfirmed || (r.value && !r.dismiss))); });
+    }
+    if (opts.confirm) return Promise.resolve(window.confirm(opts.title + "\n\n" + opts.items.join("\n") + "\n\n" + opts.message));
+    window.alert(opts.title + "\n\n" + opts.items.join("\n") + "\n\n" + opts.message);
+    return Promise.resolve(false);
+}
+function doSubmit(force) {
+    window.__edtForceSalle = !!force;
+    ajouterEdt();
+    window.__edtForceSalle = false;
+}
+$(document).on("change", "#corpsEdt .tache, #corpsEnseignant .salle", planifierVerifConflits);
+$(document).on("input change", "#corpsEdt .horaireDebut, #corpsEdt .horaireFin", planifierVerifConflits);
+$("#salles, #groupeSelect, #enseignants").on("change", planifierVerifConflits);
+$("#recalculer, #add-row, #remove-row, #removeEnseignant").on("click", planifierVerifConflits);
 </script>

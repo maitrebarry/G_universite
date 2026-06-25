@@ -220,6 +220,7 @@ class Utilisateurs extends Controller
 
     public function liste_utilisateur($id_enseignant=null)
     {
+        $this->requireRole(['SupAdmin', 'DG', 'DGA', 'Chef DR']); // gestion des comptes : reserve a l'administrateur
         $utilisateur = new Utilisateur();
         $utilisateurenseignant = new Enseignant();
         if (isset($_POST["save_user"])) {
@@ -235,6 +236,7 @@ class Utilisateurs extends Controller
             utilisateur.contact_utilisateur AS utilisateur_contact,
             utilisateur.email_utilisateurs AS utilisateur_email,
               utilisateur.statut AS statut,
+              utilisateur.role AS role,
              utilisateur.signature AS signature,
             utilisateur.enseignant_id,
             enseignants.enseignant_nom,
@@ -259,22 +261,25 @@ class Utilisateurs extends Controller
     /// methode pour la modification
     public function edit_utilisateurs()
     {
+        $this->requireRole(['SupAdmin', 'DG', 'DGA', 'Chef DR']); // gestion des comptes : reserve a l'administrateur
         $utilisateur = new Utilisateur();
         if (isset($_POST['edit_user'])) {
-            //  echo 'okkddddd';exit;
-            extract($_POST);
-            $id_utilisateur = $_POST["id_utilisateur"];
-            $nom_prenom = $_POST["nom_prenom"];
-            $contact_utilisateur = $_POST["contact_utilisateur"];
-            $email_utilisateurs = $_POST["email_utilisateurs"];
-            $mot_passe = $_POST["mot_passe"];
-            $role = $_POST["role"];
-            $utilisateur->edit_utilisateur(['id_utilisateur' => $id_utilisateur, 'nom_prenom' => $nom_prenom, 'contact_utilisateur' => $contact_utilisateur, 'email_utilisateurs' => $email_utilisateurs, 'mot_passe' => $mot_passe, 'role' => $role]);
+            $utilisateur->edit_utilisateur([
+                'id_utilisateur'      => $_POST['id_utilisateur'] ?? null,
+                'nom_prenom'          => trim($_POST['nom_prenom'] ?? ''),
+                'contact_utilisateur' => trim($_POST['contact_utilisateur'] ?? ''),
+                'email_utilisateurs'  => trim($_POST['email_utilisateurs'] ?? ''),
+                'mot_passe'           => $_POST['mot_passe'] ?? '', // vide = inchangé
+                'role'                => $_POST['role'] ?? '',
+            ]); // edit_utilisateur effectue la redirection (PRG)
+            return;
         }
-        $this->view('liste_utilisateur');
+        // Aucun POST valide : on retourne à la liste (jamais de vue sans données)
+        $this->redirect('Utilisateurs/liste_utilisateur');
     }
     public function delete($id)
     {
+        $this->requireRole(['SupAdmin', 'DG', 'DGA', 'Chef DR']); // suppression de compte : reserve a l'administrateur
         $S = new Semestre();
         // Définir la requête de suppression et les paramètres
         $sql = 'DELETE FROM utilisateur WHERE id_utilisateur = :id';

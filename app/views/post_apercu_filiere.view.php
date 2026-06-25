@@ -1,189 +1,88 @@
-<!-- inclusion du partie header -->
-<?php $this->view("Partials/header") ?>
 <?php
+// Fragment maquette pédagogique — AUTO-SUFFISANT (écran + impression html2pdf). Couleurs concrètes.
 $filiere = $infoFiliere['filiere'];
 $semestres = $infoFiliere['semestres'];
 $ues = $infoFiliere['ues'];
 $modules = $infoFiliere['modules'];
+
+$modByUe = [];
+foreach ($modules as $m) { $modByUe[$m->id_ue][] = $m; }
+$ueByParcours = [];
+foreach ($ues as $u) { $ueByParcours[$u->id_parcours][] = $u; }
+$hh = function ($v) { return (int) $v; };
+$totalCreditFiliere = 0;
+foreach ($ues as $u) { $totalCreditFiliere += (int) $u->ue_credit; }
 ?>
-<div id="semestresTable">
-    <div id="infoFiliere" class="row w-100 d-flex justify-content-around align-items-center mb-2 ">
-
-        <div class="col-12 d-flex justify-content-center mb-2 w-100">
-            <img src="<?= ROOT ?>/assets/images/logo.jpg" alt="" class=" img-thumbnail  d-block" style="width: 100px;">
-        </div>
-
-        <div class="col-md-6 d-flex justify-content-start">
-            <h6 class="text-bold-600 text-success">
-                <?php echo strtoupper($filiere->nom_filiere) ?></h6>
-        </div>
-
-        <div class="col-md-6 d-flex justify-content-end">
-            <h6 class="text-bold-600 text-success">
-                <?php echo strtoupper($filiere->sigle_filiere) ?></h6>
-        </div>
+<div id="semestresTable" style="font-family: Arial, Helvetica, sans-serif; color:#111; background:#fff;">
+    <!-- En-tête officiel -->
+    <div style="text-align:center; margin-bottom:16px;">
+        <img src="<?= ROOT ?>/assets/images/logo.jpg" alt="" style="height:62px;"><br>
+        <div style="font-size:19px;font-weight:bold;color:#14346b;letter-spacing:2px;margin-top:4px;">MAQUETTE PÉDAGOGIQUE</div>
+        <div style="font-size:14px;color:#1f4f9c;font-weight:bold;"><?= strtoupper(htmlspecialchars($filiere->nom_filiere)) ?> · <?= strtoupper(htmlspecialchars($filiere->sigle_filiere)) ?></div>
+        <div style="font-size:11px;color:#555;margin-top:2px;">Institut Universitaire de Formation Professionnelle (IUFP) — Université de Ségou · <?= count($semestres) ?> semestres · <?= (int) $totalCreditFiliere ?> crédits</div>
     </div>
 
-    <?php foreach ($semestres as $semestre): ?>
-        <?php $nbrUe = 0;
-        $nbrModule = 0;
-        $totalCredit = 0;
-        $totalHeure = 0 ?>
-        <!-- SEMESTRE -->
-        <div class='semestre' id="s_<?php echo $semestre->id_parcours ?>">
-            <h4 class='text-center'>
-                <?php echo $semestre->nom_semestre ?>
-            </h4>
-            <table class='table table-bordered'>
+    <?php foreach ($semestres as $semestre):
+        $sUes = $ueByParcours[$semestre->id_parcours] ?? [];
+        $nbUe = count($sUes); $nbMod = 0; $tCred = 0; $tVht = 0;
+    ?>
+        <div class="semestre" id="s_<?= $semestre->id_parcours ?>" style="margin-bottom:18px; page-break-inside:auto;">
+            <div style="background:#14346b;color:#fff;font-weight:bold;padding:7px 12px;border-radius:6px 6px 0 0;font-size:13px;letter-spacing:.5px;">
+                <?= mb_strtoupper(htmlspecialchars($semestre->nom_semestre), 'UTF-8') ?> (<?= htmlspecialchars($semestre->sigle_semestre) ?>)
+            </div>
+            <table style="width:100%;border-collapse:collapse;font-size:11px;">
                 <thead>
-                    <tr class="">
-                        <th class="text-center ue-section col-4">UE</th>
-                        <th class="text-center col-8">Modules</th>
+                    <tr style="background:#e7ecf5;color:#14346b;">
+                        <th style="border:1px solid #9aa3b2;padding:5px;text-align:left;width:20%;">Unité d'Enseignement</th>
+                        <th style="border:1px solid #9aa3b2;padding:5px;text-align:left;">ECUE (Module)</th>
+                        <th style="border:1px solid #9aa3b2;padding:5px;width:9%;">Code</th>
+                        <th style="border:1px solid #9aa3b2;padding:5px;width:7%;">Crédit</th>
+                        <th style="border:1px solid #9aa3b2;padding:5px;width:6%;">CM</th>
+                        <th style="border:1px solid #9aa3b2;padding:5px;width:6%;">TD</th>
+                        <th style="border:1px solid #9aa3b2;padding:5px;width:6%;">TP</th>
+                        <th style="border:1px solid #9aa3b2;padding:5px;width:6%;">TPE</th>
+                        <th style="border:1px solid #9aa3b2;padding:5px;width:7%;">VHT</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($ues as $ue): ?>
-                        <?php if ($ue->id_parcours == $semestre->id_parcours): ?>
-                            <?php $nbrUe++;
-                            $totalCredit += $ue->ue_credit;
-                            $totalHeure += $ue->ue_cm + $ue->ue_td + $ue->ue_tp + $ue->ue_tpe ?>
-                            <!-- UE -->
-                            <tr class='ue-item '>
-                                <!-- INFO UE -->
-                                <td class="p-1 ue-section col-4">
-                                    <div class="">
-                                        <h5 class="ue-name mt-2 text-center">
-                                            <?php echo $ue->nom_ue ?></h5>
-                                    </div>
-
-                                    <!-- STATISTIQUE -->
-                                    <div class="row mt-4 d-flex  align-items-center">
-                                        <!-- CM -->
-                                        <div class=' col-6 col-xl-3 '>
-                                            <label class="d-block text-center">CREDIT</label>
-                                            <input type='number' class='form-control text-center ueCredit' disabled
-                                                value="<?php echo $ue->ue_credit ?>">
-                                        </div class=' col-6 col-xl-3'>
-                                        <!-- TD -->
-                                        <div class=' col-6 col-xl-3'>
-                                            <label class="d-block text-center">VHT</label>
-                                            <input type='number' class='form-control text-center ueVht' disabled
-                                                value="<?php echo $ue->ue_cm + $ue->ue_td + $ue->ue_tp + $ue->ue_tpe ?>">
-                                        </div>
-                                        <!-- TP -->
-                                        <div class=' col-6 col-xl-3'>
-                                            <label class="d-block text-center ueTpe">TPE</label>
-                                            <input type='number' class='form-control text-center' disabled
-                                                value="<?php echo $ue->ue_tpe ?>">
-                                        </div>
-                                        <!-- TPE -->
-                                        <div class=' col-6 col-xl-3'>
-                                            <label class="d-block text-center">CM TD
-                                                TP</label>
-                                            <input type='number' class='form-control text-center ueHeure' disabled
-                                                value="<?php echo $ue->ue_cm + $ue->ue_td + $ue->ue_tp ?>">
-                                        </div>
-                                    </div>
-                                </td>
-
-
-
-                                <!-- MODULES -->
-                                <td class="col-8">
-                                    <ul class='module-list' id="module-list">
-                                        <?php foreach ($modules as $module): ?>
-                                            <?php if ($module->id_ue == $ue->id_ue): ?>
-                                                <?php $nbrModule++ ?>
-                                                <!-- MODULE -->
-                                                <li class='module-item row'>
-                                                    <!-- LES HEURES DU MOULE -->
-                                                    <div class="heure border m-0 col-12 row p-1">
-                                                        <!-- CM -->
-                                                        <div class='col-6 col-lg-3'>
-                                                            <label class="d-block text-center">CM</label>
-                                                            <input type='number' class='form-control text-center cm' disabled
-                                                                value="<?php echo $module->cm ?>">
-                                                        </div>
-                                                        <!-- TD -->
-                                                        <div class='col-6 col-lg-3'>
-                                                            <label class="d-block text-center">TD</label>
-                                                            <input type='number' class='form-control text-center td' disabled
-                                                                value="<?php echo $module->td ?>">
-                                                        </div>
-                                                        <!-- TP -->
-                                                        <div class='col-6 col-lg-3'>
-                                                            <label class="d-block text-center">TP</label>
-                                                            <input type='number' class='form-control text-center tp' disabled
-                                                                value="<?php echo $module->tp ?>">
-                                                        </div>
-                                                        <!-- TPE -->
-                                                        <div class='col-6 col-lg-3'>
-                                                            <label class="d-block text-center">TPE</label>
-                                                            <input type='number' class='form-control text-center tpe' disabled
-                                                                value="<?php echo $module->tpe ?>">
-                                                        </div>
-                                                    </div>
-
-                                                    <!-- NOM DU MODULE ECUE ET COEFICIENT -->
-                                                    <div class="module border col-12 p-1 row m-auto">
-                                                        <h6 class="col-6">
-                                                            <?php echo $module->nom_module ?>
-                                                        </h6>
-                                                        <h6 class="col-4">
-                                                            <?php echo $module->code_module ?>
-                                                        </h6>
-                                                        <h6 class="col-2 text-right credit">
-                                                            <?php echo $module->coeficient ?>
-                                                        </h6>
-                                                    </div>
-                                                </li>
-                                            <?php endif ?>
-                                        <?php endforeach ?>
-                                    </ul>
-                                </td>
+                    <?php foreach ($sUes as $ue):
+                        $uMods = $modByUe[$ue->id_ue] ?? [];
+                        $rs = max(1, count($uMods));
+                        $nbMod += count($uMods); $tCred += (int) $ue->ue_credit;
+                    ?>
+                        <?php if (empty($uMods)): ?>
+                            <tr>
+                                <td style="border:1px solid #9aa3b2;padding:5px;background:#f1f4fa;font-weight:bold;"><?= mb_strtoupper(htmlspecialchars($ue->nom_ue), 'UTF-8') ?><br><small style="color:#1f4f9c;font-weight:normal;"><?= (int) $ue->ue_credit ?> crédits</small></td>
+                                <td colspan="8" style="border:1px solid #9aa3b2;padding:5px;color:#999;text-align:center;">Aucun module</td>
                             </tr>
-                        <?php endif ?>
+                        <?php else: foreach ($uMods as $j => $m):
+                            $vht = $hh($m->cm) + $hh($m->td) + $hh($m->tp) + $hh($m->tpe); $tVht += $vht;
+                        ?>
+                            <tr>
+                                <?php if ($j === 0): ?>
+                                    <td rowspan="<?= $rs ?>" style="border:1px solid #9aa3b2;padding:5px;background:#f1f4fa;font-weight:bold;vertical-align:middle;"><?= mb_strtoupper(htmlspecialchars($ue->nom_ue), 'UTF-8') ?><br><small style="color:#1f4f9c;font-weight:normal;"><?= (int) $ue->ue_credit ?> crédits</small></td>
+                                <?php endif ?>
+                                <td style="border:1px solid #9aa3b2;padding:5px;text-align:left;"><?= mb_convert_case(htmlspecialchars($m->nom_module), MB_CASE_TITLE, 'UTF-8') ?></td>
+                                <td style="border:1px solid #9aa3b2;padding:5px;text-align:center;"><?= htmlspecialchars($m->code_module) ?></td>
+                                <td style="border:1px solid #9aa3b2;padding:5px;text-align:center;font-weight:bold;color:#0f2a52;"><?= (int) $m->coeficient ?></td>
+                                <td style="border:1px solid #9aa3b2;padding:5px;text-align:center;"><?= $hh($m->cm) ?></td>
+                                <td style="border:1px solid #9aa3b2;padding:5px;text-align:center;"><?= $hh($m->td) ?></td>
+                                <td style="border:1px solid #9aa3b2;padding:5px;text-align:center;"><?= $hh($m->tp) ?></td>
+                                <td style="border:1px solid #9aa3b2;padding:5px;text-align:center;"><?= $hh($m->tpe) ?></td>
+                                <td style="border:1px solid #9aa3b2;padding:5px;text-align:center;font-weight:bold;"><?= $vht ?></td>
+                            </tr>
+                        <?php endforeach; endif ?>
                     <?php endforeach ?>
                 </tbody>
-                <!-- STATISTIQUE DU SEMESTRE -->
-                <caption class="border p-1 text-center">
-                    <div class=" W-100 row m-auto">
-                        <!-- NOMBRE UE -->
-                        <div class='col-3'>
-                            <label class="d-block text-center">NBR
-                                UE</label>
-                            <input type='number' class='form-control nbrUe text-center' disabled
-                                value="<?php echo $nbrUe ?>">
-                        </div class='col-3'>
-                        <!-- NOMBRE MODULE -->
-                        <div class='col-3'>
-                            <label class="d-block text-center">NBR
-                                MODULE</label>
-                            <input type='number' class='form-control nbrModule text-center' disabled
-                                value="<?php echo $nbrModule ?>">
-                        </div>
-                        <!-- TOTAL CREDIT -->
-                        <div class='col-3'>
-                            <label class="d-block text-center totalCredit">T
-                                CREDIT</label>
-                            <input type='number' class='form-control text-center' disabled
-                                value="<?php echo $totalCredit ?>">
-                        </div>
-                        <!-- TOTAL HEURE -->
-                        <div class='col-3'>
-                            <label class="d-block text-center totalHeure">T
-                                HEURE</label>
-                            <input type='number' class='form-control text-center' disabled
-                                value="<?php echo $totalHeure ?>">
-                        </div>
-                    </div>
-                </caption>
-
-
+                <tfoot>
+                    <tr style="background:#dbe5f5;color:#0f2a52;font-weight:bold;">
+                        <td style="border:1px solid #9aa3b2;padding:5px;"><?= $nbUe ?> UE</td>
+                        <td style="border:1px solid #9aa3b2;padding:5px;"><?= $nbMod ?> module(s)</td>
+                        <td colspan="2" style="border:1px solid #9aa3b2;padding:5px;text-align:center;"><?= $tCred ?> crédits</td>
+                        <td colspan="5" style="border:1px solid #9aa3b2;padding:5px;text-align:center;">Volume horaire total : <?= $tVht ?> h</td>
+                    </tr>
+                </tfoot>
             </table>
         </div>
     <?php endforeach ?>
 </div>
-
-<!-- inclusion du partie footer-->
-<?php $this->view("Partials/footer") ?>

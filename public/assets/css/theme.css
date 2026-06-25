@@ -1,0 +1,281 @@
+/* =====================================================================
+   G_universite — Design System (étape 1 : fondations / tokens)
+   Approche : Bootstrap 5 + thème à tokens — Charte : bleu académique
+   Mode clair + mode sombre via [data-bs-theme="dark"] (standard BS5)
+   ---------------------------------------------------------------------
+   Inclure APRÈS le CSS de Bootstrap 5 :
+     <link href="bootstrap@5.3.css">
+     <link href="assets/css/theme.css">
+   ===================================================================== */
+
+:root {
+  /* ---- Marque : bleu académique ---- */
+  --brand-50:  #eef4fb;
+  --brand-100: #d4e4f6;
+  --brand-200: #aac8ec;
+  --brand-300: #79a6de;
+  --brand-400: #4a83cf;
+  --brand-500: #2966bd;
+  --brand-600: #1f4f9c;   /* couleur primaire */
+  --brand-700: #1a3f79;
+  --brand-800: #163357;
+  --brand-900: #0f213a;
+
+  /* ---- Accent : or académique (à utiliser avec parcimonie) ---- */
+  --accent-400: #e6b34d;
+  --accent-500: #d99a2b;
+  --accent-600: #b67d18;
+
+  /* ---- Neutres (slate) ---- */
+  --gray-50:  #f6f7f9;
+  --gray-100: #eceef2;
+  --gray-200: #dce0e7;
+  --gray-300: #c2c8d2;
+  --gray-400: #9aa3b2;
+  --gray-500: #6b7585;
+  --gray-600: #4c5564;
+  --gray-700: #374050;
+  --gray-800: #232b38;
+  --gray-900: #141a24;
+
+  /* ---- Couleurs sémantiques (valeur, fond clair, texte foncé) ---- */
+  --success:      #1e9e75;
+  --success-bg:   #e3f5ee;
+  --success-text: #0f6e56;
+  --warning:      #d99a2b;
+  --warning-bg:   #fbf1da;
+  --warning-text: #875a10;
+  --danger:       #d64545;
+  --danger-bg:    #fbe8e8;
+  --danger-text:  #8f2727;
+  --info:         #2966bd;
+  --info-bg:      #e8f0fb;
+  --info-text:    #1a3f79;
+
+  /* ---- Couleurs par rôle (badges, accents contextuels) ---- */
+  --role-supadmin: var(--brand-600);
+  --role-dg:       #6f5cd8;
+  --role-dga:      #1d9e8f;
+  --role-chefdr:   var(--accent-600);
+  --role-secretaire:#c4537e;
+  --role-scolarite:#3b8a3b;
+  --role-enseignant:var(--gray-600);
+
+  /* ---- Typographie ---- */
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --fs-xs:   .75rem;
+  --fs-sm:   .875rem;
+  --fs-base: 1rem;
+  --fs-lg:   1.125rem;
+  --fs-xl:   1.375rem;
+  --fs-2xl:  1.75rem;
+  --fs-3xl:  2.25rem;
+  --fw-regular: 400;
+  --fw-medium:  500;
+  --fw-semibold:600;
+  --lh-tight: 1.25;
+  --lh-base:  1.6;
+
+  /* ---- Espacement ---- */
+  --space-1: .25rem;
+  --space-2: .5rem;
+  --space-3: .75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-8: 3rem;
+
+  /* ---- Rayons ---- */
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   14px;
+  --radius-xl:   20px;
+  --radius-pill: 999px;
+
+  /* ---- Ombres (sobres) ---- */
+  --shadow-sm: 0 1px 2px rgba(16,24,40,.06);
+  --shadow-md: 0 4px 12px rgba(16,24,40,.08);
+  --shadow-lg: 0 12px 28px rgba(16,24,40,.12);
+
+  /* ---- Transitions ---- */
+  --transition: 160ms ease;
+
+  /* ---- Surfaces & texte (mode clair) ---- */
+  --surface-page:  var(--gray-50);
+  --surface-card:  #ffffff;
+  --surface-muted: var(--gray-100);
+  --text-primary:   var(--gray-900);
+  --text-secondary: var(--gray-600);
+  --text-tertiary:  var(--gray-500);
+  --border:        var(--gray-200);
+  --border-strong: var(--gray-300);
+
+  --color-primary:          var(--brand-600);
+  --color-primary-hover:    var(--brand-700);
+  --color-primary-contrast: #ffffff;
+
+  /* ---- Mapping Bootstrap 5 ---- */
+  --bs-primary: var(--brand-600);
+  --bs-primary-rgb: 31,79,156;
+  --bs-body-font-family: var(--font-sans);
+  --bs-body-color: var(--text-primary);
+  --bs-body-bg: var(--surface-page);
+  --bs-border-color: var(--border);
+  --bs-border-radius: var(--radius-md);
+  --bs-border-radius-lg: var(--radius-lg);
+  --bs-link-color: var(--brand-600);
+  --bs-link-hover-color: var(--brand-700);
+  --bs-secondary-color: var(--text-secondary);
+}
+
+/* ===================== Mode sombre ===================== */
+[data-bs-theme="dark"] {
+  --surface-page:  #0f141c;
+  --surface-card:  #161d28;
+  --surface-muted: #1e2632;
+  --text-primary:   #e7ebf1;
+  --text-secondary: #a8b2c1;
+  --text-tertiary:  #7d8798;
+  --border:        #2a3340;
+  --border-strong: #3a4350;
+
+  --success-bg: #11302a; --success-text: #6fd9b9;
+  --warning-bg: #322713; --warning-text: #efc173;
+  --danger-bg:  #341a1a; --danger-text:  #f0a3a3;
+  --info-bg:    #16263f; --info-text:    #8fb6ea;
+
+  --color-primary:       var(--brand-400);
+  --color-primary-hover: var(--brand-300);
+
+  --bs-primary: var(--brand-400);
+  --bs-primary-rgb: 74,131,207;
+  --bs-body-color: var(--text-primary);
+  --bs-body-bg: var(--surface-page);
+  --bs-border-color: var(--border);
+  --bs-link-color: var(--brand-300);
+  --bs-link-hover-color: var(--brand-200);
+  --bs-secondary-color: var(--text-secondary);
+}
+
+/* ===================== Base ===================== */
+body {
+  background: var(--surface-page);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  line-height: var(--lh-base);
+}
+h1,h2,h3,h4,h5,h6 { font-weight: var(--fw-semibold); line-height: var(--lh-tight); color: var(--text-primary); }
+a { color: var(--bs-link-color); text-decoration: none; }
+a:hover { color: var(--bs-link-hover-color); }
+.text-secondary-2 { color: var(--text-secondary) !important; }
+.text-tertiary    { color: var(--text-tertiary) !important; }
+
+/* ===================== Composants ===================== */
+.card {
+  background: var(--surface-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn { border-radius: var(--radius-md); font-weight: var(--fw-medium); transition: var(--transition); }
+.btn-primary {
+  --bs-btn-bg: var(--color-primary);
+  --bs-btn-border-color: var(--color-primary);
+  --bs-btn-hover-bg: var(--color-primary-hover);
+  --bs-btn-hover-border-color: var(--color-primary-hover);
+  --bs-btn-active-bg: var(--color-primary-hover);
+  --bs-btn-active-border-color: var(--color-primary-hover);
+  --bs-btn-color: var(--color-primary-contrast);
+  --bs-btn-hover-color: var(--color-primary-contrast);
+  --bs-btn-active-color: var(--color-primary-contrast);
+}
+.btn-outline-primary {
+  --bs-btn-color: var(--color-primary);
+  --bs-btn-border-color: var(--color-primary);
+  --bs-btn-hover-bg: var(--color-primary);
+  --bs-btn-hover-border-color: var(--color-primary);
+  --bs-btn-active-bg: var(--color-primary);
+}
+
+.form-control, .form-select {
+  border-radius: var(--radius-md);
+  border-color: var(--border-strong);
+  background: var(--surface-card);
+  color: var(--text-primary);
+}
+.form-control:focus, .form-select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(var(--bs-primary-rgb), .18);
+}
+.form-control::placeholder { color: var(--text-tertiary); }
+/* Frest est en Bootstrap 4 : .form-select n'est pas stylé -> on le refait proprement */
+.form-select {
+  display: block;
+  width: 100%;
+  padding: .45rem 2.25rem .45rem .85rem;
+  font-size: var(--fs-base);
+  line-height: 1.5;
+  color: var(--text-primary);
+  background-color: var(--surface-card);
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%236b7585' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right .85rem center;
+  background-size: 14px 11px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.form-select:hover { border-color: var(--text-tertiary); }
+.form-select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(var(--bs-primary-rgb), .18);
+  outline: none;
+}
+.form-select-sm { padding: .3rem 2rem .3rem .7rem; font-size: var(--fs-sm); background-position: right .6rem center; }
+[data-bs-theme="dark"] .form-select {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23a8b2c1' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+}
+
+/* Tints sémantiques pour badges / alertes */
+.badge { font-weight: var(--fw-medium); border-radius: var(--radius-pill); padding: .35em .7em; }
+.badge-soft-success { background: var(--success-bg); color: var(--success-text); }
+.badge-soft-warning { background: var(--warning-bg); color: var(--warning-text); }
+.badge-soft-danger  { background: var(--danger-bg);  color: var(--danger-text); }
+.badge-soft-info    { background: var(--info-bg);    color: var(--info-text); }
+
+.alert { border: 0; border-radius: var(--radius-md); }
+.alert-soft-success { background: var(--success-bg); color: var(--success-text); }
+.alert-soft-warning { background: var(--warning-bg); color: var(--warning-text); }
+.alert-soft-danger  { background: var(--danger-bg);  color: var(--danger-text); }
+.alert-soft-info    { background: var(--info-bg);    color: var(--info-text); }
+
+/* Badge de rôle */
+.role-badge {
+  display: inline-flex; align-items: center; gap: .35em;
+  font-size: var(--fs-xs); font-weight: var(--fw-medium);
+  padding: .3em .7em; border-radius: var(--radius-pill);
+  background: var(--info-bg); color: var(--info-text);
+}
+
+/* Carte d'indicateur (KPI) */
+.metric-card {
+  background: var(--surface-muted);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+}
+.metric-card .metric-label { font-size: var(--fs-sm); color: var(--text-secondary); }
+.metric-card .metric-value { font-size: var(--fs-2xl); font-weight: var(--fw-semibold); }
+
+/* Tableaux */
+.table { --bs-table-bg: transparent; color: var(--text-primary); }
+.table thead th {
+  font-size: var(--fs-sm); font-weight: var(--fw-semibold);
+  color: var(--text-secondary); border-bottom: 1px solid var(--border-strong);
+}
+.table td, .table th { border-color: var(--border); }

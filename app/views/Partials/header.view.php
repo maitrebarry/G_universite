@@ -5,7 +5,7 @@ if (!isset($_SESSION['id_utilisateur'])) {
 }
 ?>
 <!DOCTYPE html>
-<html class="loading" lang="en" data-textdirection="ltr">
+<html class="loading" lang="fr" data-textdirection="ltr">
 <!-- BEGIN: Head-->
 
 <head>
@@ -19,9 +19,24 @@ if (!isset($_SESSION['id_utilisateur'])) {
     <meta name="keywords"
         content="admin template, Frest admin template, dashboard template, flat admin template, responsive admin template, web app">
     <meta name="author" content="PIXINVENT">
-    <title>Institut universaire de formation de Ségou</title>
-    <link rel="apple-touch-icon" href="<?= ROOT ?>/assets/images/OIP.jpeg">
-    <link rel="shortcut icon" type="image/x-icon" href="<?= ROOT ?>/assets/images/OIP.jpeg">
+    <title>Kunafoni IUFP — Université de Ségou</title>
+    <link rel="icon" type="image/png" sizes="48x48" href="<?= ROOT ?>/assets/images/pwa/favicon-48.png?v=5">
+    <link rel="icon" type="image/png" sizes="32x32" href="<?= ROOT ?>/assets/images/pwa/favicon-32.png?v=5">
+    <link rel="icon" type="image/png" sizes="16x16" href="<?= ROOT ?>/assets/images/pwa/favicon-16.png?v=5">
+    <link rel="shortcut icon" href="<?= ROOT ?>/assets/images/pwa/favicon-32.png?v=5">
+    <link rel="icon" href="<?= ROOT ?>/favicon.ico?v=5" sizes="any">
+
+    <!-- BEGIN: PWA -->
+    <link rel="manifest" href="<?= ROOT ?>/manifest.webmanifest">
+    <meta name="theme-color" content="#14346b">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Kunafoni IUFP">
+    <link rel="apple-touch-icon" href="<?= ROOT ?>/assets/images/pwa/apple-touch-icon.png?v=5">
+    <link rel="icon" type="image/png" sizes="192x192" href="<?= ROOT ?>/assets/images/pwa/icon-192.png?v=5">
+    <link rel="icon" type="image/png" sizes="512x512" href="<?= ROOT ?>/assets/images/pwa/icon-512.png?v=5">
+    <!-- END: PWA -->
     <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,600%7CIBM+Plex+Sans:300,400,500,600,700"
         rel="stylesheet">
 
@@ -47,15 +62,19 @@ if (!isset($_SESSION['id_utilisateur'])) {
     <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/plugins/forms/validation/form-validation.css">
     <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/vendors/css/forms/select/select2.min.css">
     <!-- END: Page CSS-->
-    <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/core/menu/menu-types/vertical-menu.css">
-    <!-- <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/plugins/forms/wizard.css"> -->
-    <!-- END: Page CSS-->
     <!-- BEGIN: Custom CSS-->
     <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/style.css">
     <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/g-universite-chatbot.css">
     <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/bsStepper.min1.css">
-    <!-- <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/custom-bsStepper.css"> -->
     <!-- END: Custom CSS-->
+
+    <!-- BEGIN: Design system G_universite (override — doit rester en dernier) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/theme.css">
+    <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/gu-components.css">
+    <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/gu-shell.css">
+    <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/gu-mobile.css">
+    <!-- END: Design system -->
 
     <script>
         window.APP_ROOT = <?= json_encode(ROOT) ?>;

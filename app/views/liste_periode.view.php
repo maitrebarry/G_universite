@@ -1,275 +1,116 @@
-<!-- inclusion du partie header -->
+<?php $this->view("Partials/header") ?>
 
-<?php
-$this->view("Partials/header") ?>
+<body class="vertical-layout vertical-menu-modern boxicon-layout no-card-shadow 2-columns navbar-sticky footer-static"
+    data-open="click" data-menu="vertical-menu-modern" data-col="2-columns">
 
-<body class="vertical-layout vertical-menu-modern boxicon-layout no-card-shadow 2-columns  navbar-sticky footer-static  " data-open="click" data-menu="vertical-menu-modern" data-col="2-columns">
-
-    <!-- inclusion du partie header -->
     <?php $this->view("Partials/navbar") ?>
-    <!-- inclusion du partie header fin-->
-
-    <!-- inclusion du partie seibar-->
     <?php $this->view("Partials/seibar") ?>
-    <!-- inclusion du partie seibar fin-->
 
-    <!--  Content-->
     <div class="app-content content">
-
-        <div class="content-overlay"></div>
         <div class="content-wrapper">
             <div class="content-header row">
-
+                <?php $this->view("set_flash") ?>
                 <div class="content-header-left col-12 mb-2 mt-1">
                     <div class="row breadcrumbs-top">
                         <div class="col-12">
                             <h5 class="content-header-title float-left pr-1 mb-0">Configuration</h5>
                             <div class="breadcrumb-wrapper col-12">
                                 <ol class="breadcrumb p-0 mb-0">
-                                    <li class="breadcrumb-item"><a href="index.html"><i class="bx bx-home-alt"></i></a>
-                                    </li>
-                                    <li class="breadcrumb-item"><a href="#">Gestion des periode</a>
-                                    </li>
-                                    <li class="breadcrumb-item active">Liste
-                                    </li>
-
+                                    <li class="breadcrumb-item"><a href="<?= ROOT ?>/Homes"><i class="bx bx-home-alt"></i></a></li>
+                                    <li class="breadcrumb-item">Configuration</li>
+                                    <li class="breadcrumb-item active">Périodes</li>
                                 </ol>
-
-                                <div class="ms-auto">
-                                    <button type="button" class="btn btn-primary" style="float: right;" data-toggle="modal" data-target="#primary">
-                                        <i class="bx bx-plus"></i>Période
-                                    </button>
-                                </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
-
             </div>
-            <div class="row g-4">
-                <!-- Navigation -->
-                <div class="col-12 col-lg-3">
-                    <div class="card card-animated-border-top ">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between flex-column mb-3 mb-md-0">
-                                <ul class="nav nav-align-left nav-pills flex-column">
-                               
-                                    <li class="nav-item mb-1">
-                                        <a class="nav-link  " href="<?= ROOT ?>/Modules/listeModule">
-                                        <i class="fa-solid fa-book-open-reader me-2"></i>
-                                            <span class="align-middle">Modules</span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item mb-1">
-                                        <a class="nav-link " href="<?= ROOT ?>/Semestres/Liste">
-                                        <i class="fa-solid fa-calendar-day me-2"></i>
-                                            <span class="align-middle">Semestre</span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item mb-1">
-                                        <a class="nav-link  active" href="<?= ROOT ?>/Periodes/Liste">
-                                        <i class="fa-solid fa-calendar-alt me-2"></i>
-                                            <span class="align-middle">Periode</span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item mb-1">
-                                        <a class="nav-link " href="<?= ROOT ?>/Utilisateurs/liste_utilisateur">
-                                        <i class="fa-solid fa-users me-2"></i>
-                                            <span class="align-middle">Utilisateur</span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item mb-1">
-                                        <a class="nav-link " href="<?= ROOT ?>/Salles/Liste">
-                                        <i class="fa-solid fa-door-open me-2"></i>
-                                            <span class="align-middle">Salles</span>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item mb-1">
-                                        <a class="nav-link   " href="<?= ROOT ?>/Departements/listeDepartements">
-                                        <i class="fa-solid fa-building me-2"></i>
-                                            <span class="align-middle">departements</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- /Navigation -->
 
-                <!-- Options -->
-                <div class="col-12 col-lg-9 pt-4 pt-lg-0">
-                    <div class="tab-content p-0">
-                        <!-- Store Details Tab -->
-                        <div class="tab-pane fade show active" id="store_details" role="tabpanel">
-                            <?php $this->view("set_flash") ?>
-                            <div class="row mb-4">
-                                <div class="col-12 ">
-                                    <div class="card card-animated-border-top ">
-                                        <div class="card-body">
-                                            <!-- partie liste de l'école -->
-                                            <table class="table zero-configuration table-bordered" style="width:100%">
-                                                <thead>
-                                                    <tr>
-                                                       
-                                                        <th>Date de début</th>
-                                                        <th>Date de fin</th>
-                                                        <th>Status</th>
-                                                        <th class="text-center dt-no-sorting">Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <?php foreach ($datas  as $data): ?>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td><?= date_format(date_create($data->date_debut), 'd-m-Y'); ?></td>
-                                                            <td><?= date_format(date_create($data->date_fin), 'd-m-Y'); ?></td>
-                                                            <td class="text-primary"><span class=" badge badge-light-primary"><?= $data->status ?></span></td>
-                                                            <td class="text-center ">
-                                                                <div class=" dropdown">
-                                                                    <span class="bx bx-dots-horizontal-rounded font-medium-3 dropdown-toggle nav-hide-arrow cursor-pointer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="menu">
-                                                                    </span>
-                                                                    <div class="dropdown-menu dropdown-menu-right">
-                                                                        <a class="dropdown-item edit-btn" data-toggle="modal" data-target="#default"
-                                                                            href="#"
-                                                                            data-id_periode="<?= $data->id_periode ?>"
-                                                                            data-date_debut="<?= $data->date_debut ?>"
-                                                                            data-date_fin="<?= $data->date_fin ?>"><i class="bx bx-edit-alt mr-1"></i> edit</a>
-                                                                        <a class="dropdown-item" href="<?= ROOT ?>/Periodes/supprimer/<?= $data->id_periode ?>"><i class="bx bx-trash mr-1"></i> delete</a>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-
-                                                    </tbody>
-                                                <?php endforeach ?>
-                                            </table>
-                                            <!-- fin de la  partie liste de l'école -->
-                                        </div>
-                                    </div>
-                                </div>
+            <div class="content-body">
+                <div id="confLayout">
+                    <?php $this->view("Partials/config_nav", ['active' => 'periodes']) ?>
+                    <div class="conf-main">
+                        <div class="conf-card">
+                            <div class="d-flex align-items-center justify-content-between flex-wrap mb-2" style="gap:10px;">
+                                <div class="gu-section-title"><span class="gu-ico-chip"><i class="bx bx-calendar"></i></span> Périodes <span class="badge badge-soft-primary"><?= count($datas) ?></span></div>
+                                <button class="btn btn-primary" onclick="guConfOpen('addPerModal')"><i class="bx bx-plus"></i> Ajouter une période</button>
                             </div>
-                            <form action="" method="post">
-                                <!-- partie insertion des données -->
-                                <div class="modal-primary mr-1 mb-1 d-inline-block modal-lg">
-                                    <div class="modal fade text-left" id="primary" tabindex="-1" role="dialog" aria-labelledby="myModalLabel160" aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header bg-primary">
-                                                    <h5 class="modal-title white" id="myModalLabel160"> Enregistrements de année universitaire</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <i class="bx bx-x"></i>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <!-- <div class="row">
-                                                        <div class="col mb-3">
-                                                            <label for="nameBasic" class="form-label">Années Scolaires <span class="text-danger fs-6">*</span></label>
-                                                            <input type="text" id="nameBasic" value="" name="anne_scolaire" class="form-control" placeholder="Années Scolaires" />
-                                                        </div>
-                                                    </div> -->
-                                                    <div class="row g-2">
-                                                        <div class="col mb-0">
-                                                            <label for="dateDebut" class="form-label">Date de début</label>
-                                                            <input type="date" id="dateDebut" name="date_debut" class="form-control" placeholder="Date de début" />
-                                                        </div>
-                                                        <div class="col mb-0">
-                                                            <label for="dateFin" class="form-label">Date de fin</label>
-                                                            <input type="date" id="dateFin" name="date_fin" class="form-control" placeholder="Date de fin" readonly />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-light-secondary" data-dismiss="modal">
-                                                        <i class="bx bx-x d-block d-sm-none"></i>
-                                                        <span class="d-none d-sm-block">Annuler</span>
-                                                    </button>
-                                                    <button type="submit" name="submit" class="btn btn-primary ml-1">
-                                                        <i class="bx bx-check d-block d-sm-none"></i>
-                                                        <span class="d-none d-sm-block">Accept</span>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                            <!-- fin insertion des données -->
-
-                            <!-- partie modification des données -->
-                            <div class="modal-primary mr-1 mb-1 d-inline-block">
-                                <div class="modal fade text-left" id="default" tabindex="-1" aria-labelledby="defaultLabel" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header bg-primary">
-                                                <h5 class="modal-title white" id="defaultLabel">Modification de Periode</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <i class="bx bx-x"></i>
-                                                </button>
-                                            </div>
-                                            <form method="post" action="<?= ROOT ?>/Periodes/update">
-                                                <div class="modal-body">
-                                                    <input type="hidden" id="inputId_periode" name="id_periode">
-                                                    <div class="form-group">
-                                                        <label for="inputDate_debut">Date debut</label>
-                                                        <input type="date" class="form-control" id="inputDate_debut" name="date_debut" required>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label for="inputDate_fin">Date Fin</label>
-                                                        <input type="date" class="form-control" id="inputDate_fin" name="date_fin" required>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-light-secondary" data-dismiss="modal">
-                                                        <i class="bx bx-x d-block d-sm-none"></i>
-                                                        <span class="d-none d-sm-block">Annuler</span>
-                                                    </button>
-                                                    <button type="submit" class="btn btn-primary" name="modifier">Modifier</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
+                            <?php if (empty($datas)): ?>
+                                <div class="gu-empty"><i class="bx bx-calendar"></i>Aucune période.</div>
+                            <?php else: ?>
+                            <div class="gu-table-wrap" style="max-height:calc(100vh - 320px);">
+                                <table class="gu-table" style="width:100%;">
+                                    <thead><tr><th style="width:46px;text-align:center;">N°</th><th>Date de début</th><th>Date de fin</th><th class="text-center">Statut</th><th class="text-center" style="width:110px;">Actions</th></tr></thead>
+                                    <tbody>
+                                        <?php $i = 1; foreach ($datas as $l):
+                                            $st = strtolower($l->status ?? '');
+                                            $cls = (strpos($st, 'cours') !== false || strpos($st, 'inach') !== false) ? 'success' : 'secondary';
+                                        ?>
+                                            <tr>
+                                                <td class="text-center"><?= $i++ ?></td>
+                                                <td style="font-weight:var(--fw-medium);"><?= htmlspecialchars(date('d/m/Y', strtotime($l->date_debut))) ?></td>
+                                                <td><?= htmlspecialchars(date('d/m/Y', strtotime($l->date_fin))) ?></td>
+                                                <td class="text-center"><span class="badge badge-soft-<?= $cls ?>"><?= htmlspecialchars($l->status ?? '—') ?></span></td>
+                                                <td class="text-center" style="white-space:nowrap;">
+                                                    <button type="button" class="conf-act btn-edit-per" data-id="<?= $l->id_periode ?>" data-debut="<?= htmlspecialchars($l->date_debut) ?>" data-fin="<?= htmlspecialchars($l->date_fin) ?>" title="Modifier"><i class="bx bx-edit-alt"></i></button>
+                                                    <a class="conf-act danger btn-conf-del" href="<?= ROOT ?>/Periodes/supprimer/<?= $l->id_periode ?>" data-nom="la période du <?= htmlspecialchars(date('d/m/Y', strtotime($l->date_debut))) ?>" title="Supprimer"><i class="bx bx-trash"></i></a>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach ?>
+                                    </tbody>
+                                </table>
                             </div>
+                            <?php endif ?>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- fin: Content-->
+
+    <div class="gu-conf-modal" id="addPerModal">
+        <div class="gm-back" data-conf-close="addPerModal"></div>
+        <div class="gm-card">
+            <form action="" method="post">
+                <div class="gm-head"><h5><i class="bx bx-plus-circle"></i> Nouvelle période</h5><button type="button" class="conf-act" data-conf-close="addPerModal" style="border:0;background:transparent;color:#fff;"><i class="bx bx-x"></i></button></div>
+                <div class="gm-body"><div class="row" style="row-gap:12px;">
+                    <div class="col-md-6"><label class="form-label">Date de début <span class="text-danger">*</span></label><input type="date" class="form-control" name="date_debut" required></div>
+                    <div class="col-md-6"><label class="form-label">Date de fin <span class="text-danger">*</span></label><input type="date" class="form-control" name="date_fin" required></div>
+                </div></div>
+                <div class="gm-foot"><button type="button" class="btn btn-ghost" data-conf-close="addPerModal">Annuler</button><button type="submit" class="btn btn-primary" name="submit"><i class="bx bx-check"></i> Enregistrer</button></div>
+            </form>
+        </div>
+    </div>
+
+    <div class="gu-conf-modal" id="editPerModal">
+        <div class="gm-back" data-conf-close="editPerModal"></div>
+        <div class="gm-card">
+            <form action="<?= ROOT ?>/Periodes/update" method="post">
+                <div class="gm-head"><h5><i class="bx bx-edit-alt"></i> Modifier la période</h5><button type="button" class="conf-act" data-conf-close="editPerModal" style="border:0;background:transparent;color:#fff;"><i class="bx bx-x"></i></button></div>
+                <div class="gm-body"><input type="hidden" id="ep_id" name="id_periode"><div class="row" style="row-gap:12px;">
+                    <div class="col-md-6"><label class="form-label">Date de début</label><input type="date" class="form-control" id="ep_debut" name="date_debut" required></div>
+                    <div class="col-md-6"><label class="form-label">Date de fin</label><input type="date" class="form-control" id="ep_fin" name="date_fin" required></div>
+                </div></div>
+                <div class="gm-foot"><button type="button" class="btn btn-ghost" data-conf-close="editPerModal">Annuler</button><button type="submit" class="btn btn-primary" name="modifier">Modifier</button></div>
+            </form>
+        </div>
+    </div>
 
     <div class="sidenav-overlay"></div>
     <div class="drag-target"></div>
-    <!-- inclusion du partie foot-->
-    <?php $this->view("Partials/foot") ?>
-    <!-- inclusion du partie foot fin-->
-    <!-- inclusion du partie footer-->
-    <?php $this->view("Partials/footer") ?>
-    <script src="<?= ROOT ?>/assets/mon_js/modification_periode.js"></script>
 
+    <?php $this->view("Partials/foot") ?>
+    <?php $this->view("Partials/footer") ?>
     <script>
-        document.getElementById('dateDebut').addEventListener('change', function() {
-            const dateDebut = new Date(this.value);
-            if (!isNaN(dateDebut)) { // Vérifie si la date est valide
-                const dateFin = new Date(dateDebut);
-                dateFin.setMonth(dateFin.getMonth() + 6); // Ajoute 6 mois
-                const isoDate = dateFin.toISOString().split('T')[0]; // Format ISO (YYYY-MM-DD)
-                document.getElementById('dateFin').value = isoDate;
-            }
-        });
-        document.getElementById('inputDate_debut').addEventListener('change', function() {
-            const inputDate_debut = new Date(this.value);
-            if (!isNaN(inputDate_debut)) { // Vérifie si la date est valide
-                const inputDate_fin = new Date(inputDate_debut);
-                inputDate_fin.setMonth(inputDate_fin.getMonth() + 6); // Ajoute 6 mois
-                const isoDate = inputDate_fin.toISOString().split('T')[0]; // Format ISO (YYYY-MM-DD)
-                document.getElementById('inputDate_fin').value = isoDate;
-            }
+        document.querySelectorAll('.btn-edit-per').forEach(function (b) {
+            b.addEventListener('click', function () {
+                document.getElementById('ep_id').value = this.dataset.id;
+                document.getElementById('ep_debut').value = this.dataset.debut;
+                document.getElementById('ep_fin').value = this.dataset.fin;
+                guConfOpen('editPerModal');
+            });
         });
     </script>
-    <!-- inclusion du partie footer fin-->
 </body>
-<!-- END: Body-->
 
 </html>

@@ -178,6 +178,19 @@ class Etudiant  extends Model
         ]
     );
 
+    // Cohérence : renseigner id_promotion + id_filiere sur etudiant
+    // (colonnes lues par les tableaux de bord et les listes filtrées).
+    $promoRow = $this->FetchSelectWhere('id_filiere', 'promotion', 'id_promotion = ?', [$id_promotion]);
+    $idFiliereCalc = is_object($promoRow) ? ($promoRow->id_filiere ?? null) : null;
+    try {
+        $this->insertion_update_simples(
+            'UPDATE etudiant SET id_promotion = :p, id_filiere = :f WHERE id_etudiant = :id',
+            [':p' => $id_promotion, ':f' => $idFiliereCalc, ':id' => $idEtudt]
+        );
+    } catch (\Throwable $e) {
+        error_log('MAJ id_promotion/id_filiere etudiant: ' . $e->getMessage());
+    }
+
     // 3. Gestion du paiement (comme dans ton code)
     if (isset($_POST['montant_paye'])) {
         $montantPaye = $_POST['montant_paye'];
@@ -420,6 +433,66 @@ public function getEtudiantById($id) {
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 
+    // ===== Liste complète : recherche + tri + pagination (côté serveur) =====
+    private function listeWhere($q, $promotion, &$params)
+    {
+        $where = [];
+        if ($q !== '') {
+            $where[] = "(e.nom_prenom_etudiant LIKE :q OR e.prenom LIKE :q OR e.matricule_etudiant LIKE :q OR f.nom_filiere LIKE :q)";
+            $params[':q'] = '%' . $q . '%';
+        }
+        if ($promotion !== '' && $promotion !== null) {
+            $where[] = "e.id_promotion = :promotion";
+            $params[':promotion'] = $promotion;
+        }
+        return $where ? ('WHERE ' . implode(' AND ', $where)) : '';
+    }
+
+    public function compterEtudiants($q = '', $promotion = '')
+    {
+        $params = [];
+        $whereSql = $this->listeWhere($q, $promotion, $params);
+        $sql = "SELECT COUNT(*) AS total FROM etudiant e LEFT JOIN filiere f ON f.id_filiere = e.id_filiere $whereSql";
+        $stmt = $this->bdd()->prepare($sql);
+        $stmt->execute($params);
+        $row = $stmt->fetch(PDO::FETCH_OBJ);
+        return (int) ($row->total ?? 0);
+    }
+
+    public function listerEtudiants($q = '', $promotion = '', $sortKey = 'name', $dir = 'asc', $offset = 0, $limit = 10)
+    {
+        // Tri sur liste blanche (jamais d'entrée utilisateur dans le SQL)
+        $cols = [
+            'name'      => 'e.nom_prenom_etudiant',
+            'matricule' => 'e.matricule_etudiant',
+            'filiere'   => 'f.nom_filiere',
+            'diplome'   => 'e.diplome',
+            'statut'    => 'e.id_statut',
+        ];
+        $sortCol = $cols[$sortKey] ?? $cols['name'];
+        $dir = strtoupper($dir) === 'DESC' ? 'DESC' : 'ASC';
+        $offset = max(0, (int) $offset);
+        $limit  = ($limit > 0 && $limit <= 100) ? (int) $limit : 10;
+
+        $params = [];
+        $whereSql = $this->listeWhere($q, $promotion, $params);
+
+        $sql = "SELECT e.id_etudiant, e.nom_prenom_etudiant, e.prenom, e.matricule_etudiant,
+                       e.id_statut, e.diplome, f.nom_filiere, f.sigle_filiere
+                FROM etudiant e
+                LEFT JOIN filiere f ON f.id_filiere = e.id_filiere
+                $whereSql
+                ORDER BY $sortCol $dir
+                LIMIT $limit OFFSET $offset";
+        $stmt = $this->bdd()->prepare($sql);
+        $stmt->execute($params);
+        $rows = $stmt->fetchAll(PDO::FETCH_OBJ);
+        foreach ($rows as $r) {
+            $r->statut_label = gu_statut_label($r->id_statut ?? '');
+        }
+        return $rows;
+    }
+
 
     // Récupérer les informations d'un étudiant par ID
     public function getById($id)
@@ -497,21 +570,36 @@ public function getEtudiantById($id) {
         $result = $stmt->fetch();
         return $result['total_payé'] ? $result['total_payé'] : 0;
     }
-    // Fonction pour mettre à jour la table `payement` avec le paiement ajouté
+    // Promotion courante de l'étudiant (la plus récente) -> fournit annee + idPromo du paiement.
+    public function getCurrentPromotion($id_etudiant)
+    {
+        $stmt = $this->pdo->prepare("SELECT p.id_promotion, p.annee_universitaire
+            FROM etudiant_promotion ep JOIN promotion p ON ep.id_promotion = p.id_promotion
+            WHERE ep.id_etudiants = ? ORDER BY p.annee_universitaire DESC, ep.id_etudiant_promotionn DESC LIMIT 1");
+        $stmt->execute([(int) $id_etudiant]);
+        return $stmt->fetch(PDO::FETCH_OBJ);
+    }
+
+    // Point UNIQUE d'enregistrement d'un paiement : renseigne annee + idPromo (NOT NULL).
+    public function enregistrerPaiement($id_etudiant, $montant_paye)
+    {
+        $montant_paye = (int) $montant_paye;
+        if ($montant_paye <= 0) return false;
+        $promo = $this->getCurrentPromotion($id_etudiant);
+        $idPromo = $promo ? (int) $promo->id_promotion : 0;
+        $annee = $promo ? (int) substr($promo->annee_universitaire, 0, 4) : (int) date('Y');
+        $stmt = $this->pdo->prepare("INSERT INTO payement (idEtudt, montant_paye, annee, idPromo, date) VALUES (?, ?, ?, ?, NOW())");
+        return $stmt->execute([(int) $id_etudiant, $montant_paye, $annee, $idPromo]);
+    }
+
+    // Conservés pour compatibilité : routés vers enregistrerPaiement (qui renseigne annee + idPromo).
     private function updatePaiement($id_etudiant, $montant_paye)
     {
-        if ($montant_paye <= 0) {
-            throw new InvalidArgumentException('Le montant payé doit être supérieur à zéro.');
-        }
-        $stmt = $this->pdo->prepare("INSERT INTO payement (idEtudt, montant_paye, date) VALUES (?, ?, NOW())");
-        $stmt->execute([$id_etudiant, $montant_paye]);
+        return $this->enregistrerPaiement($id_etudiant, $montant_paye);
     }
     public function addPayment($data)
     {
-        $db = $this->pdo;
-        $query = "INSERT INTO payement (idEtudt, montant_paye, date) VALUES (:idEtudt, :montant_paye, :date)";
-        $stmt = $db->prepare($query);
-        return $stmt->execute($data);
+        return $this->enregistrerPaiement($data['idEtudt'] ?? 0, $data['montant_paye'] ?? 0);
     }
     public function getEtudiantsByIds($ids)
     {

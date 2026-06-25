@@ -24,11 +24,10 @@ class Departements extends Controller{
           $id_departement=$_POST["id_departement"];
           $nom_departement=$_POST["nom_departement"];
           $sigle_departement=$_POST["sigle_departement"];
-         $departements->editdepartement(['id_departement'=>$id_departement, 'nom_departement'=>$nom_departement, 'sigle_departement'=>$sigle_departement]); 
+         $departements->editdepartement(['id_departement'=>$id_departement, 'nom_departement'=>$nom_departement, 'sigle_departement'=>$sigle_departement]);
         }
 
-        $this->view('liste_departement'); 
-       
+        $this->redirect('Departements/listeDepartements');
     }
 
     public function delete($id) {

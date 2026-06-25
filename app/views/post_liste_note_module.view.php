@@ -1,144 +1,74 @@
-<link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/vendors/css/tables/datatable/datatables.min.css">
+<?php
+$sum = 0; $n = 0; $nbValide = 0;
+foreach ($note_des_etudiants as $note) {
+    $m = (float) $note->moyenne_module;
+    $sum += $m; $n++;
+    if ($m >= 10) $nbValide++;
+}
+$moyGen = $n ? $sum / $n : 0;
+$taux = $n ? ($nbValide * 100 / $n) : 0;
+if (!function_exists('rn_note_brute')) {
+    function rn_note_brute($v) { return ($v === null || $v === '') ? '—' : rtrim(rtrim(number_format((float) $v, 2, '.', ''), '0'), '.'); }
+}
+?>
+<style>
+    .gu-bulletin-head { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+    .gu-bulletin-head .gu-stat { flex: 1; min-width: 150px; border: 1px solid #c7d2e6; border-radius: 8px; padding: 8px 12px; background: #f4f7fc; text-align: center; }
+    .gu-bulletin-head .gu-stat .lab { font-size: 11px; color: #5a6b86; text-transform: uppercase; letter-spacing: .4px; }
+    .gu-bulletin-head .gu-stat .val { font-size: 18px; font-weight: 700; color: #14346b; line-height: 1.2; }
+    .gu-bulletin-head .gu-stat .val.ok { color: #15803d; } .gu-bulletin-head .gu-stat .val.ko { color: #b91c1c; }
+    #notesTable { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+    #notesTable th, #notesTable td { border: 1px solid #9aa3b2; padding: 6px 8px; }
+    #notesTable thead th { background: #e7ecf5; color: #14346b; font-weight: 700; text-align: center; vertical-align: middle; }
+    #notesTable tbody tr:nth-child(even) { background: #f6f8fc; }
+    #notesTable .num { text-align: center; }
+    #notesTable .nom { font-weight: 600; }
+    #notesTable .moy-cell { font-weight: 700; text-align: center; background: #eef3fb; color: #0f2a52; }
+    #notesTable .obs { font-weight: 700; text-align: center; }
+    #notesTable .ok { color: #15803d; } #notesTable .ko { color: #b91c1c; }
+</style>
 
-
-<div class="d-flex justify-content-around align-items-center row">
-
-    <div class="col-6 col-md-3">
-        <h6 class=" text-center ">Module</h6>
-        <h6 class=" text-center text-bold-600 nomModule"> <?= $infosModule->nom_module; ?></h6>
-    </div>
-
-    <div class="col-6 col-md-3 mb-1 mb-md-0">
-        <h6 class=" text-center ">Moyenne General</h6>
-        <h6 class=" text-center text-bold-600" id="moyenneTotalModule"> </h6>
-    </div>
-
-
-    <div class="col-6 col-md-3">
-        <h6 class=" text-center ">Taux de reussite</h6>
-        <h6 class=" text-center text-bold-600">
-            <span class=" badge text-bold-600" id="tauxReussite"></span>
-        </h6>
-    </div>
-
-
-    <div class="col-6 col-md-3">
-        <h6 class=" text-center ">Credit</h6>
-        <h6 class=" text-center  text-bold-600 nomModule coeficient"><?= $infosModule->coeficient ?></h6>
-    </div>
-
-
+<div style="text-align:center;margin-bottom:10px;">
+    <h5 style="color:#14346b;font-weight:700;margin:0;">Résultats par module</h5>
+    <?php if (!empty($infosModule->nom_ue)): ?><div style="font-size:12.5px;color:#555;">UE : <?= mb_strtoupper(htmlspecialchars($infosModule->nom_ue), 'UTF-8') ?></div><?php endif ?>
 </div>
+
+<div class="gu-bulletin-head">
+    <div class="gu-stat"><div class="lab">Module</div><div class="val" style="font-size:13px;"><?= mb_strtoupper(htmlspecialchars($infosModule->nom_module), 'UTF-8') ?></div></div>
+    <div class="gu-stat"><div class="lab">Crédit</div><div class="val"><?= (int) $infosModule->coeficient ?></div></div>
+    <div class="gu-stat"><div class="lab">Moyenne générale</div><div class="val <?= $moyGen >= 10 ? 'ok' : 'ko' ?>"><?= number_format($moyGen, 2) ?></div></div>
+    <div class="gu-stat"><div class="lab">Taux de réussite</div><div class="val <?= $taux >= 50 ? 'ok' : 'ko' ?>"><?= number_format($taux, 1) ?>%</div></div>
+</div>
+
 <div class="table-responsive">
-    <table class="table table-striped table-bordered zero-configuration  w-100" id="notesTable">
+    <table id="notesTable">
         <thead>
             <tr>
-                <th class="text-center d-lg-none">Etudiant</th>
-                <th class="text-center d-none d-lg-table-cell">Matricule</th>
-                <th class="text-center d-none d-lg-table-cell">Nom & Prenom</th>
-                <th class="text-center  genre d-none d-md-table-cell">Genre</th>
-                <th class="text-center note_devoir  noteContainer">Devoir</th>
-                <th class="text-center note_evaluation  noteContainer">Éxamen</th>
-                <th class="text-center noteContainer">Session</th>
-                <th class="text-center moyenne noteContainer">M/Module</th>
-                <th class="text-center moyenne noteContainer">Observation</th>
-        </thead>
-        <tbody id="tableBody">
-            <!-- Affichage dynamique via PHP -->
-            <?php foreach ($note_des_etudiants as $note): ?>
-            <?php
-
-                ?>
-            <tr class="rowt" data-id="<?= $note->id_note ?>">
-
-                <td class="text-bold-500 text-center d-lg-none etudiant">
-                    <div><?= strtoupper($note->nom_prenom_etudiant) ?></div>
-                    <div><a href=""><?= $note->matricule_etudiant ?></a></div>
-                </td>
-                <td class="text-bold-500 text-left d-none d-lg-table-cell">
-                    <a href=""><?= $note->matricule_etudiant ?></a>
-                </td>
-                <td class="text-bold-500 text-left d-none d-lg-table-cell">
-                    <?= strtoupper($note->nom_prenom_etudiant) ?>
-                </td>
-                <td class="genre d-none d-md-table-cell"><?= ($note->genre_etudiant == "Féminin") ? 'F' : "M" ?></td>
-                <td class=" noteContainer">
-                    <input type="number" class="form-control noteDevoir note text-bold-600 text-center"
-                        value="<?= $note->note_devoir ?>" step="0.1" disabled>
-                </td>
-                <td class=" noteContainer">
-                    <input type="number" class="form-control noteEvaluation note text-bold-600 text-center"
-                        value="<?= $note->note_evaluation ?>" step="0.1" disabled>
-                </td>
-                <td class="noteContainer">
-                    <input type="number" class="form-control noteSession note text-bold-600 text-center"
-                        value="<?= $note->note_session ?>" step="0.1" disabled>
-                </td>
-                <td class="noteContainer" disabled>
-                    <!-- Moyenne affichée dans un input readonly -->
-                    <input type="number" class="form-control moyenne moyenneModule text-bold-600 text-center"
-                        value="<?= $note->moyenne_module ?>" disabled>
-                </td>
-
-
-                <td>
-                    <span class=" badge etatSemestre text-bold-600 text-center"></span>
-                </td>
+                <th style="width:42px;">N°</th>
+                <th>Matricule</th>
+                <th>Nom &amp; Prénom</th>
+                <th style="width:54px;">Genre</th>
+                <th>Devoir</th>
+                <th>Examen</th>
+                <th>Session</th>
+                <th>Moy. Module</th>
+                <th>Observation</th>
             </tr>
+        </thead>
+        <tbody>
+            <?php $i = 1; foreach ($note_des_etudiants as $note): $m = (float) $note->moyenne_module; $ok = $m >= 10; ?>
+                <tr>
+                    <td class="num"><?= $i++ ?></td>
+                    <td><?= htmlspecialchars($note->matricule_etudiant) ?></td>
+                    <td class="nom"><?= mb_strtoupper(htmlspecialchars($note->nom_prenom_etudiant), 'UTF-8') ?><?= !empty($note->prenom) ? ' ' . mb_convert_case(htmlspecialchars($note->prenom), MB_CASE_TITLE, 'UTF-8') : '' ?></td>
+                    <td class="num"><?= ($note->genre_etudiant == "Féminin") ? 'F' : 'M' ?></td>
+                    <td class="num"><?= rn_note_brute($note->note_devoir) ?></td>
+                    <td class="num"><?= rn_note_brute($note->note_evaluation) ?></td>
+                    <td class="num"><?= rn_note_brute($note->note_session) ?></td>
+                    <td class="moy-cell"><?= number_format($m, 2) ?></td>
+                    <td class="obs <?= $ok ? 'ok' : 'ko' ?>"><?= $ok ? 'Validé' : 'Non validé' ?></td>
+                </tr>
             <?php endforeach ?>
         </tbody>
     </table>
 </div>
-</div>
-
-<!-- BEGIN Vendor JS-->
-<script src="<?= ROOT ?>/assets/vendors/js/tables/datatable/datatables.min.js"></script>
-<script src="<?= ROOT ?>/assets/vendors/js/tables/datatable/dataTables.bootstrap4.min.js"></script>
-<script src="<?= ROOT ?>/assets/vendors/js/tables/datatable/dataTables.buttons.min.js"></script>
-<script src="<?= ROOT ?>/assets/vendors/js/tables/datatable/datatables.checkboxes.min.js"></script>
-<script src="<?= ROOT ?>/assets/js/scripts/datatables/datatable.js"></script>
-<!-- BEGIN: Page Vendor JS-->
-
-<script>
-$("#notesTable").DataTable({
-    "pageLength": 100
-})
-
-
-var nbrValide = 0;
-var nbrEtudiant = 0;
-var moyenneTotalModule = 0;
-$("#notesTable tbody tr").each(function() {
-    nbrEtudiant++;
-    const moyenneInput = $(this).find(".moyenne");
-    const moyenne = moyenneInput.val()
-    if (moyenne < 10) {
-        moyenneInput.addClass("bg-rgba-danger");
-        $(this).find('.etatSemestre').text("Non Validé");
-        $(this).find('.etatSemestre').addClass('badge-light-danger');
-    } else if (moyenne <= 20) {
-        moyenneInput.addClass("bg-rgba-success");
-        $(this).find('.etatSemestre').text("Validé");
-        $(this).find('.etatSemestre').addClass('badge-light-success');
-        nbrValide++;
-    }
-
-    moyenneTotalModule += parseFloat(moyenne, 10);
-})
-
-moyenneTotalModule = (moyenneTotalModule / nbrEtudiant).toFixed(2);
-$('#moyenneTotalModule').text(moyenneTotalModule);
-if (moyenneTotalModule < 10) {
-    $('#moyenneTotalModule').addClass('text-danger');
-} else {
-    $('#moyenneTotalModule').addClass('text-success');
-}
-
-tauxReussite = ((nbrValide * 100) / nbrEtudiant).toFixed(2);
-$('#tauxReussite').text(tauxReussite + "%");
-if (tauxReussite < 50) {
-    $('#tauxReussite').addClass('badge-light-danger');
-} else {
-    $('#tauxReussite').addClass('badge-light-success');
-}
-</script>

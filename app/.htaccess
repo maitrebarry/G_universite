@@ -1,0 +1,11 @@
+# Ce dossier contient le code source (controllers, models, vues, config).
+# Il ne doit JAMAIS être servi directement par le serveur web.
+# (Défense en profondeur quand tout le projet est sous la racine web.)
+
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>

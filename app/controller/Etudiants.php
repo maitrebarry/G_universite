@@ -5,10 +5,11 @@ class Etudiants extends Controller
     {
         // Récupérer les données des filières
         $filiereModel = new Filiere(); // Initialiser le modèle des filières
-        $listeFilieres = $filiereModel->SelectAllData("*", "promotion 
-        INNER JOIN filiere ON promotion.id_filiere=filiere.id_filiere 
-        INNER JOIN parcours ON promotion.id_parcours=parcours.id_parcours 
-        INNER JOIN semestre ON parcours.id_semestre=semestre.id_semestre");
+        $listeFilieres = $filiereModel->SelectAllData("*", "promotion
+        INNER JOIN filiere ON promotion.id_filiere=filiere.id_filiere
+        INNER JOIN parcours ON promotion.id_parcours=parcours.id_parcours
+        INNER JOIN semestre ON parcours.id_semestre=semestre.id_semestre
+        ORDER BY promotion.annee_universitaire DESC, filiere.sigle_filiere ASC");
         
     // Groupement par année universitaire
     $listeParAnnee = [];
@@ -21,12 +22,44 @@ class Etudiants extends Controller
     }
         // Transmettre les données à la vue
 
-        $this->view('liste_incrit', [
- 'listeFilieres' => $listeFilieres,        // pas supprimé si tu en as besoin ailleurs
-        'listeParAnnee' => $listeParAnnee,
-     // pour la double sélection année > promotion
-    ]);
-}
+        // Liste complète : on fournit les filières pour le filtre optionnel.
+        // Les données du tableau sont chargées en AJAX via liste_data().
+        $filieres = $filiereModel->SelectAllData("*", "filiere");
+        $this->view('liste_etudiant_page', ['filieres' => $filieres, 'promotions' => $listeFilieres]);
+    }
+
+    // Endpoint JSON : recherche + tri + pagination cote serveur
+    public function liste_data()
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        $etu = new Etudiant();
+
+        $q         = trim($_POST['q'] ?? '');
+        $promotion = trim($_POST['promotion'] ?? '');
+        $sort    = $_POST['sort'] ?? 'name';
+        $dir     = $_POST['dir'] ?? 'asc';
+        $page    = max(1, (int) ($_POST['page'] ?? 1));
+        $size    = (int) ($_POST['size'] ?? 10);
+        $size    = ($size > 0 && $size <= 100) ? $size : 10;
+        $offset  = ($page - 1) * $size;
+
+        try {
+            $total = $etu->compterEtudiants($q, $promotion);
+            $rows  = $etu->listerEtudiants($q, $promotion, $sort, $dir, $offset, $size);
+        } catch (\Throwable $e) {
+            error_log('liste_data: ' . $e->getMessage());
+            $total = 0;
+            $rows  = [];
+        }
+
+        echo json_encode([
+            'rows'  => $rows,
+            'total' => $total,
+            'page'  => $page,
+            'size'  => $size,
+            'pages' => max(1, (int) ceil($total / $size)),
+        ]);
+    }
 
     
     public function incrit_etudiant() {
@@ -80,72 +113,60 @@ public function trier_liste_etudiant() {
         // Afficher la page de paiement pour un étudiant spécifique
         public function paiement_etudiant($id)
         {
-           
-            // Récupérer l'étudiant par son ID
             $student = new Etudiant();
-            $etudiant = $student->getById($id); // Appel de la méthode non statique
-        
-            // Vérifier si l'étudiant existe
-            if ($etudiant) {
-                // Récupérer l'historique des paiements pour cet étudiant
-                $payments = $student->getPaymentsByStudentId($id);
-         // Calculer le montant total payé
-         $totalPaid = 0;
-         foreach ($payments as $payment) {
-             $totalPaid += $payment['montant_paye']; // Additionner tous les paiements
-         }
-         
-         // Calculer le montant restant
-         $remainingAmount = $etudiant['total_frais'] - $totalPaid;
-         
-         // Passer les informations à la vue
-         $this->view('paiement_inscription', [
-             'etudiant' => $etudiant,
-             'payments' => $payments,
-             'remainingAmount' => $remainingAmount
-         ]);
-         if (isset($_POST["paie"])) {
-            // la méthode d'enregistrement
-             $student->ajouterPaiement();
-         }
-     } else {
-         $this->view('paiement_inscription', ['error' => 'Étudiant introuvable.']);
-     }
-     
- }
+
+            // Enregistrer le paiement AVANT le rendu, puis rediriger (PRG : évite la double soumission).
+            if (isset($_POST['paie']) && !empty($_POST['montant_paye'])) {
+                if ($student->enregistrerPaiement($id, $_POST['montant_paye'])) {
+                    $student->set_flash('Paiement enregistré avec succès.', 'success');
+                } else {
+                    $student->set_flash('Montant invalide.', 'danger');
+                }
+                $this->redirect("Etudiants/paiement_etudiant/$id");
+                return;
+            }
+
+            $etudiant = $student->getById($id);
+            if (!$etudiant) {
+                $this->view('paiement_inscription', ['error' => 'Étudiant introuvable.']);
+                return;
+            }
+
+            $payments = $student->getPaymentsByStudentId($id);
+            $totalPaid = 0;
+            foreach ($payments as $payment) {
+                $totalPaid += $payment['montant_paye'];
+            }
+            $remainingAmount = (int) $etudiant['total_frais'] - $totalPaid;
+
+            $this->view('paiement_inscription', [
+                'etudiant' => $etudiant,
+                'payments' => $payments,
+                'totalPaid' => $totalPaid,
+                'remainingAmount' => $remainingAmount
+            ]);
+        }
  public function traiter_paiement_groupes() {
     $etudiant = new Etudiant();
+    $faits = 0;
 
-    // Vérifier que des montants ont été soumis
     if (isset($_POST['paiement']) && is_array($_POST['paiement'])) {
-        $paiements = $_POST['paiement'];
-        $erreur = false;
-
-        foreach ($paiements as $idEtudt => $montant) {
-            // Vérifier que le montant est valide (supérieur à zéro)
+        // Un montant vide ou 0 = étudiant non payé cette fois (on l'ignore, pas d'erreur).
+        foreach ($_POST['paiement'] as $idEtudt => $montant) {
+            $montant = (int) $montant;
             if ($montant > 0) {
-                $data = [
-                    'idEtudt' => $idEtudt,
-                    'montant_paye' => $montant,
-                    'date' => date('Y-m-d H:i:s'),
-                ];
-                $etudiant->addPayment($data); // Ajouter le paiement
-            } else {
-                $_SESSION['error'] = "Montant invalide pour l'étudiant ID: $idEtudt.";
-                $erreur = true; // Si une erreur se produit, ne pas continuer
-                break; // On arrête la boucle si un paiement est invalide
+                if ($etudiant->enregistrerPaiement($idEtudt, $montant)) {
+                    $faits++;
+                }
             }
         }
-
-        if (!$erreur) {
-            $_SESSION['message'] = "Paiements effectués avec succès.";
-        }
-
+        $_SESSION['message'] = $faits > 0
+            ? "$faits paiement(s) enregistré(s) avec succès."
+            : "Aucun montant saisi : aucun paiement enregistré.";
     } else {
         $_SESSION['message'] = "Aucun montant soumis.";
     }
 
-    // Redirection après traitement
     header("Location: " . ROOT . "/Etudiants");
     exit;
 }
@@ -260,17 +281,18 @@ public function modifier($id_etudiant) {
     );
 
     // 🔹 Récupérer les filières + promotions liées à l’étudiant
-    $filieres = $filiere->SelectAllData(
-        "p.id_promotion, p.annee_universitaire, 
-         f.id_filiere, f.sigle_filiere, f.nom_filiere,
-         pa.id_parcours, pa.nom_parcours, 
-         s.id_semestre, s.nom_semestre",
-        "etudiant_promotion ep
+    $filieres = $filiere->select_data_table_join_where(
+        "SELECT p.id_promotion, p.annee_universitaire,
+                f.id_filiere, f.sigle_filiere, f.nom_filiere,
+                pa.id_parcours, pa.nom_parcours,
+                s.id_semestre, s.nom_semestre
+         FROM etudiant_promotion ep
          INNER JOIN promotion p ON ep.id_promotion = p.id_promotion
          INNER JOIN filiere f ON p.id_filiere = f.id_filiere
          INNER JOIN parcours pa ON p.id_parcours = pa.id_parcours
          INNER JOIN semestre s ON pa.id_semestre = s.id_semestre
-         WHERE ep.id_etudiants = $id_etudiant"
+         WHERE ep.id_etudiants = ?",
+        [$id_etudiant]
     );
 
     // 🔹 Si formulaire soumis → modification
@@ -341,15 +363,16 @@ public function apercu_etudiant($idEtudiant) {
 $etudiant = $etudiants->getEtudiantById($idEtudiant);
 
 // Récupérer les infos des filières, promotions, parcours, semestres liés à l'étudiant
-$filieres = $filiere->SelectAllData(
-    "*",
-    "etudiant_promotion
+$filieres = $filiere->select_data_table_join_where(
+    "SELECT *
+     FROM etudiant_promotion
      INNER JOIN promotion ON etudiant_promotion.id_promotion = promotion.id_promotion
      INNER JOIN filiere ON promotion.id_filiere = filiere.id_filiere
      INNER JOIN parcours ON promotion.id_parcours = parcours.id_parcours
      INNER JOIN semestre ON parcours.id_semestre = semestre.id_semestre
      INNER JOIN etudiant ON etudiant.id_etudiant = etudiant_promotion.id_etudiants
-     WHERE etudiant.id_etudiant = $idEtudiant"
+     WHERE etudiant.id_etudiant = ?",
+    [$idEtudiant]
 );
 
     if ($etudiant) {

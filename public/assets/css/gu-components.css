@@ -1,0 +1,289 @@
+/* =====================================================================
+   G_universite — Composants (étape 1b : boutons / formulaires / listes)
+   Dépend de theme.css (tokens). À inclure APRÈS theme.css.
+   100% basé sur les tokens => compatible mode clair / sombre.
+   ===================================================================== */
+
+/* ============================ BOUTONS ============================ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .5em;
+  position: relative; border-radius: var(--radius-md); font-weight: var(--fw-medium);
+  transition: transform var(--transition), box-shadow var(--transition),
+              background-color var(--transition), color var(--transition),
+              border-color var(--transition), filter var(--transition);
+}
+.btn:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(var(--bs-primary-rgb), .35); }
+.btn:active { transform: translateY(0) scale(.98); }
+
+/* Élévation au survol pour les boutons pleins */
+.btn-primary, .btn-success, .btn-danger, .btn-warning, .btn-gradient { box-shadow: var(--shadow-sm); }
+.btn-primary:hover, .btn-success:hover, .btn-danger:hover, .btn-warning:hover, .btn-gradient:hover {
+  transform: translateY(-1px); box-shadow: var(--shadow-md);
+}
+
+/* Variante premium : dégradé animé au survol */
+.btn-gradient {
+  border: 0; color: #fff;
+  background: linear-gradient(135deg, var(--brand-400), var(--brand-600) 55%, var(--brand-700));
+  background-size: 160% 160%; background-position: 0% 50%;
+  transition: background-position .5s ease, transform var(--transition), box-shadow var(--transition);
+}
+.btn-gradient:hover { background-position: 100% 50%; color: #fff; }
+
+/* Boutons sémantiques (mappés sur les tokens) */
+.btn-success { --bs-btn-bg: var(--success); --bs-btn-border-color: var(--success);
+  --bs-btn-hover-bg: var(--success-text); --bs-btn-hover-border-color: var(--success-text);
+  --bs-btn-color: #fff; --bs-btn-hover-color: #fff; }
+.btn-danger  { --bs-btn-bg: var(--danger); --bs-btn-border-color: var(--danger);
+  --bs-btn-hover-bg: var(--danger-text); --bs-btn-hover-border-color: var(--danger-text);
+  --bs-btn-color: #fff; --bs-btn-hover-color: #fff; }
+.btn-warning { --bs-btn-bg: var(--warning); --bs-btn-border-color: var(--warning);
+  --bs-btn-hover-bg: var(--warning-text); --bs-btn-hover-border-color: var(--warning-text);
+  --bs-btn-color: #3a2a08; --bs-btn-hover-color: #fff; }
+
+/* Boutons « soft » (tons sémantiques, adaptés au sombre) */
+.btn-soft-primary { background: var(--info-bg);    color: var(--info-text);    border: 0; }
+.btn-soft-success { background: var(--success-bg); color: var(--success-text); border: 0; }
+.btn-soft-warning { background: var(--warning-bg); color: var(--warning-text); border: 0; }
+.btn-soft-danger  { background: var(--danger-bg);  color: var(--danger-text);  border: 0; }
+.btn-soft-primary:hover, .btn-soft-success:hover, .btn-soft-warning:hover, .btn-soft-danger:hover { filter: brightness(.96); }
+
+/* Bouton fantôme (action discrète) */
+.btn-ghost { background: transparent; border: 0; color: var(--text-secondary); }
+.btn-ghost:hover { background: var(--surface-muted); color: var(--text-primary); }
+
+/* Boutons icône */
+.btn-icon { padding: 0; width: 2.4rem; height: 2.4rem; }
+.btn-icon.btn-sm { width: 2rem; height: 2rem; }
+.btn-icon.btn-lg { width: 2.9rem; height: 2.9rem; }
+.btn-round { border-radius: 50%; }
+.btn-icon i { font-size: 1.2rem; line-height: 1; }
+
+/* Tailles & formes additionnelles */
+.btn-xl { padding: .85rem 1.6rem; font-size: var(--fs-lg); border-radius: var(--radius-lg); }
+.btn-pill { border-radius: var(--radius-pill); }
+
+/* État chargement */
+.btn.is-loading { color: transparent !important; pointer-events: none; }
+.btn.is-loading::after {
+  content: ""; position: absolute; width: 1.05em; height: 1.05em;
+  border: 2px solid #fff; border-right-color: transparent; border-radius: 50%;
+  animation: gu-spin .6s linear infinite;
+}
+.btn-outline-primary.is-loading::after, .btn-ghost.is-loading::after,
+.btn-soft-primary.is-loading::after { border-color: var(--color-primary); border-right-color: transparent; }
+@keyframes gu-spin { to { transform: rotate(360deg); } }
+
+/* Bouton flottant (FAB) */
+.btn-fab { width: 3.5rem; height: 3.5rem; border-radius: 50%; box-shadow: var(--shadow-lg); padding: 0; }
+.btn-fab i { font-size: 1.5rem; }
+
+/* Contrôle segmenté (groupe de boutons) */
+.gu-segment { display: inline-flex; background: var(--surface-muted); padding: .25rem; border-radius: var(--radius-md); gap: .25rem; }
+.gu-segment .seg {
+  border: 0; background: transparent; color: var(--text-secondary);
+  padding: .4rem .9rem; border-radius: calc(var(--radius-md) - .15rem);
+  font-weight: var(--fw-medium); font-size: var(--fs-sm); cursor: pointer; transition: var(--transition);
+  display: inline-flex; align-items: center; gap: .35rem;
+}
+.gu-segment .seg:hover { color: var(--text-primary); }
+.gu-segment .seg.active { background: var(--surface-card); color: var(--color-primary); box-shadow: var(--shadow-sm); }
+
+/* ============================ FORMULAIRES ============================ */
+.form-label { font-weight: var(--fw-medium); font-size: var(--fs-sm); color: var(--text-primary); margin-bottom: .35rem; }
+.form-text { color: var(--text-tertiary); font-size: var(--fs-xs); }
+.req::after { content: " *"; color: var(--danger); }
+
+/* Champ avec icône (avant / après) */
+.gu-field { position: relative; }
+.gu-field .gu-ico { position: absolute; top: 50%; transform: translateY(-50%); left: .85rem;
+  color: var(--text-tertiary); font-size: 1.15rem; pointer-events: none; }
+.gu-field .gu-ico-r { left: auto; right: .55rem; top: 50%; transform: translateY(-50%); pointer-events: auto;
+  cursor: pointer; background: 0; border: 0; color: var(--text-tertiary); padding: .3rem; border-radius: var(--radius-sm);
+  display: inline-flex; align-items: center; }
+.gu-field .gu-ico-r:hover { color: var(--color-primary); background: var(--surface-muted); }
+.gu-field .form-control.has-ico { padding-left: 2.6rem; }
+.gu-field .form-control.has-ico-r { padding-right: 2.6rem; }
+.gu-field:focus-within .gu-ico { color: var(--color-primary); }
+
+/* Recherche en pilule */
+.gu-search .form-control { border-radius: var(--radius-pill); }
+
+/* Validation */
+.form-control.is-valid, .form-select.is-valid { border-color: var(--success); }
+.form-control.is-invalid, .form-select.is-invalid { border-color: var(--danger); }
+.form-control.is-valid:focus { box-shadow: 0 0 0 3px rgba(30,158,117,.18); }
+.form-control.is-invalid:focus { box-shadow: 0 0 0 3px rgba(214,69,69,.18); }
+.gu-feedback { font-size: var(--fs-xs); display: flex; gap: .3rem; align-items: center; margin-top: .3rem; }
+.gu-feedback.ok  { color: var(--success-text); }
+.gu-feedback.err { color: var(--danger-text); }
+
+/* Floating labels (Bootstrap) — accent couleur */
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label { color: var(--color-primary); }
+
+/* Interrupteur */
+.form-switch .form-check-input { width: 2.6em; height: 1.4em; cursor: pointer; }
+.form-check-input { cursor: pointer; }
+.form-check-input:checked { background-color: var(--color-primary); border-color: var(--color-primary); }
+.form-check-input:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(var(--bs-primary-rgb), .2); }
+
+/* Zone de dépôt (upload) */
+.gu-dropzone { border: 2px dashed var(--border-strong); border-radius: var(--radius-lg); padding: 1.6rem;
+  text-align: center; color: var(--text-secondary); background: var(--surface-muted);
+  transition: var(--transition); cursor: pointer; }
+.gu-dropzone:hover, .gu-dropzone.dragover { border-color: var(--color-primary); color: var(--color-primary); background: var(--info-bg); }
+.gu-dropzone i { font-size: 1.9rem; }
+
+/* Curseur (range) */
+.form-range::-webkit-slider-thumb { background: var(--color-primary); }
+.form-range::-moz-range-thumb { background: var(--color-primary); }
+
+/* ============================ LISTES / TABLEAUX ============================ */
+.gu-table-card { background: var(--surface-card); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm); }
+
+.gu-toolbar { display: flex; align-items: center; gap: .75rem; padding: .85rem 1rem;
+  border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+.gu-toolbar .gu-title { font-weight: var(--fw-semibold); display: inline-flex; align-items: center; gap: .5rem; }
+.gu-count { background: var(--info-bg); color: var(--info-text); font-size: var(--fs-xs);
+  padding: .15rem .55rem; border-radius: var(--radius-pill); }
+
+.gu-chip { display: inline-flex; align-items: center; gap: .35rem; font-size: var(--fs-xs);
+  padding: .35rem .75rem; border-radius: var(--radius-pill); background: var(--surface-muted);
+  color: var(--text-secondary); border: 1px solid var(--border); cursor: pointer; transition: var(--transition); }
+.gu-chip:hover { color: var(--text-primary); }
+.gu-chip.active { background: var(--info-bg); color: var(--info-text); border-color: transparent; }
+
+/* Hauteur adaptée à l'écran : les lignes défilent à l'intérieur,
+   en-tête figé en haut, le pied (pagination) reste toujours visible. */
+.gu-table-wrap { max-height: calc(100vh - 330px); min-height: 220px; overflow: auto; }
+/* Variante « ajustée à l'écran » (liste complète) : la carte devient une colonne
+   flex bornée en hauteur — la barre d'outils et le pied (pagination) gardent
+   TOUJOURS leur place, et le tableau prend l'espace restant en défilant à
+   l'intérieur. Robuste même si le pied passe sur deux lignes. */
+.gu-table-card.is-fitted { display: flex; flex-direction: column; max-height: calc(100vh - 170px); }
+.gu-table-card.is-fitted > .gu-toolbar,
+.gu-table-card.is-fitted > .gu-foot { flex: 0 0 auto; }
+.gu-table-card.is-fitted > .gu-table-wrap { flex: 1 1 auto; min-height: 180px; max-height: none; }
+.gu-table { width: 100%; margin: 0; border-collapse: separate; border-spacing: 0; }
+.gu-table thead th { position: sticky; top: 0; background: var(--surface-card); z-index: 1;
+  font-size: var(--fs-sm); font-weight: var(--fw-semibold); color: var(--text-secondary);
+  padding: .7rem 1rem; border-bottom: 1px solid var(--border-strong); white-space: nowrap; }
+.gu-table tbody td { padding: .7rem 1rem; border-bottom: 1px solid var(--border); color: var(--text-primary); vertical-align: middle; }
+.gu-table tbody tr { transition: background-color var(--transition); }
+.gu-table tbody tr:hover { background: var(--surface-muted); }
+.gu-table tbody tr.is-selected { background: var(--info-bg); }
+.gu-table.is-compact thead th, .gu-table.is-compact tbody td { padding: .4rem .75rem; }
+
+.gu-table th.sortable { cursor: pointer; user-select: none; }
+.gu-table th.sortable i { opacity: .35; font-size: 1rem; vertical-align: -3px; }
+.gu-table th.sorted-asc i, .gu-table th.sorted-desc i { opacity: 1; color: var(--color-primary); }
+
+.gu-row-actions { display: inline-flex; gap: .25rem; opacity: 0; transition: var(--transition); }
+.gu-table tbody tr:hover .gu-row-actions, .gu-table tbody tr.is-selected .gu-row-actions { opacity: 1; }
+
+.gu-meter { height: 6px; border-radius: var(--radius-pill); background: var(--surface-muted); overflow: hidden; min-width: 84px; }
+.gu-meter > span { display: block; height: 100%; border-radius: inherit; background: var(--color-primary); }
+.gu-meter.warn > span { background: var(--warning); }
+.gu-meter.bad  > span { background: var(--danger); }
+
+.gu-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--info-bg); color: var(--info-text);
+  display: inline-flex; align-items: center; justify-content: center; font-weight: var(--fw-medium); font-size: var(--fs-xs); flex-shrink: 0; }
+
+.gu-foot { display: flex; align-items: center; justify-content: space-between; padding: .7rem 1rem;
+  border-top: 1px solid var(--border); font-size: var(--fs-sm); color: var(--text-secondary); flex-wrap: wrap; gap: .5rem; }
+.gu-pagination { display: inline-flex; gap: .25rem; }
+.gu-pagination button { min-width: 2rem; height: 2rem; border: 1px solid var(--border); background: var(--surface-card);
+  border-radius: var(--radius-md); color: var(--text-primary); cursor: pointer; transition: var(--transition); }
+.gu-pagination button:hover:not(:disabled) { border-color: var(--color-primary); color: var(--color-primary); }
+.gu-pagination button.active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+.gu-pagination button:disabled { opacity: .4; cursor: default; }
+
+/* État vide */
+.gu-empty { text-align: center; padding: 2.5rem 1rem; color: var(--text-secondary); }
+.gu-empty i { font-size: 2.4rem; color: var(--text-tertiary); display: block; margin-bottom: .5rem; }
+
+/* Liste façon cartes (responsive / mobile) */
+.gu-list .gu-list-item { display: flex; align-items: center; gap: .85rem; padding: .8rem 1rem;
+  border-bottom: 1px solid var(--border); transition: var(--transition); }
+.gu-list .gu-list-item:hover { background: var(--surface-muted); }
+.gu-list .gu-list-item:last-child { border-bottom: 0; }
+.gu-list .gu-list-body { min-width: 0; flex: 1; }
+.gu-list .gu-list-body .t { font-weight: var(--fw-medium); }
+.gu-list .gu-list-body .m { font-size: var(--fs-sm); color: var(--text-secondary); }
+
+/* ============================ FICHE / DÉTAIL ============================ */
+.gu-kv { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px 22px; }
+.gu-kv .k { font-size: var(--fs-xs); color: var(--text-tertiary); text-transform: uppercase; letter-spacing: .03em; margin-bottom: 2px; }
+.gu-kv .v { font-weight: var(--fw-medium); color: var(--text-primary); word-break: break-word; }
+.gu-kv .v.empty { color: var(--text-tertiary); font-weight: 400; }
+
+.gu-profile-av { width: 84px; height: 84px; border-radius: 50%; overflow: hidden; background: var(--info-bg); color: var(--info-text);
+  display: inline-flex; align-items: center; justify-content: center; font-weight: var(--fw-semibold); font-size: 1.8rem; flex-shrink: 0; }
+.gu-profile-av img { width: 100%; height: 100%; object-fit: cover; }
+
+.gu-section-title { font-weight: var(--fw-semibold); display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.gu-section-title i { color: var(--brand-600); font-size: 1.2rem; }
+
+/* Hero de profil : bannière dégradé + avatar superposé */
+.gu-hero { overflow: hidden; padding: 0; }
+.gu-hero-cover { height: 104px; position: relative;
+  background: linear-gradient(120deg, var(--brand-700), var(--brand-500) 70%, var(--brand-400)); }
+.gu-hero-cover::after { content: ""; position: absolute; inset: 0;
+  background: radial-gradient(circle at 88% -25%, rgba(255,255,255,.16), transparent 42%),
+              radial-gradient(circle at 10% 130%, rgba(255,255,255,.10), transparent 42%); }
+.gu-hero-body { display: flex; flex-wrap: wrap; align-items: center; gap: 18px; padding: 14px 22px 18px; position: relative; }
+.gu-hero-av { width: 98px; height: 98px; margin-top: -64px; border-radius: 50%; border: 4px solid var(--surface-card);
+  background: var(--info-bg); color: var(--info-text); display: inline-flex; align-items: center; justify-content: center;
+  font-weight: var(--fw-semibold); font-size: 2rem; overflow: hidden; position: relative; box-shadow: var(--shadow-md); }
+.gu-hero-av img { width: 100%; height: 100%; object-fit: cover; }
+.gu-hero-av .dot { position: absolute; right: 5px; bottom: 5px; width: 16px; height: 16px; border-radius: 50%;
+  border: 3px solid var(--surface-card); background: var(--text-tertiary); }
+.gu-hero-av .dot.on { background: var(--success); }
+.gu-hero-main { flex: 1; min-width: 220px; padding-bottom: 4px; }
+.gu-hero-actions { display: flex; flex-wrap: wrap; gap: 8px; padding-bottom: 4px; }
+
+/* Puce d'icône (titres de section) */
+.gu-ico-chip { width: 34px; height: 34px; border-radius: var(--radius-md); background: var(--info-bg); color: var(--info-text);
+  display: inline-flex; align-items: center; justify-content: center; font-size: 1.15rem; flex-shrink: 0; }
+.gu-ico-chip.success { background: var(--success-bg); color: var(--success-text); }
+.gu-ico-chip.warning { background: var(--warning-bg); color: var(--warning-text); }
+.gu-ico-chip i { color: inherit; }
+.gu-kv.lined .kv { padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+
+/* ============================ SELECT INTELLIGENT (recherche) ============================ */
+.gu-ss { position: relative; }
+.gu-ss-control { width: 100%; text-align: left; display: flex; align-items: center; cursor: pointer; }
+.gu-ss-control > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gu-ss-control .gu-ss-ph { color: var(--text-tertiary); }
+.gu-ss.open .gu-ss-control { border-color: var(--color-primary); box-shadow: 0 0 0 3px var(--ring, rgba(31,79,156,.15)); }
+.gu-ss-panel { position: absolute; z-index: 60; top: calc(100% + 4px); left: 0; right: 0;
+  background: var(--surface-card); border: 1px solid var(--border); border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg); display: none; overflow: hidden; }
+.gu-ss.open .gu-ss-panel { display: block; }
+.gu-ss-search { display: flex; align-items: center; gap: 6px; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+.gu-ss-search i { color: var(--text-tertiary); font-size: 1.1rem; }
+.gu-ss-search input { border: 0; outline: 0; width: 100%; background: transparent; color: var(--text-primary); font-size: var(--fs-sm); }
+.gu-ss-list { max-height: 240px; overflow-y: auto; padding: 4px; }
+.gu-ss-item { padding: 8px 12px; border-radius: var(--radius-sm); cursor: pointer; font-size: var(--fs-sm); color: var(--text-primary); }
+.gu-ss-item:hover, .gu-ss-item.kb { background: var(--surface-muted); }
+.gu-ss-item.selected { background: var(--info-bg); color: var(--info-text); font-weight: var(--fw-medium); }
+.gu-ss-empty { padding: 12px; text-align: center; color: var(--text-tertiary); font-size: var(--fs-sm); }
+
+/* ============================ BARRE D'ACTION COLLANTE (création EDT) ============================ */
+/* Garde le bouton « Enregistrer » (et le bandeau de conflits) toujours visibles en bas. */
+.gu-edt-actions { position: sticky; bottom: 0; z-index: 30; display: flex; align-items: center;
+  justify-content: flex-end; gap: 14px; flex-wrap: wrap; margin-top: 18px; padding: 12px 14px;
+  background: var(--surface-card); border: 1px solid var(--border); border-radius: var(--radius-md);
+  box-shadow: 0 -6px 18px rgba(15, 23, 42, .10); }
+.gu-edt-actions__msg { flex: 1 1 260px; min-width: 0; max-height: 92px; overflow: auto; }
+.gu-edt-actions__msg:empty { display: none; }
+.gu-edt-actions__msg .alert { margin: 0; }
+.gu-edt-actions > #valider { flex: 0 0 auto; }
+
+/* Icônes d'action en ligne (listes) */
+.gu-icon-act { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px;
+  border: 0; background: transparent; cursor: pointer;
+  border-radius: var(--radius-md); color: var(--text-secondary); font-size: 1.12rem; text-decoration: none; transition: var(--transition); }
+.gu-icon-act:hover { background: var(--surface-muted); color: var(--color-primary); }

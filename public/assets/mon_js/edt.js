@@ -109,7 +109,7 @@ function addHeure(horaireDebut, horaireFin, coursJour) {
             </div>
         </td>
         <td>
-            <select class='select2 form-control tache'>
+            <select class='form-select tache'>
                 <option value='x' class='text-center' ${
                   coursJour.l == "x" ? "selected" : ""
                 }>X</option>
@@ -131,7 +131,7 @@ function addHeure(horaireDebut, horaireFin, coursJour) {
             </select>
         </td>
         <td>
-            <select class='select2 form-control tache'>
+            <select class='form-select tache'>
                 <option value='x' class='text-center' ${
                   coursJour.m == "x" ? "selected" : ""
                 }>X</option>
@@ -153,7 +153,7 @@ function addHeure(horaireDebut, horaireFin, coursJour) {
             </select>
         </td>
         <td>
-            <select class='select2 form-control tache'>
+            <select class='form-select tache'>
                 <option value='x' class='text-center' ${
                   coursJour.mer == "x" ? "selected" : ""
                 }>X</option>
@@ -175,7 +175,7 @@ function addHeure(horaireDebut, horaireFin, coursJour) {
             </select>
         </td>
         <td>
-            <select class='select2 form-control tache'>
+            <select class='form-select tache'>
                 <option value='x' class='text-center' ${
                   coursJour.j == "x" ? "selected" : ""
                 }>X</option>
@@ -197,7 +197,7 @@ function addHeure(horaireDebut, horaireFin, coursJour) {
             </select>
         </td>
         <td>
-            <select class='select2 form-control tache'>
+            <select class='form-select tache'>
                 <option value='x' class='text-center' ${
                   coursJour.v == "x" ? "selected" : ""
                 }>X</option>
@@ -220,7 +220,7 @@ function addHeure(horaireDebut, horaireFin, coursJour) {
         </td>
        
         <td>
-            <select class='select2 form-control tache'>
+            <select class='form-select tache'>
                 <option value='x' class='text-center' ${
                   coursJour.s == "x" && heureTotal > 40 ? "selected" : ""
                 }>X</option>
@@ -557,6 +557,7 @@ function ajouterEdt(url = window.ROOT_EDT + "/ajouter_EDT", action = "ajouter_ED
       edt: edt,
       horaires: horaires,
       enseignants: enseignants,
+      forceSalle: window.__edtForceSalle ? 1 : 0,
     },
     success: function (response) {
       console.log(response);

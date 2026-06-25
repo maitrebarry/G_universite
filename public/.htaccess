@@ -1,8 +1,46 @@
-Options -Multiviews
-RewriteEngine On
+# Routage portable — AUCUN chemin codé en dur (fonctionne en sous-dossier,
+# en sous-domaine, ou avec le DocumentRoot pointé directement sur /public).
+Options -MultiViews
+Options -Indexes
 
-RewriteBase /G_universite/public
+# Type MIME correct pour le manifeste PWA
+<IfModule mod_mime.c>
+    AddType application/manifest+json .webmanifest
+</IfModule>
 
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^(.*)$  ../index.php?url=$1 [QSA,L]
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Dans 99% des cas, rien à décommenter. Si votre hébergeur l'exige
+    # (ex. routage cassé), forcez la base correspondant à l'URL de /public :
+    #   RewriteBase /
+    #   RewriteBase /G_universite/public
+
+    # Laisse passer les fichiers et dossiers réels (assets, images, uploads…)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    # Tout le reste => front controller du même dossier
+    RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
+</IfModule>
+
+# Petit plus performance : cache des assets statiques
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 7 days"
+    ExpiresByType application/javascript "access plus 7 days"
+    ExpiresByType image/png "access plus 30 days"
+    ExpiresByType image/jpeg "access plus 30 days"
+    ExpiresByType image/svg+xml "access plus 30 days"
+    ExpiresByType image/webp "access plus 30 days"
+</IfModule>
+
+# Le service worker et le manifest ne doivent PAS être mis en cache
+# (sinon les mises à jour de l'app ne se propagent pas).
+<FilesMatch "(sw\.js|manifest\.webmanifest)$">
+    <IfModule mod_headers.c>
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+    </IfModule>
+    <IfModule mod_expires.c>
+        ExpiresActive Off
+    </IfModule>
+</FilesMatch>

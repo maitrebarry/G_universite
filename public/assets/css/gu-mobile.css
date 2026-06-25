@@ -1,0 +1,108 @@
+/* =====================================================================
+   G_universite — Adaptations MOBILE / TABLETTE
+   Chargé APRÈS theme.css + gu-components.css + gu-shell.css (override final).
+   Le menu (sidebar off-canvas + hamburger) est géré par Frest ; ici on
+   fiabilise le CONTENU sur petits écrans (pas de débordement horizontal,
+   tables défilantes, en-têtes/grilles/modales compactes).
+   ===================================================================== */
+
+/* Filet de sécurité GLOBAL : aucune barre de défilement horizontale parasite */
+html, body { max-width: 100%; overflow-x: hidden; }
+
+/* ===== Tablette et mobile (sidebar en off-canvas, < xl) ===== */
+@media (max-width: 1199.98px) {
+  /* Contenu pleine largeur (la sidebar ne pousse plus le contenu) */
+  .app-content { margin-left: 0 !important; width: 100% !important; }
+  .content-wrapper { max-width: 100% !important; }
+  .content-body, .content-header, .content-header .row { max-width: 100%; }
+
+  /* Toute table déborde -> défilement horizontal interne plutôt que casser la page */
+  .table-responsive, .gu-table-wrap { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  #dash table.dep { display: block; overflow-x: auto; white-space: nowrap; }
+
+  /* Bulletins / résultats annuels : grille « pannable » (défilement horizontal).
+     On ne touche PAS la structure de la table -> le PDF d'impression reste intact. */
+  #table_section { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  /* Les actions de ligne sont masquées jusqu'au survol -> il n'y a pas de survol
+     au doigt : on les rend TOUJOURS visibles sur mobile/tablette. */
+  .gu-row-actions { opacity: 1 !important; }
+}
+
+/* ===== Mobile (téléphones) ===== */
+@media (max-width: 767.98px) {
+  .content-wrapper { padding-left: 14px !important; padding-right: 14px !important; }
+
+  /* Pas de scroll vertical imbriqué : le contenu défile avec la page */
+  .gu-table-wrap { max-height: none !important; }
+
+  /* ----- Tables denses -> CARTES par ligne (tables avec .gu-card-mobile) ----- */
+  table.gu-card-mobile thead { display: none; }
+  table.gu-card-mobile, table.gu-card-mobile tbody { display: block; width: 100%; }
+  table.gu-card-mobile tr {
+    display: flex; flex-direction: column; background: #fff; border: 1px solid #e7ecf5; border-radius: 12px;
+    padding: 8px 12px 10px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(16, 42, 82, .05);
+  }
+  table.gu-card-mobile td {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    border: 0 !important; padding: 7px 0 !important; text-align: left !important; min-height: 38px;
+  }
+  table.gu-card-mobile td::before {
+    content: attr(data-label); font-weight: 600; color: #5a6b86; font-size: 12.5px; flex: 0 0 42%;
+  }
+  /* La cellule "Nom" devient le titre de la carte */
+  table.gu-card-mobile td[data-label="Nom"] {
+    order: -1; /* le nom passe en tête de carte */
+    font-size: 1.02rem; font-weight: 700; color: #14346b;
+    border-bottom: 1px solid #eef2f9 !important; padding-bottom: 8px !important; margin-bottom: 2px;
+  }
+  table.gu-card-mobile td[data-label="Nom"]::before { content: ""; flex: 0; }
+  /* Le N° (compteur de ligne) est superflu en mode carte */
+  table.gu-card-mobile td[data-label="N\00B0"] { display: none; }
+  /* Champs de note : grandes cibles tactiles */
+  table.gu-card-mobile td input.note { max-width: 120px; height: 44px; text-align: center; font-size: 1.05rem; }
+  table.gu-card-mobile td .moyenneBadge { font-size: .95rem; }
+  /* Boutons d'action en mode carte : visibles et tactiles */
+  table.gu-card-mobile td[data-label="Actions"] .btn,
+  table.gu-card-mobile td[data-label="Actions"] .gu-row-actions .btn,
+  table.gu-card-mobile td .gu-icon-act {
+    width: 42px; height: 42px; display: inline-flex; align-items: center; justify-content: center;
+    border: 1px solid #e3e8f2 !important; border-radius: 9px; color: #1f4f9c !important;
+    background: #fff; font-size: 20px; margin-left: 6px;
+  }
+
+  /* En-têtes de page plus compacts et qui passent à la ligne */
+  .content-header h2 { font-size: 1.35rem !important; line-height: 1.2; }
+  .content-header-title { font-size: 1.05rem !important; }
+  .content-header-left { margin-bottom: .5rem !important; }
+
+  /* Cartes : padding réduit */
+  .card-body { padding: 1rem; }
+  .conf-card { padding: 14px; }
+
+  /* Barres d'outils / filtres : passage à la ligne propre */
+  .gu-action-bar { flex-wrap: wrap; gap: 10px; }
+  .gu-action-bar .btn { width: 100%; }
+  .seg { width: 100%; }
+  .seg-btn { flex: 1; }
+
+  /* Modales custom : quasi plein écran, scrollables */
+  .gu-conf-modal .gm-card { width: 96vw !important; max-height: 92vh; }
+  .gu-conf-modal .gm-body { max-height: 72vh; overflow: auto; }
+
+  /* Bouton flottant d'installation PWA : plus discret */
+  #guInstallBtn { left: 12px; bottom: 12px; padding: 9px 14px; font-size: 13px; }
+}
+
+/* ===== Petits téléphones ===== */
+@media (max-width: 575.98px) {
+  /* Grilles KPI custom -> 1 colonne */
+  #usrKpis { grid-template-columns: 1fr !important; }
+
+  /* Graphe en barres du dashboard : un peu plus bas, lisible */
+  #dash .bars { height: 150px; gap: 8px; }
+  #dash .kpi-val { font-size: 21px; }
+
+  /* Pied de page : on garde le texte centré sans le bouton scroll qui chevauche */
+  .footer.footer-fixed { font-size: .78rem; }
+}

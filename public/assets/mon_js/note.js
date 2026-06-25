@@ -1,22 +1,150 @@
-// Fonction pour afficher/masquer les champs de session
+// ============================================================
+//  Saisie des notes — moteur (refonte : sauvegarde intelligente,
+//  tableau de bord live, navigation clavier, recherche)
+// ============================================================
 var ROOT_NOTES = window.APP_ROUTE ? window.APP_ROUTE("Notes") : window.APP_ROOT + "/Notes";
 var ROOT_EDT = window.APP_ROUTE ? window.APP_ROUTE("Emploi_du_temps") : window.APP_ROOT + "/Emploi_du_temps";
-function toggleSessionFields(show, hideNotes) {
-  const sessionInfo = document.getElementById("session_info");
-  const tableSection = document.getElementById("table_section");
-  const noteSessionFields = document.querySelectorAll(".note_session");
 
-  sessionInfo.classList.toggle("hidden", !show);
-  tableSection.classList.toggle("hidden", !show);
-  noteSessionFields.forEach((field) => {
-    field.classList.toggle("hidden", hideNotes);
+function toggleSessionFields(show, hideNotes) {
+  var sessionInfo = document.getElementById("session_info");
+  var tableSection = document.getElementById("table_section");
+  if (sessionInfo) sessionInfo.classList.toggle("hidden", !show);
+  if (tableSection) tableSection.classList.toggle("hidden", !show);
+  document.querySelectorAll(".note_session").forEach(function (f) { f.classList.toggle("hidden", hideNotes); });
+}
+
+// ---- Calcul de la moyenne (session normale) ----
+function calculeMoyenModuleSessionNormale(d, e, s) {
+  d = isNaN(d) ? 0 : d; e = isNaN(e) ? 0 : e; s = isNaN(s) ? 0 : s;
+  var m = (d + 2 * e) / 3;
+  if (s > m) m = s;
+  return m;
+}
+function classeMoyenne(m) { return m < 10 ? "danger" : (m < 15 ? "warning" : "success"); }
+
+// ---- Helpers ligne ----
+function valNote(row, sel) { var v = row.find(sel).val(); return v === "" ? NaN : parseFloat(v); }
+function estSaisi(row) { return row.find(".noteDevoir").val() !== "" || row.find(".noteEvaluation").val() !== ""; }
+
+function majLigne(row) {
+  var badge = row.find(".moyenneBadge");
+  if (!estSaisi(row)) { badge.text("—").attr("class", "moyenneBadge badge badge-soft-secondary"); return null; }
+  var m = calculeMoyenModuleSessionNormale(valNote(row, ".noteDevoir"), valNote(row, ".noteEvaluation"), valNote(row, ".noteSession"));
+  badge.text(m.toFixed(2)).attr("class", "moyenneBadge badge badge-soft-" + classeMoyenne(m));
+  return m;
+}
+
+// ---- Tableau de bord live ----
+function statCard(icon, big, label, color, sub) {
+  return '<div class="gu-stat gu-stat-' + color + '"><i class="bx ' + icon + '"></i>' +
+    '<div><div class="v">' + big + (sub ? ' <small>' + sub + '</small>' : '') + '</div>' +
+    '<div class="l">' + label + '</div></div></div>';
+}
+function updateStats() {
+  var box = document.getElementById("noteStats"); if (!box) return;
+  var rows = $("#notesTable tbody tr"), total = rows.length, saisis = 0, somme = 0, admis = 0;
+  rows.each(function () {
+    var r = $(this);
+    if (estSaisi(r)) {
+      saisis++;
+      var m = calculeMoyenModuleSessionNormale(valNote(r, ".noteDevoir"), valNote(r, ".noteEvaluation"), valNote(r, ".noteSession"));
+      somme += m; if (m >= 10) admis++;
+    }
+  });
+  var moy = saisis ? somme / saisis : 0, ajournes = saisis - admis;
+  var taux = saisis ? Math.round((admis / saisis) * 100) : 0, pct = total ? Math.round((saisis / total) * 100) : 0;
+  box.innerHTML =
+    statCard("bx-list-check", saisis + "/" + total, "Notes saisies", "info", pct + "%") +
+    statCard("bx-bar-chart-alt-2", saisis ? moy.toFixed(2) : "—", "Moyenne de la classe", saisis ? classeMoyenne(moy) : "secondary") +
+    statCard("bx-check-circle", admis, "Admis (≥ 10)", "success") +
+    statCard("bx-x-circle", ajournes, "Ajournés (< 10)", "danger") +
+    statCard("bx-trophy", saisis ? taux + "%" : "—", "Taux de réussite", taux >= 50 ? "success" : "warning");
+}
+
+// ---- Sauvegarde intelligente (debounce + statut par ligne) ----
+var saveTimers = {}, pendingCount = 0;
+function setStatus(row, state) {
+  var el = row.find(".saveStatus");
+  if (state === "dirty") el.html('<span class="text-tertiary" title="Modifié"><i class="bx bx-pencil"></i></span>');
+  else if (state === "saving") el.html('<span class="text-secondary" title="Enregistrement…"><i class="bx bx-loader-alt bx-spin"></i></span>');
+  else if (state === "saved") el.html('<span class="text-success" title="Enregistré"><i class="bx bx-check-circle"></i></span>');
+  else if (state === "error") el.html('<span class="text-danger" title="Échec — réessayez"><i class="bx bx-error-circle"></i></span>');
+  else el.html("");
+}
+function majSaveAll(forceBusy) {
+  var el = document.getElementById("saveAll"); if (!el) return;
+  if (forceBusy || pendingCount > 0) { el.className = "gu-note-saveall busy"; el.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i> Enregistrement…'; }
+  else { el.className = "gu-note-saveall ok"; el.innerHTML = '<i class="bx bx-check-circle"></i> Tout est enregistré'; }
+}
+function planifierSave(row) {
+  var id = row.data("id");
+  setStatus(row, "dirty"); majSaveAll(true);
+  clearTimeout(saveTimers[id]);
+  saveTimers[id] = setTimeout(function () { saveRow(row); }, 700);
+}
+function saveRow(row) {
+  setStatus(row, "saving"); pendingCount++;
+  var saisi = estSaisi(row);
+  var m = saisi ? calculeMoyenModuleSessionNormale(valNote(row, ".noteDevoir"), valNote(row, ".noteEvaluation"), valNote(row, ".noteSession")) : "";
+  $.ajax({
+    url: ROOT_NOTES + "/save_note_etudiant", type: "POST", dataType: "json",
+    data: {
+      idNote: row.data("id"),
+      devoir: row.find(".noteDevoir").val(),
+      evaluation: row.find(".noteEvaluation").val(),
+      session: row.find(".noteSession").val(),
+      moyenne: m === "" ? "" : m.toFixed(2),
+      action: "noterecuee",
+    },
+  }).done(function (res) { setStatus(row, res && res.ok ? "saved" : "error"); })
+    .fail(function () { setStatus(row, "error"); })
+    .always(function () { pendingCount--; majSaveAll(false); });
+}
+
+// ---- Navigation clavier (Entrée / flèches = ligne suivante, même colonne) ----
+function navClavier(e) {
+  if (e.key !== "Enter" && e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
+  e.preventDefault();
+  var cls = e.target.classList.contains("noteDevoir") ? "noteDevoir"
+    : e.target.classList.contains("noteEvaluation") ? "noteEvaluation" : "noteSession";
+  var rows = $("#notesTable tbody tr:visible");
+  var idx = rows.index($(e.target).closest("tr"));
+  var next = (e.key === "ArrowUp") ? rows.eq(idx - 1) : rows.eq(idx + 1);
+  if (next.length) { var inp = next.find("." + cls); inp.focus(); inp[0] && inp[0].select(); }
+}
+
+// ---- Recherche ----
+function filtrerNotes() {
+  var q = (document.getElementById("noteSearch").value || "").toLowerCase().trim();
+  $("#notesTable tbody tr").each(function () {
+    var r = $(this);
+    var ok = !q || ("" + r.data("nom")).indexOf(q) > -1 || ("" + r.data("mat")).indexOf(q) > -1;
+    r.toggle(ok);
   });
 }
 
-/**************************************************** */
-// Fonction de chargement des étudiants et de leurs notes via AJAX
-function loadEtudiants(save = false) {
-  if (save == false) {
+// ---- Initialisation après injection du tableau ----
+function initNotesTable() {
+  $("#notesTable tbody tr").each(function () { majLigne($(this)); });
+  updateStats(); majSaveAll(false);
+
+  $("#notesTable").off("input.note").on("input.note", ".note", function () {
+    var v = parseFloat(this.value);
+    if (v < 0) this.value = 0;
+    if (v > 20) this.value = 20;
+    var row = $(this).closest("tr");
+    majLigne(row); updateStats(); planifierSave(row);
+  });
+  $("#notesTable").off("keydown.note").on("keydown.note", ".note", navClavier);
+
+  var se = document.getElementById("noteSearch");
+  if (se) se.addEventListener("input", filtrerNotes);
+}
+
+// ---- Chargement des étudiants + notes ----
+function loadEtudiants(save) {
+  var filiere_id, promotion_id, module_id, semestre_id;
+  if (!save) {
     filiere_id = $("#promotions option:selected").data("filiere");
     promotion_id = $("#promotions option:selected").val();
     module_id = $("#modules").val();
@@ -28,243 +156,71 @@ function loadEtudiants(save = false) {
     semestre_id = sessionStorage.getItem("semestre");
   }
 
-  // Affichage du spinner pendant le chargement
   $("#loadingSpinner").show();
-
   $.ajax({
-    url: ROOT_NOTES + "/get_note_etudiant",
-    type: "POST",
-    data: {
-      idPromotion: promotion_id,
-      idModule: module_id,
-      idFiliere: filiere_id,
-      idSemestre: semestre_id,
-    },
+    url: ROOT_NOTES + "/get_note_etudiant", type: "POST",
+    data: { idPromotion: promotion_id, idModule: module_id, idFiliere: filiere_id, idSemestre: semestre_id },
     success: function (response) {
       $("#loadingSpinner").hide();
-
-      if (response.trim() !== "notfound") {
-        // Injecter le HTML retourné dans la section de la table
-        $("#table_section").html(response);
-
-        // Pour chaque ligne du tableau, attacher un gestionnaire pour recalculer et sauvegarder
-        $("#notesTable tbody tr").each(function () {
-          const row = $(this);
-          const idNote = row.data("id");
-
-          // Fonction de recalcul de la moyenne et sauvegarde des notes
-          function calculAndSave() {
-            // Récupération et conversion des valeurs des inputs et du coefficient
-            let noteDevoir = parseFloat(row.find(".noteDevoir").val());
-            let noteEvaluation = parseFloat(row.find(".noteEvaluation").val());
-            let noteSession = parseFloat(row.find(".noteSession").val());
-            let coeficient = parseFloat($(".coeficient").text());
-
-            //console.log("Devoir :", noteDevoir, "Evaluation :", noteEvaluation, "Coefficient :", coeficient);
-
-            // Calcul de la moyenne
-            let moyenne = calculeMoyenModuleSessionNormale(
-              noteDevoir,
-              noteEvaluation,
-              noteSession,
-              coeficient
-            );
-            // Mise à jour du champ input de la moyenne (readonly)
-            row.find(".moyenne").val(moyenne.toFixed(2));
-            const moyenneInput = row.find(".moyenne");
-            if (moyenne < 10) {
-              moyenneInput.removeClass("bg-rgba-warning");
-              moyenneInput.removeClass("bg-rgba-success");
-              moyenneInput.addClass("bg-rgba-danger");
-            } else if (moyenne < 15) {
-              moyenneInput.removeClass("bg-rgba-danger");
-              moyenneInput.removeClass("bg-rgba-success");
-              moyenneInput.addClass("bg-rgba-warning");
-            } else if (moyenne <= 20) {
-              moyenneInput.removeClass("bg-rgba-danger");
-              moyenneInput.removeClass("bg-rgba-warning");
-              moyenneInput.addClass("bg-rgba-success");
-            } else {
-              moyenneInput.removeClass("bg-rgba-danger");
-              moyenneInput.removeClass("bg-rgba-warning");
-              moyenneInput.removeClass("bg-rgba-success");
-            }
-
-            // Sauvegarder les modifications en envoyant les notes au serveur
-            saveNoteEtudiant(
-              row.find(".noteDevoir").val(),
-              row.find(".noteEvaluation").val(),
-              row.find(".noteSession").val(),
-              row.find(".moyenneModule").val(),
-              idNote
-            );
-          }
-
-          // Attachement d'un seul gestionnaire keyup sur tous les inputs de la ligne ayant la classe "note"
-          calculAndSave();
-          row.find(".note").on("keyup", function (event) {
-            if ($(this).val() < 0) {
-              $(this).val(0);
-            }
-            if ($(this).val() > 20) {
-              $(this).val(20);
-            }
-            calculAndSave();
-          });
-        });
-
-        // Gestion de l'affichage des boutons de session selon l'état
-        const sessionNormaleBtn = $("#session_normale_btn");
-        if (sessionNormaleBtn.hasClass("active")) {
-          toggleSessionFields(true, false);
-        } else {
-          toggleSessionFields(true, true);
-        }
-      } else if (response.trim().include("empty")) {
-        $("#table_section").html(
-          "<h6 class='text-center text-bold-600 text-warning'>" +
-            "Aucun étudiant trouvé pour cette classe !</h6>"
-        );
-      } else {
-        $("#table_section").html(
-          "<h6 class='text-center text-bold-600 text-warning'>" +
-            "Veuilez Bien verifier vos données !</h6>"
-        );
+      var t = (response || "").trim();
+      if (t === "" || t === "notfound") {
+        $("#table_section").html('<div class="gu-empty"><i class="bx bx-error-circle"></i>Vérifiez votre sélection (classe et module).</div>');
+        return;
       }
+      $("#table_section").html(response);
+      if (document.getElementById("notesTable")) initNotesTable();
     },
     error: function (xhr, status, error) {
       $("#loadingSpinner").hide();
       console.error("Erreur AJAX : ", status, error);
-      alert(
-        "Une erreur s'est produite lors du chargement des données. Veuillez réessayer."
-      );
+      $("#table_section").html('<div class="gu-empty"><i class="bx bx-error-circle"></i>Erreur de chargement. Réessayez.</div>');
     },
   });
 }
 
-/**************************************************** */
-// Fonction d'envoi des modifications des notes au serveur via AJAX
-function saveNoteEtudiant(
-  noteDevoir,
-  noteEvaluation,
-  noteSession,
-  moyenneModule,
-  idNote
-) {
-  $.ajax({
-    url: ROOT_NOTES + "/save_note_etudiant",
-    type: "POST",
-    data: {
-      idNote: idNote,
-      devoir: noteDevoir,
-      evaluation: noteEvaluation,
-      session: noteSession,
-      moyenne: moyenneModule,
-      action: "noterecuee",
-    },
-    success: function (response) {
-      $("#message").html(response);
-    },
-    error: function (xhr, status, error) {
-      console.error("Erreur AJAX : ", status, error);
-    },
-  });
-}
-
-/**************************************************** */
-// Fonction de calcul de la moyenne selon la formule appliquée en session normale
-// La formule utilisée ici dépend de la comparaison entre noteEvaluation et noteSession
-function calculeMoyenModuleSessionNormale(
-  noteDevoir,
-  noteEvaluation,
-  noteSession,
-  coef
-) {
-  let moyenneModule = 0;
-  // Selon la règle : si noteEvaluation est supérieure à noteSession, on utilise (devoir + evaluation)/2
-  // Sinon, on utilise (devoir + session)/2
-  moyenneModule = (noteDevoir + 2 * noteEvaluation) / 3;
-  if (noteSession > moyenneModule) {
-    moyenneModule = noteSession;
-  }
-  // On applique le coefficient pour obtenir la moyenne du module
-  return moyenneModule;
-}
-
-async function infosFiliere(idFiliere, source = null) {
+// ============================================================
+//  Cascade : filière -> classes -> modules
+// ============================================================
+async function infosFiliere(idFiliere, source) {
   try {
-    response = await $.ajax({
-      method: "POST",
-      url: ROOT_EDT + "/filiere_info",
-      dataType: "json",
-
-      data: {
-        source: source,
-        idFiliere: idFiliere,
-      },
+    return await $.ajax({
+      method: "POST", url: ROOT_EDT + "/filiere_info", dataType: "json",
+      data: { source: source || null, idFiliere: idFiliere },
     });
-    return response;
-  } catch (error) {
-    console.error(error);
-  }
-  var infoFiliere;
+  } catch (error) { console.error(error); }
 }
 
 function classesAnneeUniversitaire(anneeUniversitaire) {
   $.ajax({
-    method: "POST",
-    url: ROOT_NOTES + "/get_classe_annee",
-    dataType: "json",
-
-    data: {
-      anneeUniversitaire: anneeUniversitaire,
-    },
+    method: "POST", url: ROOT_NOTES + "/get_classe_annee", dataType: "json",
+    data: { anneeUniversitaire: anneeUniversitaire },
     success: function (response) {
-      console.log(response);
-
-      const promotionContainer = $("#promotions");
-      const newPromotionContainer = $("#newPromotions");
+      var promotionContainer = $("#promotions");
       promotionContainer.empty();
-      promotionContainer.append(
-        `<option value="" >Selectionner une Classe</option>`
-      );
-      newPromotionContainer.empty();
-      newPromotionContainer.append(
-        `<option value="" >Selectionner une Classe</option>`
-      );
-      const promotions = response;
-      promotions.forEach((promotion) => {
-        const option = `<option value='${promotion.id_promotion}' class='text-center' data-filiere='${promotion.id_filiere}' data-semestre='${promotion.id_parcours}'> 
-        ${promotion.classe}</option>`;
-        promotionContainer.append(option);
-        newPromotionContainer.append(option);
+      promotionContainer.append('<option value="" disabled selected>Sélectionner une classe</option>');
+      (response || []).forEach(function (promotion) {
+        promotionContainer.append(
+          "<option value='" + promotion.id_promotion + "' data-filiere='" + promotion.id_filiere +
+          "' data-semestre='" + promotion.id_parcours + "'>" + promotion.classe + "</option>"
+        );
       });
     },
     error: function () {},
   });
 }
-// recuperer les modules d'une promotion à travers l'id du semestre
-function modulesSemestre(idSemestre, infoFiliere, idModule = "") {
-  const mouduleContainer = $("#modules");
-  mouduleContainer.empty();
 
-  mouduleContainer.append(`<option value="" >Selectionner un Module</option>`);
-  const ues = infoFiliere["ues"];
-  const modules = infoFiliere["modules"];
-  idModuleSelected = sessionStorage.getItem("module");
-  ues.forEach((ue) => {
+function modulesSemestre(idSemestre, infoFiliere, idModule) {
+  var c = $("#modules");
+  c.empty();
+  c.append('<option value="" disabled selected>Sélectionner un module</option>');
+  if (!infoFiliere || !infoFiliere.ues || !infoFiliere.modules) return;
+  var selected = idModule || sessionStorage.getItem("module");
+  infoFiliere.ues.forEach(function (ue) {
     if (ue.id_parcours == idSemestre) {
-      // const ueOption = `<option disabled class="mt-1">${ue.nom_ue}</option>`;
-      // mouduleContainer.append(ueOption);
-      modules.forEach((module) => {
+      infoFiliere.modules.forEach(function (module) {
         if (module.id_ue == ue.id_ue) {
-          const option = `<option value='${module.id_ue_module}' 
-          class='text-center' ${
-            module.id_ue_module == idModuleSelected ? "selected" : ""
-          }>
-            ${module.nom_module}(${module.code_module})
-            </option>`;
-          mouduleContainer.append(option);
+          c.append("<option value='" + module.id_ue_module + "'" + (module.id_ue_module == selected ? " selected" : "") +
+            ">" + module.nom_module + " (" + module.code_module + ")</option>");
         }
       });
     }

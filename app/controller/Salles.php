@@ -23,7 +23,7 @@ public function update() {
         $capacite_salle = $_POST['capacite_salle'];
         $Salles->modification(['id_salle' => $id_salle, 'nom_salle' => $nom_salle,'capacite_salle' => $capacite_salle]);
     }
-  $this->view('Liste');
+  $this->redirect('Salles/Liste');
 }
 public function supprimer($id_salle) {
     $Salles = new Salle();

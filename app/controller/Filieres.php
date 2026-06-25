@@ -10,8 +10,19 @@ class Filieres extends Controller
             $idDepartement = $_SESSION['id_departement'];
         }
         $filiereModel = new Filiere();
-        $listeFilieres = $filiereModel->listeFilieresParDepartement($idDepartement);
+        $listeFilieres = $filiereModel->listeFilieresAvecStats($idDepartement);
         $this->view('liste_filiere', ['filieres' => $listeFilieres]);
+    }
+
+    // Suppression d'une filière (AJAX)
+    public function supprimer_filiere()
+    {
+        header('Content-Type: application/json');
+        if (empty($_POST['idFiliere']) || !is_numeric($_POST['idFiliere'])) {
+            echo json_encode(['ok' => false, 'msg' => 'Filière invalide.']);
+            return;
+        }
+        echo json_encode((new Filiere())->supprimerFiliere($_POST['idFiliere']));
     }
 
     // Ajouter une filière

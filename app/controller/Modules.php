@@ -24,11 +24,10 @@ class Modules extends Controller{
           $id_module=$_POST["id_module"];
           $nom_module=$_POST["nom_module"];
           $sigle_module=$_POST["sigle_module"];
-         $modules->editModule(['id_module'=>$id_module, 'nom_module'=>$nom_module, 'sigle_module'=>$sigle_module]); 
+         $modules->editModule(['id_module'=>$id_module, 'nom_module'=>$nom_module, 'sigle_module'=>$sigle_module]);
         }
 
-        $this->view('liste_module'); 
-       
+        $this->redirect('Modules/listeModule');
     }
 
     public function delete($id) {

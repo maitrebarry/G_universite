@@ -1,14 +1,11 @@
-<!-- inclusion du partie header -->
-<?php
- $this->view("Partials/header") ?>
-<body class="vertical-layout vertical-menu-modern boxicon-layout no-card-shadow 2-columns  navbar-sticky footer-static  " data-open="click" data-menu="vertical-menu-modern" data-col="2-columns">
-    <!-- inclusion du partie header -->
+<?php $this->view("Partials/header") ?>
+
+<body class="vertical-layout vertical-menu-modern boxicon-layout no-card-shadow 2-columns navbar-sticky footer-static"
+    data-open="click" data-menu="vertical-menu-modern" data-col="2-columns">
+
     <?php $this->view("Partials/navbar") ?>
-    <!-- inclusion du partie header fin-->
-    <!-- inclusion du partie seibar-->
     <?php $this->view("Partials/seibar") ?>
-    <!-- inclusion du partie seibar fin-->
-    <!--  Content-->
+
     <div class="app-content content">
         <div class="content-overlay"></div>
         <div class="content-wrapper">
@@ -16,305 +13,152 @@
                 <div class="content-header-left col-12 mb-2 mt-1">
                     <div class="row breadcrumbs-top">
                         <div class="col-12">
-                            <h5 class="content-header-title float-left pr-1 mb-0">Details des Etudiants</h5>
+                            <h5 class="content-header-title float-left pr-1 mb-0">Fiche étudiant</h5>
                             <div class="breadcrumb-wrapper col-12">
                                 <ol class="breadcrumb p-0 mb-0">
-                                    <li class="breadcrumb-item"><a href="index.html"><i class="bx bx-home-alt"></i></a>
-                                    </li>
-                                    <li class="breadcrumb-item"><a href="#">Gestion Etudiants</a>
-                                    </li>
-                                    <li class="breadcrumb-item active">Liste
-                                    </li>
+                                    <li class="breadcrumb-item"><a href="<?= ROOT ?>/Homes"><i class="bx bx-home-alt"></i></a></li>
+                                    <li class="breadcrumb-item"><a href="<?= ROOT ?>/Etudiants">Étudiants</a></li>
+                                    <li class="breadcrumb-item active">Fiche</li>
                                 </ol>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
             <div class="content-body">
-                <!-- formulaire -->
-                <section id="basic-datatable">
-                <?php //if (!empty($etudiant)): ?>
-                    <form action="" method="post">
-                        <div class="row">
-                            <div class="col-12">
-                                <?php $this->view('set_flash'); ?>
-                                <div class="card card-animated-border-top ">
-                                    <div class="card-content">
-                                        <div class="card-body">
-                                            <!-- <p class="mb-1">Filtré par</p> -->
-                                            <div class="row">
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="nom_prenom_etudiant">Nom et Prénom de l'étudiant</label>
-                                                    <!-- Affichage des données dans le champ input -->
-                                                    <?php if ($etudiant): ?>
-                                                        <input type="text" class="form-control" id="nom_prenom_etudiant" name="nom_prenom_etudiant" value="<?= htmlspecialchars($etudiant['nom_prenom_etudiant']); ?> <?= htmlspecialchars($etudiant['prenom']); ?>" disabled>
-                                                    <?php else: ?>
-                                                        <p>Aucun étudiant trouvé.</p>
-                                                    <?php endif; ?>
-                                                </div>
-                                            </div>
+                <?php $this->view('set_flash'); ?>
 
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="date_naissance_etudiant">Date de naissance</label>
-                                                    <!-- Affichage des données dans le champ input -->
-                                                    <?php if ($etudiant): ?>
-                                                        <input type="text" class="form-control" id="date_naissance_etudiant" name="date_naissance_etudiant" value="<?= htmlspecialchars($etudiant['date_naissance_etudiant']); ?>" disabled>
-                                                    <?php endif; ?>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label class="form-label" for="lieu_naissance_etudiant">Lieu de naissance</label>
-                                                    <!-- Affichage des données dans le champ input -->
-                                                    <?php if ($etudiant): ?>
-                                                        <input type="text" class="form-control" id="lieu_naissance_etudiant" name="lieu_naissance_etudiant" value="<?= htmlspecialchars($etudiant['lieu_naissance_etudiant']); ?>" disabled>
-                                                    <?php endif; ?>
-                                                </div>
-                                            </div>
-                                        </div>
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label class="form-label" for="contact_etudiant">Contact</label>
-                                                        <?php if ($etudiant): ?>
-                                                            <input type="text" class="form-control" id="contact_etudiant" name="contact_etudiant" value="<?= htmlspecialchars($etudiant['contact_etudiant']); ?>" disabled>
-                                                        <?php endif; ?>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label class="form-label" for="single-select ">Genre d'etudiant</label>
-                                                         <input type="text" class="form-control" id="" name="" value="<?= htmlspecialchars($etudiant['genre_etudiant']); ?>" disabled>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label class="form-label" for="single-select ">Matricule</label>
-                                                        <?php if ($etudiant): ?>
-                                                        <input type="text" class="form-control" value="<?= htmlspecialchars($etudiant['matricule_etudiant']); ?>" disabled>
-                                                        <?php endif; ?>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                <?php if (empty($etudiant)): ?>
+                    <div class="card"><div class="card-body">
+                        <div class="gu-empty"><i class="bx bx-user-x"></i>Étudiant introuvable.</div>
+                        <div class="text-center"><a href="<?= ROOT ?>/Etudiants" class="btn btn-primary"><i class="bx bx-arrow-back"></i> Retour à la liste</a></div>
+                    </div></div>
+                <?php else:
+                    $val = function ($k) use ($etudiant) {
+                        $x = isset($etudiant[$k]) ? trim((string) $etudiant[$k]) : '';
+                        return $x !== '' ? '<span class="v">' . htmlspecialchars($x) . '</span>' : '<span class="v empty">—</span>';
+                    };
+                    $nom = trim(($etudiant['nom_prenom_etudiant'] ?? '') . ' ' . ($etudiant['prenom'] ?? ''));
+                    $ini = '';
+                    foreach (preg_split('/\s+/', $nom) as $w) { if ($w !== '') $ini .= mb_strtoupper(mb_substr($w, 0, 1)); }
+                    $ini = htmlspecialchars(mb_substr($ini, 0, 2) ?: 'E');
+                    $photo = trim($etudiant['profilname'] ?? '');
+                    $actif = ((int) ($etudiant['id_statut'] ?? 0) === 1);
+                    $id = $etudiant['id_etudiant'] ?? '';
+                ?>
+
+                <!-- En-tête profil (hero) -->
+                <div class="card gu-hero">
+                    <div class="gu-hero-cover"></div>
+                    <div class="gu-hero-body">
+                        <div class="gu-hero-av">
+                            <?php if ($photo): ?>
+                                <img src="<?= ROOT ?>/profile/<?= htmlspecialchars(rawurlencode($photo)) ?>" alt="Photo"
+                                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                                <span style="display:none;width:100%;height:100%;align-items:center;justify-content:center;"><?= $ini ?></span>
+                            <?php else: ?>
+                                <?= $ini ?>
+                            <?php endif; ?>
+                            <span class="dot on" title="<?= htmlspecialchars(gu_statut_label($etudiant['id_statut'] ?? '')) ?>"></span>
+                        </div>
+
+                        <div class="gu-hero-main">
+                            <div class="d-flex align-items-center flex-wrap" style="gap:10px;">
+                                <h3 style="margin:0;font-weight:600;"><?= htmlspecialchars($nom) ?></h3>
+                                <span class="badge badge-soft-info"><?= htmlspecialchars(gu_statut_label($etudiant['id_statut'] ?? '')) ?></span>
+                            </div>
+                            <div class="text-secondary-2" style="margin:5px 0 10px;">
+                                <i class="bx bx-id-card"></i> <?= htmlspecialchars($etudiant['matricule_etudiant'] ?? '—') ?>
+                                <span style="opacity:.4;">·</span>
+                                <i class="bx bx-bookmark-alt"></i> <?= htmlspecialchars($etudiant['sigle_filiere'] ?? '—') ?>
+                            </div>
+                            <div class="d-flex flex-wrap" style="gap:6px;">
+                                <?php if (!empty($filieres)): foreach ($filieres as $p): ?>
+                                    <span class="gu-chip"><?= htmlspecialchars(($p->sigle_filiere ?? '') . ' · ' . ($p->nom_semestre ?? '') . ' (' . ($p->annee_universitaire ?? '') . ')') ?></span>
+                                <?php endforeach; endif; ?>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-8">
-                                <div class="card card-animated-border-top ">
-                                    <div class="card-content">
-                                        <div class="card-body">
-                                            <!-- <p class="mb-1">Filtré par</p> -->
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label class="form-label" for="single-select ">Numero d'etudiant</label>
-                                                        <?php if ($etudiant): ?>
-                                                        <input type="text" class="form-control" name=""
-                                                        value="<?= htmlspecialchars($etudiant['numetudiant']); ?>" disabled>
-                                                        <?php endif; ?>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label class="form-label" for="single-select ">Cercle de naissance</label>
-                                                        <?php if ($etudiant): ?>
-                                                        <input type="text" class="form-control" value="<?= htmlspecialchars($etudiant['cercleNais']); ?>" disabled>
-                                                        <?php endif; ?>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label class="form-label" for="single-select ">Commune de naissance</label>
-                                                        <?php if ($etudiant): ?>
-                                                        <input type="text" class="form-control" value="<?= htmlspecialchars($etudiant['commNais']); ?>" disabled>
-                                                        <?php endif; ?>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label class="form-label" for="single-select ">Nationalite</label>
-                                                        <?php if ($etudiant): ?>
-                                                        <input type="text" name="" class="form-control" value="<?= htmlspecialchars($etudiant['nationnalite']); ?>" disabled>
-                                                        <?php endif; ?>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label class="form-label" for="single-select ">Annee du diplome</label>
-                                                        
-                                                        <input type="text" class="form-control" value="<?= htmlspecialchars($etudiant['anneediplome']); ?>" disabled>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label class="form-label" for="single-select ">Serie</label>
-                                                        <?php if ($etudiant): ?>
-                                                        <input type="text" class="form-control" value="<?= htmlspecialchars($etudiant['serie']); ?>" disabled>
-                                                        <?php endif; ?>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-3">
-                                                    <div class="form-group">
-                                                        <label class="form-label" for="single-select ">Pays</label>
-                                                        <?php if ($etudiant): ?>
-                                                       <input type="text" class="form-control" value="<?= htmlspecialchars($etudiant['pays']); ?>" disabled>
-                                                       <?php endif; ?>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <div class="form-group">
-                                                        <label class="form-label" for="single-select ">Academie</label>
-                                                        <?php if ($etudiant): ?>
-                                                        <input type="text" class="form-control" value="<?= htmlspecialchars($etudiant['academie']); ?>" disabled>
-                                                        <?php endif; ?>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <div class="form-group">
-                                                        <label class="form-label" for="single-select ">Adresse</label>
-                                                        <?php if ($etudiant): ?>
-                                                        <input type="text" class="form-control" value="<?= htmlspecialchars($etudiant['adresseactuel']); ?>" disabled>
-                                                        <?php endif; ?>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <div class="form-group">
-                                                        <label class="form-label" for="single-select ">Numero de place</label>
-                                                        <?php if ($etudiant): ?>
-                                                        <input type="text" class="form-control" value="<?= htmlspecialchars($etudiant['numplace']); ?>" disabled>
-                                                        <?php endif; ?>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-4">
-                                <div class="card card-animated-border-top ">
-                                    <div class="card-content">
-                                        <div class="card-body">
-                                            <!-- <p class="mb-1">Filtré par</p> -->
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <div class="form-group">
-                                                        <label class="form-label" for="single-select ">Image</label>
-                                                        <!-- <img src="<?= ROOT ?>/téle.png" alt=""> -->
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12">
-                                                    <div class="form-group">
-                                                        <label class="form-label" for="single-select ">Diplome</label>
-                                                        <?php if ($etudiant): ?>
-                                                        <input type="text" class="form-control" value="<?= htmlspecialchars($etudiant['diplome']); ?>" disabled>
-                                                        <?php endif; ?>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label class="form-label" for="single-select ">Statut</label>
-                                                        <?php if ($etudiant): ?>
-                                                        <input type="text" class="form-control" value="<?= htmlspecialchars($etudiant['id_statut']); ?>" disabled>
-                                                        <?php endif; ?>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                    <?php if ($etudiant): ?>
-                                                        <label class="form-label" for="single-select">Filière</label>
-                                                        <input type="text" class="form-control" value="<?= htmlspecialchars($etudiant['sigle_filiere']); ?>" disabled>
-            
 
-                                                        </select>
-                                                    <?php endif; ?>
-
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12">
-                                                    <div class="form-group">
-                                                        <label class="form-label" for="single-select ">Promotion</label>
-                                                            <?php foreach ($filieres as $Promotion): ?>  
-                                                        <input type="text" class="form-control"  value="<?= htmlspecialchars($Promotion->sigle_filiere."-".$Promotion->nom_semestre ."(".$Promotion->annee_universitaire.")"); ?>" disabled>
-                                                                              
-                                                          <?php endforeach; ?>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="gu-hero-actions">
+                            <a href="<?= ROOT ?>/Etudiants" class="btn btn-ghost"><i class="bx bx-arrow-back"></i> Retour</a>
+                            <a href="<?= ROOT ?>/Etudiants/paiement_etudiant/<?= $id ?>" class="btn btn-soft-primary"><i class="bx bx-wallet"></i> Paiement</a>
+                            <a href="<?= ROOT ?>/Etudiants/modifier/<?= $id ?>" class="btn btn-primary"><i class="bx bx-edit"></i> Modifier</a>
                         </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="card card-animated-border-top ">
-                                    <div class="card-content">
-                                        <div class="card-body card-dashboard">
-                                            <div class="table-responsive">
-                                                <table class="table zero-configuration">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Nom && Prénom du pere</th>
-                                                            <!-- <th>statut</th> -->
-                                                            <th>Nom && Prénom du mere</th>
-                                                            <th>Lieu de residence</th>
-                                                            <!-- <th>MATRICULE</th>
-                                                        <th class="text-center dt-no-sorting">Action</th> -->
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <?php if($etudiant): ?>
-                                                            <tr>
-                                                                <td>
-                                                                    <?php echo strtoupper($etudiant['prenompere']) ?>
-                                                                </td>
-                                                                <td>
-                                                                    <?php echo strtoupper($etudiant['prenomnommere']) ?>
-                                                                </td>
-                                                                <td class="text-center dt-no-sorting">
-                                                                    <?php echo strtoupper($etudiant['lieuresidenceparents']) ?>
-                                                                </td>
-                                                            </tr>
-                                                        <?php endif ?>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- État civil -->
+                    <div class="col-lg-6">
+                        <div class="card"><div class="card-body">
+                            <div class="gu-section-title lg"><span class="gu-ico-chip"><i class="bx bx-user"></i></span> État civil</div>
+                            <div class="gu-kv">
+                                <div class="kv"><div class="k">Date de naissance</div><?= $val('date_naissance_etudiant') ?></div>
+                                <div class="kv"><div class="k">Lieu de naissance</div><?= $val('lieu_naissance_etudiant') ?></div>
+                                <div class="kv"><div class="k">Genre</div><?= $val('genre_etudiant') ?></div>
+                                <div class="kv"><div class="k">Nationalité</div><?= $val('nationnalite') ?></div>
+                                <div class="kv"><div class="k">Cercle de naissance</div><?= $val('cercleNais') ?></div>
+                                <div class="kv"><div class="k">Commune de naissance</div><?= $val('commNais') ?></div>
+                                <div class="kv"><div class="k">Pays</div><?= $val('pays') ?></div>
                             </div>
-                        </div>
-                    </form>
-                    <?php //else: ?>
-                        <p class="alert alert-danger">Aucun étudiant trouvé.</p>
-                    <?php //endif; ?>
-                </section>
-                <!-- formulaire -->
+                        </div></div>
+                    </div>
+
+                    <!-- Scolarité -->
+                    <div class="col-lg-6">
+                        <div class="card"><div class="card-body">
+                            <div class="gu-section-title lg"><span class="gu-ico-chip success"><i class="bx bx-book"></i></span> Scolarité</div>
+                            <div class="gu-kv">
+                                <div class="kv"><div class="k">Matricule</div><?= $val('matricule_etudiant') ?></div>
+                                <div class="kv"><div class="k">N° étudiant</div><?= $val('numetudiant') ?></div>
+                                <div class="kv"><div class="k">Filière</div><?= $val('sigle_filiere') ?></div>
+                                <div class="kv"><div class="k">Diplôme</div><?= $val('diplome') ?></div>
+                                <div class="kv"><div class="k">Série</div><?= $val('serie') ?></div>
+                                <div class="kv"><div class="k">Année du diplôme</div><?= $val('anneediplome') ?></div>
+                                <div class="kv"><div class="k">Académie</div><?= $val('academie') ?></div>
+                                <div class="kv"><div class="k">N° de place</div><?= $val('numplace') ?></div>
+                            </div>
+                        </div></div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Contacts & adresse -->
+                    <div class="col-lg-6">
+                        <div class="card"><div class="card-body">
+                            <div class="gu-section-title lg"><span class="gu-ico-chip warning"><i class="bx bx-map"></i></span> Contacts &amp; adresse</div>
+                            <div class="gu-kv">
+                                <div class="kv"><div class="k">Contact</div><?= $val('contact_etudiant') ?></div>
+                                <div class="kv"><div class="k">Adresse actuelle</div><?= $val('adresseactuel') ?></div>
+                                <div class="kv"><div class="k">Résidence des parents</div><?= $val('lieuresidenceparents') ?></div>
+                            </div>
+                        </div></div>
+                    </div>
+
+                    <!-- Parents -->
+                    <div class="col-lg-6">
+                        <div class="card"><div class="card-body">
+                            <div class="gu-section-title lg"><span class="gu-ico-chip"><i class="bx bx-group"></i></span> Parents</div>
+                            <div class="gu-kv">
+                                <div class="kv"><div class="k">Prénom du père</div><?= $val('prenompere') ?></div>
+                                <div class="kv"><div class="k">Nom &amp; prénom de la mère</div><?= $val('prenomnommere') ?></div>
+                            </div>
+                        </div></div>
+                    </div>
+                </div>
+
+                <?php endif; ?>
             </div>
         </div>
     </div>
-    <!-- fin: Content-->
+
     <div class="sidenav-overlay"></div>
     <div class="drag-target"></div>
-    <!-- inclusion du partie foot-->
+
     <?php $this->view("Partials/foot") ?>
-    <!-- inclusion du partie foot fin-->
-    <!-- inclusion du partie footer-->
     <?php $this->view("Partials/footer") ?>
-    <!-- inclusion du partie footer fin-->
 
 </body>
-<!-- END: Body-->
+
 </html>

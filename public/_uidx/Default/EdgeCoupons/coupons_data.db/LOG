@@ -1,0 +1,5 @@
+2026/06/24-11:17:13.561 4c94 Creating DB C:\xampp\htdocs\G_universite\public\_uidx\Default\EdgeCoupons/coupons_data.db since it was missing.
+2026/06/24-11:17:13.570 4c94 Reusing MANIFEST C:\xampp\htdocs\G_universite\public\_uidx\Default\EdgeCoupons/coupons_data.db/MANIFEST-000001
+2026/06/24-11:17:14.000 1e14 Level-0 table #5: started
+2026/06/24-11:17:14.009 1e14 Level-0 table #5: 682693 bytes OK
+2026/06/24-11:17:14.013 1e14 Delete type=0 #3

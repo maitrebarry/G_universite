@@ -93,15 +93,100 @@ $champsBdd = [
     'contact_etudiant' => 'Contact'
 ];
 
-    // Entêtes Excel si présentes
-    $entetesExcel = isset($_SESSION['entetes'])  ? $_SESSION['entetes'] : [];
+    // Clés existantes pour la détection de doublons côté client
+    $existing = (new EtudiantPargroupe())->existingStudentKeys();
 
-    // Afficher la vue principale
+    // Afficher l'assistant d'import
     $this->view('liste_inscription_groupe', [
-        'listeFilieres' => $listeFilieres,        // pas supprimé si tu en as besoin ailleurs
-        'listeParAnnee' => $listeParAnnee,        // pour la double sélection année > promotion
-        'champsBdd' => $champsBdd,
-        'entetesExcel' => $entetesExcel
+        'listeFilieres' => $listeFilieres,
+        'listeParAnnee' => $listeParAnnee,
+        'champsBdd'     => $champsBdd,
+        'existing'      => $existing,
+    ]);
+}
+
+// Frais selon le statut (extrait de importerEnChunks)
+private function fraisSelonStatut($statutBrut)
+{
+    return gu_statut_frais($statutBrut); // référentiel unique des frais
+    $s = strtolower(trim((string) $statutBrut));
+    $s = str_replace(['é', 'è', 'ê', 'ë'], 'e', $s);
+    switch ($s) {
+        case 'reg':
+        case 'regulier':
+            return 6000;
+        case 'cl':
+            return 81000;
+        case 'privee':
+        case 'prive':
+        case 'prof. prive':
+            return 200000;
+        case 'public':
+        case 'publique':
+        case 'profpubliq':
+        case 'pro. collect':
+        case 'collectivite':
+            return 150000;
+        default:
+            return 150000;
+    }
+}
+
+// Import d'un lot de lignes (JSON) — renvoie un rapport
+public function importJson()
+{
+    header('Content-Type: application/json; charset=utf-8');
+
+    $payload = json_decode(file_get_contents('php://input'), true);
+    $idPromotion = $payload['id_promotion'] ?? null;
+    $start = (int) ($payload['start'] ?? 0);
+    $rows = is_array($payload['rows'] ?? null) ? $payload['rows'] : [];
+
+    if (empty($idPromotion)) {
+        echo json_encode(['error' => 'Promotion manquante.']);
+        return;
+    }
+
+    $model = new EtudiantPargroupe();
+
+    // Filière de la promotion choisie -> renseignée sur etudiant.id_filiere
+    $promo = $model->FetchSelectWhere('id_filiere', 'promotion', 'id_promotion = ?', [$idPromotion]);
+    $idFiliere = is_object($promo) ? ($promo->id_filiere ?? null) : null;
+
+    $imported = 0;
+    $skipped = 0;
+    $errors = [];
+
+    foreach ($rows as $i => $r) {
+        $d = is_array($r) ? $r : [];
+        $ligne = $start + $i + 1;
+        $nom = trim((string) ($d['nom_prenom_etudiant'] ?? ''));
+
+        if ($nom === '') {
+            $skipped++;
+            $errors[] = ['ligne' => $ligne, 'raison' => 'Nom manquant'];
+            continue;
+        }
+
+        $d['id_promotion'] = $idPromotion;
+        $d['id_filiere'] = $idFiliere;
+        $d['matricule_etudiant'] = $this->genererMatricule(date('Y'), $nom, $d['prenom'] ?? '', $d['genre_etudiant'] ?? '', $start + $i);
+        $d['total_frais'] = $this->fraisSelonStatut($d['id_statut'] ?? '');
+        $d['id_statut'] = gu_statut_normalize($d['id_statut'] ?? '') ?? ($d['id_statut'] ?? '');
+
+        $res = $model->insertEtudiant($d);
+        if (is_array($res) && !empty($res['success'])) {
+            $imported++;
+        } else {
+            $skipped++;
+            $errors[] = ['ligne' => $ligne, 'raison' => is_array($res) ? ($res['message'] ?? 'Échec') : 'Échec'];
+        }
+    }
+
+    echo json_encode([
+        'imported' => $imported,
+        'skipped'  => $skipped,
+        'errors'   => array_slice($errors, 0, 100),
     ]);
 }
 
@@ -134,6 +219,9 @@ public function genererMatricule($anneeDiplome, $nom, $prenom, $genre, $index)
       }
 public function uploadExcel()
 {
+    // Déprécié : remplacé par le nouvel assistant (parsing côté client). On redirige.
+    $this->redirect("EtudiantPargroupes");
+    return;
     if (isset($_FILES['excel_file']) && $_FILES['excel_file']['error'] === UPLOAD_ERR_OK) {
         $fileTmpPath = $_FILES['excel_file']['tmp_name'];
         $fileName = uniqid() . "_" . $_FILES['excel_file']['name'];
@@ -158,6 +246,10 @@ $champsBdd = ['nom_prenom_etudiant','prenom', 'date_naissance_etudiant', 'genre_
 
 public function importerEnChunks()
 {
+    // Déprécié : l'import passe désormais par le nouvel assistant (importJson). On redirige proprement.
+    $this->set_flash("L'import a été modernisé : utilisez le nouvel assistant ci-dessous.", "info");
+    $this->redirect("EtudiantPargroupes");
+    return;
     if (isset($_FILES['excel_file']) && $_FILES['excel_file']['error'] === UPLOAD_ERR_OK) {
         set_time_limit(300); // Allonge le temps d'exécution à 5 minutes
 

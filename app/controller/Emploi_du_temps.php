@@ -33,8 +33,9 @@ class Emploi_du_temps extends Controller
             @$edt = $_POST['edt'];
             @$horaires = $_POST['horaires'];
             @$enseignants = $_POST['enseignants'];
+            $forceSalle = !empty($_POST['forceSalle']);
             $edtModel = new Emploi_du_temp();
-            $edtModel->ajouterEdt($edt, $horaires, $enseignants);
+            $edtModel->ajouterEdt($edt, $horaires, $enseignants, $forceSalle);
             $this->view("set_flash");
             return;
         }
@@ -130,14 +131,40 @@ class Emploi_du_temps extends Controller
                     "salles" => $salles
                 ]);
             }
-        } else if ($_POST['action'] == "editer_edt") {
+        } else if (isset($_POST['action']) && $_POST['action'] == "editer_edt") {
             @$edt = $_POST['edt'];
             @$horaires = $_POST['horaires'];
+            $forceSalle = !empty($_POST['forceSalle']);
             $edtModel = new Emploi_du_temp();
-            $edtModel->editerEdt($edt, $horaires);
+            $edtModel->editerEdt($edt, $horaires, $forceSalle);
             $this->view("set_flash");
             return;
         }
         exit("Edt Introuvable");
+    }
+
+    // Vérification des conflits EN DIRECT (AJAX/JSON) pour l'assistant de création/édition.
+    public function conflits()
+    {
+        header('Content-Type: application/json');
+        $cells = [];
+        foreach ((array) ($_POST['cells'] ?? []) as $c) {
+            $j = $c['jour'] ?? null;
+            $d = $c['debut'] ?? '';
+            $f = $c['fin'] ?? '';
+            if ($j !== null && $j !== '' && $d !== '' && $f !== '') {
+                $cells[] = ['jour' => (int) $j, 'debut' => $d, 'fin' => $f];
+            }
+        }
+        $salles = array_map('intval', (array) ($_POST['salles'] ?? []));
+        $enseignants = array_map('intval', (array) ($_POST['enseignants'] ?? []));
+        $exclude = !empty($_POST['excludeEdtId']) ? (int) $_POST['excludeEdtId'] : null;
+
+        $model = new Emploi_du_temp();
+        $periode = $model->getCurrentPeriode();
+        $conflits = (is_object($periode) && !empty($periode->id_periode) && !empty($cells))
+            ? $model->detecterConflits($salles, $enseignants, $cells, $periode->id_periode, $exclude)
+            : ['salle' => [], 'enseignant' => []];
+        echo json_encode($conflits);
     }
 }

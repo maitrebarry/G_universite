@@ -25,8 +25,7 @@ class Semestres extends Controller
 
         }
 
-        $this->view('liste_semestre'); 
-       
+        $this->redirect('Semestres/Liste');
     }
     public function delete($id) {
         $S = new Semestre();     

@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="fr" data-bs-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>G_universite — Design System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <link href="assets/css/theme.css" rel="stylesheet">
+  <link href="assets/css/gu-components.css" rel="stylesheet">
+  <style>
+    .sg-section { padding: 2rem 0; border-bottom: 1px solid var(--border); }
+    .sg-section > h2 { font-size: var(--fs-xl); margin-bottom: .25rem; }
+    .sg-section p.lead-muted { color: var(--text-secondary); font-size: var(--fs-sm); margin-bottom: 1.25rem; }
+    .sg-label { font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .04em; color: var(--text-tertiary); margin: 1.25rem 0 .6rem; font-weight: var(--fw-medium); }
+    .swatches { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 10px; }
+    .swatch { border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border); }
+    .swatch .chip { height: 56px; }
+    .swatch .meta { padding: 6px 8px; font-size: 11px; background: var(--surface-card); }
+    .swatch .meta b { display: block; font-weight: var(--fw-medium); }
+    .swatch .meta span { color: var(--text-tertiary); font-family: var(--font-mono); }
+    .sg-topbar { position: sticky; top: 0; z-index: 20; background: var(--surface-card); border-bottom: 1px solid var(--border); }
+    .type-row { display: flex; align-items: baseline; gap: 1rem; margin-bottom: .5rem; }
+    .type-row .tag { font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary); width: 56px; flex-shrink: 0; }
+    .demo-row { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
+  </style>
+</head>
+<body>
+  <div class="sg-topbar">
+    <div class="container d-flex align-items-center py-2" style="gap:.75rem;">
+      <span class="d-inline-flex align-items-center justify-content-center" style="width:34px;height:34px;border-radius:var(--radius-md);background:var(--color-primary);color:#fff;font-weight:600;">IU</span>
+      <div class="me-auto">
+        <div style="font-weight:600;line-height:1.1;">G_universite — Design System</div>
+        <div style="font-size:var(--fs-xs);color:var(--text-secondary);">Bleu académique · Bootstrap 5 + tokens</div>
+      </div>
+      <button id="themeToggle" class="btn btn-outline-primary btn-sm" type="button">
+        <i class="bx bx-moon"></i> <span id="themeLabel">Mode sombre</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="container">
+    <section class="sg-section">
+      <h2>Couleurs</h2>
+      <p class="lead-muted">Marque (bleu académique), neutres et couleurs sémantiques.</p>
+      <div class="sg-label">Marque</div>
+      <div class="swatches" id="ramp-brand"></div>
+      <div class="sg-label">Neutres</div>
+      <div class="swatches" id="ramp-gray"></div>
+      <div class="sg-label">Sémantique &amp; rôles</div>
+      <div class="d-flex flex-wrap gap-2">
+        <span class="badge badge-soft-success">Succès</span>
+        <span class="badge badge-soft-warning">Avertissement</span>
+        <span class="badge badge-soft-danger">Danger</span>
+        <span class="badge badge-soft-info">Info</span>
+        <span class="role-badge" style="color:#fff;background-color:var(--role-supadmin);"><i class="bx bx-shield"></i> SupAdmin</span>
+        <span class="role-badge" style="color:#fff;background-color:var(--role-dg);">DG</span>
+        <span class="role-badge" style="color:#fff;background-color:var(--role-dga);">DGA</span>
+        <span class="role-badge" style="color:#fff;background-color:var(--role-chefdr);">Chef DR</span>
+        <span class="role-badge" style="color:#fff;background-color:var(--role-secretaire);">Secrétaire</span>
+        <span class="role-badge" style="color:#fff;background-color:var(--role-scolarite);">Scolarité</span>
+        <span class="role-badge" style="color:#fff;background-color:var(--role-enseignant);">Enseignant</span>
+      </div>
+    </section>
+
+    <section class="sg-section">
+      <h2>Typographie</h2>
+      <p class="lead-muted">Police Inter · échelle de tailles.</p>
+      <div class="type-row"><span class="tag">2xl</span><span style="font-size:var(--fs-2xl);font-weight:600;">Tableau de bord</span></div>
+      <div class="type-row"><span class="tag">xl</span><span style="font-size:var(--fs-xl);font-weight:600;">Liste des étudiants</span></div>
+      <div class="type-row"><span class="tag">lg</span><span style="font-size:var(--fs-lg);">Sous-titre de section</span></div>
+      <div class="type-row"><span class="tag">base</span><span style="font-size:var(--fs-base);">Texte courant — 16px, confortable pour les tableaux denses.</span></div>
+      <div class="type-row"><span class="tag">sm</span><span style="font-size:var(--fs-sm);color:var(--text-secondary);">Texte secondaire et libellés.</span></div>
+    </section>
+
+    <section class="sg-section">
+      <h2>Boutons</h2>
+      <p class="lead-muted">Variantes, tailles, icônes et états — avec micro-interactions (survol, focus, pression).</p>
+
+      <div class="sg-label">Variantes principales</div>
+      <div class="demo-row">
+        <button class="btn btn-gradient">Dégradé</button>
+        <button class="btn btn-primary">Primaire</button>
+        <button class="btn btn-soft-primary">Soft</button>
+        <button class="btn btn-outline-primary">Contour</button>
+        <button class="btn btn-ghost">Fantôme</button>
+        <button class="btn btn-primary btn-pill">Pilule</button>
+      </div>
+
+      <div class="sg-label">Sémantiques</div>
+      <div class="demo-row">
+        <button class="btn btn-success">Valider</button>
+        <button class="btn btn-warning">Avertir</button>
+        <button class="btn btn-danger">Supprimer</button>
+        <button class="btn btn-soft-success">Soft</button>
+        <button class="btn btn-soft-warning">Soft</button>
+        <button class="btn btn-soft-danger">Soft</button>
+      </div>
+
+      <div class="sg-label">Tailles</div>
+      <div class="demo-row">
+        <button class="btn btn-primary btn-sm">Petit</button>
+        <button class="btn btn-primary">Normal</button>
+        <button class="btn btn-primary btn-lg">Grand</button>
+        <button class="btn btn-primary btn-xl">Très grand</button>
+      </div>
+
+      <div class="sg-label">Avec icônes</div>
+      <div class="demo-row">
+        <button class="btn btn-primary"><i class="bx bx-plus"></i> Nouvel étudiant</button>
+        <button class="btn btn-outline-primary"><i class="bx bx-download"></i> Exporter</button>
+        <button class="btn btn-soft-primary">Suivant <i class="bx bx-right-arrow-alt"></i></button>
+        <button class="btn btn-ghost btn-icon" title="Modifier" aria-label="Modifier"><i class="bx bx-edit"></i></button>
+        <button class="btn btn-soft-danger btn-icon btn-round" title="Supprimer" aria-label="Supprimer"><i class="bx bx-trash"></i></button>
+        <button class="btn btn-gradient btn-fab" title="Ajouter" aria-label="Ajouter"><i class="bx bx-plus"></i></button>
+      </div>
+
+      <div class="sg-label">États &amp; groupes</div>
+      <div class="demo-row">
+        <button class="btn btn-primary" id="loadBtn"><i class="bx bx-save"></i> Cliquer (chargement)</button>
+        <button class="btn btn-primary" disabled>Désactivé</button>
+        <div class="gu-segment" id="segDemo">
+          <button class="seg active" data-v="liste"><i class="bx bx-list-ul"></i> Liste</button>
+          <button class="seg" data-v="grille"><i class="bx bx-grid-alt"></i> Grille</button>
+          <button class="seg" data-v="kanban"><i class="bx bx-columns"></i> Kanban</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="sg-section">
+      <h2>Formulaires</h2>
+      <p class="lead-muted">Champs intelligents : icônes, mot de passe afficher/masquer, validation, recherche, upload.</p>
+      <div class="row g-4" style="max-width:680px;">
+        <div class="col-md-6">
+          <label class="form-label req">Nom &amp; prénom</label>
+          <div class="gu-field">
+            <i class="bx bx-user gu-ico"></i>
+            <input type="text" class="form-control has-ico" value="Amadou Karembé">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Email</label>
+          <div class="gu-field">
+            <i class="bx bx-envelope gu-ico"></i>
+            <input type="email" class="form-control has-ico is-valid" value="amadou.karembe@iufp.ml">
+          </div>
+          <div class="gu-feedback ok"><i class="bx bx-check-circle"></i> Adresse valide</div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label req">Mot de passe</label>
+          <div class="gu-field">
+            <i class="bx bx-lock-alt gu-ico"></i>
+            <input type="password" class="form-control has-ico has-ico-r" value="motdepasse" id="pwd">
+            <button type="button" class="gu-ico-r" id="pwdToggle" aria-label="Afficher le mot de passe"><i class="bx bx-show"></i></button>
+          </div>
+          <div class="form-text">8 caractères minimum.</div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Matricule</label>
+          <div class="gu-field">
+            <i class="bx bx-id-card gu-ico"></i>
+            <input type="text" class="form-control has-ico is-invalid" value="000">
+          </div>
+          <div class="gu-feedback err"><i class="bx bx-error-circle"></i> Format de matricule invalide</div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Filière</label>
+          <select class="form-select"><option>Informatique</option><option>Gestion</option><option>Droit</option></select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Recherche</label>
+          <div class="gu-field gu-search">
+            <i class="bx bx-search gu-ico"></i>
+            <input type="text" class="form-control has-ico" placeholder="Rechercher un étudiant…">
+          </div>
+        </div>
+        <div class="col-12">
+          <label class="form-label">Niveau d'études</label>
+          <div class="gu-segment" id="segLevel">
+            <button class="seg active" data-v="L1">Licence 1</button>
+            <button class="seg" data-v="L2">Licence 2</button>
+            <button class="seg" data-v="L3">Licence 3</button>
+          </div>
+        </div>
+        <div class="col-12 d-flex flex-wrap gap-4">
+          <div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="sw1" checked><label class="form-check-label" for="sw1">Étudiant actif</label></div>
+          <div class="form-check"><input class="form-check-input" type="checkbox" id="ck1" checked><label class="form-check-label" for="ck1">Boursier</label></div>
+          <div class="form-check"><input class="form-check-input" type="radio" name="rg" id="r1" checked><label class="form-check-label" for="r1">Garçon</label></div>
+          <div class="form-check"><input class="form-check-input" type="radio" name="rg" id="r2"><label class="form-check-label" for="r2">Fille</label></div>
+        </div>
+        <div class="col-12">
+          <label class="form-label">Photo de profil</label>
+          <label class="gu-dropzone d-block" id="dropzone" for="fileInput">
+            <i class="bx bx-cloud-upload"></i>
+            <div id="dropText">Glissez une image ici ou <span style="color:var(--color-primary);font-weight:500;">parcourir</span></div>
+            <input type="file" id="fileInput" hidden>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <section class="sg-section">
+      <h2>Cartes &amp; indicateurs</h2>
+      <div class="row g-3 mb-3">
+        <div class="col-6 col-md-3"><div class="metric-card"><div class="metric-label">Étudiants</div><div class="metric-value">1 248</div><div style="font-size:var(--fs-xs);color:var(--success-text);">+4% ce mois</div></div></div>
+        <div class="col-6 col-md-3"><div class="metric-card"><div class="metric-label">Taux de réussite</div><div class="metric-value">78%</div><div style="font-size:var(--fs-xs);color:var(--success-text);">+2 pts</div></div></div>
+        <div class="col-6 col-md-3"><div class="metric-card"><div class="metric-label">Paiements en retard</div><div class="metric-value">32</div><div style="font-size:var(--fs-xs);color:var(--warning-text);">à relancer</div></div></div>
+        <div class="col-6 col-md-3"><div class="metric-card"><div class="metric-label">Examens à venir</div><div class="metric-value">5</div><div style="font-size:var(--fs-xs);color:var(--text-secondary);">7 jours</div></div></div>
+      </div>
+      <div class="card" style="max-width:420px;">
+        <div class="card-body">
+          <div class="d-flex align-items-center gap-2 mb-2">
+            <span class="gu-avatar" style="width:42px;height:42px;font-size:var(--fs-sm);">AK</span>
+            <div><div style="font-weight:600;">Amadou Karembé</div><div style="font-size:var(--fs-sm);color:var(--text-secondary);">Licence 2 · Informatique</div></div>
+            <span class="badge badge-soft-success ms-auto">Actif</span>
+          </div>
+          <p style="font-size:var(--fs-sm);color:var(--text-secondary);margin:0;">Matricule 2024-INF-0142 · Moyenne S3 : 13,2/20</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="sg-section">
+      <h2>Listes &amp; tableaux intelligents</h2>
+      <p class="lead-muted">Recherche live, filtres, tri par colonne, sélection, densité et pagination.</p>
+      <div class="gu-table-card" id="smartTable">
+        <div class="gu-toolbar">
+          <span class="gu-title"><i class="bx bx-group"></i> Étudiants <span class="gu-count" data-count>9</span></span>
+          <div class="gu-field gu-search ms-auto" style="min-width:190px;">
+            <i class="bx bx-search gu-ico"></i>
+            <input type="text" class="form-control form-control-sm has-ico" placeholder="Rechercher…" data-search>
+          </div>
+          <div class="d-flex gap-1" data-chips>
+            <button class="gu-chip active" data-statut="all">Tous</button>
+            <button class="gu-chip" data-statut="Admis">Admis</button>
+            <button class="gu-chip" data-statut="Rattrapage">Rattrapage</button>
+          </div>
+          <div class="gu-segment" data-density>
+            <button class="seg active" data-d="comfort">Confort</button>
+            <button class="seg" data-d="compact">Compact</button>
+          </div>
+          <button class="btn btn-soft-primary btn-sm"><i class="bx bx-export"></i> Exporter</button>
+          <button class="btn btn-primary btn-sm"><i class="bx bx-plus"></i> Ajouter</button>
+        </div>
+        <div class="gu-table-wrap">
+          <table class="gu-table" data-table>
+            <thead><tr>
+              <th style="width:38px;"><input type="checkbox" class="form-check-input" data-select-all aria-label="Tout sélectionner"></th>
+              <th class="sortable" data-key="name">Étudiant <i class="bx bx-sort-alt-2"></i></th>
+              <th class="sortable" data-key="filiere">Filière <i class="bx bx-sort-alt-2"></i></th>
+              <th class="sortable" data-key="niveau">Niveau <i class="bx bx-sort-alt-2"></i></th>
+              <th class="sortable" data-key="moyenne">Moyenne <i class="bx bx-sort-alt-2"></i></th>
+              <th class="sortable" data-key="statut">Statut <i class="bx bx-sort-alt-2"></i></th>
+              <th style="width:96px;text-align:right;">Actions</th>
+            </tr></thead>
+            <tbody data-body></tbody>
+          </table>
+          <div class="gu-empty" data-empty hidden><i class="bx bx-search-alt"></i>Aucun étudiant ne correspond à votre recherche.</div>
+        </div>
+        <div class="gu-foot">
+          <span data-selinfo>0 sélectionné(s)</span>
+          <div class="gu-pagination" data-pager></div>
+        </div>
+      </div>
+
+      <div class="sg-label">Variante liste (responsive / mobile)</div>
+      <div class="gu-table-card gu-list" style="max-width:460px;">
+        <div class="gu-list-item"><span class="gu-avatar">AK</span><div class="gu-list-body"><div class="t">Amadou Karembé</div><div class="m">Informatique · L2</div></div><span class="badge badge-soft-success">Admis</span></div>
+        <div class="gu-list-item"><span class="gu-avatar">MD</span><div class="gu-list-body"><div class="t">Moussa Diarra</div><div class="m">Informatique · L2</div></div><span class="badge badge-soft-warning">Rattrapage</span></div>
+        <div class="gu-list-item"><span class="gu-avatar">OK</span><div class="gu-list-body"><div class="t">Oumar Keïta</div><div class="m">Informatique · L3</div></div><span class="badge badge-soft-success">Admis</span></div>
+      </div>
+    </section>
+
+    <section class="sg-section">
+      <h2>Alertes</h2>
+      <div class="alert alert-soft-info d-flex align-items-center gap-2"><i class="bx bx-info-circle"></i> Période d'inscription ouverte jusqu'au 30 juin.</div>
+      <div class="alert alert-soft-success d-flex align-items-center gap-2"><i class="bx bx-check-circle"></i> Notes enregistrées avec succès.</div>
+      <div class="alert alert-soft-warning d-flex align-items-center gap-2"><i class="bx bx-error"></i> 32 paiements en retard de plus de 30 jours.</div>
+      <div class="alert alert-soft-danger d-flex align-items-center gap-2 mb-0"><i class="bx bx-x-circle"></i> Accès refusé : droits insuffisants.</div>
+    </section>
+
+    <div class="py-4 text-center" style="font-size:var(--fs-xs);color:var(--text-tertiary);">G_universite · système de design — étape 1 (fondations + composants)</div>
+  </div>
+
+  <script>
+    (function () {
+      var brand = [["50","#eef4fb"],["100","#d4e4f6"],["200","#aac8ec"],["300","#79a6de"],["400","#4a83cf"],["500","#2966bd"],["600","#1f4f9c"],["700","#1a3f79"],["800","#163357"],["900","#0f213a"]];
+      var gray  = [["50","#f6f7f9"],["100","#eceef2"],["200","#dce0e7"],["300","#c2c8d2"],["400","#9aa3b2"],["500","#6b7585"],["600","#4c5564"],["700","#374050"],["800","#232b38"],["900","#141a24"]];
+      function render(id, ramp, prefix) {
+        document.getElementById(id).innerHTML = ramp.map(function (s) {
+          return '<div class="swatch"><div class="chip" style="background:' + s[1] + '"></div>' +
+                 '<div class="meta"><b>' + prefix + '-' + s[0] + '</b><span>' + s[1] + '</span></div></div>';
+        }).join('');
+      }
+      render('ramp-brand', brand, 'brand');
+      render('ramp-gray', gray, 'gray');
+
+      var saved = localStorage.getItem('gu-theme');
+      if (saved) document.documentElement.setAttribute('data-bs-theme', saved);
+      var qp = new URLSearchParams(location.search).get('theme');
+      if (qp === 'light' || qp === 'dark') document.documentElement.setAttribute('data-bs-theme', qp);
+      var btn = document.getElementById('themeToggle'), label = document.getElementById('themeLabel');
+      function sync() {
+        var dark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+        label.textContent = dark ? 'Mode clair' : 'Mode sombre';
+        btn.querySelector('i').className = dark ? 'bx bx-sun' : 'bx bx-moon';
+      }
+      sync();
+      btn.addEventListener('click', function () {
+        var dark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+        var next = dark ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-bs-theme', next);
+        localStorage.setItem('gu-theme', next); sync();
+      });
+
+      var pwd = document.getElementById('pwd'), pt = document.getElementById('pwdToggle');
+      pt && pt.addEventListener('click', function () {
+        var show = pwd.type === 'password'; pwd.type = show ? 'text' : 'password';
+        pt.querySelector('i').className = show ? 'bx bx-hide' : 'bx bx-show';
+      });
+
+      var lb = document.getElementById('loadBtn');
+      lb && lb.addEventListener('click', function () {
+        if (lb.classList.contains('is-loading')) return;
+        lb.classList.add('is-loading');
+        setTimeout(function () { lb.classList.remove('is-loading'); }, 1600);
+      });
+
+      function segGroup(el) {
+        el && el.addEventListener('click', function (e) {
+          var b = e.target.closest('.seg'); if (!b) return;
+          el.querySelectorAll('.seg').forEach(function (s) { s.classList.remove('active'); });
+          b.classList.add('active');
+          if (el.hasAttribute('data-density')) {
+            state.compact = b.getAttribute('data-d') === 'compact';
+            tableEl.classList.toggle('is-compact', state.compact);
+          }
+        });
+      }
+      segGroup(document.getElementById('segDemo'));
+      segGroup(document.getElementById('segLevel'));
+
+      var dz = document.getElementById('dropzone'), fi = document.getElementById('fileInput'), dt = document.getElementById('dropText');
+      if (dz) {
+        ['dragenter','dragover'].forEach(function (ev){ dz.addEventListener(ev, function (e){ e.preventDefault(); dz.classList.add('dragover'); }); });
+        ['dragleave','drop'].forEach(function (ev){ dz.addEventListener(ev, function (e){ e.preventDefault(); dz.classList.remove('dragover'); }); });
+        dz.addEventListener('drop', function (e){ if (e.dataTransfer.files[0]) dt.textContent = e.dataTransfer.files[0].name; });
+        fi.addEventListener('change', function (){ if (fi.files[0]) dt.textContent = fi.files[0].name; });
+      }
+
+      var DATA = [
+        ["Amadou Karembé","2024-INF-0142","Informatique",2,13.2,"Admis"],
+        ["Fatoumata Traoré","2024-GES-0210","Gestion",1,11.8,"Admis"],
+        ["Moussa Diarra","2024-INF-0155","Informatique",2,8.4,"Rattrapage"],
+        ["Aïssata Coulibaly","2023-GES-0098","Gestion",3,14.6,"Admis"],
+        ["Ibrahim Touré","2024-INF-0301","Informatique",1,9.2,"Rattrapage"],
+        ["Mariam Sidibé","2024-GES-0177","Gestion",2,12.1,"Admis"],
+        ["Oumar Keïta","2023-INF-0042","Informatique",3,15.3,"Admis"],
+        ["Awa Cissé","2024-GES-0260","Gestion",1,7.9,"Rattrapage"],
+        ["Seydou Konaté","2024-INF-0188","Informatique",2,10.7,"Admis"]
+      ];
+      var root = document.getElementById('smartTable');
+      var tableEl = root.querySelector('[data-table]');
+      var bodyEl = root.querySelector('[data-body]');
+      var countEl = root.querySelector('[data-count]');
+      var emptyEl = root.querySelector('[data-empty]');
+      var pagerEl = root.querySelector('[data-pager]');
+      var selInfo = root.querySelector('[data-selinfo]');
+      var selectAll = root.querySelector('[data-select-all]');
+      var searchEl = root.querySelector('[data-search]');
+      var state = { q:"", statut:"all", sort:null, dir:1, page:1, size:5, compact:false };
+
+      function initials(n){ return n.split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase(); }
+      function meterClass(m){ return m < 10 ? 'bad' : (m < 12 ? 'warn' : ''); }
+      function badge(s){ return s === 'Admis' ? 'badge-soft-success' : 'badge-soft-warning'; }
+
+      var rows = DATA.map(function (d) {
+        var tr = document.createElement('tr');
+        tr.dataset.name = d[0]; tr.dataset.filiere = d[2]; tr.dataset.niveau = d[3]; tr.dataset.moyenne = d[4]; tr.dataset.statut = d[5];
+        var pct = Math.round(d[4] / 20 * 100);
+        tr.innerHTML =
+          '<td><input type="checkbox" class="form-check-input" data-row aria-label="Sélectionner"></td>' +
+          '<td><div class="d-flex align-items-center gap-2"><span class="gu-avatar">' + initials(d[0]) + '</span>' +
+            '<div><div style="font-weight:500;">' + d[0] + '</div><div style="font-size:var(--fs-xs);color:var(--text-secondary);">' + d[1] + '</div></div></div></td>' +
+          '<td>' + d[2] + '</td>' +
+          '<td>L' + d[3] + '</td>' +
+          '<td><div class="d-flex align-items-center gap-2"><div class="gu-meter ' + meterClass(d[4]) + '" style="flex:1;"><span style="width:' + pct + '%"></span></div>' +
+            '<span style="font-size:var(--fs-sm);min-width:30px;">' + d[4].toFixed(1).replace('.', ',') + '</span></div></td>' +
+          '<td><span class="badge ' + badge(d[5]) + '">' + d[5] + '</span></td>' +
+          '<td style="text-align:right;"><div class="gu-row-actions">' +
+            '<button class="btn btn-ghost btn-icon btn-sm" title="Voir" aria-label="Voir"><i class="bx bx-show"></i></button>' +
+            '<button class="btn btn-ghost btn-icon btn-sm" title="Modifier" aria-label="Modifier"><i class="bx bx-edit"></i></button>' +
+            '<button class="btn btn-ghost btn-icon btn-sm" title="Supprimer" aria-label="Supprimer"><i class="bx bx-trash"></i></button></div></td>';
+        bodyEl.appendChild(tr);
+        return tr;
+      });
+
+      function filtered() {
+        var q = state.q.toLowerCase();
+        var list = rows.filter(function (r) {
+          var mq = !q || r.dataset.name.toLowerCase().indexOf(q) > -1 || r.dataset.filiere.toLowerCase().indexOf(q) > -1;
+          var ms = state.statut === 'all' || r.dataset.statut === state.statut;
+          return mq && ms;
+        });
+        if (state.sort) {
+          var num = state.sort === 'moyenne' || state.sort === 'niveau';
+          list.sort(function (a, b) {
+            var ka = a.dataset[state.sort], kb = b.dataset[state.sort];
+            if (num) { ka = parseFloat(ka); kb = parseFloat(kb); } else { ka = ka.toLowerCase(); kb = kb.toLowerCase(); }
+            return (ka < kb ? -1 : ka > kb ? 1 : 0) * state.dir;
+          });
+        }
+        return list;
+      }
+
+      function apply() {
+        var list = filtered();
+        var pages = Math.max(1, Math.ceil(list.length / state.size));
+        if (state.page > pages) state.page = pages;
+        rows.forEach(function (r) { r.style.display = 'none'; });
+        var start = (state.page - 1) * state.size;
+        list.slice(start, start + state.size).forEach(function (r) { r.style.display = ''; });
+        countEl.textContent = list.length;
+        emptyEl.hidden = list.length > 0;
+        tableEl.style.display = list.length > 0 ? '' : 'none';
+        renderPager(pages);
+        syncSel();
+      }
+
+      function renderPager(pages) {
+        var h = '<button ' + (state.page <= 1 ? 'disabled' : '') + ' data-pg="prev"><i class="bx bx-chevron-left"></i></button>';
+        for (var i = 1; i <= pages; i++) h += '<button class="' + (i === state.page ? 'active' : '') + '" data-pg="' + i + '">' + i + '</button>';
+        h += '<button ' + (state.page >= pages ? 'disabled' : '') + ' data-pg="next"><i class="bx bx-chevron-right"></i></button>';
+        pagerEl.innerHTML = h;
+      }
+
+      function visibleRows() { return rows.filter(function (r) { return r.style.display !== 'none'; }); }
+      function syncSel() {
+        var checked = rows.filter(function (r) { return r.querySelector('[data-row]').checked; });
+        selInfo.textContent = checked.length + ' sélectionné(s)';
+        var vis = visibleRows(), on = vis.filter(function (r) { return r.querySelector('[data-row]').checked; });
+        selectAll.checked = vis.length > 0 && on.length === vis.length;
+        selectAll.indeterminate = on.length > 0 && on.length < vis.length;
+      }
+
+      searchEl.addEventListener('input', function () { state.q = searchEl.value; state.page = 1; apply(); });
+      root.querySelector('[data-chips]').addEventListener('click', function (e) {
+        var c = e.target.closest('.gu-chip'); if (!c) return;
+        root.querySelectorAll('[data-chips] .gu-chip').forEach(function (x) { x.classList.remove('active'); });
+        c.classList.add('active'); state.statut = c.getAttribute('data-statut'); state.page = 1; apply();
+      });
+      root.querySelectorAll('th.sortable').forEach(function (th) {
+        th.addEventListener('click', function () {
+          var key = th.getAttribute('data-key');
+          if (state.sort === key) state.dir *= -1; else { state.sort = key; state.dir = 1; }
+          root.querySelectorAll('th.sortable').forEach(function (t) {
+            t.classList.remove('sorted-asc', 'sorted-desc');
+            t.querySelector('i').className = 'bx bx-sort-alt-2';
+          });
+          th.classList.add(state.dir === 1 ? 'sorted-asc' : 'sorted-desc');
+          th.querySelector('i').className = state.dir === 1 ? 'bx bx-chevron-up' : 'bx bx-chevron-down';
+          apply();
+        });
+      });
+      pagerEl.addEventListener('click', function (e) {
+        var b = e.target.closest('button'); if (!b) return;
+        var pg = b.getAttribute('data-pg');
+        if (pg === 'prev') state.page--; else if (pg === 'next') state.page++; else state.page = parseInt(pg, 10);
+        apply();
+      });
+      bodyEl.addEventListener('change', function (e) {
+        if (!e.target.matches('[data-row]')) return;
+        e.target.closest('tr').classList.toggle('is-selected', e.target.checked); syncSel();
+      });
+      selectAll.addEventListener('change', function () {
+        visibleRows().forEach(function (r) {
+          var cb = r.querySelector('[data-row]'); cb.checked = selectAll.checked;
+          r.classList.toggle('is-selected', selectAll.checked);
+        });
+        syncSel();
+      });
+
+      apply();
+    })();
+  </script>
+</body>
+</html>

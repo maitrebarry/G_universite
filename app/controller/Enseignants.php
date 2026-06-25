@@ -283,9 +283,8 @@ class Enseignants extends Controller
     public function imprimerEDTIndividuels()
     {
         require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
-        ini_set('display_errors', 1);
-        ini_set('display_startup_errors', 1);
-        error_reporting(E_ALL);
+        // Ne JAMAIS afficher d'erreur ici : tout texte parasite corrompt le binaire PDF.
+        ini_set('display_errors', '0');
 
         $model = new Enseignant();
         $date_debut = $_POST['date_debut'] ?? null;
@@ -422,106 +421,10 @@ class Enseignants extends Controller
         }
     }
 
-    public function exporterEDTPDF()
-    {
-        $model = new Enseignant();
-        
-        $date_debut = $_POST['date_debut'] ?? null;
-        $date_fin = $_POST['date_fin'] ?? null;
-        $periode_id = $_POST['periode_id'] ?? null;
-        $enseignants = $_POST['enseignants'] ?? [];
-    
-        // 🔹 Si jamais on reçoit une chaîne JSON, on la décode
-        if (is_string($enseignants)) {
-            $enseignants = json_decode($enseignants, true);
-        }
-    
-        if (!$periode_id) {
-            die("Erreur : periode_id requis !");
-        }
-    
-        $enseignantsIndex = [];
-    
-        foreach ($enseignants as $eid) {
-            $emplois = $model->getEmploiDuTempsByEnseignantRecap($eid, $date_debut, $date_fin, $periode_id);
-    
-            if (!empty($emplois)) {
-                foreach ($emplois as $emploi) {
-                    if (!isset($enseignantsIndex[$eid])) {
-                        $enseignantsIndex[$eid] = $emploi;
-                        $enseignantsIndex[$eid]->emplois_du_temps = [];
-    
-                     
-                        $enseignantsIndex[$eid]->heures_dues = $emploi->heures_dues ?? 0;
-    
-                       
-                       // 🔹 Correction : on affecte uniquement le matricule s’il existe
-                       if (!empty($emploi->enseignant_matricule)) {
-                        $enseignantsIndex[$eid]->enseignant_matricule = $emploi->enseignant_matricule;
-                        } else {
-                            // Vérification et formatage de la date de naissance si matricule vide
-                            if (!empty($emploi->enseignant_date_naissance)) {
-                                $timestamp = strtotime($emploi->enseignant_date_naissance);
-                                if ($timestamp !== false) {
-                                    $enseignantsIndex[$eid]->enseignant_matricule = date('d-m-Y', $timestamp); // ✅ Formaté en j-m-a
-                                } else {
-                                    $enseignantsIndex[$eid]->enseignant_matricule = "Date inconnue";
-                                }
-                            } else {
-                                $enseignantsIndex[$eid]->enseignant_matricule = "Non renseigné";
-                            }
-                        }
-                        $enseignantsIndex[$eid]->heures_effectuees = 0;
-                        $enseignantsIndex[$eid]->heures_supp = 0;
-                    }
-    
-                  
-                    $enseignantsIndex[$eid]->emplois_du_temps[] = $emploi->nom_module;
-    
-                    // 🔹 Calcul des heures effectuées
-                    $enseignantsIndex[$eid]->heures_effectuees += $emploi->heure_total;
-                }
-    
-                // 🔹 Calcul des heures supplémentaires
-                if (strtoupper($emploi->enseignant_statut) === 'PERMANANT') {
-                    $enseignantsIndex[$eid]->heures_supp = max(0, $enseignantsIndex[$eid]->heures_effectuees - $enseignantsIndex[$eid]->heures_dues);
-                } else {
-                    $enseignantsIndex[$eid]->heures_supp = $enseignantsIndex[$eid]->heures_effectuees;
-                }
-            }
-        }
-    
-        // 🔹 Séparation permanents / non-permanents
-        $permanents = array_filter($enseignantsIndex, fn($e) => strtoupper($e->enseignant_statut) === 'PERMANANT');
-        $non_permanents = array_filter($enseignantsIndex, fn($e) => strtoupper($e->enseignant_statut) !== 'PERMANANT');
-    
-        // 🔹 Capture de la vue HTML
-        ob_start();
-        require dirname(__DIR__) . '/views/recap_edt.view.php';
-        $html = ob_get_clean();
-    
-        // 🔹 Configuration PDF
-        require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
-        $options = new \Dompdf\Options();
-        $options->set('isHtml5ParserEnabled', true);
-        $options->set('defaultFont', 'Arial');
-    
-        $dompdf = new \Dompdf\Dompdf($options);
-        $dompdf->loadHtml($html);
-        $dompdf->setPaper('A4', 'portrait');
-        $dompdf->render();
-    
-        // 🔹 Téléchargement du PDF sans `exit`
-        $pdfFilename = "EDT_Récapitulatif.pdf";
-        header("Content-Type: application/pdf");
-        header("Content-Disposition: attachment; filename={$pdfFilename}");
-        header("Content-Length: " . strlen($dompdf->output()));
-        echo $dompdf->output();
-    }
-    
     public function genererPDF()
     {
         require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
+        ini_set('display_errors', '0'); // éviter toute pollution du binaire PDF
         $model = new Enseignant();
     
         $date_debut = $_POST['date_debut'] ?? null;
@@ -608,12 +511,7 @@ class Enseignants extends Controller
         ob_start();
         require dirname(__DIR__) . '/views/recap_edt.view.php';
         $html = ob_get_clean();
-        echo "<pre>";
-        // // print_r($permanents);
-        // print_r($non_permanents);
-        // echo "</pre>";
-        // exit;
-        // // 🔹 Configuration PDF
+        // 🔹 Configuration PDF
         $options = new \Dompdf\Options();
         $options->set('isHtml5ParserEnabled', true);
         $options->set('defaultFont', 'Arial');
@@ -728,7 +626,8 @@ class Enseignants extends Controller
             }
         }
 
-        $this->view('apercu_EDT_individuels_groupes', [
+        // Nom de vue avec la casse EXACTE du fichier (Apercu_…) — indispensable sous Linux.
+        $this->view('Apercu_EDT_individuels_groupes', [
             'apercus' => $apercus
         ]);
     }
@@ -737,26 +636,42 @@ class Enseignants extends Controller
         $model = new Enseignant();
         $errors = [];
         $periodes = $model->getPeriodes();
-        $periode_id = isset($_POST['periode_id']) ? $_POST['periode_id'] : null; // 🔹 Ajout du filtre période
+        $periode_id = isset($_POST['periode_id']) ? $_POST['periode_id'] : null;
         $periode_selectionnee = null;
 
         foreach ($periodes as $periode) {
-            if ($periode->id_periode == $periode_id) { // 🔹 Filtrer par ID de période et non par statut
+            if ($periode->id_periode == $periode_id) {
                 $periode_selectionnee = $periode;
                 break;
             }
+        }
+
+        // Aucune période choisie (ex: clic depuis la liste) -> période par défaut :
+        // celle qui contient aujourd'hui, sinon la plus récente.
+        if (!$periode_selectionnee && !empty($periodes)) {
+            $today = date('Y-m-d');
+            foreach ($periodes as $p) {
+                if ($today >= $p->date_debut && $today <= $p->date_fin) { $periode_selectionnee = $p; break; }
+            }
+            if (!$periode_selectionnee) {
+                $tri = $periodes;
+                usort($tri, fn($a, $b) => strcmp($b->date_debut, $a->date_debut));
+                $periode_selectionnee = $tri[0];
+            }
+            $periode_id = $periode_selectionnee->id_periode;
         }
 
         // Gestion des dates (priorité à celles saisies par l'utilisateur)
         $date_debut = isset($_POST['date_debut']) ? $_POST['date_debut'] : ($periode_selectionnee->date_debut ?? null);
         $date_fin = isset($_POST['date_fin']) ? $_POST['date_fin'] : ($periode_selectionnee->date_fin ?? null);
 
-        // Si aucune période sélectionnée ou dates invalides, afficher le formulaire de filtrage
+        // Aucune période en base -> formulaire de filtrage
         if (!$periode_selectionnee || $date_debut === null || $date_fin === null) {
-            $errors[] = "Les dates de début et de fin doivent être spécifiées ou disponibles dans la période sélectionnée.";
+            $errors[] = "Aucune période disponible. Veuillez d'abord créer une période avant de consulter l'emploi du temps.";
             $this->view("filtreEDT_individuel", [
                 "periodes" => $periodes,
-                "errors" => $errors
+                "errors" => $errors,
+                "id" => $id
             ]);
             return;
         }
@@ -811,7 +726,10 @@ class Enseignants extends Controller
             "semestres_promotions" => $semestres_promotions,
             "date_debut" => $date_debut,
             "date_fin" => $date_fin,
-            "errors" => $errors
+            "errors" => $errors,
+            "periodes" => $periodes,
+            "periode_id" => $periode_id,
+            "id" => $id
         ]);
     }
 }

@@ -1,368 +1,168 @@
 <?php $this->view("Partials/header") ?>
+
 <style>
-/* Style pour le texte défilant */
-.scrolling-text {
-    background-color: #007bff;
-    /* Couleur d'arrière-plan */
-    color: white;
-    /* Couleur du texte */
-    font-size: 20px;
-    /* Taille du texte */
-    padding: 10px 0;
-    /* Espacement autour du texte */
-    text-align: center;
-    /* Centrer le texte */
-    width: 100%;
-    /* Largeur complète */
-    overflow: hidden;
-    /* Empêcher le texte de déborder */
-}
+    .hidden { display: none !important; }
+    #ajoutNotes .form-label { font-size: var(--fs-sm); font-weight: var(--fw-medium); color: var(--text-secondary); margin-bottom: 4px; }
 
-.scrolling-text span {
-    display: inline-block;
-    white-space: nowrap;
-    animation: scroll-left 10s linear infinite;
-}
+    /* En-tête module */
+    .gu-note-head { display: flex; flex-wrap: wrap; gap: 28px; align-items: center; padding: 4px 4px 16px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+    .gu-note-head .lbl { display: block; font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: .04em; color: var(--text-tertiary); }
+    .gu-note-head .val { font-weight: var(--fw-semibold); color: var(--text-primary); }
 
-@keyframes scroll-left {
-    0% {
-        transform: translateX(100%);
-        /* Début du texte à droite */
-    }
+    /* Tableau de bord */
+    .gu-note-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 12px; margin-bottom: 16px; }
+    .gu-stat { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface-card); }
+    .gu-stat i { font-size: 1.5rem; width: 42px; height: 42px; border-radius: var(--radius-md); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .gu-stat .v { font-weight: var(--fw-bold); font-size: 1.25rem; line-height: 1.1; }
+    .gu-stat .v small { font-size: .68rem; font-weight: var(--fw-medium); color: var(--text-tertiary); }
+    .gu-stat .l { font-size: var(--fs-xs); color: var(--text-secondary); margin-top: 3px; }
+    .gu-stat-info i { background: var(--info-bg); color: var(--info-text); }
+    .gu-stat-success i { background: var(--success-bg); color: var(--success-text); }
+    .gu-stat-danger i { background: var(--danger-bg); color: var(--danger-text); }
+    .gu-stat-warning i { background: var(--warning-bg); color: var(--warning-text); }
+    .gu-stat-secondary i { background: var(--surface-muted); color: var(--text-secondary); }
 
-    100% {
-        transform: translateX(-100%);
-        /* Fin du texte à gauche */
-    }
-}
+    /* Barre recherche + état */
+    .gu-note-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+    .gu-note-saveall { font-size: var(--fs-sm); font-weight: var(--fw-medium); padding: 5px 12px; border-radius: var(--radius-pill); display: inline-flex; align-items: center; gap: 6px; }
+    .gu-note-saveall.ok { background: var(--success-bg); color: var(--success-text); }
+    .gu-note-saveall.busy { background: var(--warning-bg); color: var(--warning-text); }
 
-/* Style pour les cadres */
-.form-section,
-.table-container {
-    width: 100%;
-
-    /* Largeur maximale uniforme */
-    margin: 0 auto;
-    /* Centrer les éléments */
-    padding: 20px;
-    border: 2px solid #007bff;
-    border-radius: 10px;
-    margin-bottom: 20px;
-}
-
-/* Tableau */
-#notesTable {
-    width: 100%;
-    max-width: 100%;
-    border-collapse: collapse;
-    margin: auto;
-}
-
-#notesTable th,
-#notesTable td {
-    padding: 5px;
-    text-align: center;
-    width: auto;
-    /* Centrer les contenus des cellules */
-}
-
-.noteContainer {
-    max-width: 80px !important;
-}
-
-#notesTable th {
-    background-color: rgb(96, 103, 105);
-    /* Couleur d'entête */
-    color: white;
-    width: auto;
-}
-
-/* Cadre des boutons */
-.button-container {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 10px;
-}
-
-.session-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.session-button:active {
-    background-color: #0056b3;
-}
-
-/* Style pour les champs de sélection */
-.form-section select {
-    width: 100%;
-    padding: 8px;
-    font-size: 16px;
-    text-align: center;
-}
-
-/* Style pour les champs de texte */
-.note_input {
-    width: 80% !important;
-    padding: 8px;
-    font-size: 16px;
-    text-align: center;
-}
-
-.etudiant {
-    width: auto !important;
-}
-
-.genre {
-
-    max-width: 40px !important;
-}
+    /* Tableau des notes */
+    #notesTable thead th { position: sticky; top: 0; z-index: 1; }
+    #notesTable td .note { width: 74px; text-align: center; margin: 0 auto; padding: .3rem .35rem; }
+    #notesTable .moyenneBadge { font-size: var(--fs-sm); min-width: 50px; display: inline-block; }
+    .badge-soft-secondary { background: var(--surface-muted); color: var(--text-secondary); }
 </style>
-<!-- inclusion du partie header -->
-
 
 <body class="vertical-layout vertical-menu-modern boxicon-layout no-card-shadow 2-columns navbar-sticky footer-static"
     data-open="click" data-menu="vertical-menu-modern" data-col="2-columns">
 
-    <body
-        class="vertical-layout vertical-menu-modern boxicon-layout no-card-shadow 2-columns navbar-sticky footer-static"
-        data-open="click" data-menu="vertical-menu-modern" data-col="2-columns">
+    <?php $this->view("Partials/navbar") ?>
+    <?php $this->view("Partials/seibar") ?>
 
-        <!-- inclusion du partie header -->
-        <?php $this->view("Partials/navbar") ?>
-        <!-- inclusion du partie header fin-->
-
-        <!-- inclusion du partie seibar-->
-        <?php $this->view("Partials/seibar") ?>
-        <!-- inclusion du partie seibar fin-->
-
-        <!-- Content-->
-
-        <!-- Content-->
-        <div class="app-content content">
-            <div class="content-wrapper">
-                <div class="content-header row">
-                    <div class="content-header-left col-12 mb-2 mt-1">
-                        <div class="row breadcrumbs-top">
-                            <div class="col-12">
-                                <h5 class="content-header-title float-left pr-1 mb-0">Science et Technique</h5>
-
-                                <div class="breadcrumb-wrapper col-12">
-                                    <ol class="breadcrumb p-0 mb-0">
-                                        <li class="breadcrumb-item"><a href="index.html"><i
-                                                    class="bx bx-home-alt"></i></a>
-                                        </li>
-                                        <li class="breadcrumb-item"><a
-                                                href="<?php echo ROOT . '/Emploi_du_temps/' ?>">Gestion Notes</a>
-
-                                        </li>
-                                        <li class="breadcrumb-item active">Engistrements
-
-                                        </li>
-                                    </ol>
-                                </div>
+    <div class="app-content content">
+        <div class="content-wrapper">
+            <div class="content-header row">
+                <div class="content-header-left col-12 mb-2 mt-1">
+                    <div class="row breadcrumbs-top">
+                        <div class="col-12">
+                            <h5 class="content-header-title float-left pr-1 mb-0">Notes</h5>
+                            <div class="breadcrumb-wrapper col-12">
+                                <ol class="breadcrumb p-0 mb-0">
+                                    <li class="breadcrumb-item"><a href="<?= ROOT ?>/Homes"><i class="bx bx-home-alt"></i></a></li>
+                                    <li class="breadcrumb-item">Notes</li>
+                                    <li class="breadcrumb-item active">Saisie</li>
+                                </ol>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="content-body">
-                    <!-- formulaire -->
-                    <section class="simple-validation">
+            </div>
 
-                        <div class="row">
-                            <div id="message" class="col-12"></div>
-                            <div class="col-md-12">
-                                <div class="card card-animated-border-top">
-                                    <div class="card-header">
-                                        <h4 class="card-title text-center">Saisie des notes</h4>
+            <div class="content-body">
+                <div id="message" class="d-none"></div>
+
+                <div class="card" id="ajoutNotes">
+                    <div class="card-content">
+                        <div class="card-body">
+                            <div class="gu-section-title lg"><span class="gu-ico-chip"><i class="bx bx-edit"></i></span> Saisie des notes</div>
+
+                            <div id="session_info">
+                                <div class="row" style="row-gap:14px;">
+                                    <div class="col-12 col-md-3">
+                                        <label class="form-label" for="anneeUniversitaire">Année universitaire</label>
+                                        <select class="form-select" id="anneeUniversitaire" name="anneeUniversitaire"></select>
                                     </div>
-
-                                    <div class="card-content">
-                                        <div class="card-body">
-                                            <!-- Cadre des boutons -->
-                                            <!-- Section des champs de sélection -->
-                                            <div class="form-section " id="session_info">
-                                                <div class="row">
-                                                    <div class="col-sm-3">
-                                                        <label class="form-label">Année universitaire</label>
-                                                        <select class="form-control disabled select2"
-                                                            id="anneeUniversitaire" name="anneeUniversitaire">
-
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <label class="form-label">Classe</label>
-                                                        <select class="select2 form-control disabled" id="promotions"
-                                                            name="promotions">
-                                                            <option value="" disabled selected>Selectionner une Classe
-                                                            </option>
-                                                        </select>
-                                                    </div>
-
-                                                    <div class="col-sm-6">
-                                                        <label class="form-label">Modules</label>
-                                                        <select class="select2 form-control disabled" id="modules">
-                                                            <option value="" disabled selected>Selectionner un Module
-                                                            </option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <!-- Cadre du tableau -->
-                                            <div class="table-container " id="table_section">
-                                                <h6 class=" text-center text-bold-600 text-warning ">
-                                                    Selectionner le module et les notes vont apparaître &#x1F603
-                                                </h6>
-
-                                            </div>
-                                        </div>
+                                    <div class="col-12 col-md-3">
+                                        <label class="form-label" for="promotions">Classe</label>
+                                        <select class="form-select" id="promotions" name="promotions">
+                                            <option value="" disabled selected>Sélectionner une classe</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label class="form-label" for="modules">Module</label>
+                                        <select class="form-select" id="modules">
+                                            <option value="" disabled selected>Sélectionner un module</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
+
+                            <div id="loadingSpinner" class="text-center my-3" style="display:none;">
+                                <i class="bx bx-loader-alt bx-spin" style="font-size:1.6rem;color:var(--color-primary);"></i>
+                            </div>
+
+                            <div id="table_section" class="mt-3">
+                                <div class="gu-empty"><i class="bx bx-list-ul"></i>Sélectionnez une classe puis un module pour saisir les notes.</div>
+                            </div>
                         </div>
-                    </section>
-                    <!-- formulaire -->
+                    </div>
                 </div>
             </div>
-
-
-
-
-
-
         </div>
-        <!-- fin: Content-->
+    </div>
 
+    <div class="sidenav-overlay"></div>
+    <div class="drag-target"></div>
 
+    <?php $this->view("Partials/foot") ?>
+    <?php $this->view("Partials/footer") ?>
+</body>
 
+</html>
+<script src="<?= ROOT ?>/assets/mon_js/note.js"></script>
+<script>
+    var infoFiliere = [];
 
+    $(document).ready(async function () {
+        var anneeSaved = sessionStorage.getItem('annee');
+        var debut = 2012;
+        var today = new Date();
+        var annee_actuelle = today.getFullYear();
+        if ((today.getMonth() + 1) <= 8) annee_actuelle -= 1;
+        var courante = annee_actuelle + '-' + (annee_actuelle + 1);
+        if (!anneeSaved) anneeSaved = courante;
 
+        for (var annee = debut; annee <= annee_actuelle; annee++) {
+            var valeur = annee + '-' + (annee + 1);
+            $('#anneeUniversitaire').append('<option value="' + valeur + '"' + (valeur === anneeSaved ? ' selected' : '') + '>' + valeur + '</option>');
+        }
 
-        <div class="sidenav-overlay"></div>
-        <div class="drag-target"></div>
-
-
-        <!-- inclusion du partie foot-->
-        <?php $this->view("Partials/foot") ?>
-        <!-- inclusion du partie foot fin-->
-        <!-- inclusion du partie footer-->
-        <?php $this->view("Partials/footer") ?>
-        <!-- inclusion du partie footer fin-->
-    </body>
-    <!-- END: Body-->
-
-    </html>
-     <!-- <script>
-        // Injection de la constante ROOT définie en PHP dans ton JS
-        const ROOT = "<?= ROOT ?>";
-        const ROOT_NOTES = ROOT + "/Notes";
-        const ROOT_EDT = ROOT + "/Emploi_du_temps";
-	    </script> -->
-    <script src="<?= ROOT ?>/assets/mon_js/note.js"></script>
-
-
-    <script>
-        var infoFiliere = [];
-        $(document).ready(async function() {
-            let anneeSaved = sessionStorage.getItem('annee');
-
-            const debut = 2012;
-            const today = new Date();
-            let annee_actuelle = today.getFullYear();
-            let mois = today.getMonth() + 1; // janvier = 0, donc on ajoute 1
-
-            // Si on est avant septembre (mois 9), l'année universitaire commence l'année précédente
-            if (mois <= 8) {
-                annee_actuelle -= 1;
-            }
-
-            const annee_en_cours = annee_actuelle + '-' + (annee_actuelle + 1);
-
-            for (let annee = debut; annee <= annee_actuelle; annee++) {
-                let annee_suivante = annee + 1;
-                let valeur = annee + '-' + annee_suivante;
-                let selected = (valeur === anneeSaved) ? 'selected' : '';
-                $('#anneeUniversitaire').append(`<option value="${valeur}" ${selected}>${valeur}</option>`);
-            }
-
-            await classesAnneeUniversitaire(anneeSaved);
-            infoFiliere = JSON.parse(sessionStorage.getItem('infoFiliere'));
-            idSemestre = sessionStorage.getItem('semestre');
-            if (infoFiliere) {
-                modulesSemestre(idSemestre, infoFiliere);
-                if ($("#modules option:selected").val() != "" && $("#modules option:selected").val() != null) {
-                    loadEtudiants(true);
-
-                }
-            }
-
-
-        })
-
-        $("#anneeUniversitaire").change(async function() {
-
-            classesAnneeUniversitaire($("#anneeUniversitaire option:selected").val());
-
-
-            idSemestre = $("#promotions option:selected").data("semestre");
-            $("#table_section").html(
-                "<h6 class='text-center text-bold-600 text-warning'>" +
-                "Veuillez selectionner un module &#x1F603</h6>"
-            );
-
-            $("#modules").empty();
-            $("#modules").append(`<option value="" >Selectionner un Module</option>`);
-
-            sessionStorage.setItem("annee", $("#anneeUniversitaire option:selected").val());
-
-            sessionStorage.setItem("module", $("#modules option:selected").val());
-            console.log('A : ')
-
-
-        })
-
-        $("#promotions").change(async function() {
-
-            sessionStorage.setItem("classe", $("#promotions option:selected").val());
-            sessionStorage.setItem("semestre", $("#promotions option:selected").data('semestre'));
-            sessionStorage.setItem("filiere", $("#promotions option:selected").data('filiere'));
-
-
-            infoFiliere = await infosFiliere($("#promotions option:selected").data("filiere"), "all");
-            idSemestre = $("#promotions option:selected").data("semestre");
-            sessionStorage.setItem("infoFiliere", JSON.stringify(infoFiliere));
+        await classesAnneeUniversitaire(anneeSaved);
+        try { infoFiliere = JSON.parse(sessionStorage.getItem('infoFiliere')); } catch (e) { infoFiliere = null; }
+        var idSemestre = sessionStorage.getItem('semestre');
+        if (infoFiliere) {
             modulesSemestre(idSemestre, infoFiliere);
-            $("#table_section").html(
-                "<h6 class='text-center text-bold-600 text-warning'>" +
-                "Veuillez selectionner un module &#x1F603</h6>"
-            );
+            if ($("#modules option:selected").val()) loadEtudiants(true);
+        }
+    });
 
-            sessionStorage.setItem("module", $("#modules option:selected").val());
+    function viderTable() {
+        $("#table_section").html('<div class="gu-empty"><i class="bx bx-list-ul"></i>Sélectionnez un module pour saisir les notes.</div>');
+    }
 
-        })
+    $("#anneeUniversitaire").change(function () {
+        classesAnneeUniversitaire($("#anneeUniversitaire option:selected").val());
+        $("#modules").empty().append('<option value="" disabled selected>Sélectionner un module</option>');
+        viderTable();
+        sessionStorage.setItem("annee", $("#anneeUniversitaire option:selected").val());
+    });
 
-        $("#modules").change(function() {
+    $("#promotions").change(async function () {
+        sessionStorage.setItem("classe", $("#promotions option:selected").val());
+        sessionStorage.setItem("semestre", $("#promotions option:selected").data('semestre'));
+        sessionStorage.setItem("filiere", $("#promotions option:selected").data('filiere'));
+        infoFiliere = await infosFiliere($("#promotions option:selected").data("filiere"), "all");
+        var idSemestre = $("#promotions option:selected").data("semestre");
+        sessionStorage.setItem("infoFiliere", JSON.stringify(infoFiliere));
+        modulesSemestre(idSemestre, infoFiliere);
+        viderTable();
+    });
 
-            if ($("#modules option:selected").val() != "" && $("#modules option:selected").val() != null) {
-                loadEtudiants(); //Foncton pour chargér les étudiant et leur note lorsque le module est selectionnée
-            } else {
-                $("#table_section").html(
-                    "<h6 class='text-center text-bold-600 text-warning'>" +
-                    "Veuillez selectionner un module &#x1F603</h6>"
-                );
-            }
-
-            sessionStorage.setItem("module", $("#modules option:selected").val());
-        })
-
-
-        // }) //KONE
-    </script>
+    $("#modules").change(function () {
+        if ($("#modules").val()) loadEtudiants();
+        else viderTable();
+        sessionStorage.setItem("module", $("#modules option:selected").val());
+    });
+</script>

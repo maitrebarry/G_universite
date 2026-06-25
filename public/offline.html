@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hors ligne — Kunafoni IUFP</title>
+  <link rel="icon" href="assets/images/pwa/icon-192.png">
+  <style>
+    :root { --blue: #14346b; --blue2: #1f4f9c; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      font-family: Inter, Arial, Helvetica, sans-serif; color: #0f2a52;
+      background: linear-gradient(135deg, #eef3fb 0%, #ffffff 100%); padding: 24px;
+    }
+    .card {
+      background: #fff; border: 1px solid #e7ecf5; border-radius: 16px; padding: 36px 28px;
+      max-width: 420px; width: 100%; text-align: center; box-shadow: 0 18px 50px rgba(20, 52, 107, .12);
+    }
+    .logo { width: 84px; height: 84px; border-radius: 18px; margin-bottom: 18px; }
+    h1 { font-size: 1.35rem; margin: 0 0 8px; color: var(--blue); }
+    p { color: #5b6b86; line-height: 1.55; margin: 0 0 22px; font-size: .96rem; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px; border: 0; cursor: pointer;
+      background: var(--blue2); color: #fff; font-weight: 600; font-size: .95rem;
+      padding: 11px 22px; border-radius: 10px; text-decoration: none;
+    }
+    .btn:hover { background: var(--blue); }
+    .hint { margin-top: 16px; font-size: .8rem; color: #94a3b8; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <img class="logo" src="assets/images/pwa/icon-192.png" alt="IUFP">
+    <h1>Vous êtes hors ligne</h1>
+    <p>Impossible de joindre le serveur de l'IUFP pour le moment. Vérifiez votre connexion Internet, puis réessayez.</p>
+    <button class="btn" onclick="location.reload()">
+      <span>↻</span> Réessayer
+    </button>
+    <div class="hint">Institut Universitaire de Formation Professionnelle — Université de Ségou</div>
+  </div>
+</body>
+</html>

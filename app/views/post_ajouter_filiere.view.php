@@ -38,11 +38,11 @@
                         class=' bx bxs-plus-square '></i>&nbsp;
                     Module</button>
             </div>
-            <ul class='module-list' id="module-list"></ul>
+            <ul class='module-list'></ul>
         </td>
         <td class="p-0 ">
             <div class="w-100 h-100 d-flex justify-content-around align-items-center">
-                <button ype='button' class='btn btn-danger' onclick='removeUE(this)'>
+                <button type='button' class='btn btn-danger' onclick='removeUE(this)'>
                     <i class="bx bxs-minus-square"></i>&nbsp; UE
                 </button>
             </div>

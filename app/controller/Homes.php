@@ -11,31 +11,15 @@ class Homes extends Controller {
             return;
         }
 
-        switch ($_SESSION['role']) {
-            case 'Enseignant':
-                $this->dashboard_enseignant();
-                break;
-            case 'Chef DR':
-                $this->dashboard_chef_dr();
-                break;
-            case 'Sécretaire principale':
-                $this->dashboard_secretaire();
-                break;
-            case 'DGA':
-                $this->dashboard_dga();
-                break;
-            case 'DG':
-                $this->dashboard_dg();
-                break;
-            case 'SupAdmin':
-                $this->dashboard_supadmin();
-                break;
-            case 'Scolarite':
-                $this->dashboard_scolarite();
-                break;
-            default:
-                $this->redirect('Logins');
+        // Enseignant : tableau de bord personnel. Tous les autres rôles d'administration
+        // (SupAdmin, DG, DGA, Chef DR, Scolarité, Secrétaire) : nouveau tableau de bord modernisé.
+        if ($_SESSION['role'] === 'Enseignant') {
+            $this->dashboard_enseignant();
+            return;
         }
+
+        $homeModel = new Home();
+        $this->view('dashboard_supadmin', ['data' => $homeModel->getStatsSupAdmin()]);
     }
     
     // ✅ Méthode home() pour résoudre l'erreur 404
@@ -50,7 +34,7 @@ class Homes extends Controller {
         }
 
         $homeModel = new Home();
-        $this->view('home'); // ✅ "home" au lieu de "Home"
+        $this->view('dashboard_supadmin', ['data' => $homeModel->getStatsSupAdmin()]);
     }
 
     public function dashboard_enseignant() {

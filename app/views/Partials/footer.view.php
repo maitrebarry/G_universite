@@ -87,3 +87,34 @@
 </div>
 <script src="<?= ROOT ?>/assets/js/g-universite-chatbot.js"></script>
 <?php endif; ?>
+
+<!-- PWA : enregistrement du service worker (toutes les pages) -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('<?= ROOT ?>/sw.js')
+        .catch(function (e) { console.warn('Service worker non enregistré :', e); });
+    });
+  }
+</script>
+
+<!-- PWA : bouton d'installation (apparaît quand l'app est installable) -->
+<button id="guInstallBtn" type="button" aria-label="Installer l'application"
+  style="display:none;position:fixed;left:18px;bottom:18px;z-index:1200;align-items:center;gap:8px;background:#1f4f9c;color:#fff;border:0;border-radius:999px;padding:11px 18px;font:600 14px/1 Inter,Arial,sans-serif;box-shadow:0 8px 24px rgba(20,52,107,.35);cursor:pointer;">
+  <i class="bx bx-download" style="font-size:18px;"></i> Installer l'application
+</button>
+<script>
+  (function () {
+    var deferred = null, btn = document.getElementById('guInstallBtn');
+    function show() { if (btn) btn.style.display = 'inline-flex'; }
+    function hide() { if (btn) btn.style.display = 'none'; }
+    if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) { hide(); return; }
+    window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); deferred = e; show(); });
+    if (btn) btn.addEventListener('click', function () {
+      if (!deferred) return;
+      deferred.prompt();
+      deferred.userChoice.then(function () { deferred = null; hide(); });
+    });
+    window.addEventListener('appinstalled', function () { hide(); deferred = null; });
+  })();
+</script>

@@ -1,154 +1,89 @@
-<link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/vendors/css/tables/datatable/datatables.min.css">
+<?php
+$creditTotal = 0;
+foreach ($infosUe as $mod) { $creditTotal += (float) $mod->coeficient; }
 
-<?php foreach ($infosUe as $module): ?>
-    <?php @$creditTotal += $module->coeficient ?>
-<?php endforeach ?>
+// Pivot : [id_etudiant][id_ue_module] = moyenne_module
+$lookup = [];
+foreach ($moyenne_des_etudiants as $modList) {
+    foreach ($modList as $r) { $lookup[$r->id_etudiant][$r->id_module] = (float) $r->moyenne_module; }
+}
+$roster = isset($moyenne_des_etudiants[0]) ? $moyenne_des_etudiants[0] : [];
 
-<div class="d-flex justify-content-around align-items-center row">
+// Moyenne UE pondérée par crédit + stats
+$rows = []; $sum = 0; $n = 0; $nbValide = 0;
+foreach ($roster as $stu) {
+    $sp = 0; $sc = 0;
+    foreach ($infosUe as $mod) {
+        $mv = isset($lookup[$stu->id_etudiant][$mod->id_ue_module]) ? $lookup[$stu->id_etudiant][$mod->id_ue_module] : 0;
+        $sp += $mv * (float) $mod->coeficient; $sc += (float) $mod->coeficient;
+    }
+    $moyUe = $sc ? $sp / $sc : 0;
+    $rows[] = ['stu' => $stu, 'moyUe' => $moyUe];
+    $sum += $moyUe; $n++; if ($moyUe >= 10) $nbValide++;
+}
+$moyGen = $n ? $sum / $n : 0;
+$taux = $n ? ($nbValide * 100 / $n) : 0;
+?>
+<style>
+    .gu-bulletin-head { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+    .gu-bulletin-head .gu-stat { flex: 1; min-width: 150px; border: 1px solid #c7d2e6; border-radius: 8px; padding: 8px 12px; background: #f4f7fc; text-align: center; }
+    .gu-bulletin-head .gu-stat .lab { font-size: 11px; color: #5a6b86; text-transform: uppercase; letter-spacing: .4px; }
+    .gu-bulletin-head .gu-stat .val { font-size: 18px; font-weight: 700; color: #14346b; line-height: 1.2; }
+    .gu-bulletin-head .gu-stat .val.ok { color: #15803d; } .gu-bulletin-head .gu-stat .val.ko { color: #b91c1c; }
+    #notesTable { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+    #notesTable th, #notesTable td { border: 1px solid #9aa3b2; padding: 6px 8px; }
+    #notesTable thead th { background: #e7ecf5; color: #14346b; font-weight: 700; text-align: center; vertical-align: middle; }
+    #notesTable tbody tr:nth-child(even) { background: #f6f8fc; }
+    #notesTable .num { text-align: center; }
+    #notesTable .nom { font-weight: 600; }
+    #notesTable .moy-cell { font-weight: 700; text-align: center; background: #eef3fb; color: #0f2a52; }
+    #notesTable .obs { font-weight: 700; text-align: center; }
+    #notesTable .ok { color: #15803d; } #notesTable .ko { color: #b91c1c; }
+</style>
 
-    <div class="col-6 col-md-3 mb-1 mb-md-0">
-        <h6 class=" text-center   text-uppercase"> UE</h6>
-        <h6 class=" text-center text-bold-600 nomUe text-uppercase"> <?= $infosUe[0]->nom_ue ?></h6>
-    </div>
-
-    <div class="col-6 col-md-3 mb-1 mb-md-0">
-        <h6 class=" text-center ">Moyenne General</h6>
-        <h6 class=" text-center text-bold-600" id="moyenneTotalUe"> </h6>
-    </div>
-
-    <div class="col-6 col-md-3">
-        <h6 class=" text-center ">Taux de reussite</h6>
-        <h6 class=" text-center text-bold-600">
-            <span class=" badge text-bold-600" id="tauxReussite"></span>
-        </h6>
-    </div>
-
-    <div class="col-6 col-md-3">
-        <h6 class=" text-center ">Credit Total</h6>
-        <h6 class=" text-center  text-bold-600 nomModule coeficient"><?= $creditTotal ?></h6>
-    </div>
-
+<div style="text-align:center;margin-bottom:10px;">
+    <h5 style="color:#14346b;font-weight:700;margin:0;">Résultats par UE</h5>
+    <div style="font-size:11px;color:#777;">Moyenne d'UE pondérée par les crédits (compensation intra-UE)</div>
 </div>
+
+<div class="gu-bulletin-head">
+    <div class="gu-stat"><div class="lab">Unité d'Enseignement</div><div class="val" style="font-size:13px;"><?= mb_strtoupper(htmlspecialchars($infosUe[0]->nom_ue), 'UTF-8') ?></div></div>
+    <div class="gu-stat"><div class="lab">Crédit total</div><div class="val"><?= (int) $creditTotal ?></div></div>
+    <div class="gu-stat"><div class="lab">Moyenne générale</div><div class="val <?= $moyGen >= 10 ? 'ok' : 'ko' ?>"><?= number_format($moyGen, 2) ?></div></div>
+    <div class="gu-stat"><div class="lab">Taux de réussite</div><div class="val <?= $taux >= 50 ? 'ok' : 'ko' ?>"><?= number_format($taux, 1) ?>%</div></div>
+</div>
+
 <div class="table-responsive">
-    <table class="table table-striped table-bordered zero-configuration  w-100" id="notesTable">
+    <table id="notesTable">
         <thead>
             <tr>
-                <th class="text-center d-lg-none">Etudiant</th>
-                <th class="text-center d-none d-lg-table-cell">Matricule</th>
-                <th class="text-center d-none d-lg-table-cell">Nom & Prenom</th>
-                <th class="text-center  genre d-none d-lg-table-cell">Genre</th>
-                <?php foreach ($infosUe as $module): ?>
-                    <th class="text-center moyenne  noteContainer text-capitalize">
-                        M/<?= (strlen($module->nom_module) < 20) ? $module->nom_module : $module->sigle_module ?>
-                    </th>
+                <th style="width:42px;">N°</th>
+                <th>Matricule</th>
+                <th>Nom &amp; Prénom</th>
+                <th style="width:54px;">Genre</th>
+                <?php foreach ($infosUe as $mod): ?>
+                    <th title="<?= htmlspecialchars($mod->nom_module) ?>"><?= (mb_strlen($mod->nom_module) < 16) ? mb_strtoupper(htmlspecialchars($mod->nom_module), 'UTF-8') : mb_strtoupper(htmlspecialchars($mod->sigle_module), 'UTF-8') ?></th>
                 <?php endforeach ?>
-                <th class="text-center moyenne  noteContainer">M/UE</th>
-                <th class="text-center moyenne  noteContainer">Observation</th>
+                <th>Moy. UE</th>
+                <th>Observation</th>
             </tr>
         </thead>
-        <tbody id="tableBody">
-            <!-- Affichage dynamique via PHP -->
-            <?php foreach ($moyenne_des_etudiants[0] as $note): ?>
+        <tbody>
+            <?php foreach ($rows as $idx => $rw): $stu = $rw['stu']; $ok = $rw['moyUe'] >= 10; ?>
                 <tr>
-
-                    <td class="text-bold-500 text-center d-lg-none etudiant">
-                        <div><?= strtoupper($note->nom_prenom_etudiant) ?></div>
-                        <div><a href=""><?= $note->matricule_etudiant ?></a></div>
-                    </td>
-                    <td class="text-bold-500 text-left d-none d-lg-table-cell">
-                        <a href=""><?= $note->matricule_etudiant ?></a>
-                    </td>
-                    <td class="text-bold-500 text-left d-none d-lg-table-cell">
-                        <?= strtoupper($note->nom_prenom_etudiant) ?>
-                    </td>
-                    <td class="genre d-none d-lg-table-cell"><?= ($note->genre_etudiant == "Féminin") ? 'F' : "M" ?></td>
-                    <?php foreach ($infosUe as $module): ?>
-                        <td class=" noteContainer">
-                            <input type="number" class="form-control moyenneModule note text-bold-600 text-center"
-                                id="<?= 'e_' . $note->id_etudiant . '_m_' . $module->id_ue_module ?>" step="0.1" disabled
-                                value="10">
-                        </td>
+                    <td class="num"><?= $idx + 1 ?></td>
+                    <td><?= htmlspecialchars($stu->matricule_etudiant) ?></td>
+                    <td class="nom"><?= mb_strtoupper(htmlspecialchars($stu->nom_prenom_etudiant), 'UTF-8') ?><?= !empty($stu->prenom) ? ' ' . mb_convert_case(htmlspecialchars($stu->prenom), MB_CASE_TITLE, 'UTF-8') : '' ?></td>
+                    <td class="num"><?= ($stu->genre_etudiant == "Féminin") ? 'F' : 'M' ?></td>
+                    <?php foreach ($infosUe as $mod):
+                        $mv = isset($lookup[$stu->id_etudiant][$mod->id_ue_module]) ? $lookup[$stu->id_etudiant][$mod->id_ue_module] : null;
+                    ?>
+                        <td class="num <?= ($mv !== null && $mv < 10) ? 'ko' : '' ?>"><?= ($mv === null || $mv == 0) ? 'X' : number_format($mv, 2) ?></td>
                     <?php endforeach ?>
-
-                    <td class="noteContainer">
-                        <!-- Moyenne affichée dans un input readonly -->
-                        <input type="number" class="form-control  moyenneUe note text-bold-600 text-center" disabled>
-                    </td>
-
-                    <td>
-                        <span class=" badge etatUe text-bold-600 text-center"></span>
-                    </td>
-
+                    <td class="moy-cell"><?= number_format($rw['moyUe'], 2) ?></td>
+                    <td class="obs <?= $ok ? 'ok' : 'ko' ?>"><?= $ok ? 'Validée' : 'Non validée' ?></td>
                 </tr>
             <?php endforeach ?>
         </tbody>
     </table>
 </div>
-
-<!-- BEGIN Vendor JS-->
-<script src="<?= ROOT ?>/assets/vendors/js/tables/datatable/datatables.min.js"></script>
-<script src="<?= ROOT ?>/assets/vendors/js/tables/datatable/dataTables.bootstrap4.min.js"></script>
-<script src="<?= ROOT ?>/assets/vendors/js/tables/datatable/dataTables.buttons.min.js"></script>
-<script src="<?= ROOT ?>/assets/vendors/js/tables/datatable/datatables.checkboxes.min.js"></script>
-<script src="<?= ROOT ?>/assets/js/scripts/datatables/datatable.js"></script>
-
-<script>
-    $("#notesTable").DataTable({
-        "pageLength": 100
-    })
-
-    var moyennes = <?php echo json_encode($moyenne_des_etudiants); ?>;
-    var nombreModule = 0;
-    var nbrEtudiant = 0;
-    var moyenneTotalUe = 0;
-    var nbrValide = 0;
-    var tauxReussite = 0;
-    $.each(moyennes, function(index) {
-        const moyennesModule = moyennes[index];
-        nombreModule++;
-        $.each(moyennesModule, function(index2) {
-            const idMoyenne =
-                '#e_' + moyennesModule[index2].id_etudiant + "_m_" + moyennesModule[index2].id_module;
-            $(idMoyenne).val(moyennesModule[index2].moyenne_module)
-        });
-    });
-
-    $("#notesTable tbody tr").each(function(index) {
-        nbrEtudiant++;
-        var moyenneUe = 0;
-        const row = $(this);
-
-        $(this).find(".moyenneModule").each(function() {
-            let moyenneModule = parseFloat($(this).val(), 10) || 0; // Convertir en nombre et éviter NaN
-            moyenneUe += moyenneModule;
-        });
-        moyenneUe = (moyenneUe / nombreModule);
-        if (moyenneUe < 10) {
-            row.find('.etatUe').text("Non Validé");
-            row.find('.etatUe').addClass('badge-light-danger');
-        } else {
-            row.find('.etatUe').text("Validé");
-            row.find('.etatUe').addClass('badge-light-success');
-            nbrValide++;
-        }
-        row.find(".moyenneUe").val(moyenneUe.toFixed(2));
-
-        moyenneTotalUe += moyenneUe;
-    });
-    moyenneTotalUe = (moyenneTotalUe / nbrEtudiant).toFixed(2);
-    $('#moyenneTotalUe').text(moyenneTotalUe);
-    if (moyenneTotalUe < 10) {
-        $('#moyenneTotalUe').addClass('text-danger');
-    } else {
-        $('#moyenneTotalUe').addClass('text-success');
-    }
-
-    tauxReussite = ((nbrValide * 100) / nbrEtudiant).toFixed(2);
-    $('#tauxReussite').text(tauxReussite + "%");
-    if (tauxReussite < 50) {
-        $('#tauxReussite').addClass('badge-light-danger');
-    } else {
-        $('#tauxReussite').addClass('badge-light-success');
-    }
-</script>
-<!-- BEGIN: Page Vendor JS-->

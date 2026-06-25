@@ -115,6 +115,53 @@ class Filiere  extends Model
         return $filieres;
     }
 
+    // Liste des filières AVEC statistiques (semestres, UE, modules, crédits, promotions) — 1 requête.
+    public function listeFilieresAvecStats($idDepartement = null)
+    {
+        $where = '';
+        $params = [];
+        if ($idDepartement != null) {
+            $where = 'WHERE f.id_departement = ?';
+            $params[] = $idDepartement;
+        }
+        $sql = "SELECT f.id_filiere, f.nom_filiere, f.sigle_filiere, f.id_departement,
+                    d.nom_departement, d.sigle_departement,
+                    (SELECT COUNT(DISTINCT pa.id_parcours) FROM parcours pa WHERE pa.id_filiere = f.id_filiere) AS nb_semestres,
+                    (SELECT COUNT(DISTINCT u.id_ue) FROM parcours pa JOIN ue u ON u.id_parcours = pa.id_parcours WHERE pa.id_filiere = f.id_filiere) AS nb_ue,
+                    (SELECT COUNT(*) FROM parcours pa JOIN ue u ON u.id_parcours = pa.id_parcours JOIN ue_module um ON um.id_ue = u.id_ue WHERE pa.id_filiere = f.id_filiere) AS nb_modules,
+                    (SELECT IFNULL(SUM(um.coeficient), 0) FROM parcours pa JOIN ue u ON u.id_parcours = pa.id_parcours JOIN ue_module um ON um.id_ue = u.id_ue WHERE pa.id_filiere = f.id_filiere) AS total_credits,
+                    (SELECT COUNT(*) FROM promotion p WHERE p.id_filiere = f.id_filiere) AS nb_promotions
+                FROM filiere f
+                LEFT JOIN departement d ON f.id_departement = d.id_departement
+                $where
+                ORDER BY f.sigle_filiere ASC";
+        return $this->select_data_table_join_where($sql, $params);
+    }
+
+    // Suppression d'une filière (refuse si des promotions existent, pour protéger les données étudiants).
+    public function supprimerFiliere($idFiliere)
+    {
+        $idFiliere = (int) $idFiliere;
+        $connection = $this->bdd();
+        try {
+            $nbPromos = $this->FetchSelectWhere("COUNT(*) AS n", "promotion", "id_filiere=?", [$idFiliere]);
+            if (($nbPromos->n ?? 0) > 0) {
+                return ['ok' => false, 'msg' => "Suppression impossible : cette filière possède des promotions (classes). Supprimez-les d'abord."];
+            }
+            $connection->beginTransaction();
+            // ue_module -> ue -> parcours -> filiere
+            $connection->prepare("DELETE um FROM ue_module um JOIN ue u ON um.id_ue = u.id_ue JOIN parcours pa ON u.id_parcours = pa.id_parcours WHERE pa.id_filiere = ?")->execute([$idFiliere]);
+            $connection->prepare("DELETE u FROM ue u JOIN parcours pa ON u.id_parcours = pa.id_parcours WHERE pa.id_filiere = ?")->execute([$idFiliere]);
+            $connection->prepare("DELETE FROM parcours WHERE id_filiere = ?")->execute([$idFiliere]);
+            $connection->prepare("DELETE FROM filiere WHERE id_filiere = ?")->execute([$idFiliere]);
+            $connection->commit();
+            return ['ok' => true, 'msg' => "Filière supprimée avec succès."];
+        } catch (Exception $e) {
+            if ($connection->inTransaction()) $connection->rollBack();
+            return ['ok' => false, 'msg' => "Erreur lors de la suppression : " . $e->getMessage()];
+        }
+    }
+
     // la methode pour recuperer toutes les informations d'une filière
     public function apercu_filiere($idFiliere)
     {
@@ -359,7 +406,7 @@ class Filiere  extends Model
                                         'coeficient' => $moduleCoeficient,
                                         'cm' => $moduleCm,
                                         'td' => $moduleTd,
-                                        'tp' => $moduleTd,
+                                        'tp' => $moduleTp,
                                         'tpe' => $moduleTpe,
                                     ];
                                     $this->insertion_update_simples($requetteModule, $param);
@@ -382,6 +429,14 @@ class Filiere  extends Model
 
     public function supprimerElementFiliere($action, $id)
     {
+        // SÉCURITÉ : $action sert de NOM DE TABLE dans la requête (DELETE FROM $action).
+        // On whiteliste strictement les éléments réellement supprimables pour bloquer
+        // toute injection (ex. action="etudiant" supprimerait des étudiants).
+        $allowed = ['ue', 'ue_module'];
+        if (!in_array($action, $allowed, true)) {
+            echo 'error';
+            return;
+        }
         $column = 'id_' . $action;
         try {
             $isExist = $this->existe_deja($column, $id, $action);
@@ -464,8 +519,8 @@ class Filiere  extends Model
                 throw new Exception("Filiere Introuvable : !Veuillez bien verifier vos données");
             }
             $statutCondtion = '';
-            if ($statut != null) {
-                $statutCondtion = "AND promotion.statut=$statut";
+            if ($statut !== null) {
+                $statutCondtion = "AND promotion.statut=" . (int) $statut;
             }
             $requette = "SELECT id_promotion, annee_universitaire, promotion.statut, promotion.id_parcours, promotion.id_filiere, nom_filiere, 
             sigle_filiere, nom_semestre, sigle_semestre FROM promotion INNER JOIN filiere ON promotion.id_filiere=filiere.id_filiere

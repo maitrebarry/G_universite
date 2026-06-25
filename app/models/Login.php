@@ -25,7 +25,10 @@ class Login extends Model {
         $this->ensureDefaultSupAdmin();
 
         $email = filter_var($_POST['email_utilisateurs'] ?? null, FILTER_SANITIZE_EMAIL);
-        $mot_passe = htmlspecialchars($_POST['mot_passe'] ?? null);
+        // Pas de htmlspecialchars ici : le mot de passe n'est jamais affiché, et le
+        // transformer cassait la connexion des mots de passe à caractères spéciaux
+        // (la création hache le mot de passe BRUT).
+        $mot_passe = $_POST['mot_passe'] ?? '';
 
         if (empty($email) || empty($mot_passe)) {
             if (empty($email)) {

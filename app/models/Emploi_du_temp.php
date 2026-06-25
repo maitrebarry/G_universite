@@ -9,7 +9,7 @@ class Emploi_du_temp  extends Model
     }
 
     // la methode pour ajouter un edt
-    public function ajouterEdt($edt, $horaires, $enseignants)
+    public function ajouterEdt($edt, $horaires, $enseignants, $forceSalle = false)
     {
         try {
             $connection = $this->bdd();
@@ -17,12 +17,49 @@ class Emploi_du_temp  extends Model
             $connection->beginTransaction();
 
             // La verification des infos de base de l'edt
-            if (!$this->isArrayDataValid($edt)) {
-                throw new Exception("Données Edt Invalide");
+            // Validation des champs réellement requis (idEdt = édition uniquement ;
+            // heureTotal est facultatif, normalisé plus bas). On NOMME les champs
+            // manquants pour un message clair côté utilisateur.
+            $champsRequis = [
+                'idFiliere'   => 'filière',
+                'idPromotion' => 'classe',
+                'idSemestre'  => 'parcours / semestre',
+                'idModule'    => 'module',
+                'dateDebut'   => 'date de début',
+            ];
+            $manquants = [];
+            foreach ($champsRequis as $cle => $libelle) {
+                $val = $edt[$cle] ?? null;
+                if ($val === null || trim((string) $val) === '') {
+                    $manquants[] = $libelle;
+                }
+            }
+            if (!empty($manquants)) {
+                throw new Exception("Informations manquantes : " . implode(', ', $manquants) . ". Choisissez bien la classe puis le module.");
             }
             $periode = $this->getCurrentPeriode();
-            $this->e(extract($edt));
-            $requetteEdt = "INSERT INTO edt(date_creation, date_debut, date_Fin, statut, heure_total, id_filiere, id_promotion, id_semestre, id_module, id_periode) 
+            if (!is_object($periode) || empty($periode->id_periode)) {
+                throw new Exception("Aucune période active (statut « inachevé »). Activez une période avant de créer un emploi du temps.");
+            }
+            extract($edt);
+
+            // Vérifications intelligentes : budget d'heures du module + conflits salle/enseignant.
+            $this->verifierBudgetHeures($idModule, $enseignants);
+            $conf = $this->detecterConflits(
+                $this->idsDistincts($enseignants, 'salle'),
+                $this->idsDistincts($enseignants, 'enseignant'),
+                $this->cellsFromHoraires($horaires),
+                $periode->id_periode,
+                null
+            );
+            if (!empty($conf['enseignant'])) {
+                throw new Exception("Conflit d'enseignant — " . implode(' ; ', $conf['enseignant']));
+            }
+            if (!empty($conf['salle']) && !$forceSalle) {
+                throw new Exception("Conflit de salle — " . implode(' ; ', $conf['salle']));
+            }
+
+            $requetteEdt = "INSERT INTO edt(date_creation, date_debut, date_Fin, statut, heure_total, id_filiere, id_promotion, id_semestre, id_module, id_periode)
             VALUES (:dateCreation, :dateDebut, :dateFin, :statut, :heureTotal, :idFiliere, :idPromotion, :idSemestre, :idModule, :idPeriode)";
             $dateFin = new DateTime($dateDebut);
             $dateFin->add(new DateInterval('P7D'));
@@ -31,7 +68,7 @@ class Emploi_du_temp  extends Model
                 "dateDebut" => $dateDebut,
                 "dateFin" => $dateFin->format("Y-m-d"),
                 "statut" => 0,
-                "heureTotal" => $heureTotal,
+                "heureTotal" => (int) $heureTotal,
                 "idFiliere" => $idFiliere,
                 "idPromotion" => $idPromotion,
                 "idSemestre" => $idSemestre,
@@ -42,40 +79,41 @@ class Emploi_du_temp  extends Model
             $reponse = $this->insertion_update_simples_insert_id($requetteEdt, $param);
             $idEdt = $reponse['lastInsertId'];
             if ($enseignants == null || count($enseignants) < 1) {
-                throw new Exception("Aucun enseignant selectionné");
+                throw new Exception("Aucun enseignant sélectionné.");
             }
-            foreach ($enseignants as $enseignant) {
-
-                $requetteEnseignant = "INSERT INTO enseignant_edt(id_edt, id_enseignant, groupe, nombre_heure, type_cours, id_salle) 
+            $requetteEnseignant = "INSERT INTO enseignant_edt(id_edt, id_enseignant, groupe, nombre_heure, type_cours, id_salle)
                 VALUES (:idEdt, :idEnseignant, :groupe, :nombreHeure, :typeCours, :salle)";
-                extract($enseignant);
-                if (empty(trim($salle))) {
-                    throw new Exception("Salle non selectionné");
+            foreach ($enseignants as $ens) {
+                $idEnseignant = $ens['enseignant'] ?? null;
+                $salle = trim((string) ($ens['salle'] ?? ''));
+                if (empty($idEnseignant)) {
+                    throw new Exception("Un enseignant de la liste est invalide (identifiant manquant).");
                 }
-
+                if ($salle === '') {
+                    throw new Exception("Salle non sélectionnée pour un enseignant.");
+                }
                 $param = [
                     "idEdt" => $idEdt,
-                    "idEnseignant" => $enseignant,
-                    "groupe" => $groupe,
-                    "nombreHeure" => $nombreHeure,
-                    "typeCours" => $typeCours,
-                    "salle" => $salle
+                    "idEnseignant" => $idEnseignant,
+                    "groupe" => $ens['groupe'] ?? '',
+                    "nombreHeure" => $ens['nombreHeure'] ?? 0,
+                    "typeCours" => $ens['typeCours'] ?? '',
+                    "salle" => $salle,
                 ];
-
                 $this->insertion_update_simples($requetteEnseignant, $param);
             }
             // la verification des horaires
             if (empty($horaires)) {
-                throw new Exception("Données Horaires Invalide");
+                throw new Exception("Créneau horaire invalide (aucun créneau, ou heure de début/fin manquante).");
             }
 
             // les requettes pour inserer des horaires ou des taches
             $requetteHoraire = "INSERT INTO horaire(heure_debut, heure_fin, id_edt) VALUES (:heureDebut, :heureFin, :idEdt)";
             $requetteTache = "INSERT INTO tache(type_tache, id_horaire, id_jour) VALUES (:typeTache, :idHoraire, :idJour)";
             foreach ($horaires as $horaire) {
-                $this->e(extract($horaire));
+                extract($horaire);
                 if (empty(trim($heureDebut)) || empty(trim($heureFin))) {
-                    throw new Exception("Données Horaires Invalide");
+                    throw new Exception("Créneau horaire invalide (aucun créneau, ou heure de début/fin manquante).");
                 }
                 // l'insertion d'un horaire
                 $param = [
@@ -88,14 +126,14 @@ class Emploi_du_temp  extends Model
 
                 // la verification des taches pour chaque horaire
                 if (empty($taches)) {
-                    throw new Exception("Données HorairesT Invalide");
+                    throw new Exception("Un créneau n'a aucun jour associé.");
                 }
 
                 foreach ($taches as $tache) {
                     if (!$this->isArrayDataValid($tache)) {
-                        throw new Exception("Données HoraireT2 Invalide");
+                        throw new Exception("Tâche invalide (type ou jour manquant).");
                     }
-                    $this->e(extract($tache));
+                    extract($tache);
 
                     // l'insertion d'un horaire
                     $param = [
@@ -279,7 +317,7 @@ class Emploi_du_temp  extends Model
     }
 
     // la methode pour editer un edt
-    public function editerEdt($edt, $horaires)
+    public function editerEdt($edt, $horaires, $forceSalle = false)
     {
         try {
             $connection = $this->bdd();
@@ -288,23 +326,42 @@ class Emploi_du_temp  extends Model
 
             // La verification des infos de base de l'edt
             if (!$this->isArrayDataValid($edt)) {
-                throw new Exception("Données Edt Invalide");
+                throw new Exception("Informations de base de l'EDT incomplètes (année, classe, module ou date).");
             }
             $periode = $this->getCurrentPeriode();
-            $this->e(extract($edt));
-            $requetteEdt = "UPDATE  edt SET date_debut=:dateDebut, date_Fin=:dateFin, statut=:statut, heure_total=:heureTotal, id_filiere=:idFiliere, id_promotion=:idPromotion, id_module=:idModule, id_enseignant=:idEnseignant id_periode=:idPeriode
-            WHERE id_edt=:idEdt LIMIT 1";
+            extract($edt);
+
+            // Vérifications intelligentes (en édition, les affectations enseignant/salle sont inchangées).
+            $affectations = $this->enseignantsOfEdt($idEdt);
+            $this->verifierBudgetHeures($idModule, $affectations);
+            $conf = $this->detecterConflits(
+                $this->idsDistincts($affectations, 'salle'),
+                $this->idsDistincts($affectations, 'enseignant'),
+                $this->cellsFromHoraires($horaires),
+                $periode->id_periode,
+                $idEdt
+            );
+            if (!empty($conf['enseignant'])) {
+                throw new Exception("Conflit d'enseignant — " . implode(' ; ', $conf['enseignant']));
+            }
+            if (!empty($conf['salle']) && !$forceSalle) {
+                throw new Exception("Conflit de salle — " . implode(' ; ', $conf['salle']));
+            }
+
+            $requetteEdt = "UPDATE edt SET date_debut=:dateDebut, date_fin=:dateFin, statut=:statut, heure_total=:heureTotal,
+                id_filiere=:idFiliere, id_promotion=:idPromotion, id_semestre=:idSemestre, id_module=:idModule, id_periode=:idPeriode
+                WHERE id_edt=:idEdt LIMIT 1";
             $dateFin = new DateTime($dateDebut);
             $dateFin->add(new DateInterval('P7D'));
             $param = [
                 "dateDebut" => $dateDebut,
                 "dateFin" => $dateFin->format("Y-m-d"),
                 "statut" => 0,
-                "heureTotal" => $heureTotal,
+                "heureTotal" => (int) $heureTotal,
                 "idFiliere" => $idFiliere,
                 "idPromotion" => $idPromotion,
+                "idSemestre" => $idSemestre,
                 "idModule" => $idModule,
-                "idEnseignant" => $idEnseignant,
                 "idPeriode" => $periode->id_periode,
                 "idEdt" => $idEdt,
             ];
@@ -312,7 +369,7 @@ class Emploi_du_temp  extends Model
 
             // la verification des horaires
             if (empty($horaires)) {
-                throw new Exception("Données Horaires Invalide");
+                throw new Exception("Créneau horaire invalide (aucun créneau, ou heure de début/fin manquante).");
             }
             // La suppression des anciens horaires
             $this->insertion_update_simples("DELETE FROM horaire WHERE id_edt=?", [$idEdt]);
@@ -321,9 +378,9 @@ class Emploi_du_temp  extends Model
             $requetteHoraire = "INSERT INTO horaire(heure_debut, heure_fin, id_edt) VALUES (:heureDebut, :heureFin, :idEdt)";
             $requetteTache = "INSERT INTO tache(type_tache, id_horaire, id_jour) VALUES (:typeTache, :idHoraire, :idJour)";
             foreach ($horaires as $horaire) {
-                $this->e(extract($horaire));
+                extract($horaire);
                 if (empty(trim($heureDebut)) || empty(trim($heureFin))) {
-                    throw new Exception("Données Horaires Invalide");
+                    throw new Exception("Créneau horaire invalide (aucun créneau, ou heure de début/fin manquante).");
                 }
                 // l'insertion d'un horaire
                 $param = [
@@ -336,14 +393,14 @@ class Emploi_du_temp  extends Model
 
                 // la verification des taches pour chaque horaire
                 if (empty($taches)) {
-                    throw new Exception("Données HorairesT Invalide");
+                    throw new Exception("Un créneau n'a aucun jour associé.");
                 }
 
                 foreach ($taches as $tache) {
                     if (!$this->isArrayDataValid($tache)) {
-                        throw new Exception("Données HoraireT2 Invalide");
+                        throw new Exception("Tâche invalide (type ou jour manquant).");
                     }
-                    $this->e(extract($tache));
+                    extract($tache);
 
                     // l'insertion d'un horaire
                     $param = [
@@ -363,5 +420,123 @@ class Emploi_du_temp  extends Model
             $this->set_flash($e->getMessage() . " : !Veuillez bien verifier vos données");
             return;
         }
+    }
+
+    // ============================================================
+    //  Vérifications intelligentes : budget d'heures + conflits
+    // ============================================================
+
+    // Cellules réellement occupées par la grille : un tuple (jour, début, fin) par tâche utile.
+    private function cellsFromHoraires($horaires)
+    {
+        $cells = [];
+        foreach ((array) $horaires as $h) {
+            $debut = trim((string) ($h['heureDebut'] ?? ''));
+            $fin = trim((string) ($h['heureFin'] ?? ''));
+            if ($debut === '' || $fin === '') continue;
+            foreach (($h['taches'] ?? []) as $t) {
+                $type = strtolower(trim((string) ($t['typeTache'] ?? '')));
+                $jour = $t['idJour'] ?? null;
+                if ($jour === null || $jour === '' || $type === '' || $type === 'x') continue;
+                $cells[] = ['jour' => (int) $jour, 'debut' => $debut, 'fin' => $fin];
+            }
+        }
+        return $cells;
+    }
+
+    // Identifiants distincts (salle / enseignant) d'une liste d'affectations.
+    private function idsDistincts($enseignants, $key)
+    {
+        $ids = [];
+        foreach ((array) $enseignants as $e) {
+            $v = is_array($e) ? ($e[$key] ?? null) : null;
+            if (!empty($v)) $ids[(int) $v] = (int) $v;
+        }
+        return array_values($ids);
+    }
+
+    // Affectations (enseignant / salle / heures) déjà enregistrées pour un EDT (utile en édition).
+    private function enseignantsOfEdt($idEdt)
+    {
+        $out = [];
+        $stmt = $this->bdd()->prepare("SELECT id_enseignant, id_salle, nombre_heure, type_cours FROM enseignant_edt WHERE id_edt = ?");
+        $stmt->execute([$idEdt]);
+        foreach ($stmt->fetchAll(PDO::FETCH_OBJ) as $r) {
+            $out[] = ['enseignant' => $r->id_enseignant, 'salle' => $r->id_salle, 'nombreHeure' => $r->nombre_heure, 'typeCours' => $r->type_cours];
+        }
+        return $out;
+    }
+
+    // Refuse une affectation d'heures supérieure au volume du module (cm + td + tp).
+    private function verifierBudgetHeures($idUeModule, $enseignants)
+    {
+        $stmt = $this->bdd()->prepare("SELECT cm, td, tp FROM ue_module WHERE id_ue_module = ?");
+        $stmt->execute([$idUeModule]);
+        $mod = $stmt->fetch(PDO::FETCH_OBJ);
+        if (!$mod) return;
+        $budget = (int) $mod->cm + (int) $mod->td + (int) $mod->tp;
+        $somme = 0;
+        foreach ((array) $enseignants as $e) {
+            $somme += (int) (is_array($e) ? ($e['nombreHeure'] ?? 0) : 0);
+        }
+        if ($budget > 0 && $somme > $budget) {
+            throw new Exception("Heures affectées ($somme h) supérieures au volume du module ($budget h). Ajustez la répartition CM/TD/TP.");
+        }
+    }
+
+    // Détecte les conflits : même salle ou même enseignant sur des créneaux qui se chevauchent,
+    // dans la même période. Retourne une liste de messages lisibles (vide = aucun conflit).
+    public function detecterConflits($salleIds, $enseignantIds, $cells, $idPeriode, $excludeEdtId = null)
+    {
+        $resultat = ['salle' => [], 'enseignant' => []];
+        if (empty($cells) || (empty($salleIds) && empty($enseignantIds))) return $resultat;
+
+        $params = [':periode' => $idPeriode];
+        $orParts = [];
+        foreach ($cells as $i => $c) {
+            $orParts[] = "(t.id_jour = :j$i AND h.heure_debut < :f$i AND h.heure_fin > :d$i)";
+            $params[":j$i"] = $c['jour'];
+            $params[":d$i"] = $c['debut'];
+            $params[":f$i"] = $c['fin'];
+        }
+        $overlap = '(' . implode(' OR ', $orParts) . ')';
+        $exclude = '';
+        if (!empty($excludeEdtId)) { $exclude = " AND e.id_edt <> :exclude"; $params[':exclude'] = $excludeEdtId; }
+
+        $from = "FROM enseignant_edt ee
+            JOIN edt e ON e.id_edt = ee.id_edt
+            JOIN horaire h ON h.id_edt = e.id_edt
+            JOIN tache t ON t.id_horaire = h.id_horaire
+            JOIN jour j ON j.id_jour = t.id_jour
+            JOIN salle s ON s.id_salle = ee.id_salle
+            JOIN enseignants ens ON ens.enseignant_id = ee.id_enseignant
+            LEFT JOIN filiere f ON f.id_filiere = e.id_filiere
+            WHERE t.type_tache NOT IN ('x', '') AND e.id_periode = :periode $exclude AND $overlap";
+
+        if (!empty($salleIds)) {
+            $p = $params; $in = [];
+            foreach (array_values($salleIds) as $k => $id) { $in[] = ":s$k"; $p[":s$k"] = $id; }
+            $sql = "SELECT DISTINCT s.nom_salle AS lib, j.nom_jour AS jour,
+                        TIME_FORMAT(h.heure_debut, '%H:%i') AS d, TIME_FORMAT(h.heure_fin, '%H:%i') AS f, f.sigle_filiere AS fil
+                    $from AND ee.id_salle IN (" . implode(', ', $in) . ")";
+            $stmt = $this->bdd()->prepare($sql);
+            $stmt->execute($p);
+            foreach ($stmt->fetchAll(PDO::FETCH_OBJ) as $r) {
+                $resultat['salle'][] = "Salle « {$r->lib} » déjà occupée " . mb_strtolower($r->jour) . " {$r->d}-{$r->f}" . ($r->fil ? " ({$r->fil})" : "");
+            }
+        }
+        if (!empty($enseignantIds)) {
+            $p = $params; $in = [];
+            foreach (array_values($enseignantIds) as $k => $id) { $in[] = ":en$k"; $p[":en$k"] = $id; }
+            $sql = "SELECT DISTINCT TRIM(CONCAT(ens.enseignant_nom, ' ', ens.enseignant_prenom)) AS lib, j.nom_jour AS jour,
+                        TIME_FORMAT(h.heure_debut, '%H:%i') AS d, TIME_FORMAT(h.heure_fin, '%H:%i') AS f, f.sigle_filiere AS fil
+                    $from AND ee.id_enseignant IN (" . implode(', ', $in) . ")";
+            $stmt = $this->bdd()->prepare($sql);
+            $stmt->execute($p);
+            foreach ($stmt->fetchAll(PDO::FETCH_OBJ) as $r) {
+                $resultat['enseignant'][] = "Enseignant « {$r->lib} » déjà occupé " . mb_strtolower($r->jour) . " {$r->d}-{$r->f}" . ($r->fil ? " ({$r->fil})" : "");
+            }
+        }
+        return $resultat;
     }
 }

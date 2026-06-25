@@ -2,107 +2,9 @@
 $current_page = basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
 $role = $_SESSION['role'] ?? '';
 
-// ✅ Définition des permissions par rôle
-$menu_permissions = [
-    'SupAdmin' => ['dashboard', 'filieres', 'enseignants', 'notes', 'emploi', 'etudiants', 'configuration'],
-    'DG'       => ['dashboard', 'filieres', 'enseignants', 'notes', 'emploi', 'etudiants'],
-    'DGA'      => ['dashboard', 'filieres', 'enseignants', 'notes', 'emploi', 'etudiants'],
-    'Chef DR'  => ['dashboard', 'filieres', 'enseignants', 'notes', 'emploi', 'etudiants', 'configuration'], // ✅ ajouté
-    'Enseignant' => ['dashboard', 'notes_simple', 'etudiant_simple'], 
-    'Sécretaire principale' => ['dashboard', 'etudiants_sp'],
-    'Scolarite' => ['dashboard','etudiants', 'notes']
-];
-
-
-// ✅ Menus disponibles
-$menus = [
-    'dashboard' => [
-        'title' => 'Tableau Bord',
-        'icon'  => 'bx bx-home-alt',
-        'url'   => ROOT . '/Homes'
-    ],
-    'filieres' => [
-        'title' => 'Filières',
-        'icon'  => 'bx bx-bookmark-alt',
-        'url'   => ROOT . '/Filieres'
-    ],
-    'enseignants' => [
-        'title' => 'Enseignants',
-        'icon'  => 'bx bx-user',
-        'url'   => ROOT . '/Enseignants'
-    ],
-    'notes' => [
-        'title' => 'Notes',
-        'icon'  => 'bx bx-book',
-        'submenu' => [
-            ['url' => ROOT . '/Notes', 'title' => 'Saisie des Notes'],
-            ['url' => ROOT . '/Notes/liste_note', 'title' => 'Résultat Annuel']
-        ]
-    ],
-    'emploi' => [
-        'title' => 'Emploi du temps',
-        'icon'  => 'bx bx-calendar',
-        'submenu' => [
-            ['url' => ROOT . '/Emploi_du_temps', 'title' => 'EDT'],
-            ['url' => ROOT . '/Enseignants/listeEDT_individuels_par_periode', 'title' => 'EDT Individuel']
-        ]
-    ],
-    'etudiants' => [
-        'title' => 'Étudiants',
-        'icon'  => 'bx bx-group',
-        'submenu' => [
-            ['url' => ROOT . '/Etudiants', 'title' => 'Liste Étudiants'],
-            ['url' => ROOT . '/EtudiantPargroupes', 'title' => 'Importer une Liste'],
-            ['url' => ROOT . '/Reinsciptions', 'title' => 'Réinscription']
-        ]
-    ],
-    'configuration' => [
-        'title' => 'Configuration',
-        'icon'  => 'bx bx-cog',
-        'url'   => ROOT . '/Modules/listeModule'
-    ],
-
-    // ✅ Menus simplifiés pour Enseignant
-    'notes_simple' => [
-        'title' => 'Saisie des Notes',
-        'icon'  => 'bx bx-book',
-        'url'   => ROOT . '/Notes'
-    ],
-    'etudiant_simple' => [
-        'title' => 'Liste Étudiants',
-        'icon'  => 'bx bx-user-pin',
-        'url'   => ROOT . '/Etudiants'
-    ],
-
-    // ✅ Menu spécial SP
-    'etudiants_sp' => [
-        'title' => 'Étudiants',
-        'icon'  => 'bx bx-group',
-        'submenu' => [
-            ['url' => ROOT . '/Etudiants', 'title' => 'Liste Étudiants'],
-            ['url' => ROOT . '/EtudiantPargroupes', 'title' => 'Importer une Liste'],
-            ['url' => ROOT . '/Reinsciptions', 'title' => 'Réinscription']
-        ]
-    ]
-];
+// Source UNIQUE de la navigation : définit $menu_permissions + $menus
+require __DIR__ . '/../../core/menu.php';
 ?>
-
-<style>
-.nav-item.active > .nav-link {
-    color: #007bff;
-    font-weight: bold;
-}
-.menu-content .active > a {
-    color: #007bff;
-    font-weight: bold;
-}
-.menu-content {
-    display: none;
-}
-.nav-item.open .menu-content {
-    display: block;
-}
-</style>
 
 <div class="main-menu menu-fixed menu-light menu-accordion menu-shadow" data-scroll-to-active="true">
     <div class="navbar-header">
@@ -110,7 +12,7 @@ $menus = [
             <li class="nav-item mr-auto">
                 <a class="navbar-brand" href="<?= ROOT ?>/Homes">
                     <div class="brand-logo">
-                        <img class="logo" src="<?= ROOT ?>/assets/images/OIP.jpeg" />
+                        <img class="logo" src="<?= ROOT ?>/assets/images/pwa/icon-192.png?v=5" />
                     </div>
                     <h2 class="brand-text mb-0">IUFP</h2>
                 </a>
@@ -137,7 +39,7 @@ $menus = [
                         if (isset($menu['submenu'])) {
                             foreach ($menu['submenu'] as $sub) {
                                 if ($current_page == basename($sub['url'])) {
-                                    $isActive = false; 
+                                    $isActive = false;
                                     $isOpen = true;
                                     break;
                                 }

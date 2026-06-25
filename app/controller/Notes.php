@@ -47,8 +47,7 @@ class Notes extends Controller
                 $this->view('post_ajouter_notes', ['note_des_etudiants' => $note_des_etudiants, "infosModule" => $infosModule]);
                 return;
             } else {
-                echo   "<h6 class='text-center text-bold-600 text-warning'>" .
-                    "Aucun étudiant trouvé pour cette promotion 000 !</h6>";
+                echo '<div class="gu-empty"><i class="bx bx-user-x"></i>Aucun étudiant trouvé pour cette classe.</div>';
                 return;
             }
 
@@ -62,25 +61,23 @@ class Notes extends Controller
 
     //Fonction pour enregistrer les notes 
     public function save_note_etudiant()
-    {   //ACTION EST UNE DONNEE PRISE COMME CA PAR NOUS DEPUIS AJAX POUR SAVOIR SI LES DONNEES SONT BIEN TRANSMIS AU CONTROLLER OU PAS
+    {
+        header('Content-Type: application/json');
         if (isset($_POST['action']) && $_POST['action'] === 'noterecuee') {
-            //Récupération des données envoyée par l'ajax
-            @$idNote = htmlspecialchars($_POST['idNote']);
-            @$devoir = $_POST['devoir'];
-            @$evaluation = htmlspecialchars($_POST['evaluation']);
-            @$session = htmlspecialchars($_POST['session']);
-            @$moyenne = htmlspecialchars($_POST['moyenne']);
-            //echo"Les données sont bien reçues";
+            // Champ vide -> NULL (note non saisie), sinon la valeur.
+            $norm = function ($v) { return ($v === null || $v === '') ? null : $v; };
+            $idNote     = (int) ($_POST['idNote'] ?? 0);
+            $devoir     = $norm($_POST['devoir'] ?? '');
+            $evaluation = $norm($_POST['evaluation'] ?? '');
+            $session    = $norm($_POST['session'] ?? '');
+            $moyenne    = $norm($_POST['moyenne'] ?? '');
 
-            //Appel de la fonction de modification de la note
             $noteModel = new Note();
-            $note_modifiee = $noteModel->save_note_etudiant($idNote, $devoir, $evaluation, $session, $moyenne);
-            if (!$note_modifiee) {
-                $this->view("set_flash");
-            }
-        } else {
-            echo "Les données sont en attente";
+            $ok = $noteModel->save_note_etudiant($idNote, $devoir, $evaluation, $session, $moyenne);
+            echo json_encode(['ok' => $ok !== false]);
+            return;
         }
+        echo json_encode(['ok' => false, 'error' => 'Requête invalide']);
     }
 
     public function liste_note()
@@ -321,5 +318,62 @@ class Notes extends Controller
                 exit;
             }
         }
+    }
+
+    // ===== Centre des relevés (fonctionnalité dédiée) =====
+    public function releves()
+    {
+        $this->view('releves');
+    }
+
+    // Liste d'une classe avec décision (roster du centre des relevés).
+    public function get_releves_roster()
+    {
+        if (!empty($_POST['idPromotion']) && !empty($_POST['idSemestre'])) {
+            $idPromotion = htmlspecialchars(trim($_POST['idPromotion']));
+            $idSemestre = htmlspecialchars(trim($_POST['idSemestre']));
+            $resultat = (new Note())->getAllMoyenneSemestreEtudiants($idPromotion, $idSemestre);
+            if (!empty($resultat['moyennesSemestre'])) {
+                $this->view('post_releves_roster', [
+                    'moyennesSemestre' => $resultat['moyennesSemestre'],
+                    'moyennesUe' => $resultat['moyennesUe'],
+                    'infosSemestre' => $resultat['infosSemestre'],
+                    'promotion' => $resultat['promotion'],
+                    'semestre' => $resultat['semestre'],
+                ]);
+                return;
+            }
+            echo '<div class="gu-empty"><i class="bx bx-user-x"></i>Aucun étudiant / aucune note pour cette classe.</div>';
+            return;
+        }
+        echo '<div class="gu-empty"><i class="bx bx-error-circle"></i>Sélection invalide.</div>';
+    }
+
+    // Relevé d'UN seul étudiant (aperçu écran / PDF individuel).
+    public function get_releve_etudiant()
+    {
+        if (!empty($_POST['idPromotion']) && !empty($_POST['idSemestre']) && !empty($_POST['idEtudiant'])) {
+            $idPromotion = htmlspecialchars(trim($_POST['idPromotion']));
+            $idSemestre = htmlspecialchars(trim($_POST['idSemestre']));
+            $idEtudiant = (int) $_POST['idEtudiant'];
+            $resultat = (new Note())->getAllMoyenneSemestreEtudiants($idPromotion, $idSemestre);
+            $idx = null;
+            foreach ($resultat['moyennesSemestre'] as $k => $ms) {
+                if ((int) $ms['etudiant']->id_etudiant === $idEtudiant) { $idx = $k; break; }
+            }
+            if ($idx !== null) {
+                $this->view('post_releve_etudiant', [
+                    'moyennesSemestre' => [$resultat['moyennesSemestre'][$idx]],
+                    'moyennesUe' => [$resultat['moyennesUe'][$idx]],
+                    'infosSemestre' => $resultat['infosSemestre'],
+                    'promotion' => $resultat['promotion'],
+                    'semestre' => $resultat['semestre'],
+                ]);
+                return;
+            }
+            echo 'notfound';
+            return;
+        }
+        echo 'notfound';
     }
 }

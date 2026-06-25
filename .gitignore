@@ -1,0 +1,25 @@
+# Dependances Composer (a reinstaller avec: composer install)
+/vendor/
+
+# Secrets / configuration locale (ne jamais committer)
+/app/core/config.local.php
+.env
+
+# Uploads generes a l'execution
+/public/uploads/
+/public/assets/uploads/
+
+# Fichiers systeme / editeur
+.DS_Store
+Thumbs.db
+*.log
+
+# Fichiers de sauvegarde
+*.bak
+*~
+* copy.*
+*copy.php
+
+# Sauvegardes / exports de base (donnees sensibles : ne jamais committer)
+/backups/
+*_export.sql

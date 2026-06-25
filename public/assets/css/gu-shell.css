@@ -1,0 +1,68 @@
+/* =====================================================================
+   G_universite — Shell (étape 2) : rebrand du shell Frest en bleu académique
+   Couche d'OVERRIDE chargée APRÈS le CSS Frest + theme.css + gu-components.css.
+   Cible uniquement le shell (sidebar, topbar, footer) + l'accent primaire.
+   Le contenu des pages reste en Frest/BS4 jusqu'à leur migration.
+   ===================================================================== */
+
+/* ---- Police & fond de page ---- */
+html body { background-color: var(--surface-page); }
+body, .navigation, .main-menu, .header-navbar, .dropdown-menu { font-family: var(--font-sans) !important; }
+
+/* ---- Recoloration de l'accent primaire (Frest #5A8DEE -> bleu académique) ---- */
+.btn-primary { background-color: var(--brand-600) !important; border-color: var(--brand-600) !important; }
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active,
+.btn-primary:not(:disabled):not(.disabled):active { background-color: var(--brand-700) !important; border-color: var(--brand-700) !important; }
+.text-primary { color: var(--brand-600) !important; }
+.bg-primary { background-color: var(--brand-600) !important; }
+a { color: var(--brand-600); }
+a:hover { color: var(--brand-700); }
+
+/* ---- Sidebar ---- */
+.main-menu.menu-light { background: var(--surface-card); border-right: 1px solid var(--border); }
+.main-menu.menu-light .navigation { background: var(--surface-card); }
+.main-menu .navbar-header { background: var(--surface-card); border-bottom: 1px solid var(--border); }
+.main-menu .navbar-header .navbar-brand .brand-text { color: var(--brand-700); font-weight: 600; letter-spacing: .02em; }
+
+.main-menu.menu-light .navigation > li > a { color: var(--text-secondary); border-radius: var(--radius-md); }
+.main-menu.menu-light .navigation > li > a > i { font-size: 1.2rem; }
+.main-menu.menu-light .navigation > li > a:hover { background: var(--surface-muted); color: var(--text-primary); }
+
+.main-menu.menu-light .navigation > li.active:not(.sidebar-group-active) > a {
+  background: var(--info-bg); color: var(--brand-600); border-radius: var(--radius-md); font-weight: 500; box-shadow: none;
+}
+.main-menu.menu-light .navigation > li.active > a i { color: var(--brand-600) !important; }
+.main-menu.menu-light .navigation > li.nav-item.open > a,
+.main-menu.menu-light .navigation > li.nav-item.open > a i { color: var(--brand-600) !important; }
+.main-menu.menu-light .navigation > li ul .active { background: var(--info-bg); border-radius: var(--radius-md); }
+.main-menu.menu-light .navigation > li ul .active > a,
+.menu-content .active > a { color: var(--brand-600); font-weight: 500; }
+.main-menu.menu-light .navigation li.has-sub > a:after { color: var(--text-tertiary); }
+
+/* ---- Topbar ---- */
+.header-navbar.navbar-with-menu { background: var(--surface-card) !important; }
+.header-navbar { background: var(--surface-card) !important; box-shadow: var(--shadow-sm) !important; border-bottom: 1px solid var(--border); }
+.header-navbar .navbar-nav .nav-link { color: var(--text-secondary) !important; }
+.header-navbar .navbar-nav .nav-link:hover { color: var(--brand-600) !important; }
+.header-navbar .user-nav .user-name { color: var(--text-primary); font-weight: 500; }
+.header-navbar .user-nav .user-status { color: var(--text-tertiary) !important; }
+.header-navbar .ficon { color: var(--text-secondary); }
+
+/* Avatar initiales (topbar) */
+.gu-avatar-nav { width: 40px; height: 40px; border-radius: 50%; background: var(--info-bg); color: var(--info-text);
+  display: inline-flex; align-items: center; justify-content: center; font-weight: 600; font-size: .9rem; }
+
+/* Dropdowns (notifications / utilisateur) */
+.header-navbar .dropdown-menu { border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); }
+.dropdown-notification .dropdown-menu-header { background: var(--brand-600) !important; border-top-left-radius: var(--radius-lg); border-top-right-radius: var(--radius-lg); }
+.dropdown-item:active, .dropdown-item:focus { background-color: var(--info-bg); color: var(--brand-700); }
+.badge-up.badge-danger { background-color: var(--danger) !important; }
+
+/* ---- Cartes (léger lissage, le contenu reste Frest) ---- */
+.card { border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); }
+.content-header-title { color: var(--text-primary); border-right-color: var(--border) !important; }
+
+/* ---- Footer ---- */
+.footer.footer-fixed { background: var(--surface-card) !important; border-top: 1px solid var(--border); box-shadow: none !important; color: var(--text-secondary); }
+.footer.footer-fixed a { color: var(--brand-600); }
+.footer .scroll-top.btn-primary { background-color: var(--brand-600) !important; border-color: var(--brand-600) !important; }

@@ -237,7 +237,7 @@ class Note extends Model
 
             foreach ($etudiants as $etudiant) {
                 $moyenne = $this->isValidateSemestre($etudiant->id_etudiant, $idSemestre);
-                $moyenneSemestre[] = ['etudiant' => $etudiant, 'moyenne' => $moyenne['moyenne']];
+                $moyenneSemestre[] = ['etudiant' => $etudiant, 'moyenne' => $moyenne['moyenne'], 'isValidate' => $moyenne['isValidate']];
                 $ues = [];
                 foreach ($infosSemestre as $ue) {
 
@@ -259,12 +259,40 @@ class Note extends Model
                         $modules[] = (!empty($note)) ? $note[0] : (object) ['moyenne_module' => 0];
                     }
 
-                    $ues[] = ['nom_ue' => $ue[0]->nom_ue, 'moyenne' => $moyenneUe['moyenne'], 'modules' => $modules];
+                    $ues[] = ['nom_ue' => $ue[0]->nom_ue, 'moyenne' => $moyenneUe['moyenne'], 'isValidate' => $moyenneUe['isValidate'], 'idUe' => $idUe, 'modules' => $modules];
                 }
 
                 $moyennesUe[] = ['etudiant' => $etudiant, 'ues' => $ues];
             }
 
+            // Moyenne réelle pondérée (sans annulation par la garde projet) + rang de classe + effectif.
+            $coefParUe = [];
+            foreach ($infosSemestre as $ue) {
+                $c = 0;
+                foreach ($ue as $m) { $c += (float) $m->coeficient; }
+                $coefParUe[] = $c;
+            }
+            $totalCoef = array_sum($coefParUe);
+            foreach ($moyenneSemestre as $k => $ms) {
+                $sp = 0;
+                foreach ($moyennesUe[$k]['ues'] as $j => $u) {
+                    $sp += (float) $u['moyenne'] * ($coefParUe[$j] ?? 0);
+                }
+                $moyenneSemestre[$k]['moyenneReelle'] = $totalCoef ? round($sp / $totalCoef, 2) : 0;
+            }
+            $effectif = count($moyenneSemestre);
+            $ordre = array_keys($moyenneSemestre);
+            usort($ordre, function ($a, $b) use ($moyenneSemestre) {
+                return $moyenneSemestre[$b]['moyenneReelle'] <=> $moyenneSemestre[$a]['moyenneReelle'];
+            });
+            $rang = 0; $pos = 0; $prev = null;
+            foreach ($ordre as $k) {
+                $pos++;
+                $m = $moyenneSemestre[$k]['moyenneReelle'];
+                if ($prev === null || $m < $prev) { $rang = $pos; $prev = $m; }
+                $moyenneSemestre[$k]['rang'] = $rang;
+                $moyenneSemestre[$k]['effectif'] = $effectif;
+            }
 
             $query = "SELECT annee_universitaire, filiere.sigle_filiere, filiere.nom_filiere  FROM promotion   INNER JOIN filiere ON promotion.id_filiere=filiere.id_filiere WHERE id_promotion=? LIMIT 1";
             $promotion = $this->select_data_table_join_where($query, [$idPromotion]);
@@ -402,13 +430,18 @@ class Note extends Model
     // la methode pour savoir si un etudiant a valider un ue*
     public function isValidateUe($idEtudiant, $idUe)
     {
-        $moyenne = 0;
+        // Moyenne de l'UE = moyenne des modules PONDÉRÉE par leur crédit (compensation intra-UE).
+        $sommePond = 0;
+        $sommeCoef = 0;
         $infosUe = $this->getInfosUe($idUe);
         foreach ($infosUe as $module) {
             $resultatModule = $this->isValidateModule($idEtudiant, $module->id_ue_module);
-            $moyenne += ($resultatModule['moyenne'] == null) ? 0 : $resultatModule['moyenne'];
+            $note = ($resultatModule['moyenne'] == null) ? 0 : (float) $resultatModule['moyenne'];
+            $coef = (float) ($module->coeficient ?? 0);
+            $sommePond += $note * $coef;
+            $sommeCoef += $coef;
         }
-        $moyenne /= count($infosUe);
+        $moyenne = $sommeCoef > 0 ? $sommePond / $sommeCoef : 0;
         $isValidate = $moyenne >= 10;
         return [
             'isValidate' => $isValidate,
