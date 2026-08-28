@@ -34,6 +34,13 @@ $ini = mb_substr($ini, 0, 2, 'UTF-8') ?: 'U';
         .pf-tab.active { color: #14346b; border-bottom-color: #1f4f9c; }
         .pf-pane { display: none; } .pf-pane.active { display: block; }
         .pf-card .form-label { font-size: .85rem; color: #475569; font-weight: 500; margin-bottom: 4px; }
+        .radio-pill { display: flex; gap: 10px; }
+        .radio-pill label { flex: 1; border: 1px solid #e3e8f2; border-radius: 9px; padding: 9px 12px; cursor: pointer; font-size: 13.5px; font-weight: 600; color: #475569; display: flex; align-items: center; gap: 8px; margin: 0; transition: all .12s; }
+        .radio-pill input { display: none; }
+        .radio-pill input:checked + label { border-color: #1f4f9c; background: #eef4fd; color: #14346b; }
+        .sig-pad-wrap { position: relative; border: 1px dashed #b9c4da; border-radius: 10px; overflow: hidden; background: repeating-linear-gradient(0deg, #fbfcfe, #fbfcfe 31px, #eef2f8 32px); }
+        #pfSigCanvas { display: block; width: 100%; height: 160px; cursor: crosshair; touch-action: none; }
+        .sig-hint { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); color: #aab7cc; font-size: 13px; pointer-events: none; user-select: none; }
     </style>
 
     <div class="app-content content">
@@ -76,6 +83,7 @@ $ini = mb_substr($ini, 0, 2, 'UTF-8') ?: 'U';
                         <div class="pf-tabs">
                             <button type="button" class="pf-tab <?= $activeTab === 'infos' ? 'active' : '' ?>" data-tab="infos"><i class="bx bx-user"></i> Informations</button>
                             <button type="button" class="pf-tab <?= $activeTab === 'password' ? 'active' : '' ?>" data-tab="password"><i class="bx bx-lock-alt"></i> Mot de passe</button>
+                            <button type="button" class="pf-tab <?= $activeTab === 'signature' ? 'active' : '' ?>" data-tab="signature"><i class="bx bx-pen"></i> Signature</button>
                         </div>
 
                         <!-- Informations -->
@@ -124,6 +132,44 @@ $ini = mb_substr($ini, 0, 2, 'UTF-8') ?: 'U';
                                 </div>
                             </form>
                         </div>
+
+                        <!-- Signature -->
+                        <div class="pf-pane <?= $activeTab === 'signature' ? 'active' : '' ?>" data-pane="signature">
+                            <form method="POST" action="<?= ROOT ?>/Utilisateurs/update_signature" enctype="multipart/form-data" id="pfSigForm">
+                                <label class="form-label">Signature</label>
+                                <div class="radio-pill mb-2">
+                                    <span><input type="radio" name="sig_mode" id="pfSigModeUpload" value="upload" checked><label for="pfSigModeUpload"><i class="bx bx-upload"></i> Téléverser une image</label></span>
+                                    <span><input type="radio" name="sig_mode" id="pfSigModeDraw" value="draw"><label for="pfSigModeDraw"><i class="bx bx-pen"></i> Signer ici</label></span>
+                                </div>
+
+                                <!-- Mode : téléverser une image -->
+                                <div id="pfSigUpload" class="row justify-content-between align-items-center" style="row-gap:14px;">
+                                    <div class="col-md-7">
+                                        <input type="file" id="pfSigFile" name="signature" class="form-control" accept="image/*">
+                                    </div>
+                                    <div class="col-md-5 d-flex justify-content-end">
+                                        <?php if (!empty($profil['signature'])): ?>
+                                            <img id="pfSigCurrent" src="<?= ROOT . htmlspecialchars((string) $profil['signature']) ?>" alt="Signature actuelle" style="height:60px;max-width:140px;border:1px dashed #d7deea;border-radius:8px;padding:4px;background:#fff;">
+                                        <?php endif ?>
+                                    </div>
+                                </div>
+
+                                <!-- Mode : signer directement -->
+                                <div id="pfSigDraw" style="display:none;">
+                                    <div class="sig-pad-wrap">
+                                        <canvas id="pfSigCanvas"></canvas>
+                                        <span class="sig-hint" id="pfSigHint">Signez dans le cadre (souris ou doigt)</span>
+                                    </div>
+                                    <div class="d-flex justify-content-end mt-1">
+                                        <button type="button" class="btn btn-ghost btn-sm" id="pfSigClear"><i class="bx bx-eraser"></i> Effacer</button>
+                                    </div>
+                                </div>
+
+                                <div class="text-right mt-3">
+                                    <button type="submit" class="btn btn-primary"><i class="bx bx-save"></i> Enregistrer la signature</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -148,6 +194,90 @@ $ini = mb_substr($ini, 0, 2, 'UTF-8') ?: 'U';
             var c = document.getElementById('confirmation_mot_passe').value;
             if (n !== c) { e.preventDefault(); alert('La confirmation ne correspond pas au nouveau mot de passe.'); }
         });
+
+        // ===== Signature : bascule téléverser / signer + pavé de dessin =====
+        (function () {
+            var sigCanvas = document.getElementById('pfSigCanvas');
+            var sigCtx = sigCanvas ? sigCanvas.getContext('2d') : null;
+            var sigDrawing = false, sigHasDrawn = false, sigLastX = 0, sigLastY = 0;
+
+            function sigUpdateHint() {
+                var h = document.getElementById('pfSigHint');
+                if (h) h.style.display = sigHasDrawn ? 'none' : '';
+            }
+            function resizeSigCanvas() {
+                if (!sigCanvas || !sigCtx) return;
+                var ratio = window.devicePixelRatio || 1;
+                var w = sigCanvas.parentElement.clientWidth || 420, h = 160;
+                sigCanvas.width = w * ratio; sigCanvas.height = h * ratio;
+                sigCanvas.style.width = w + 'px'; sigCanvas.style.height = h + 'px';
+                sigCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
+                sigCtx.lineWidth = 2; sigCtx.lineCap = 'round'; sigCtx.lineJoin = 'round'; sigCtx.strokeStyle = '#0f2a52';
+                sigHasDrawn = false; sigUpdateHint();
+            }
+            function sigPos(e) {
+                var r = sigCanvas.getBoundingClientRect();
+                var cx = e.touches ? e.touches[0].clientX : e.clientX;
+                var cy = e.touches ? e.touches[0].clientY : e.clientY;
+                return { x: cx - r.left, y: cy - r.top };
+            }
+            function sigStart(e) { sigDrawing = true; var p = sigPos(e); sigLastX = p.x; sigLastY = p.y; if (e.cancelable) e.preventDefault(); }
+            function sigMove(e) {
+                if (!sigDrawing) return;
+                var p = sigPos(e);
+                sigCtx.beginPath(); sigCtx.moveTo(sigLastX, sigLastY); sigCtx.lineTo(p.x, p.y); sigCtx.stroke();
+                sigLastX = p.x; sigLastY = p.y; sigHasDrawn = true; sigUpdateHint();
+                if (e.cancelable) e.preventDefault();
+            }
+            function sigEnd() { sigDrawing = false; }
+            if (sigCanvas) {
+                sigCanvas.addEventListener('mousedown', sigStart);
+                sigCanvas.addEventListener('mousemove', sigMove);
+                window.addEventListener('mouseup', sigEnd);
+                sigCanvas.addEventListener('touchstart', sigStart, { passive: false });
+                sigCanvas.addEventListener('touchmove', sigMove, { passive: false });
+                sigCanvas.addEventListener('touchend', sigEnd);
+            }
+            var sigClear = document.getElementById('pfSigClear');
+            if (sigClear) sigClear.addEventListener('click', function () {
+                if (sigCtx) { sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height); sigHasDrawn = false; sigUpdateHint(); }
+            });
+
+            var sigUpload = document.getElementById('pfSigUpload');
+            var sigDraw = document.getElementById('pfSigDraw');
+            document.querySelectorAll('input[name="sig_mode"]').forEach(function (r) {
+                r.addEventListener('change', function () {
+                    var draw = document.getElementById('pfSigModeDraw').checked;
+                    if (sigDraw) sigDraw.style.display = draw ? '' : 'none';
+                    if (sigUpload) sigUpload.style.display = draw ? 'none' : '';
+                    if (draw) { document.getElementById('pfSigFile').value = ''; resizeSigCanvas(); }
+                });
+            });
+
+            var sigForm = document.getElementById('pfSigForm');
+            if (sigForm) sigForm.addEventListener('submit', function (e) {
+                var form = this;
+                var drawMode = document.getElementById('pfSigModeDraw').checked;
+
+                if (drawMode) {
+                    if (!sigHasDrawn) { e.preventDefault(); alert('Veuillez signer dans le cadre.'); return; }
+                    e.preventDefault();
+                    sigCanvas.toBlob(function (blob) {
+                        try {
+                            var dt = new DataTransfer();
+                            dt.items.add(new File([blob], 'signature.png', { type: 'image/png' }));
+                            document.getElementById('pfSigFile').files = dt.files;
+                        } catch (err) { /* navigateur trop ancien : ignoré */ }
+                        form.submit();
+                    }, 'image/png');
+                    return;
+                }
+
+                if (!document.getElementById('pfSigFile').value) {
+                    e.preventDefault(); alert('Veuillez téléverser une signature ou choisir « Signer ici ».');
+                }
+            });
+        })();
     </script>
 </body>
 

@@ -181,6 +181,41 @@ class Utilisateurs extends Controller
         $this->redirect('Utilisateurs/profil');
     }
 
+    public function update_signature()
+    {
+        if (!isset($_SESSION['id_utilisateur'])) {
+            $this->redirect('Logins');
+            return;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('Utilisateurs/profil');
+            return;
+        }
+
+        $utilisateur = new Utilisateur();
+        $_SESSION['profil_tab'] = 'signature';
+
+        $signaturePath = $utilisateur->upload_cv($_FILES['signature'] ?? []);
+        if ($signaturePath === false) {
+            $utilisateur->set_flash(implode(' ', $utilisateur->errors) ?: 'Erreur lors de l\'enregistrement de la signature.', 'danger');
+            $this->redirect('Utilisateurs/profil');
+            return;
+        }
+
+        $utilisateur->insertion_update_simples(
+            'UPDATE utilisateur SET signature = :signature WHERE id_utilisateur = :id',
+            [
+                ':signature' => $signaturePath,
+                ':id' => (int) $_SESSION['id_utilisateur'],
+            ]
+        );
+
+        $_SESSION['signature'] = $signaturePath;
+        $utilisateur->set_flash('Votre signature a ete mise a jour.', 'success');
+        $this->redirect('Utilisateurs/profil');
+    }
+
     private function getProfilConnecte(Utilisateur $utilisateur)
     {
         // La signature vit toujours sur la table utilisateur, meme pour un
