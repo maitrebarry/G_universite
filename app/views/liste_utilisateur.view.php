@@ -21,6 +21,11 @@ $roleOptions = [
     'Chef DR'              => 'Chef de Département',
     'Enseignant'           => 'Enseignant',
 ];
+// Un utilisateur ne peut assigner (creation/edition) que les rôles strictement
+// en dessous du sien : $rolesAssignables vient du contrôleur (liste_utilisateur()).
+if (isset($rolesAssignables)) {
+    $roleOptions = array_intersect_key($roleOptions, array_flip($rolesAssignables));
+}
 function uRoleBadge($r)
 {
     $r = strtoupper(str_replace(' ', '', (string) $r));

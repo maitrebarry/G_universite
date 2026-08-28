@@ -61,6 +61,14 @@ $ini = mb_substr($ini, 0, 2, 'UTF-8') ?: 'U';
                         <span class="badge badge-soft-primary" style="margin-top:6px;"><?= htmlspecialchars((string) $profil['role']) ?: '—' ?></span>
                         <div class="pf-meta"><i class="bx bx-envelope"></i> <?= htmlspecialchars((string) $profil['email_utilisateurs']) ?: '—' ?></div>
                         <div class="pf-meta"><i class="bx bx-phone"></i> <?= htmlspecialchars((string) $profil['contact_utilisateur']) ?: '—' ?></div>
+                        <div class="pf-meta">
+                            <i class="bx bx-pen"></i>
+                            <?php if (!empty($profil['signature'])): ?>
+                                <img src="<?= ROOT . htmlspecialchars((string) $profil['signature']) ?>" alt="Signature" style="height:32px;max-width:120px;border-radius:6px;border:1px solid #e3e8f2;background:#fff;">
+                            <?php else: ?>
+                                <span>Aucune signature enregistrée</span>
+                            <?php endif ?>
+                        </div>
                     </div>
 
                     <!-- Carte paramètres -->

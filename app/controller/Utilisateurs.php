@@ -183,6 +183,16 @@ class Utilisateurs extends Controller
 
     private function getProfilConnecte(Utilisateur $utilisateur)
     {
+        // La signature vit toujours sur la table utilisateur, meme pour un
+        // compte lie a un enseignant.
+        $compteSignature = $utilisateur->FetchSelectWhere(
+            'signature',
+            'utilisateur',
+            'id_utilisateur = ?',
+            [(int) $_SESSION['id_utilisateur']]
+        );
+        $signature = $compteSignature->signature ?? null;
+
         if (!empty($_SESSION['enseignant_id'])) {
             $enseignant = $utilisateur->FetchSelectWhere(
                 'enseignant_prenom, enseignant_nom, enseignant_email, enseignant_telephone',
@@ -197,6 +207,7 @@ class Utilisateurs extends Controller
                     'email_utilisateurs' => $enseignant->enseignant_email,
                     'contact_utilisateur' => $enseignant->enseignant_telephone,
                     'role' => $_SESSION['role'] ?? '',
+                    'signature' => $signature,
                     'type' => 'enseignant',
                 ];
             }
@@ -214,12 +225,13 @@ class Utilisateurs extends Controller
             'email_utilisateurs' => $compte->email_utilisateurs ?? ($_SESSION['email_utilisateurs'] ?? ''),
             'contact_utilisateur' => $compte->contact_utilisateur ?? ($_SESSION['contact_utilisateur'] ?? ''),
             'role' => $compte->role ?? ($_SESSION['role'] ?? ''),
+            'signature' => $signature,
             'type' => 'utilisateur',
         ];
     }
 
-    // Hierarchie des roles : un utilisateur ne doit voir dans la liste que les
-    // roles strictement en dessous du sien. Le SupAdmin n'apparait jamais.
+    // Hierarchie des roles : un utilisateur ne doit voir/gerer dans la liste
+    // que les roles strictement en dessous du sien. Le SupAdmin n'apparait jamais.
     private static $roleHierarchy = [
         'SupAdmin'              => 1,
         'DG'                    => 2,
@@ -230,21 +242,31 @@ class Utilisateurs extends Controller
         'Enseignant'            => 7,
     ];
 
+    // Roles qu'un utilisateur ayant $role peut voir, editer, supprimer ou attribuer.
+    private static function rolesInferieurs($role)
+    {
+        $rang = self::$roleHierarchy[$role] ?? PHP_INT_MAX;
+        return array_keys(array_filter(
+            self::$roleHierarchy,
+            fn($r) => $r > $rang
+        ));
+    }
+
     public function liste_utilisateur($id_enseignant=null)
     {
         $this->requireRole(['SupAdmin', 'DG', 'DGA', 'Chef DR']); // gestion des comptes : reserve a l'administrateur
         $utilisateur = new Utilisateur();
         $utilisateurenseignant = new Enseignant();
-        if (isset($_POST["save_user"])) {
+        $rolesVisibles = self::rolesInferieurs($_SESSION['role'] ?? '');
 
+        if (isset($_POST["save_user"])) {
+            if (!in_array($_POST['role'] ?? '', $rolesVisibles, true)) {
+                $utilisateur->set_flash("Vous ne pouvez pas attribuer un rôle égal ou supérieur au vôtre.", 'danger');
+                $this->redirect('Utilisateurs/liste_utilisateur');
+                return;
+            }
             $utilisateur->save_utilisateur(["nom_prenom", "contact_utilisateur", "email_utilisateurs", "mot_passe", "role"]);
         }
-
-        $viewerRank = self::$roleHierarchy[$_SESSION['role'] ?? ''] ?? PHP_INT_MAX;
-        $rolesVisibles = array_keys(array_filter(
-            self::$roleHierarchy,
-            fn($rang) => $rang > $viewerRank
-        ));
 
         //appel du method de recuperation
         // Exemple d'utilisation de la méthode
@@ -275,7 +297,7 @@ class Utilisateurs extends Controller
 
         $enseignants = $utilisateurenseignant->SelectAllData("*", "enseignants");
         $departements = $utilisateur->SelectAllData("*", "departement");
-        $this->view('liste_utilisateur', ['liste' => $liste, 'enseignants' => $enseignants,'id_enseignant'=>$id_enseignant,'departements'=>$departements]);
+        $this->view('liste_utilisateur', ['liste' => $liste, 'enseignants' => $enseignants,'id_enseignant'=>$id_enseignant,'departements'=>$departements,'rolesAssignables'=>$rolesVisibles]);
     }
 
     /// methode pour la modification
@@ -284,8 +306,18 @@ class Utilisateurs extends Controller
         $this->requireRole(['SupAdmin', 'DG', 'DGA', 'Chef DR']); // gestion des comptes : reserve a l'administrateur
         $utilisateur = new Utilisateur();
         if (isset($_POST['edit_user'])) {
+            $rolesVisibles = self::rolesInferieurs($_SESSION['role'] ?? '');
+            $id_cible = $_POST['id_utilisateur'] ?? null;
+            $cible = $utilisateur->FetchSelectWhere('role', 'utilisateur', 'id_utilisateur = ?', [$id_cible]);
+
+            if (!$cible || !in_array($cible->role, $rolesVisibles, true) || !in_array($_POST['role'] ?? '', $rolesVisibles, true)) {
+                $utilisateur->set_flash("Vous ne pouvez pas modifier cet utilisateur ou lui attribuer ce rôle.", 'danger');
+                $this->redirect('Utilisateurs/liste_utilisateur');
+                return;
+            }
+
             $utilisateur->edit_utilisateur([
-                'id_utilisateur'      => $_POST['id_utilisateur'] ?? null,
+                'id_utilisateur'      => $id_cible,
                 'nom_prenom'          => trim($_POST['nom_prenom'] ?? ''),
                 'contact_utilisateur' => trim($_POST['contact_utilisateur'] ?? ''),
                 'email_utilisateurs'  => trim($_POST['email_utilisateurs'] ?? ''),
@@ -301,6 +333,15 @@ class Utilisateurs extends Controller
     {
         $this->requireRole(['SupAdmin', 'DG', 'DGA', 'Chef DR']); // suppression de compte : reserve a l'administrateur
         $S = new Semestre();
+
+        $rolesVisibles = self::rolesInferieurs($_SESSION['role'] ?? '');
+        $cible = $S->FetchSelectWhere('role', 'utilisateur', 'id_utilisateur = ?', [$id]);
+        if (!$cible || !in_array($cible->role, $rolesVisibles, true)) {
+            $S->set_flash("Vous ne pouvez pas supprimer cet utilisateur.", 'danger');
+            $S->redirect("Utilisateurs/liste_utilisateur");
+            return;
+        }
+
         // Définir la requête de suppression et les paramètres
         $sql = 'DELETE FROM utilisateur WHERE id_utilisateur = :id';
         $params = [':id' => $id];
