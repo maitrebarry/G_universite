@@ -218,6 +218,18 @@ class Utilisateurs extends Controller
         ];
     }
 
+    // Hierarchie des roles : un utilisateur ne doit voir dans la liste que les
+    // roles strictement en dessous du sien. Le SupAdmin n'apparait jamais.
+    private static $roleHierarchy = [
+        'SupAdmin'              => 1,
+        'DG'                    => 2,
+        'DGA'                   => 3,
+        'Chef DR'               => 4,
+        'Sécretaire principale' => 5,
+        'Scolarite'             => 6,
+        'Enseignant'            => 7,
+    ];
+
     public function liste_utilisateur($id_enseignant=null)
     {
         $this->requireRole(['SupAdmin', 'DG', 'DGA', 'Chef DR']); // gestion des comptes : reserve a l'administrateur
@@ -227,10 +239,17 @@ class Utilisateurs extends Controller
 
             $utilisateur->save_utilisateur(["nom_prenom", "contact_utilisateur", "email_utilisateurs", "mot_passe", "role"]);
         }
-        //appel du method de recuperation 
+
+        $viewerRank = self::$roleHierarchy[$_SESSION['role'] ?? ''] ?? PHP_INT_MAX;
+        $rolesVisibles = array_keys(array_filter(
+            self::$roleHierarchy,
+            fn($rang) => $rang > $viewerRank
+        ));
+
+        //appel du method de recuperation
         // Exemple d'utilisation de la méthode
         $select = "
-        SELECT 
+        SELECT
             utilisateur.id_utilisateur,
             utilisateur.nom_prenom AS utilisateur_nom_prenom,
             utilisateur.contact_utilisateur AS utilisateur_contact,
@@ -246,12 +265,13 @@ class Utilisateurs extends Controller
         FROM utilisateur
         LEFT JOIN enseignants
         ON utilisateur.enseignant_id = enseignants.enseignant_id
+        WHERE utilisateur.role IN (" . implode(',', array_fill(0, count($rolesVisibles), '?')) . ")
     ";
-    
+
 
 
         // Appel de la méthode en passant les paramètres nécessaires
-        $liste = $utilisateur->select_data_table_join_where($select);
+        $liste = $rolesVisibles ? $utilisateur->select_data_table_join_where($select, $rolesVisibles) : [];
 
         $enseignants = $utilisateurenseignant->SelectAllData("*", "enseignants");
         $departements = $utilisateur->SelectAllData("*", "departement");
