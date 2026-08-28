@@ -15,11 +15,11 @@
     #menuPromotion { position: fixed; inset: 0; z-index: 1080; display: none; align-items: center; justify-content: center; }
     #menuPromotion.open { display: flex; }
     #menuPromotion .gm-back { position: absolute; inset: 0; background: rgba(15, 23, 42, .55); }
-    #menuPromotion .gm-card { position: relative; background: #fff; border-radius: 12px; width: min(560px, 94vw); box-shadow: 0 20px 60px rgba(0, 0, 0, .3); overflow: hidden; }
-    #menuPromotion .gm-head { padding: 14px 18px; background: #14346b; color: #fff; display: flex; align-items: center; justify-content: space-between; }
+    #menuPromotion .gm-card { position: relative; background: #fff; border-radius: 12px; width: min(560px, 94vw); max-height: 90vh; box-shadow: 0 20px 60px rgba(0, 0, 0, .3); overflow: hidden; display: flex; flex-direction: column; }
+    #menuPromotion .gm-head { padding: 14px 18px; background: #14346b; color: #fff; display: flex; align-items: center; justify-content: space-between; flex: 0 0 auto; }
     #menuPromotion .gm-head h5 { margin: 0; font-weight: 700; font-size: 16px; }
-    #menuPromotion .gm-body { padding: 18px; }
-    #menuPromotion .gm-foot { padding: 12px 18px; border-top: 1px solid #eef2f9; display: flex; justify-content: flex-end; gap: 8px; }
+    #menuPromotion .gm-body { padding: 18px; overflow-y: auto; flex: 1 1 auto; min-height: 0; }
+    #menuPromotion .gm-foot { padding: 12px 18px; border-top: 1px solid #eef2f9; display: flex; justify-content: flex-end; gap: 8px; flex: 0 0 auto; }
     #menuPromotion .form-label { font-size: .85rem; color: #475569; font-weight: 500; }
 </style>
 

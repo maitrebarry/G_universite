@@ -28,10 +28,10 @@
     #menuEditer { position: fixed; inset: 0; z-index: 1080; display: none; align-items: center; justify-content: center; }
     #menuEditer.open { display: flex; }
     #menuEditer .gm-back { position: absolute; inset: 0; background: rgba(15, 23, 42, .55); }
-    #menuEditer .gm-card { position: relative; background: #fff; border-radius: 12px; width: min(440px, 94vw); box-shadow: 0 20px 60px rgba(0, 0, 0, .3); overflow: hidden; }
-    #menuEditer .gm-head { padding: 14px 18px; border-bottom: 1px solid #eef2f9; display: flex; align-items: center; justify-content: space-between; }
+    #menuEditer .gm-card { position: relative; background: #fff; border-radius: 12px; width: min(440px, 94vw); max-height: 90vh; box-shadow: 0 20px 60px rgba(0, 0, 0, .3); overflow: hidden; display: flex; flex-direction: column; }
+    #menuEditer .gm-head { padding: 14px 18px; border-bottom: 1px solid #eef2f9; display: flex; align-items: center; justify-content: space-between; flex: 0 0 auto; }
     #menuEditer .gm-head h5 { margin: 0; color: #14346b; font-weight: 700; }
-    #menuEditer .gm-body { padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+    #menuEditer .gm-body { padding: 18px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; flex: 1 1 auto; min-height: 0; }
     #menuEditer .gm-opt { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid #e7ecf5; border-radius: 10px; color: #14346b; text-decoration: none; font-weight: 600; transition: all .12s ease; }
     #menuEditer .gm-opt:hover { transform: translateX(3px); }
     #menuEditer .gm-opt i { font-size: 22px; }

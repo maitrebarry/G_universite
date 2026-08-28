@@ -4,6 +4,16 @@
    100% basé sur les tokens => compatible mode clair / sombre.
    ===================================================================== */
 
+/* ============================ MENU LATERAL (scroll de secours) ============================
+   .main-menu-content a une hauteur bornee (components.css, calc(100% - 6rem) !important) mais
+   aucun overflow propre : le theme compte sur PerfectScrollbar (app-menu.js) pour scroller,
+   or ce script calcule sa hauteur via .main-menu-header/.main-menu-footer qui n'existent pas
+   dans ce gabarit -> si PerfectScrollbar ne s'initialise pas correctement, les items de menu
+   en trop sont rognes par le overflow:hidden de .main-menu, sans aucun scroll possible.
+   Ce fallback natif ne fait rien si PerfectScrollbar fonctionne (il impose son propre overflow
+   inline), et sauve le scroll sinon. */
+.main-menu .main-menu-content { overflow-y: auto; }
+
 /* ============================ BOUTONS ============================ */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: .5em;

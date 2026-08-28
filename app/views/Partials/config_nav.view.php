@@ -16,11 +16,11 @@
     .gu-conf-modal { position: fixed; inset: 0; z-index: 1080; display: none; align-items: center; justify-content: center; }
     .gu-conf-modal.open { display: flex; }
     .gu-conf-modal .gm-back { position: absolute; inset: 0; background: rgba(15, 23, 42, .55); }
-    .gu-conf-modal .gm-card { position: relative; background: #fff; border-radius: 12px; width: min(520px, 94vw); box-shadow: 0 20px 60px rgba(0, 0, 0, .3); overflow: hidden; }
-    .gu-conf-modal .gm-head { padding: 14px 18px; background: #14346b; color: #fff; display: flex; align-items: center; justify-content: space-between; }
+    .gu-conf-modal .gm-card { position: relative; background: #fff; border-radius: 12px; width: min(520px, 94vw); max-height: 90vh; box-shadow: 0 20px 60px rgba(0, 0, 0, .3); overflow: hidden; display: flex; flex-direction: column; }
+    .gu-conf-modal .gm-head { padding: 14px 18px; background: #14346b; color: #fff; display: flex; align-items: center; justify-content: space-between; flex: 0 0 auto; }
     .gu-conf-modal .gm-head h5 { margin: 0; font-weight: 700; font-size: 16px; }
-    .gu-conf-modal .gm-body { padding: 18px; }
-    .gu-conf-modal .gm-foot { padding: 12px 18px; border-top: 1px solid #eef2f9; display: flex; justify-content: flex-end; gap: 8px; }
+    .gu-conf-modal .gm-body { padding: 18px; overflow-y: auto; flex: 1 1 auto; min-height: 0; }
+    .gu-conf-modal .gm-foot { padding: 12px 18px; border-top: 1px solid #eef2f9; display: flex; justify-content: flex-end; gap: 8px; flex: 0 0 auto; }
     .gu-conf-modal .form-label { font-size: .85rem; color: #475569; font-weight: 500; }
     #confLayout .conf-act { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 8px; border: 1px solid #e3e8f2; color: #1f4f9c; background: #fff; cursor: pointer; font-size: 16px; text-decoration: none; margin: 0 1px; }
     #confLayout .conf-act:hover { background: #eaf1fb; border-color: #1f4f9c; }
