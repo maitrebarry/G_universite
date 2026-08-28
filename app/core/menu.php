@@ -10,8 +10,8 @@
 
 $menu_permissions = [
     'SupAdmin'              => ['dashboard', 'filieres', 'enseignants', 'notes', 'emploi', 'etudiants', 'configuration'],
-    'DG'                    => ['dashboard', 'filieres', 'enseignants', 'notes', 'emploi', 'etudiants'],
-    'DGA'                   => ['dashboard', 'filieres', 'enseignants', 'notes', 'emploi', 'etudiants'],
+    'DG'                    => ['dashboard', 'filieres', 'enseignants', 'notes', 'emploi', 'etudiants', 'configuration'],
+    'DGA'                   => ['dashboard', 'filieres', 'enseignants', 'notes', 'emploi', 'etudiants', 'configuration'],
     'Chef DR'               => ['dashboard', 'filieres', 'enseignants', 'notes', 'emploi', 'etudiants', 'configuration'],
     'Enseignant'            => ['dashboard', 'notes_simple', 'etudiant_simple'],
     'Sécretaire principale' => ['dashboard', 'etudiants_sp'],
