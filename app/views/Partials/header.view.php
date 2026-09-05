@@ -63,7 +63,6 @@ if (!isset($_SESSION['id_utilisateur'])) {
     <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/vendors/css/forms/select/select2.min.css">
     <!-- END: Page CSS-->
     <!-- BEGIN: Custom CSS-->
-    <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/style.css">
     <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/g-universite-chatbot.css">
     <link rel="stylesheet" type="text/css" href="<?= ROOT ?>/assets/css/bsStepper.min1.css">
     <!-- END: Custom CSS-->
