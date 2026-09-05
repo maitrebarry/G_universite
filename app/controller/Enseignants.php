@@ -51,33 +51,38 @@ class Enseignants extends Controller
     }
     public function ajouter_enseignant()
     {
-         $enseignant = new Enseignant();
-         if (isset($_SESSION['id_departement'])) {
-                $_POST['id_departement'] = $_SESSION['id_departement'];
-            } else {
-                $_SESSION['errors'][] = "Votre identifiant de département est introuvable. Veuillez vous reconnecter.";
-               $enseignant->redirect("Enseignants/ajouter_enseignant"); 
-                exit;
-            }
-        // Vérifier que l'utilisateur est connecté et est chef DR
-        if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Chef DR') {
-            // Rediriger ou afficher une erreur
-            $_SESSION['errors'][] = "Accès refusé. Seuls les chefs de département peuvent ajouter des enseignants.";
-            $enseignant->redirect("ajouter_enseignant"); 
+        $enseignant = new Enseignant();
+
+        // Chef DR gere son propre departement ; SupAdmin/DG/DGA voient tous les
+        // departements et doivent en choisir un dans le formulaire.
+        if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], ['SupAdmin', 'DG', 'DGA', 'Chef DR'])) {
+            $_SESSION['errors'][] = "Accès refusé. Seuls les responsables peuvent ajouter des enseignants.";
+            $enseignant->redirect("Enseignants");
             exit;
         }
+        $departementFixe = $_SESSION['role'] === 'Chef DR';
 
-        $enseignant = new Enseignant();
         $filiere = $enseignant->SelectAllData("*", "grade");
+        $departements = $departementFixe ? [] : $enseignant->SelectAllData("*", "departement");
 
         if (isset($_POST["envoyer"])) {
             $_POST = array_map('trim', $_POST);
             $_POST['administration'] = $_POST['administration'] ?? 0;
 
-            // Injecter le département du chef DR connecté
-            $_POST['id_departement'] = $_SESSION['id_departement'];
+            if ($departementFixe) {
+                if (!isset($_SESSION['id_departement'])) {
+                    $_SESSION['errors'][] = "Votre identifiant de département est introuvable. Veuillez vous reconnecter.";
+                    $enseignant->redirect("Enseignants");
+                    exit;
+                }
+                $_POST['id_departement'] = $_SESSION['id_departement'];
+            } elseif (empty($_POST['id_departement'])) {
+                $enseignant->errors[] = "Veuillez sélectionner un département.";
+            }
 
-            $enseignant->enregistrement($_FILES, $_POST, $filiere);
+            if (empty($enseignant->errors)) {
+                $enseignant->enregistrement($_FILES, $_POST, $filiere);
+            }
 
             if (!empty($enseignant->errors)) {
                 $_SESSION['input'] = $_POST;
@@ -94,6 +99,8 @@ class Enseignants extends Controller
         $this->view("ajouter_enseignant", [
             'errors' => $errors,
             'filiere' => $filiere,
+            'departements' => $departements,
+            'departementFixe' => $departementFixe,
             'input_values' => $input_values
         ]);
     }

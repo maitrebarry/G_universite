@@ -106,6 +106,19 @@
                                 <label class="form-label">Prénom <span class="text-danger">*</span></label>
                                 <input name="prenom" id="prenom" type="text" class="form-control" placeholder="Prénom" value="<?= htmlspecialchars($input_values['prenom'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
                             </div>
+                            <?php if (!$departementFixe): ?>
+                            <div class="col-md-6">
+                                <label class="form-label">Département <span class="text-danger">*</span></label>
+                                <select name="id_departement" id="id_departement" class="form-select" required>
+                                    <option value="" disabled <?= empty($input_values['id_departement']) ? 'selected' : '' ?>>Choisissez un département</option>
+                                    <?php foreach ($departements as $departement): ?>
+                                        <option value="<?= $departement->id_departement ?>" <?= (($input_values['id_departement'] ?? '') == $departement->id_departement) ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($departement->nom_departement) ?> (<?= htmlspecialchars($departement->sigle_departement) ?>)
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <?php endif; ?>
                         </div>
                     </div>
 
