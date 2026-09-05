@@ -14,6 +14,13 @@
    inline), et sauve le scroll sinon. */
 .main-menu .main-menu-content { overflow-y: auto; }
 
+/* ============================ PIED DE PAGE FIXE (espace reserve) ============================
+   Partials/foot.view.php rend <footer class="footer ... footer-fixed">, reellement en
+   position:fixed;bottom:0 (~41px de haut) sur TOUTE page authentifiee. Rien ne reservait cet
+   espace en bas du contenu : une fois le scroll de page (re)active, le bas reel de chaque page
+   (bouton Enregistrer, dernieres lignes d'un tableau...) se retrouvait cache dessous. */
+html body .content .content-wrapper { padding-bottom: 3.5rem !important; }
+
 /* ============================ BOUTONS ============================ */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: .5em;
